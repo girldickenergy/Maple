@@ -5,6 +5,33 @@
     <ClCompile Include="Utilities\Logging\Logger.cpp">
       <Filter>Utilities\Logging</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\NameCache.cpp">
+      <Filter>Dependencies\Vanilla</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp">
+      <Filter>Dependencies\Vanilla</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\COM\Assembly.cpp">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\COM\Field.cpp">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\COM\Method.cpp">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\COM\Type.cpp">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\Explorer\MethodFieldExplorer.cpp">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\Explorer\TypeExplorer.cpp">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Vanilla\Explorer\Explorer.cpp">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -19,6 +46,15 @@
     <Filter Include="Dependencies\Vanilla">
       <UniqueIdentifier>{dadb27bc-1e7c-457f-8ccb-72a4ba2a0809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\Vanilla\COM">
+      <UniqueIdentifier>{25368007-2780-4e14-ab47-f0787797150a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Vanilla\COM\Helpers">
+      <UniqueIdentifier>{02f2d8da-1035-4b76-a3ea-31fc34bb676e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Vanilla\Explorer">
+      <UniqueIdentifier>{362f6855-c437-428a-9626-46823a2748c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utilities\Logging\Logger.h">
@@ -29,6 +65,45 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h">
       <Filter>Dependencies\Vanilla</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\mscorlib.h">
+      <Filter>Dependencies\Vanilla</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\NameCache.h">
+      <Filter>Dependencies\Vanilla</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\FieldHelpers.h">
+      <Filter>Dependencies\Vanilla\COM\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\JItHelpers.h">
+      <Filter>Dependencies\Vanilla\COM\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Assembly.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\COMString.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Field.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Method.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\SafeVector.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Type.h">
+      <Filter>Dependencies\Vanilla\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Explorer\Explorer.h">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Explorer\MethodFieldExplorer.h">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Explorer\TypeExplorer.h">
+      <Filter>Dependencies\Vanilla\Explorer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

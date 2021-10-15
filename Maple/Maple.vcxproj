@@ -155,10 +155,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dependencies\Vanilla\COM\Assembly.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\COM\Field.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\COM\Method.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\COM\Type.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\Explorer\Explorer.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\Explorer\MethodFieldExplorer.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\Explorer\TypeExplorer.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\NameCache.cpp" />
+    <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dependencies\Vanilla\COM\Assembly.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\COMString.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Field.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\FieldHelpers.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\JItHelpers.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Method.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\SafeVector.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Type.h" />
+    <ClInclude Include="Dependencies\Vanilla\Explorer\Explorer.h" />
+    <ClInclude Include="Dependencies\Vanilla\Explorer\MethodFieldExplorer.h" />
+    <ClInclude Include="Dependencies\Vanilla\Explorer\TypeExplorer.h" />
+    <ClInclude Include="Dependencies\Vanilla\mscorlib.h" />
+    <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />

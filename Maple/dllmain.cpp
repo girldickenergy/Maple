@@ -3,9 +3,13 @@
 #include <windows.h>
 #include <clocale>
 
+#include "Dependencies/Vanilla/Vanilla.h"
 #include "Utilities/Logging/Logger.h"
 
-void Initialize();
+DWORD WINAPI Initialize(LPVOID data_addr);
+void InitializeMaple(const std::string& username);
+void InitializeLogging(const std::string& username);
+void DisableAuth();
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -13,7 +17,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     DisableThreadLibraryCalls(hModule);
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-        CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Initialize), nullptr, 0, nullptr);
+        CreateThread(nullptr, 0, Initialize, nullptr, 0, nullptr);
 	
     return TRUE;
 }
@@ -30,8 +34,30 @@ std::string GetWorkingDirectory(const std::string& username)
     return path;
 }
 
-void Initialize()
+DWORD WINAPI Initialize(LPVOID data_addr)
 {
-    Logger::Initialize(GetWorkingDirectory("MapleRewriteTest") + "\\runtime.log", LogSeverity::Info | LogSeverity::Debug | LogSeverity::Warning | LogSeverity::Error | LogSeverity::Assert, true, L"Runtime log | Maple");
+	//initialize comms stuff here
+    InitializeMaple("MapleRewriteTest");
+}
+
+void InitializeMaple(const std::string& username)
+{
+    Vanilla::Initialize();
+	
+    InitializeLogging(username);
+
+#ifdef _DEBUG
+    DisableAuth();
+#endif
+}
+
+void InitializeLogging(const std::string& username)
+{
+    Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
     Logger::Log(LogSeverity::Info, "Initialization started.");
+}
+
+void DisableAuth()
+{
+	
 }
