@@ -5,19 +5,17 @@
 #include <sstream>
 #include <fstream>
 
-void Logger::Initialize(const std::string& logFilePath, LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
+void Logger::clearLogFile()
 {
-	Logger::logFilePath = logFilePath;
-	Logger::scope = scope;
-	
-	if (initializeConsole)
-	{
-		AllocConsole();
-		freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
-		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (logFilePath.empty())
+		return;
 
-		SetConsoleTitle(consoleTitle);
-	}
+	if (!exists(logFilePath.parent_path()))
+		create_directories(logFilePath.parent_path());
+
+	std::fstream logFile;
+	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
+	logFile.close();
 }
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
@@ -32,36 +30,36 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	switch (severity)
 	{
-		case LogSeverity::Debug:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 8);
+	case LogSeverity::Debug:
+		if (consoleHandle)
+			SetConsoleTextAttribute(consoleHandle, 8);
 
-			entry << "[DEBUG] ";
-			break;
-		case LogSeverity::Warning:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 6);
+		entry << "[DEBUG] ";
+		break;
+	case LogSeverity::Warning:
+		if (consoleHandle)
+			SetConsoleTextAttribute(consoleHandle, 6);
 
-			entry << "[WARNING] ";
-			break;
-		case LogSeverity::Error:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 4);
+		entry << "[WARNING] ";
+		break;
+	case LogSeverity::Error:
+		if (consoleHandle)
+			SetConsoleTextAttribute(consoleHandle, 4);
 
-			entry << "[ERROR] ";
-			break;
-		case LogSeverity::Assert:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 5);
+		entry << "[ERROR] ";
+		break;
+	case LogSeverity::Assert:
+		if (consoleHandle)
+			SetConsoleTextAttribute(consoleHandle, 5);
 
-			entry << "[ASSERT FAIL] ";
-			break;
-		default:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 7);
+		entry << "[ASSERT FAIL] ";
+		break;
+	default:
+		if (consoleHandle)
+			SetConsoleTextAttribute(consoleHandle, 7);
 
-			entry << "[INFO] ";
-			break;
+		entry << "[INFO] ";
+		break;
 	}
 
 	entry << message;
@@ -71,14 +69,31 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	if (logFilePath.empty())
 		return;
-	
+
 	if (!exists(logFilePath.parent_path()))
 		create_directories(logFilePath.parent_path());
-	
+
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
 	logFile << entry.str() << std::endl;
 	logFile.close();
+}
+
+void Logger::Initialize(const std::string& logFilePath, LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
+{
+	Logger::logFilePath = logFilePath;
+	Logger::scope = scope;
+	
+	if (initializeConsole)
+	{
+		AllocConsole();
+		freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+		SetConsoleTitle(consoleTitle);
+	}
+
+	clearLogFile();
 }
 
 void Logger::Log(LogSeverity severity, const char* format, ...)

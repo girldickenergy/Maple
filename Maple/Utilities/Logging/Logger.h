@@ -12,6 +12,7 @@ class Logger
 	static inline LogSeverity scope;
 	static inline std::filesystem::path logFilePath;
 
+	static void clearLogFile();
 	static void createLogEntry(LogSeverity severity, std::string message);
 public:
 	static void Initialize(const std::string& logFilePath = "", LogSeverity scope = LogSeverity::None, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
