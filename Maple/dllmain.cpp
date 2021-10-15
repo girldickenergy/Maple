@@ -38,6 +38,8 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 {
 	//initialize comms stuff here
     InitializeMaple("MapleRewriteTest");
+
+    return 0;
 }
 
 void InitializeMaple(const std::string& username)
@@ -53,11 +55,17 @@ void InitializeMaple(const std::string& username)
 
 void InitializeLogging(const std::string& username)
 {
+#ifdef _DEBUG
     Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
+#else
+    Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All);
+#endif
+	
     Logger::Log(LogSeverity::Info, "Initialization started.");
 }
 
 void DisableAuth()
 {
-	
+    auto instance = Vanilla::Explorer["osu.GameBase"]["Instance"].Field.GetValueUnsafe(variant_t());
+    Vanilla::Explorer["osu.GameBase"]["FreeAC"].Method.InvokeUnsafe(instance, nullptr);
 }
