@@ -156,12 +156,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MapleBase.h" />
-    <ClInclude Include="Utilities\DependencyInjection\DependencyContainer.h" />
+    <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
   </ItemGroup>

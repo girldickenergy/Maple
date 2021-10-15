@@ -5,10 +5,10 @@
 #include <sstream>
 #include <fstream>
 
-void Logger::Initialize(const char* logFilePath, LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
+void Logger::Initialize(const std::string& logFilePath, LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
 {
-	this->logFilePath = logFilePath;
-	this->scope = scope;
+	Logger::logFilePath = logFilePath;
+	Logger::scope = scope;
 	
 	if (initializeConsole)
 	{
@@ -64,11 +64,14 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 			break;
 	}
 
-	entry << " " << message;
+	entry << message;
 
 	if (consoleHandle)
 		std::cout << entry.str() << std::endl;
 
+	if (logFilePath.empty())
+		return;
+	
 	if (!exists(logFilePath.parent_path()))
 		create_directories(logFilePath.parent_path());
 	

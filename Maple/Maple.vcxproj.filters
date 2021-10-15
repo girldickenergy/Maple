@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp">
       <Filter>Utilities\Logging</Filter>
     </ClCompile>
@@ -14,20 +13,22 @@
     <Filter Include="Utilities\Logging">
       <UniqueIdentifier>{57b325d8-4dff-40b8-a942-3a486c2b88d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utilities\DependencyInjection">
-      <UniqueIdentifier>{6ea8f82a-d59c-41ff-95db-69fef792e776}</UniqueIdentifier>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{bb4854db-e234-449e-9539-a4e28a6cc54e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Vanilla">
+      <UniqueIdentifier>{dadb27bc-1e7c-457f-8ccb-72a4ba2a0809}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MapleBase.h" />
     <ClInclude Include="Utilities\Logging\Logger.h">
       <Filter>Utilities\Logging</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\DependencyInjection\DependencyContainer.h">
-      <Filter>Utilities\DependencyInjection</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\Logging\LogSeverity.h">
       <Filter>Utilities\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Vanilla.h">
+      <Filter>Dependencies\Vanilla</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,13 +8,13 @@
 
 class Logger
 {
-	HANDLE consoleHandle = nullptr;
-	LogSeverity scope;
-	std::filesystem::path logFilePath;
+	static inline HANDLE consoleHandle = nullptr;
+	static inline LogSeverity scope;
+	static inline std::filesystem::path logFilePath;
 
-	void createLogEntry(LogSeverity severity, std::string message);
+	static void createLogEntry(LogSeverity severity, std::string message);
 public:
-	void Initialize(const char* logFilePath, LogSeverity scope = LogSeverity::Debug | LogSeverity::Warning | LogSeverity::Error | LogSeverity::Assert, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
-	void Log(LogSeverity severity, const char* format, ...);
-	void Assert(bool condition, bool throwIfFalse, const char* format, ...);
+	static void Initialize(const std::string& logFilePath = "", LogSeverity scope = LogSeverity::None, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
+	static void Log(LogSeverity severity, const char* format, ...);
+	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);
 };
