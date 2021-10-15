@@ -72,9 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\DirectX;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\DirectX;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -97,6 +101,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -118,6 +123,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -155,6 +161,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dependencies\Cinnamon\Cinnamon.cpp" />
+    <ClCompile Include="Dependencies\gl3w\GL\gl3w.c" />
+    <ClCompile Include="Dependencies\hde32\hde32.c" />
+    <ClCompile Include="Dependencies\ImGui\imgui.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Assembly.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Field.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Method.cpp" />
@@ -165,9 +182,45 @@
     <ClCompile Include="Dependencies\Vanilla\NameCache.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Hooks\EndScene.cpp" />
+    <ClCompile Include="Hooks\Hooks.cpp" />
+    <ClCompile Include="Hooks\SwapBuffers.cpp" />
+    <ClCompile Include="UI\MainMenu.cpp" />
+    <ClCompile Include="UI\Overlay.cpp" />
+    <ClCompile Include="UI\Widgets.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
+    <ClCompile Include="Utilities\Textures\TextureHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dependencies\Cinnamon\Cinnamon.h" />
+    <ClInclude Include="Dependencies\Cinnamon\CinnamonResult.h" />
+    <ClInclude Include="Dependencies\Cinnamon\Hook.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9anim.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9core.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9effect.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9math.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9mesh.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9shader.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9shape.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9tex.h" />
+    <ClInclude Include="Dependencies\DirectX\d3dx9xof.h" />
+    <ClInclude Include="Dependencies\gl3w\GL\gl3w.h" />
+    <ClInclude Include="Dependencies\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="Dependencies\hde32\hde32.h" />
+    <ClInclude Include="Dependencies\hde32\pstdint.h" />
+    <ClInclude Include="Dependencies\hde32\table32.h" />
+    <ClInclude Include="Dependencies\ImGui\imconfig.h" />
+    <ClInclude Include="Dependencies\ImGui\imgui.h" />
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Dependencies\ImGui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\stb\stb.h" />
+    <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Assembly.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\COMString.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Field.h" />
@@ -182,8 +235,19 @@
     <ClInclude Include="Dependencies\Vanilla\mscorlib.h" />
     <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
+    <ClInclude Include="Hooks\Hooks.h" />
+    <ClInclude Include="UI\Fonts.h" />
+    <ClInclude Include="UI\MainMenu.h" />
+    <ClInclude Include="UI\Overlay.h" />
+    <ClInclude Include="UI\StyleProvider.h" />
+    <ClInclude Include="UI\Textures.h" />
+    <ClInclude Include="UI\Widgets.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
+    <ClInclude Include="Utilities\Textures\TextureHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\DirectX\d3dx9math.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

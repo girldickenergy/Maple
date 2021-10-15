@@ -1,0 +1,203 @@
+#include "Overlay.h"
+
+#include "imgui_impl_dx9.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_win32.h"
+#include "MainMenu.h"
+#include "StyleProvider.h"
+#include "GL/gl3w.h"
+
+void Overlay::enableRaw()
+{
+	if (!rawInputDisabled)
+		return;
+
+	rawInputDisabled = false;
+
+	if (uiDeviceCount == -1)
+		return;
+
+	if (!uiDeviceCount)
+		return;
+
+	RegisterRawInputDevices(pDevices, uiDeviceCount, sizeof(RAWINPUTDEVICE));
+}
+
+void Overlay::disableRaw()
+{
+	if (rawInputDisabled)
+		return;
+
+	rawInputDisabled = true;
+
+	backupRaw();
+
+	if (uiDeviceCount == -1)
+		return;
+
+	if (!uiDeviceCount)
+		return;
+
+	for (unsigned int i = 0; i < uiDeviceCount; i++)
+	{
+		RAWINPUTDEVICE device;
+		memcpy(&device, pDevices + i, sizeof(RAWINPUTDEVICE));
+		device.dwFlags = RIDEV_REMOVE;
+		device.hwndTarget = NULL;
+		RegisterRawInputDevices(&device, 1, sizeof(RAWINPUTDEVICE));
+	}
+}
+
+void Overlay::backupRaw()
+{
+	uiDeviceCount = -1;
+	GetRegisteredRawInputDevices(NULL, &uiDeviceCount, sizeof(RAWINPUTDEVICE));
+
+	delete[] pDevices;
+
+	pDevices = new RAWINPUTDEVICE[uiDeviceCount];
+	GetRegisteredRawInputDevices(pDevices, &uiDeviceCount, sizeof(RAWINPUTDEVICE));
+}
+
+void Overlay::Initialize(IDirect3DDevice9* d3d9Device)
+{
+	if (d3d9Device)
+		Renderer = Renderer::D3D9;
+	
+	D3D9Device = d3d9Device;
+	
+	ImGui::CreateContext();
+
+	if (Renderer == Renderer::OGL3)
+	{
+		gl3wInit();
+		ImGui_ImplOpenGL3_Init();
+	}
+	else
+		ImGui_ImplDX9_Init(D3D9Device);
+
+	ImGui::StyleColorsDark();
+
+	StyleProvider::LoadFonts();
+	StyleProvider::LoadTextures();
+	StyleProvider::UpdateColours();
+	StyleProvider::UpdateScale();
+
+	ImGui_ImplWin32_Init(GetWindowHandle());
+
+	oHandleInput = SetWindowsHookEx(WH_GETMESSAGE, HandleInputHook, NULL, GetCurrentThreadId());
+
+	Initialized = true;
+}
+
+void Overlay::Render()
+{
+	if (MainMenu::IsOpen && !rawInputDisabled)
+		disableRaw();
+	else if (!MainMenu::IsOpen && rawInputDisabled)
+		enableRaw();
+
+	if (!MainMenu::IsOpen)
+		return;
+
+	if (Renderer == Renderer::OGL3)
+		ImGui_ImplOpenGL3_NewFrame();
+	else
+		ImGui_ImplDX9_NewFrame();
+
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	ImGuiIO& io = ImGui::GetIO();
+	if (MainMenu::IsOpen)
+		io.MouseDrawCursor = true;
+	else
+		io.MouseDrawCursor = false;
+
+	if (MainMenu::IsOpen)
+		MainMenu::Render();
+	
+	ImGui::Render();
+
+	if (Renderer == Renderer::OGL3)
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	else
+		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Overlay::ToggleMainMenu()
+{
+	MainMenu::IsOpen = !MainMenu::IsOpen;
+}
+
+HWND Overlay::GetWindowHandle()
+{
+	if (window)
+		return window;
+
+	EnumWindows([](HWND hwnd, LPARAM lparam) -> BOOL
+	{
+		DWORD id;
+		GetWindowThreadProcessId(hwnd, &id);
+
+		if (GetCurrentProcessId() == id && GetConsoleWindow() != hwnd)
+		{
+			char windowTitle[256];
+			GetWindowTextA(hwnd, windowTitle, sizeof(windowTitle));
+			if (windowTitle[0] == 'o') //LMFAO
+			{
+				window = hwnd;
+
+				return 0;
+			}
+		}
+		return 1;
+	}, 0);
+
+	return window;
+}
+
+IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT Overlay::HandleInputHook(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode > 0)
+		return CallNextHookEx(oHandleInput, nCode, wParam, lParam);
+
+	MSG* pMsg = reinterpret_cast<MSG*>(lParam);
+
+	if (wParam == PM_REMOVE)
+	{
+		if (pMsg->message == WM_KEYUP && pMsg->wParam == VK_DELETE)
+			ToggleMainMenu();
+
+		if (MainMenu::IsOpen && pMsg->message == WM_KEYUP && pMsg->wParam == VK_ESCAPE)
+		{
+			pMsg->message = WM_NULL;
+			MainMenu::IsOpen = false;
+		}
+
+		if (MainMenu::IsOpen)
+			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
+	}
+
+	if (MainMenu::IsOpen)
+	{
+		if (pMsg->message == WM_CHAR)
+			pMsg->message = WM_NULL;
+
+		if ((pMsg->message >= WM_MOUSEMOVE && pMsg->message <= WM_MOUSELAST) || pMsg->message == WM_MOUSEWHEEL)
+			pMsg->message = WM_NULL;
+
+		return true;
+	}
+
+	return CallNextHookEx(oHandleInput, nCode, wParam, lParam);
+}
+
+BOOL __stdcall Overlay::HandleKeyboardInputHook(PBYTE arr)
+{
+	if (MainMenu::IsOpen)
+		return false;
+
+	return oHandleKeyboardInput(arr);
+}

@@ -3,7 +3,9 @@
 #include <windows.h>
 #include <clocale>
 
-#include "Dependencies/Vanilla/Vanilla.h"
+#include <Vanilla.h>
+
+#include "Hooks/Hooks.h"
 #include "Utilities/Logging/Logger.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
@@ -51,6 +53,8 @@ void InitializeMaple(const std::string& username)
 #ifdef _DEBUG
     DisableAuth();
 #endif
+
+    Hooks::InstallAllHooks();
 }
 
 void InitializeLogging(const std::string& username)

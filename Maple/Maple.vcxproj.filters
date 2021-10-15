@@ -32,6 +32,60 @@
     <ClCompile Include="Dependencies\Vanilla\Explorer\Explorer.cpp">
       <Filter>Dependencies\Vanilla\Explorer</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\hde32\hde32.c">
+      <Filter>Dependencies\hde32</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Cinnamon\Cinnamon.cpp">
+      <Filter>Dependencies\Cinnamon</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Hooks.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_dx9.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\gl3w\GL\gl3w.c">
+      <Filter>Dependencies\gl3w\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Overlay.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Textures\TextureHelper.cpp">
+      <Filter>Utilities\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Widgets.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\EndScene.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\SwapBuffers.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -54,6 +108,36 @@
     </Filter>
     <Filter Include="Dependencies\Vanilla\Explorer">
       <UniqueIdentifier>{362f6855-c437-428a-9626-46823a2748c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Cinnamon">
+      <UniqueIdentifier>{56e8e536-c1be-4bcb-8f9b-0051e04596cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\hde32">
+      <UniqueIdentifier>{1275e200-50b6-455e-931a-4d570b1aa26a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks">
+      <UniqueIdentifier>{29670e33-291b-4d4e-8d61-93010123eb5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\ImGui">
+      <UniqueIdentifier>{29f6a6a0-dc11-488c-a8d1-de85e75853e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\DirectX">
+      <UniqueIdentifier>{5b1ec554-b8f4-45b2-8777-e81f17e25233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\gl3w">
+      <UniqueIdentifier>{c57c50b1-3acc-4288-a884-b8478bae900c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\stb">
+      <UniqueIdentifier>{2556df57-94a9-4191-9544-25fff461c57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\gl3w\GL">
+      <UniqueIdentifier>{9e16626f-4693-4df6-896e-8e0256696ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{238092e0-902b-47b4-b863-f386b1b4b241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Textures">
+      <UniqueIdentifier>{06892572-ac19-479a-82ba-c8a203245f4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,5 +189,121 @@
     <ClInclude Include="Dependencies\Vanilla\Explorer\TypeExplorer.h">
       <Filter>Dependencies\Vanilla\Explorer</Filter>
     </ClInclude>
+    <ClInclude Include="Dependencies\hde32\hde32.h">
+      <Filter>Dependencies\hde32</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\hde32\pstdint.h">
+      <Filter>Dependencies\hde32</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\hde32\table32.h">
+      <Filter>Dependencies\hde32</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Cinnamon\Cinnamon.h">
+      <Filter>Dependencies\Cinnamon</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Cinnamon\CinnamonResult.h">
+      <Filter>Dependencies\Cinnamon</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Cinnamon\Hook.h">
+      <Filter>Dependencies\Cinnamon</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\Hooks.h">
+      <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\stb\stb.h">
+      <Filter>Dependencies\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\stb\stb_image.h">
+      <Filter>Dependencies\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imconfig.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_dx9.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_opengl3.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui_impl_win32.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui_internal.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_textedit.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_truetype.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9anim.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9core.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9effect.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9math.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9mesh.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9shader.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9shape.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9tex.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9xof.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\DirectX\d3dx9.h">
+      <Filter>Dependencies\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\gl3w\GL\gl3w.h">
+      <Filter>Dependencies\gl3w\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\gl3w\GL\glcorearb.h">
+      <Filter>Dependencies\gl3w\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Overlay.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MainMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Textures\TextureHelper.h">
+      <Filter>Utilities\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Fonts.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\StyleProvider.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Textures.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widgets.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\DirectX\d3dx9math.inl">
+      <Filter>Dependencies\DirectX</Filter>
+    </None>
   </ItemGroup>
 </Project>
