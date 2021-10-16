@@ -154,3 +154,64 @@ DWORD Vanilla::GetModuleSize(const char* moduleName)
 
 	return pNTHeaders->OptionalHeader.SizeOfImage;
 }
+
+bool Vanilla::InstallPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, const char* patch)
+{
+	if (patches.count(name) > 0)
+		return false;
+
+	const uintptr_t address = FindSignature(signature, mask, entryPoint, size);
+	if (address == NULL)
+		return false;
+
+	std::vector<char> originalBytes;
+	const int patchSize = strlen(patch);
+	for (int i = 0; i < patchSize; i++)
+	{
+		originalBytes.push_back(*reinterpret_cast<char*>(address + offset + i));
+		*reinterpret_cast<char*>(address + offset + i) = patch[i];
+	}
+
+	patches[name] = Patch(address, originalBytes);
+
+	return true;
+}
+
+bool Vanilla::InstallNOPPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, int nopSize)
+{
+	if (patches.count(name) > 0)
+		return false;
+
+	const uintptr_t address = FindSignature(signature, mask, entryPoint, size);
+	if (address == NULL)
+		return false;
+
+	std::vector<char> originalBytes;
+	for (int i = 0; i < nopSize; i++)
+	{
+		originalBytes.push_back(*reinterpret_cast<char*>(address + offset + i));
+		*reinterpret_cast<char*>(address + offset + i) = 0x90;
+	}
+
+	patches[name] = ::Patch(address, originalBytes);
+
+	return true;
+}
+
+void Vanilla::RemovePatch(const std::string& name)
+{
+	if (patches.count(name) == 0)
+		return;
+
+	auto patch = patches[name];
+	for (unsigned int i = 0; i < patch.OriginalBytes.size(); i++)
+		*reinterpret_cast<char*>(patch.Location + i) = patch.OriginalBytes.at(i);
+
+	patches.erase(name);
+}
+
+void Vanilla::RemoveAllPatches()
+{
+	while (!patches.empty())
+		RemovePatch(patches.begin()->first);
+}

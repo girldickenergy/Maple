@@ -151,6 +151,9 @@
     <Filter Include="Sdk\Anticheat">
       <UniqueIdentifier>{83729ef7-f463-4176-b481-4b3a49f693f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\Vanilla\Patching">
+      <UniqueIdentifier>{e9aed8ae-7ecc-4f82-992d-acdc651f18fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utilities\Logging\Logger.h">
@@ -314,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h">
       <Filter>Sdk\ConfigManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h">
+      <Filter>Dependencies\Vanilla\Patching</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -235,6 +235,7 @@
     <ClInclude Include="Dependencies\Vanilla\Explorer\TypeExplorer.h" />
     <ClInclude Include="Dependencies\Vanilla\mscorlib.h" />
     <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
+    <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
