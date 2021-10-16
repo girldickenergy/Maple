@@ -185,7 +185,9 @@
     <ClCompile Include="Hooks\EndScene.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
+    <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
+    <ClCompile Include="Sdk\Osu\GameBase.cpp" />
     <ClCompile Include="UI\MainMenu.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
     <ClCompile Include="UI\Widgets.cpp" />
@@ -238,7 +240,9 @@
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Hooks\Hooks.h" />
+    <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
+    <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="UI\Fonts.h" />
     <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="UI\Overlay.h" />

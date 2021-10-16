@@ -89,6 +89,12 @@
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp">
       <Filter>Sdk\ConfigManager</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Anticheat\Anticheat.cpp">
+      <Filter>Sdk\Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Osu\GameBase.cpp">
+      <Filter>Sdk\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -153,6 +159,9 @@
     </Filter>
     <Filter Include="Dependencies\Vanilla\Patching">
       <UniqueIdentifier>{e9aed8ae-7ecc-4f82-992d-acdc651f18fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Osu">
+      <UniqueIdentifier>{55e64035-fb7b-4bca-a6f6-b5f572313182}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -320,6 +329,12 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h">
       <Filter>Dependencies\Vanilla\Patching</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Anticheat\Anticheat.h">
+      <Filter>Sdk\Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Osu\GameBase.h">
+      <Filter>Sdk\Osu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
