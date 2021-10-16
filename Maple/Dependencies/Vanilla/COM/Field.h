@@ -19,6 +19,6 @@ public:
 	variant_t GetValueUnsafe(variant_t instance);
 	std::string GetFullNameUnsafe();
 	int GetOffset();
-	void* GetAddress(void* instance);
+	void* GetAddress(void* instance = nullptr);
 };
 

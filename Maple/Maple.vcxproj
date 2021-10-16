@@ -185,6 +185,7 @@
     <ClCompile Include="Hooks\EndScene.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
+    <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="UI\MainMenu.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
     <ClCompile Include="UI\Widgets.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Hooks\Hooks.h" />
+    <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
     <ClInclude Include="UI\Fonts.h" />
     <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="UI\Overlay.h" />

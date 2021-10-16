@@ -6,12 +6,14 @@
 #include <Vanilla.h>
 
 #include "Hooks/Hooks.h"
+#include "Sdk/ConfigManager/ConfigManager.h"
 #include "Utilities/Logging/Logger.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple(const std::string& username);
 void InitializeLogging(const std::string& username);
 void DisableAuth();
+void InitializeSdk();
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -47,6 +49,8 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 void InitializeMaple(const std::string& username)
 {
     Vanilla::Initialize();
+
+    InitializeSdk();
 	
     InitializeLogging(username);
 
@@ -72,4 +76,9 @@ void DisableAuth()
 {
     auto instance = Vanilla::Explorer["osu.GameBase"]["Instance"].Field.GetValueUnsafe(variant_t());
     Vanilla::Explorer["osu.GameBase"]["FreeAC"].Method.InvokeUnsafe(instance, nullptr);
+}
+
+void InitializeSdk()
+{
+    ConfigManager::Initialize();
 }

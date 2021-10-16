@@ -86,6 +86,9 @@
     <ClCompile Include="Hooks\SwapBuffers.cpp">
       <Filter>Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp">
+      <Filter>Sdk\ConfigManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -138,6 +141,15 @@
     </Filter>
     <Filter Include="Utilities\Textures">
       <UniqueIdentifier>{06892572-ac19-479a-82ba-c8a203245f4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk">
+      <UniqueIdentifier>{29edb8e7-beb1-488c-9f91-b503d994b1b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\ConfigManager">
+      <UniqueIdentifier>{a0d2289b-6194-47ca-aae0-06f3ad07656c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Anticheat">
+      <UniqueIdentifier>{83729ef7-f463-4176-b481-4b3a49f693f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +311,9 @@
     </ClInclude>
     <ClInclude Include="UI\Widgets.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\ConfigManager\ConfigManager.h">
+      <Filter>Sdk\ConfigManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
