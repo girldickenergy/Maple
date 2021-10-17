@@ -2,17 +2,9 @@
 
 #include <Cinnamon.h>
 
-
 #include "../Sdk/ConfigManager/ConfigManager.h"
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
-
-typedef void(__fastcall* fnSetPlaybackRate)(double rate);
-fnSetPlaybackRate oSetPlaybackRate;
-void __fastcall SetPlaybackRateHook(double rate)
-{
-	oSetPlaybackRate(100);
-}
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
@@ -51,11 +43,6 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked GetKeyboardState");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook GetKeyboardState");
-
-	if (installManagedHook("SetPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["set_CurrentPlaybackRate"].Method, SetPlaybackRateHook, reinterpret_cast<LPVOID*>(&oSetPlaybackRate)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked SetPlaybackRate");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook SetPlaybackRate");
 }
 
 void Hooks::UninstallAllHooks()

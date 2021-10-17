@@ -95,6 +95,15 @@
     <ClCompile Include="Sdk\Osu\GameBase.cpp">
       <Filter>Sdk\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Timewarp\Timewarp.cpp">
+      <Filter>Features\Timewarp</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Player\Player.cpp">
+      <Filter>Sdk\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Audio\AudioEngine.cpp">
+      <Filter>Sdk\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -162,6 +171,18 @@
     </Filter>
     <Filter Include="Sdk\Osu">
       <UniqueIdentifier>{55e64035-fb7b-4bca-a6f6-b5f572313182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features">
+      <UniqueIdentifier>{21448485-c429-4870-9cb3-3a540ef84fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Timewarp">
+      <UniqueIdentifier>{b626e8fd-4fa7-4749-bec7-8f53a81ecaab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Audio">
+      <UniqueIdentifier>{140f0a0f-5ab6-4af6-9ae5-0ddbba8c4eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Player">
+      <UniqueIdentifier>{c72927e1-f17a-4d71-b70b-5861cd76fb8a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +356,15 @@
     </ClInclude>
     <ClInclude Include="Sdk\Osu\GameBase.h">
       <Filter>Sdk\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Timewarp\Timewarp.h">
+      <Filter>Features\Timewarp</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Audio\AudioEngine.h">
+      <Filter>Sdk\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Player\Player.h">
+      <Filter>Sdk\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
