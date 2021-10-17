@@ -54,6 +54,7 @@ double AudioEngine::GetPlaybackRate()
 
 void AudioEngine::SetPlaybackRate(double rate)
 {
+	//PLEASE SEND HELP I CAN'T FIGURE OUT WHY IT CRASHES
     setCurrentPlaybackRate(rate);
 
     //std::vector<variant_t> args;
