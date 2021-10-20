@@ -11,6 +11,10 @@ public:
 
 	struct Visuals
 	{
+		static inline bool ARChangerEnabled = false;
+		static inline bool ARChangerAdjustToMods = false;
+		static inline float AR = 9.2f;
+		static inline bool HiddenDisabled = false;
 		static inline bool FlashlightDisabled = false;
 	};
 };

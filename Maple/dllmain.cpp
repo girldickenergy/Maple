@@ -11,6 +11,7 @@
 #include "Sdk/ConfigManager/ConfigManager.h"
 #include "Sdk/Mods/ModManager.h"
 #include "Sdk/Osu/GameBase.h"
+#include "Sdk/Player/HitObjectManager.h"
 #include "Sdk/Player/Player.h"
 #include "Sdk/Player/Ruleset.h"
 #include "Utilities/Logging/Logger.h"
@@ -85,6 +86,7 @@ void InitializeSdk()
     ConfigManager::Initialize();
     ModManager::Initialize();
     Ruleset::Initialize();
+    HitObjectManager::Initialize();
 }
 
 void StartFunctions()

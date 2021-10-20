@@ -192,6 +192,7 @@
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="Sdk\Osu\GameBase.cpp" />
+    <ClCompile Include="Sdk\Player\HitObjectManager.cpp" />
     <ClCompile Include="Sdk\Player\Player.cpp" />
     <ClCompile Include="Sdk\Player\Ruleset.cpp" />
     <ClCompile Include="UI\MainMenu.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
+    <ClInclude Include="Sdk\Player\HitObjectManager.h" />
     <ClInclude Include="Sdk\Player\Player.h" />
     <ClInclude Include="Sdk\Player\Ruleset.h" />
     <ClInclude Include="UI\Fonts.h" />

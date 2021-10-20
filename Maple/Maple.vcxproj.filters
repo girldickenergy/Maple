@@ -113,6 +113,9 @@
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp">
       <Filter>Features\Visuals</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Player\HitObjectManager.cpp">
+      <Filter>Sdk\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -395,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h">
       <Filter>Features\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Player\HitObjectManager.h">
+      <Filter>Sdk\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

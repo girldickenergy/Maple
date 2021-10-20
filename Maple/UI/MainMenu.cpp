@@ -132,6 +132,11 @@ void MainMenu::Render()
         	}
             else if (currentTab == 3)
             {
+                ImGui::Checkbox("AR Changer Enabled", &Config::Visuals::ARChangerEnabled);
+                ImGui::SliderFloat("AR", &Config::Visuals::AR, 0, 12);
+                ImGui::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
+                ImGui::Spacing();
+                ImGui::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
                 ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
             }
             else ImGui::Text("Nothing to see here yet uwu");

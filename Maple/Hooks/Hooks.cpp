@@ -3,6 +3,7 @@
 #include <Cinnamon.h>
 
 #include "../Features/Timewarp/Timewarp.h"
+#include "../Features/Visuals/VisualsSpoofers.h"
 #include "../Sdk/ConfigManager/ConfigManager.h"
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
@@ -31,6 +32,16 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddParameter");
+
+	if (installManagedHook("Parse", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["parse"].Method, VisualsSpoofers::ParseHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oParse)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked Parse");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook Parse");
+
+	if (installManagedHook("ApplyStacking", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["ApplyStacking"].Method, VisualsSpoofers::ApplyStackingHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oApplyStacking)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ApplyStacking");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ApplyStacking");
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
