@@ -27,6 +27,11 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AudioTrackVirtual.GetPlaybackRate");
 
+	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook AddParameter");
+
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked GetKeyboardState");

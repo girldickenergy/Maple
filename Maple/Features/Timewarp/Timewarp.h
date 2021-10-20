@@ -1,8 +1,10 @@
 #pragma once
+#include "COM/COMString.h"
 
 class Timewarp
 {
 	typedef double(__fastcall* fnGetPlaybackRate)(void* instance);
+	typedef void(__fastcall* fnAddParameter)(void* instance, COMString* name, COMString* value);
 	
 	static inline double tickrate = 1000.0 / 60.0;
 
@@ -21,4 +23,7 @@ public:
 
 	static inline fnGetPlaybackRate oAudioTrackVirtual_GetPlaybackRate;
 	static double __fastcall AudioTrackVirtual_GetPlaybackRateHook(void* instance);
+
+	static inline fnAddParameter oAddParameter;
+	static void __fastcall AddParameterHook(void* instance, COMString* name, COMString* value);
 };

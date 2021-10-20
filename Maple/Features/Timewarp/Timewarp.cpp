@@ -103,3 +103,18 @@ __declspec(naked) double Timewarp::AudioTrackVirtual_GetPlaybackRateHook(void* i
         jmp audioTrackVirtual_GetPlaybackRateStub
     }
 }
+
+void __fastcall Timewarp::AddParameterHook(void* instance, COMString* name, COMString* value)
+{
+    if (name->GetData() == L"st" && Config::Timewarp::Enabled)
+    {
+        wchar_t buffer[16];
+
+        const int newValue = static_cast<int>(std::stod(value->GetData().data()) * GetRateMultiplier());
+
+        memset(buffer, 0, sizeof(buffer));
+        memcpy((void*)value->GetData().data(), buffer, swprintf_s(buffer, L"%d", newValue) + 1);
+    }
+
+    oAddParameter(instance, name, value);
+}
