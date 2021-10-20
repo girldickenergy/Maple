@@ -130,6 +130,10 @@ void MainMenu::Render()
                 ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
                 ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
         	}
+            else if (currentTab == 3)
+            {
+                ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
+            }
             else ImGui::Text("Nothing to see here yet uwu");
         }
         ImGui::PopFont();

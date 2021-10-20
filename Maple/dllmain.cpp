@@ -4,6 +4,7 @@
 #include <clocale>
 
 #include "Features/Timewarp/Timewarp.h"
+#include "Features/Visuals/VisualsSpoofers.h"
 #include "Hooks/Hooks.h"
 #include "Sdk/Anticheat/Anticheat.h"
 #include "Sdk/Audio/AudioEngine.h"
@@ -91,4 +92,5 @@ void StartFunctions()
     Anticheat::DisableAnticheat();
 	
     CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Timewarp::TimewarpThread), nullptr, 0, nullptr);
+    CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(VisualsSpoofers::FlashlightRemoverThread), nullptr, 0, nullptr);
 }

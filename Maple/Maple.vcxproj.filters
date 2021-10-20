@@ -41,15 +41,6 @@
     <ClCompile Include="Hooks\Hooks.cpp">
       <Filter>Hooks</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\ImGui\imgui.cpp">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\ImGui\imgui_impl_dx9.cpp">
       <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
@@ -57,12 +48,6 @@
       <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp">
       <Filter>Dependencies\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\gl3w\GL\gl3w.c">
@@ -109,6 +94,24 @@
     </ClCompile>
     <ClCompile Include="Sdk\Player\Ruleset.cpp">
       <Filter>Sdk\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_demo.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_draw.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp">
+      <Filter>Features\Visuals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +199,9 @@
     <Filter Include="Config">
       <UniqueIdentifier>{e1a36e23-5d23-43fd-b75d-3a1eee06398c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Features\Visuals">
+      <UniqueIdentifier>{e89d07cb-8eb7-42f0-bcbb-209b6e7e07c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utilities\Logging\Logger.h">
@@ -273,12 +279,6 @@
     <ClInclude Include="Dependencies\stb\stb_image.h">
       <Filter>Dependencies\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imconfig.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imgui.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\ImGui\imgui_impl_dx9.h">
       <Filter>Dependencies\ImGui</Filter>
     </ClInclude>
@@ -286,18 +286,6 @@
       <Filter>Dependencies\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\ImGui\imgui_impl_win32.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imgui_internal.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imstb_textedit.h">
-      <Filter>Dependencies\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGui\imstb_truetype.h">
       <Filter>Dependencies\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\DirectX\d3dx9anim.h">
@@ -386,6 +374,27 @@
     </ClInclude>
     <ClInclude Include="Sdk\Player\Ruleset.h">
       <Filter>Sdk\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imgui_internal.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_textedit.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imstb_truetype.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGui\imconfig.h">
+      <Filter>Dependencies\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\VisualsSpoofers.h">
+      <Filter>Features\Visuals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

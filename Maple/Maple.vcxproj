@@ -183,6 +183,7 @@
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
+    <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
+    <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
