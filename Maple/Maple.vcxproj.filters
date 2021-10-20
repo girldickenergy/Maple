@@ -107,6 +107,9 @@
     <ClCompile Include="Sdk\Mods\ModManager.cpp">
       <Filter>Sdk\Mods</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Player\Ruleset.cpp">
+      <Filter>Sdk\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="Config\Config.h">
       <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Player\Ruleset.h">
+      <Filter>Sdk\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

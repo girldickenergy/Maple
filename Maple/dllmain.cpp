@@ -11,6 +11,7 @@
 #include "Sdk/Mods/ModManager.h"
 #include "Sdk/Osu/GameBase.h"
 #include "Sdk/Player/Player.h"
+#include "Sdk/Player/Ruleset.h"
 #include "Utilities/Logging/Logger.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
@@ -82,6 +83,7 @@ void InitializeSdk()
     Anticheat::Initialize();
     ConfigManager::Initialize();
     ModManager::Initialize();
+    Ruleset::Initialize();
 }
 
 void StartFunctions()

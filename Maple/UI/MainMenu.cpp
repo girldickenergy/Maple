@@ -128,7 +128,7 @@ void MainMenu::Render()
         	if (currentTab == 2)
         	{
                 ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
-                ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 0, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
+                ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
         	}
             else ImGui::Text("Nothing to see here yet uwu");
         }

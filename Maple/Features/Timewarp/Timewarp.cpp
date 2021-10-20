@@ -6,6 +6,7 @@
 #include "../../Sdk/Audio/AudioEngine.h"
 #include "../../Sdk/Mods/ModManager.h"
 #include "../../Sdk/Player/Player.h"
+#include "../../Sdk/Player/Ruleset.h"
 
 double __fastcall Timewarp::audioTrackBass_GetPlaybackRateStub(void* instance)
 {
@@ -54,6 +55,9 @@ void Timewarp::TimewarpThread()
                     tickrate = 1000. / 60. * GetRateMultiplier();
                     AudioEngine::SetPlaybackRate(round(static_cast<double>(Config::Timewarp::Rate)));
                 }
+
+                if (Player::PlayMode() == PlayModes::Catch && roundf(Ruleset::GetCatcherSpeed()) != roundf(static_cast<float>(Config::Timewarp::Rate) / 100.f))
+                    Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Rate) / 100.f);
             }
             else
             {
@@ -62,6 +66,9 @@ void Timewarp::TimewarpThread()
                     tickrate = 1000. / 60.;
                     AudioEngine::SetPlaybackRate(ModManager::ModPlaybackRate());
                 }
+
+                if (Player::PlayMode() == PlayModes::Catch && roundf(Ruleset::GetCatcherSpeed()) != roundf(static_cast<float>(ModManager::ModPlaybackRate()) / 100.f))
+                    Ruleset::SetCatcherSpeed(static_cast<float>(ModManager::ModPlaybackRate()) / 100.f);
             }
         }
         else tickrate = 1000. / 60.;

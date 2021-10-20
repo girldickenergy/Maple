@@ -57,9 +57,6 @@ void AudioEngine::SetPlaybackRate(double rate)
     void* trackInstance = CurrentTrackInstance();
     if (!trackInstance)
         return;
-
-    if (rate < 1.)
-        rate = 1.;
 	
     *static_cast<int*>(lastAudioTimeAccurateSetAddress) = 0;
     *static_cast<bool*>(frequencyLockField.GetAddress(trackInstance)) = !Nightcore();
