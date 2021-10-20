@@ -3,14 +3,12 @@
 #include <windows.h>
 #include <clocale>
 
-#include <Vanilla.h>
-
-
 #include "Features/Timewarp/Timewarp.h"
 #include "Hooks/Hooks.h"
 #include "Sdk/Anticheat/Anticheat.h"
 #include "Sdk/Audio/AudioEngine.h"
 #include "Sdk/ConfigManager/ConfigManager.h"
+#include "Sdk/Mods/ModManager.h"
 #include "Sdk/Osu/GameBase.h"
 #include "Sdk/Player/Player.h"
 #include "Utilities/Logging/Logger.h"
@@ -83,10 +81,12 @@ void InitializeSdk()
     GameBase::Initialize();
     Anticheat::Initialize();
     ConfigManager::Initialize();
+    ModManager::Initialize();
 }
 
 void StartFunctions()
 {
     Anticheat::DisableAnticheat();
+	
     CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Timewarp::TimewarpThread), nullptr, 0, nullptr);
 }

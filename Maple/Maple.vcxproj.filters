@@ -104,6 +104,9 @@
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp">
       <Filter>Sdk\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Mods\ModManager.cpp">
+      <Filter>Sdk\Mods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -183,6 +186,12 @@
     </Filter>
     <Filter Include="Sdk\Player">
       <UniqueIdentifier>{c72927e1-f17a-4d71-b70b-5861cd76fb8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Mods">
+      <UniqueIdentifier>{0db89c94-041d-48b8-b43d-8a10aaf7fe63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{e1a36e23-5d23-43fd-b75d-3a1eee06398c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +374,12 @@
     </ClInclude>
     <ClInclude Include="Sdk\Player\Player.h">
       <Filter>Sdk\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Mods\ModManager.h">
+      <Filter>Sdk\Mods</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\Config.h">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

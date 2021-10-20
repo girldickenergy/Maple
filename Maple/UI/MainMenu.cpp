@@ -4,6 +4,7 @@
 
 #include "StyleProvider.h"
 #include "Widgets.h"
+#include "../Config/Config.h"
 
 void MainMenu::Render()
 {
@@ -111,9 +112,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l09102021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l20102021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(ImColor(117, 117, 117, 255).Value, "l09102021");
+                ImGui::TextColored(ImColor(117, 117, 117, 255).Value, "l20102021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -124,7 +125,12 @@ void MainMenu::Render()
         ImGui::SetCursorPos(ImVec2(250, 0) * StyleProvider::Scale + StyleProvider::Padding);
         ImGui::BeginChild("Options", ImVec2(550, 600) * StyleProvider::Scale - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
         {
-            ImGui::Text("Nothing to see here yet uwu");
+        	if (currentTab == 2)
+        	{
+                ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
+                ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 0, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
+        	}
+            else ImGui::Text("Nothing to see here yet uwu");
         }
         ImGui::PopFont();
         ImGui::EndChild();

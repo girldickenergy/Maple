@@ -5,19 +5,19 @@
 void AudioEngine::Initialize()
 {
     RawAudioEngine = Vanilla::Explorer["osu.Audio.AudioEngine"];
+    RawAudioTrack = Vanilla::Explorer["osu.Audio.AudioTrack"];
+    RawAudioTrackBass = Vanilla::Explorer["osu.Audio.AudioTrackBass"];
+    RawAudioTrackVirtual = Vanilla::Explorer["osu.Audio.AudioTrackVirtual"];
 
-    RawAudioEngine["set_CurrentPlaybackRate"].Method.Compile();
-    setCurrentPlaybackRate = static_cast<fnSetCurrentPlaybackRate>(RawAudioEngine["set_CurrentPlaybackRate"].Method.GetNativeStart());
-
-    trackBassPlaybackRate = Vanilla::Explorer["osu.Audio.AudioTrackBass"]["playbackRate"].Field;
-    trackVirtualPlaybackRate = Vanilla::Explorer["osu.Audio.AudioTrackVirtual"]["playbackRate"].Field;
-    audioStreamField = Vanilla::Explorer["osu.Audio.AudioTrack"]["<audioStream>k__BackingField"].Field;
-
-    RawAudioEngine["set_CurrentPlaybackRate"].Method.Compile();
+    trackBassPlaybackRate = RawAudioTrackBass["playbackRate"].Field;
+    trackVirtualPlaybackRate = RawAudioTrackVirtual["playbackRate"].Field;
+    audioStreamField = RawAudioTrack["<audioStream>k__BackingField"].Field;
+    frequencyLockField = RawAudioTrack["<FrequencyLock>k__BackingField"].Field;
 
     currentTrackInstanceAddress = RawAudioEngine["AudioTrack"].Field.GetAddress();
     initialFrequencyAddress = RawAudioEngine["InitialFrequency"].Field.GetAddress();
     nightcoreAddress = RawAudioEngine["Nightcore"].Field.GetAddress();
+    lastAudioTimeAccurateSetAddress = RawAudioEngine["lastAudioTimeAccurateSet"].Field.GetAddress();
 }
 
 void* AudioEngine::CurrentTrackInstance()
@@ -42,23 +42,46 @@ bool AudioEngine::Nightcore()
 
 double AudioEngine::GetPlaybackRate()
 {
-    void* instance = CurrentTrackInstance();
-    if (!instance)
+    void* trackInstance = CurrentTrackInstance();
+    if (!trackInstance)
         return 100.;
 
     if (TrackHandle() == 0)
-        return *static_cast<double*>(trackVirtualPlaybackRate.GetAddress(instance));
+        return *static_cast<double*>(trackVirtualPlaybackRate.GetAddress(trackInstance));
 
-	return *static_cast<double*>(trackBassPlaybackRate.GetAddress(instance));
+	return *static_cast<double*>(trackBassPlaybackRate.GetAddress(trackInstance));
 }
 
 void AudioEngine::SetPlaybackRate(double rate)
 {
-	//PLEASE SEND HELP I CAN'T FIGURE OUT WHY IT CRASHES
-    setCurrentPlaybackRate(rate);
+    void* trackInstance = CurrentTrackInstance();
+    if (!trackInstance)
+        return;
 
-    //std::vector<variant_t> args;
-    //args.push_back(variant_t(rate));
-
-    //RawAudioEngine["set_CurrentPlaybackRate"].Method.InvokeUnsafe(variant_t(), args);
+    if (rate < 1.)
+        rate = 1.;
+	
+    *static_cast<int*>(lastAudioTimeAccurateSetAddress) = 0;
+    *static_cast<bool*>(frequencyLockField.GetAddress(trackInstance)) = !Nightcore();
+    if (round(GetPlaybackRate()) != round(rate))
+    {
+        if (TrackHandle() == 0)
+        {
+            *static_cast<double*>(trackVirtualPlaybackRate.GetAddress(trackInstance)) = rate;
+        }
+        else
+        {
+            *static_cast<double*>(trackBassPlaybackRate.GetAddress(trackInstance)) = rate;
+        	if (Nightcore())
+        	{
+                channelSetAttribute(TrackHandle(), 1, static_cast<float>(static_cast<double>(InitialFrequency()) * rate / 100.0));
+                channelSetAttribute(TrackHandle(), 65536, 0);
+        	}
+            else
+            {
+                channelSetAttribute(TrackHandle(), 1, InitialFrequency());
+                channelSetAttribute(TrackHandle(), 65536, static_cast<float>(rate - 100.0));
+            }
+        }
+    }
 }
