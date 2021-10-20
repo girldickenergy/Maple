@@ -43,6 +43,11 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook ApplyStacking");
 
+	if (installManagedHook("AddFollowPoints", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["AddFollowPoints"].Method, VisualsSpoofers::AddFollowPointsHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oAddFollowPoints)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked AddFollowPoints");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook AddFollowPoints");
+
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked GetKeyboardState");

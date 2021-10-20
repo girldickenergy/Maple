@@ -7,17 +7,34 @@
 #include "../../Sdk/Player/Player.h"
 #include "../../Sdk/Player/Ruleset.h"
 
-void __fastcall VisualsSpoofers::spoofVisuals()
+void VisualsSpoofers::spoofVisuals()
+{
+	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
+		return;
+	
+	spoofPreEmpt();
+
+	if (Config::Visuals::HiddenDisabled)
+	{
+		Mods mods = HitObjectManager::GetActiveMods();
+
+		if (ModManager::IsModEnabled(Mods::Hidden))
+			mods = (mods & ~Mods::Hidden);
+
+		HitObjectManager::SetActiveMods(mods);
+	}
+}
+
+void VisualsSpoofers::spoofPreEmpt()
 {
 	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
 		return;
 
-	originalPreEmpt = HitObjectManager::GetPreEmpt();
-	originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
-	originalMods = HitObjectManager::GetActiveMods();
-	
 	if (Config::Visuals::ARChangerEnabled)
 	{
+		originalPreEmpt = HitObjectManager::GetPreEmpt();
+		originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
+		
 		double difficulty = round(static_cast<double>(Config::Visuals::AR));
 
 		if (Config::Visuals::ARChangerAdjustToMods)
@@ -33,26 +50,18 @@ void __fastcall VisualsSpoofers::spoofVisuals()
 		HitObjectManager::SetPreEmpt(static_cast<int>(difficulty));
 		HitObjectManager::SetPreEmptSliderComplete(static_cast<int>(difficulty * 2. / 3.));
 	}
-
-	if (Config::Visuals::HiddenDisabled)
-	{
-		Mods mods = HitObjectManager::GetActiveMods();
-
-		if (ModManager::IsModEnabled(Mods::Hidden))
-			mods = (mods & ~Mods::Hidden);
-
-		HitObjectManager::SetActiveMods(mods);
-	}
 }
 
-void __fastcall VisualsSpoofers::restoreVisuals()
+void VisualsSpoofers::restorePreEmpt()
 {
 	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
 		return;
 
-	HitObjectManager::SetPreEmpt(originalPreEmpt);
-	HitObjectManager::SetPreEmptSliderComplete(originalPreEmptSliderComplete);
-	HitObjectManager::SetActiveMods(originalMods);
+	if (Config::Visuals::ARChangerEnabled)
+	{
+		HitObjectManager::SetPreEmpt(originalPreEmpt);
+		HitObjectManager::SetPreEmptSliderComplete(originalPreEmptSliderComplete);
+	}
 }
 
 __declspec(naked) void VisualsSpoofers::ParseHook(void* instance, int sectionsToParse, BOOL updateChecksum, BOOL applyParsingLimits)
@@ -68,16 +77,31 @@ __declspec(naked) void VisualsSpoofers::ParseHook(void* instance, int sectionsTo
 	}
 }
 
+//restore original preempts before stacking to fix stacking issue
 __declspec(naked) void VisualsSpoofers::ApplyStackingHook(void* instance)
 {
 	__asm
 	{
 		pushad
 		pushfd
-		call restoreVisuals
+		call restorePreEmpt
 		popfd
 		popad
 		jmp oApplyStacking
+	}
+}
+
+//aaaand spoof again because peppy is an idiot
+__declspec(naked) void VisualsSpoofers::AddFollowPointsHook(void* instance, int startIndex, int endIndex)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call spoofPreEmpt
+		popfd
+		popad
+		jmp oAddFollowPoints
 	}
 }
 
