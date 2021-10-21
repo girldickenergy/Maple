@@ -3,6 +3,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
+#include "StyleProvider.h"
+
 bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -147,4 +149,42 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags);
     return pressed;
+}
+
+float Widgets::CalcPanelHeight(int controlsCount, int spacingCount)
+{
+    return ImGui::GetFrameHeight() * static_cast<float>(controlsCount) + (ImGui::GetStyle().ItemSpacing.y * static_cast<float>(spacingCount) * 2) + (ImGui::GetStyle().ItemSpacing.y * static_cast<float>(controlsCount - 1));
+}
+
+void Widgets::BeginPanel(const char* label, const ImVec2& size)
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+
+    ImGui::PushFont(StyleProvider::FontDefaultBold);
+	
+    const ImVec2 labelSize = ImGui::CalcTextSize(label);
+
+    const float titleBarHeight = labelSize.y + StyleProvider::Padding.y * 2;
+
+    const ImColor gradientStartColour = ImColor(StyleProvider::MenuColourVeryDark.x + 0.025f, StyleProvider::MenuColourVeryDark.y + 0.025f, StyleProvider::MenuColourVeryDark.z + 0.025f, StyleProvider::MenuColourVeryDark.w);
+
+    ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + titleBarHeight), ImColor(StyleProvider::MenuColourVeryDark), style.ChildRounding, ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_TopRight);
+    ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + size.y + StyleProvider::Padding.y * 2), ImColor(StyleProvider::MenuColourDark), style.ChildRounding, ImDrawCornerFlags_BotLeft | ImDrawCornerFlags_BotRight);
+    ImGui::GetWindowDrawList()->AddRectFilledMultiColor(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + StyleProvider::Padding.y), gradientStartColour, gradientStartColour, ImColor(StyleProvider::MenuColourDark), ImColor(StyleProvider::MenuColourDark));
+	
+    ImGui::SetCursorScreenPos(ImVec2(pos.x + size.x / 2 - labelSize.x / 2, pos.y + titleBarHeight / 2 - labelSize.y / 2));
+    ImGui::TextColored(StyleProvider::AccentColour, label);
+
+    ImGui::PopFont();
+
+    ImGui::SetCursorScreenPos(ImVec2(pos.x + StyleProvider::Padding.x, pos.y + titleBarHeight + StyleProvider::Padding.y));
+    ImGui::BeginChild(label, ImVec2(size.x - StyleProvider::Padding.x * 2, size.y), false, ImGuiWindowFlags_NoBackground);
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
+}
+
+void Widgets::EndPanel()
+{
+    ImGui::EndChild();
 }

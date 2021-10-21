@@ -27,17 +27,14 @@ public:
 
 	static inline float Scale = 1;
 	static inline ImVec2 Padding;
-	
+
+	static inline ImVec4 AccentColour;
     static inline ImVec4 MenuColour;
-    static inline ImVec4 ButtonColour;
     static inline ImVec4 ControlColour;
-    static inline ImVec4 TitleColour;
     static inline ImVec4 TextColour;
-    static inline ImVec4 VersionColour;
-    static inline ImVec4 PanelColour;
-    static inline ImVec4 PanelTitleColour;
-    static inline ImVec4 DropDownArrowColour;
-    static inline ImVec4 DropDownArrowHoveredColour;
+	static inline ImVec4 MottoColour;
+    static inline ImVec4 MenuColourDark;
+    static inline ImVec4 MenuColourVeryDark;
 
 	static inline void* MapleLogoTexture;
 	static inline void* AvatarTexture;
@@ -115,17 +112,26 @@ public:
 	{
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		auto WindowColour = ImColor(65, 65, 65, 255).Value;
-		
-		style.Colors[ImGuiCol_WindowBg] = ImColor(65, 65, 65, 255);
-		style.Colors[ImGuiCol_ChildBg] = ImColor(44, 44, 44, 255);
+		AccentColour = ImColor(232, 93, 155, 255).Value;
+		MenuColour = ImColor(65, 65, 65, 255).Value;
+		ControlColour = ImColor(76, 76, 76, 255).Value;
+		TextColour = ImColor(255, 255, 255, 255).Value;
 
-		style.Colors[ImGuiCol_FrameBg] = ImVec4(WindowColour.x + 0.05f, WindowColour.y + 0.05f, WindowColour.z + 0.05f, WindowColour.w);
-		style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(WindowColour.x + 0.1f, WindowColour.y + 0.1f, WindowColour.z + 0.1f, WindowColour.w);
-		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(WindowColour.x, WindowColour.y, WindowColour.z, WindowColour.w);
+		MottoColour = ImVec4(MenuColour.x + 0.2f, MenuColour.y + 0.2f, MenuColour.z + 0.2f, MenuColour.w);
+		MenuColourDark = ImVec4(MenuColour.x - 0.05f, MenuColour.y - 0.05f, MenuColour.z - 0.05f, MenuColour.w);
+		MenuColourVeryDark = ImVec4(MenuColour.x - 0.1f, MenuColour.y - 0.1f, MenuColour.z - 0.1f, MenuColour.w);
+		
+		style.Colors[ImGuiCol_WindowBg] = MenuColour;
+		style.Colors[ImGuiCol_ChildBg] = MenuColourDark;
+		
+		style.Colors[ImGuiCol_FrameBg] = ControlColour;
+		style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f, ControlColour.y - 0.05f, ControlColour.z - 0.05f, ControlColour.w);
 
 		style.Colors[ImGuiCol_Header] = style.Colors[ImGuiCol_FrameBg];
 		style.Colors[ImGuiCol_HeaderHovered] = style.Colors[ImGuiCol_FrameBgHovered];
 		style.Colors[ImGuiCol_HeaderActive] = style.Colors[ImGuiCol_FrameBgActive];
+
+		style.Colors[ImGuiCol_Text] = TextColour;
 	}
 };

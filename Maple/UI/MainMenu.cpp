@@ -17,9 +17,9 @@ void MainMenu::Render()
     {
         const ImVec2 menuPos = ImGui::GetCurrentWindow()->Pos;
 
-        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + ImVec2(250, 600) * StyleProvider::Scale, ImColor(52, 52, 52, 255), style.WindowRounding);
+        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + ImVec2(250, 600) * StyleProvider::Scale, ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
         if (expanded)
-            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + ImVec2(250, 20) * StyleProvider::Scale, ImGui::GetCurrentWindow()->Pos + ImVec2(230, 0) * StyleProvider::Scale, ImColor(52, 52, 52, 255));
+            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + ImVec2(250, 20) * StyleProvider::Scale, ImGui::GetCurrentWindow()->Pos + ImVec2(230, 0) * StyleProvider::Scale, ImColor(StyleProvider::MenuColourDark));
 
         ImGui::SetCursorPos(StyleProvider::Padding);
         ImGui::BeginChild("Maple Side Bar", ImVec2(250, 600) * StyleProvider::Scale - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
@@ -32,13 +32,13 @@ void MainMenu::Render()
             ImGui::SetCursorPosX(sideBarSize.x / 2 - ((ImGui::CalcTextSize("Maple").x / 2) + logoSize.x / 2 + style.ItemSpacing.x / 2));
             ImGui::Image(StyleProvider::MapleLogoTexture, logoSize);
             ImGui::SameLine();
-            ImGui::TextColored(ImColor(232, 93, 155, 255).Value, "Maple");
+            ImGui::TextColored(StyleProvider::AccentColour, "Maple");
             ImGui::PopStyleVar();
             ImGui::PopFont();
             ImGui::PushFont(StyleProvider::FontSmall);
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() - style.ItemSpacing.y);
             ImGui::SetCursorPosX(sideBarSize.x / 2 - ImGui::CalcTextSize("the quickest way to the top").x / 2);
-            ImGui::TextColored(ImColor(117, 117, 117, 255).Value, "the quickest way to the top");
+            ImGui::TextColored(StyleProvider::MottoColour, "the quickest way to the top");
             ImGui::PopFont();
 
             ImGui::Spacing();
@@ -48,7 +48,7 @@ void MainMenu::Render()
                 const ImVec2 userInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 userInfoSize = ImGui::GetCurrentWindow()->Size;
 
-                ImGui::GetWindowDrawList()->AddRectFilled(userInfoPos, userInfoPos + userInfoSize, ImColor(38, 38, 38, 255), style.WindowRounding);
+                ImGui::GetWindowDrawList()->AddRectFilled(userInfoPos, userInfoPos + userInfoSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
                 ImGui::GetWindowDrawList()->AddImageRounded(StyleProvider::AvatarTexture, userInfoPos + ImVec2(userInfoSize.y / 4, userInfoSize.y / 4), userInfoPos + ImVec2(userInfoSize.y / 4 + userInfoSize.y / 2, userInfoSize.y / 4 + userInfoSize.y / 2), ImVec2(0, 0), ImVec2(1, 1), ImColor(255, 255, 255, 255), style.FrameRounding);
 
@@ -59,7 +59,7 @@ void MainMenu::Render()
 
                 ImGui::PushFont(StyleProvider::FontDefault);
                 ImGui::SetCursorPos(ImVec2(userInfoSize.y / 4 + userInfoSize.y / 2 + style.ItemSpacing.x, userInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(ImColor(232, 93, 155, 255).Value, "developer");
+                ImGui::TextColored(StyleProvider::AccentColour, "developer");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -69,7 +69,7 @@ void MainMenu::Render()
                 const ImVec2 tabsPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 tabsSize = ImGui::GetCurrentWindow()->Size;
 
-                ImGui::GetWindowDrawList()->AddRectFilled(tabsPos, tabsPos + tabsSize, ImColor(38, 38, 38, 255), style.WindowRounding);
+                ImGui::GetWindowDrawList()->AddRectFilled(tabsPos, tabsPos + tabsSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
                 const float tabsHeight = (50 * StyleProvider::Scale) * 6;
                 ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, tabsSize.y / 2 - tabsHeight / 2));
@@ -103,18 +103,18 @@ void MainMenu::Render()
                 const ImVec2 buildInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 buildInfoSize = ImGui::GetCurrentWindow()->Size;
 
-                ImGui::GetWindowDrawList()->AddRectFilled(buildInfoPos, buildInfoPos + buildInfoSize, ImColor(38, 38, 38, 255), style.WindowRounding);
+                ImGui::GetWindowDrawList()->AddRectFilled(buildInfoPos, buildInfoPos + buildInfoSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
                 ImGui::PushFont(StyleProvider::FontSmallBold);
                 const ImVec2 cheatInfoSize = ImGui::CalcTextSize("Maple Lite for osu!");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - cheatInfoSize.x / 2, buildInfoSize.y / 2 - style.ItemSpacing.y / 4 - cheatInfoSize.y));
-                ImGui::TextColored(ImColor(232, 93, 155, 255).Value, "Maple Lite for osu!");
+                ImGui::TextColored(StyleProvider::AccentColour, "Maple Lite for osu!");
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
                 const ImVec2 buildStringSize = ImGui::CalcTextSize("l20102021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(ImColor(117, 117, 117, 255).Value, "l20102021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l20102021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -125,25 +125,92 @@ void MainMenu::Render()
         ImGui::SetCursorPos(ImVec2(250, 0) * StyleProvider::Scale + StyleProvider::Padding);
         ImGui::BeginChild("Options", ImVec2(550, 600) * StyleProvider::Scale - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
         {
+            const float optionsWidth = ImGui::GetWindowWidth();
+        	
+        	if (currentTab == 0)
+        	{
+                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
+
+                ImGui::Spacing();
+        		
+                Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
+        	}
+            if (currentTab == 1)
+            {
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
+            }
         	if (currentTab == 2)
         	{
-                ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
-                ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
+                Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                {
+                    ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
+                    ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
+                }
+                Widgets::EndPanel();
         	}
-            else if (currentTab == 3)
+            if (currentTab == 3)
             {
-                ImGui::Checkbox("AR Changer Enabled", &Config::Visuals::ARChangerEnabled);
-                ImGui::SliderFloat("AR", &Config::Visuals::AR, 0, 12);
-                ImGui::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
+                Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                {
+                    ImGui::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled);
+                    ImGui::SliderFloat("AR", &Config::Visuals::AR, 0, 12);
+                    ImGui::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
+                }
+                Widgets::EndPanel();
+
                 ImGui::Spacing();
-                ImGui::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
-                ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
+            	
+                Widgets::BeginPanel("HD & FL Removers", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                {
+                    ImGui::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
+                    ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
+                }
+                Widgets::EndPanel();
+
+                ImGui::Spacing();
+
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
             }
-            else if (currentTab == 4)
+            if (currentTab == 4)
             {
-	            ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
+                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
+                }
+                Widgets::EndPanel();
+
+                ImGui::Spacing();
+
+                Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
             }
-            else ImGui::Text("Nothing to see here yet uwu");
+            if (currentTab == 5)
+            {
+                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    ImGui::Text("Nothing to see here yet uwu");
+                }
+                Widgets::EndPanel();
+            }
         }
         ImGui::PopFont();
         ImGui::EndChild();
