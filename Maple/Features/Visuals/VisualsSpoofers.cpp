@@ -9,7 +9,7 @@
 
 void VisualsSpoofers::spoofVisuals()
 {
-	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
 		return;
 
 	originalPreEmpt = HitObjectManager::GetPreEmpt();
@@ -30,7 +30,7 @@ void VisualsSpoofers::spoofVisuals()
 
 void VisualsSpoofers::spoofPreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
 		return;
 
 	if (Config::Visuals::ARChangerEnabled)
@@ -44,7 +44,7 @@ void VisualsSpoofers::spoofPreEmpt()
 
 void VisualsSpoofers::restorePreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
 		return;
 
 	if (Config::Visuals::ARChangerEnabled)
