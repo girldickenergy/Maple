@@ -2,14 +2,28 @@
 
 #include "../../Config/Config.h"
 
-void __fastcall SpectateHandler::PushNewFrameHook(void* bReplayFrame_f)
+__declspec(naked) void SpectateHandler::PushNewFrameHook(void* bReplayFrame_f)
 {
-	if (!Config::Misc::DisableSpectators)
-		oPushNewFrame(bReplayFrame_f);
+	__asm
+	{
+		cmp [Config::Misc::DisableSpectators], 0x1
+		jne orig
+		ret
+		orig:
+		jmp oPushNewFrame
+	}
 }
 
-void __fastcall SpectateHandler::PurgeFramesHook(int action, void* extra)
+__declspec(naked) void SpectateHandler::PurgeFramesHook(int action, int extra)
 {
-	if (!Config::Misc::DisableSpectators || action != 0x6)
-		oPurgeFrames(action, extra);
+	__asm
+	{
+		cmp [Config::Misc::DisableSpectators], 0x1
+		jne orig
+		cmp ecx, 0x6
+		jne orig
+		ret
+		orig:
+		jmp oPurgeFrames
+	}
 }
