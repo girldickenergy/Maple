@@ -139,6 +139,10 @@ void MainMenu::Render()
                 ImGui::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
                 ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
             }
+            else if (currentTab == 4)
+            {
+	            ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
+            }
             else ImGui::Text("Nothing to see here yet uwu");
         }
         ImGui::PopFont();
