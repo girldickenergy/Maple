@@ -46,13 +46,13 @@ void Timewarp::TimewarpThread()
 	
 	while (true)
 	{
-        if (Player::IsLoaded() && !Player::IsReplayMode() && Player::IsPlaying())
+        if (Player::IsLoaded() && !Player::IsReplayMode())
         {
             if (Config::Timewarp::Enabled)
             {
                 if (round(AudioEngine::GetPlaybackRate()) != round(static_cast<double>(Config::Timewarp::Rate)))
                 {
-                    tickrate = 1000. / 60. * GetRateMultiplier();
+                    tickrate = 1000. / 60. * (1. / GetRateMultiplier());
                     AudioEngine::SetPlaybackRate(round(static_cast<double>(Config::Timewarp::Rate)));
                 }
 
