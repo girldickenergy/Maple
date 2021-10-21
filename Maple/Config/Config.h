@@ -17,4 +17,9 @@ public:
 		static inline bool HiddenDisabled = false;
 		static inline bool FlashlightDisabled = false;
 	};
+
+	struct Misc
+	{
+		static inline bool DisableSpectators = false;
+	};
 };

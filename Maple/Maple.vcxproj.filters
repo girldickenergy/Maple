@@ -116,6 +116,9 @@
     <ClCompile Include="Sdk\Player\HitObjectManager.cpp">
       <Filter>Sdk\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Misc\SpectateHandler.cpp">
+      <Filter>Features\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -204,6 +207,9 @@
     </Filter>
     <Filter Include="Features\Visuals">
       <UniqueIdentifier>{e89d07cb-8eb7-42f0-bcbb-209b6e7e07c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Misc">
+      <UniqueIdentifier>{352941ff-5d03-4da1-a3fc-e225188566fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -401,6 +407,9 @@
     </ClInclude>
     <ClInclude Include="Sdk\Player\HitObjectManager.h">
       <Filter>Sdk\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Misc\SpectateHandler.h">
+      <Filter>Features\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

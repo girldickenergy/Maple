@@ -2,6 +2,7 @@
 
 #include <Cinnamon.h>
 
+#include "../Features/Misc/SpectateHandler.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
 #include "../Sdk/ConfigManager/ConfigManager.h"
@@ -47,6 +48,16 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked AddFollowPoints");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddFollowPoints");
+
+	if (installManagedHook("PushNewFrame", Vanilla::Explorer["osu.Online.StreamingManager"]["PushNewFrame"].Method, SpectateHandler::PushNewFrameHook, reinterpret_cast<LPVOID*>(&SpectateHandler::oPushNewFrame)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked PushNewFrame");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook PushNewFrame");
+
+	if (installManagedHook("PurgeFrames", Vanilla::Explorer["osu.Online.StreamingManager"]["PurgeFrames"].Method, SpectateHandler::PurgeFramesHook, reinterpret_cast<LPVOID*>(&SpectateHandler::oPurgeFrames)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked PurgeFrames");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook PurgeFrames");
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)

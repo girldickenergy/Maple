@@ -182,6 +182,7 @@
     <ClCompile Include="Dependencies\Vanilla\NameCache.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
+    <ClInclude Include="Features\Misc\SpectateHandler.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
