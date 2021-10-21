@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui.h"
+
 class Config
 {
 public:
@@ -16,6 +18,11 @@ public:
 		static inline float AR = 9.2f;
 		static inline bool HiddenDisabled = false;
 		static inline bool FlashlightDisabled = false;
+		static inline int MenuScale = 2;
+		static inline ImVec4 AccentColour = ImColor(232, 93, 155, 255).Value;
+		static inline ImVec4 MenuColour = ImColor(65, 65, 65, 255).Value;
+		static inline ImVec4 ControlColour = ImColor(76, 76, 76, 255).Value;
+		static inline ImVec4 TextColour = ImColor(255, 255, 255, 255).Value;
 	};
 
 	struct Misc

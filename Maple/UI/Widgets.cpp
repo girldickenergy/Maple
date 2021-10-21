@@ -137,7 +137,7 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
     else if (span_all_columns && g.CurrentTable)
         ImGui::TablePopBackgroundChannel();
 
-    window->DrawList->AddImage(icon, ImVec2(pos.x + size.y / 4, pos.y + size.y / 4), ImVec2(pos.x + size.y / 4 + size.y / 2, pos.y + size.y / 4 + size.y / 2));
+    window->DrawList->AddImage(icon, ImVec2(pos.x + size.y / 4, pos.y + size.y / 4), ImVec2(pos.x + size.y / 4 + size.y / 2, pos.y + size.y / 4 + size.y / 2), ImVec2(0, 0), ImVec2(1, 1), ImColor(StyleProvider::TextColour));
 
     if (flags & ImGuiSelectableFlags_Disabled) ImGui::PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
     ImGui::RenderTextClipped(text_min, text_max, label, NULL, &label_size, style.SelectableTextAlign, &bb);

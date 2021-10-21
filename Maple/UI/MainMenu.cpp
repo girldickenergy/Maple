@@ -27,10 +27,9 @@ void MainMenu::Render()
             const ImVec2 sideBarSize = ImGui::GetCurrentWindow()->Size;
 
             ImGui::PushFont(StyleProvider::FontHugeBold);
-            const ImVec2 logoSize = ImVec2(24, 24) * StyleProvider::Scale;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5 * StyleProvider::Scale, 10 * StyleProvider::Scale));
-            ImGui::SetCursorPosX(sideBarSize.x / 2 - ((ImGui::CalcTextSize("Maple").x / 2) + logoSize.x / 2 + style.ItemSpacing.x / 2));
-            ImGui::Image(StyleProvider::MapleLogoTexture, logoSize);
+            ImGui::SetCursorPosX(sideBarSize.x / 2 - ((ImGui::CalcTextSize("Maple").x / 2) + StyleProvider::MapleLogoSize.x / 2 + style.ItemSpacing.x / 2));
+            ImGui::Image(StyleProvider::MapleLogoTexture, StyleProvider::MapleLogoSize, ImVec2(0, 0), ImVec2(1, 1), StyleProvider::AccentColour);
             ImGui::SameLine();
             ImGui::TextColored(StyleProvider::AccentColour, "Maple");
             ImGui::PopStyleVar();
@@ -114,7 +113,7 @@ void MainMenu::Render()
                 ImGui::PushFont(StyleProvider::FontSmall);
                 const ImVec2 buildStringSize = ImGui::CalcTextSize("l20102021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l20102021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l21102021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -181,9 +180,22 @@ void MainMenu::Render()
 
                 ImGui::Spacing();
 
-                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 1)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+                    const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
+                    if (ImGui::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
+                        StyleProvider::UpdateScale();
+
+                    ImGui::Spacing();
+
+                    bool coloursChanged = false;
+                    coloursChanged |= ImGui::ColorEdit4("Accent colour", (float*)&Config::Visuals::AccentColour, ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Menu colour", (float*)&Config::Visuals::MenuColour, ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Control colour", (float*)&Config::Visuals::ControlColour, ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Text colour", (float*)&Config::Visuals::TextColour, ImGuiColorEditFlags_NoInputs);
+
+                    if (coloursChanged)
+                        StyleProvider::UpdateColours();
                 }
                 Widgets::EndPanel();
             }
