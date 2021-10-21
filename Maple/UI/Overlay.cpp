@@ -164,9 +164,6 @@ LRESULT Overlay::HandleInputHook(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(oHandleInput, nCode, wParam, lParam);
 
 	MSG* pMsg = reinterpret_cast<MSG*>(lParam);
-
-	if (ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam))
-		return true;
 	
 	if (wParam == PM_REMOVE)
 	{
@@ -175,9 +172,12 @@ LRESULT Overlay::HandleInputHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 		if (MainMenu::IsOpen && pMsg->message == WM_KEYUP && pMsg->wParam == VK_ESCAPE)
 		{
+			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
+			
 			pMsg->message = WM_NULL;
 			MainMenu::IsOpen = false;
 		}
+		else ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
 	if (MainMenu::IsOpen)
