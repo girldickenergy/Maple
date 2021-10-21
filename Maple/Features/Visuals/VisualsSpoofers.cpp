@@ -11,6 +11,9 @@ void VisualsSpoofers::spoofVisuals()
 {
 	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
 		return;
+
+	originalPreEmpt = HitObjectManager::GetPreEmpt();
+	originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
 	
 	spoofPreEmpt();
 
@@ -32,23 +35,10 @@ void VisualsSpoofers::spoofPreEmpt()
 
 	if (Config::Visuals::ARChangerEnabled)
 	{
-		originalPreEmpt = HitObjectManager::GetPreEmpt();
-		originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
-		
-		double difficulty = round(static_cast<double>(Config::Visuals::AR));
+		const int preEmpt = static_cast<int>(HitObjectManager::MapDifficultyRange(static_cast<double>(Config::Visuals::AR), 1800., 1200., 450., Config::Visuals::ARChangerAdjustToMods));
 
-		if (Config::Visuals::ARChangerAdjustToMods)
-			difficulty = ModManager::IsModEnabled(Mods::Easy) ? max(0.0, difficulty / 2.0) : ModManager::IsModEnabled(Mods::HardRock) ? min(10.0, difficulty * 1.4) : difficulty;
-
-		if (difficulty > 5.)
-			difficulty = 1200. + (450. - 1200.) * (difficulty - 5.) / 5.;
-		else if (difficulty < 5.)
-			difficulty = 1200. - (1200. - 1800.) * (5. - difficulty) / 5.;
-		else
-			difficulty = 1200.;
-
-		HitObjectManager::SetPreEmpt(static_cast<int>(difficulty));
-		HitObjectManager::SetPreEmptSliderComplete(static_cast<int>(difficulty * 2. / 3.));
+		HitObjectManager::SetPreEmpt(preEmpt);
+		HitObjectManager::SetPreEmptSliderComplete(preEmpt * 2 / 3);
 	}
 }
 

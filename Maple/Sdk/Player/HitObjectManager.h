@@ -29,4 +29,5 @@ public:
 	static void SetPreEmptSliderComplete(int preEmptSliderComplete);
 	static Mods GetActiveMods();
 	static void SetActiveMods(Mods mods);
+	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 };
