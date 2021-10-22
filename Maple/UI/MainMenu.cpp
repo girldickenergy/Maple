@@ -204,6 +204,7 @@ void MainMenu::Render()
                 Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
                 {
                     ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
+                    ImGui::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);
                 }
                 Widgets::EndPanel();
 
