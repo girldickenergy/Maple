@@ -2,14 +2,34 @@
 
 #include <string>
 
-struct COMString
+#include <Vanilla.h>
+
+class COMString
 {
-	void* vtable;
-	int length;
-	wchar_t buffer[512];
-	
-	std::wstring_view GetData()
+	typedef COMString*(__cdecl* fnNewString)(const wchar_t* pwsz);
+	static inline fnNewString newString = reinterpret_cast<fnNewString>(Vanilla::FindSignature("\x53\x8B\xD9\x56\x57\x85\xDB\x0F", "xxxxxxxx", reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")), Vanilla::GetModuleSize("clr.dll")));
+
+	struct StringObject
 	{
-		return (const wchar_t*)&buffer;
+		void* vtable;
+		int length;
+		wchar_t* buffer;
+	};
+
+	StringObject ptr;
+public:
+	static COMString* CreateString(const wchar_t* pwsz)
+	{
+		return newString(pwsz);
+	}
+	
+	int Length() const
+	{
+		return ptr.length;
+	}
+	
+	std::wstring_view Data() const
+	{
+		return reinterpret_cast<const wchar_t*>(&ptr.buffer);
 	}
 };

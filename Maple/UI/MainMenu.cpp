@@ -201,7 +201,7 @@ void MainMenu::Render()
             }
             if (currentTab == 4)
             {
-                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
                     ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
                     ImGui::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);

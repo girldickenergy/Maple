@@ -106,15 +106,14 @@ __declspec(naked) double Timewarp::AudioTrackVirtual_GetPlaybackRateHook(void* i
 
 void __fastcall Timewarp::AddParameterHook(void* instance, COMString* name, COMString* value)
 {
-    if (name->GetData() == L"st" && Config::Timewarp::Enabled)
+    if (name->Data() == L"st" && Config::Timewarp::Enabled)
     {
-        const int newValue = static_cast<int>(std::stod(value->GetData().data()) * GetRateMultiplier());
+        const int newValue = static_cast<int>(std::stod(value->Data().data()) * GetRateMultiplier());
 
-        spoofedPlaytime->vtable = *reinterpret_cast<void**>(value);
-        swprintf_s(spoofedPlaytime->buffer, 16, L"%d", newValue);
-        spoofedPlaytime->length = wcslen(spoofedPlaytime->buffer);
+        wchar_t buf[16];
+        swprintf_s(buf, 16, L"%d", newValue);
 
-        oAddParameter(instance, name, spoofedPlaytime);
+        oAddParameter(instance, name, COMString::CreateString(buf));
     }
     else
 		oAddParameter(instance, name, value);

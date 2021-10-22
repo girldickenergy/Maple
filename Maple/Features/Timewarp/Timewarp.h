@@ -8,7 +8,6 @@ class Timewarp
 	typedef void(__fastcall* fnAddParameter)(void* instance, COMString* name, COMString* value);
 	
 	static inline double tickrate = 1000.0 / 60.0;
-	static inline COMString* spoofedPlaytime = new COMString();
 
 	static inline void* audioTrackBass_GetPlaybackRateReturnAddress = nullptr;
 	static double __fastcall audioTrackBass_GetPlaybackRateStub(void* instance);
