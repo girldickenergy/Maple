@@ -119,6 +119,9 @@
     <ClCompile Include="Features\Misc\SpectateHandler.cpp">
       <Filter>Features\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Misc\RichPresence.cpp">
+      <Filter>Features\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -409,6 +412,9 @@
       <Filter>Sdk\Player</Filter>
     </ClInclude>
     <ClInclude Include="Features\Misc\SpectateHandler.h">
+      <Filter>Features\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Misc\RichPresence.h">
       <Filter>Features\Misc</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,26 +2,14 @@
 
 #include <string>
 
-class COMString
+struct COMString
 {
-	struct UnicodeString
-	{
-		int padding;
-		int length;
-
-		wchar_t* buffer;
-	};
-
-	UnicodeString ptr;
-
-public:
-	int GetLength()
-	{
-		return ptr.length;
-	}
-
+	void* vtable;
+	int length;
+	wchar_t buffer[512];
+	
 	std::wstring_view GetData()
 	{
-		return (const wchar_t*)&ptr.buffer;
+		return (const wchar_t*)&buffer;
 	}
 };

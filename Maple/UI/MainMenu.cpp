@@ -209,9 +209,11 @@ void MainMenu::Render()
 
                 ImGui::Spacing();
 
-                Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+                    ImGui::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled);
+                    ImGui::InputText("Name", Config::Misc::SpoofedName.data(), 64);
+                    ImGui::InputText("Rank", Config::Misc::SpoofedRank.data(), 64);
                 }
                 Widgets::EndPanel();
             }

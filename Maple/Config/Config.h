@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "imgui.h"
 
 class Config
@@ -28,5 +30,9 @@ public:
 	struct Misc
 	{
 		static inline bool DisableSpectators = false;
+		static inline bool PromptOnScoreSubmissionEnabled = false;
+		static inline bool RichPresenceSpooferEnabled = false;
+		static inline std::string SpoofedName = "maple.software";
+		static inline std::string SpoofedRank = "rocking osu! since 2021";
 	};
 };

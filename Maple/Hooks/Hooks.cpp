@@ -2,6 +2,7 @@
 
 #include <Cinnamon.h>
 
+#include "../Features/Misc/RichPresence.h"
 #include "../Features/Misc/SpectateHandler.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
@@ -58,6 +59,11 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked PurgeFrames");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook PurgeFrames");
+
+	if (installManagedHook("UpdateStatus", Vanilla::Explorer["DiscordRPC.Assets"]["set_LargeImageText"].Method, RichPresence::SetLargeImageTextHook, reinterpret_cast<LPVOID*>(&RichPresence::oSetLargeImageText)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked set_LargeImageText");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook set_LargeImageText");
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
