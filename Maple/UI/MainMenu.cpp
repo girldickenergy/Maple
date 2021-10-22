@@ -12,17 +12,17 @@ void MainMenu::Render()
     ImGuiStyle& style = ImGui::GetStyle();
 
     const bool expanded = currentTab != -1;
-    ImGui::SetNextWindowSize(ImVec2(expanded ? 800 : 250, 600) * StyleProvider::Scale);
-    ImGui::Begin("Maple menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+    ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
+    ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     {
         const ImVec2 menuPos = ImGui::GetCurrentWindow()->Pos;
 
-        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + ImVec2(250, 600) * StyleProvider::Scale, ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
+        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + StyleProvider::MainMenuSideBarSize, ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
         if (expanded)
-            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + ImVec2(250, 20) * StyleProvider::Scale, ImGui::GetCurrentWindow()->Pos + ImVec2(230, 0) * StyleProvider::Scale, ImColor(StyleProvider::MenuColourDark));
+            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + StyleProvider::MainMenuSideBarSize, ImVec2(menuPos.x + StyleProvider::MainMenuSideBarSize.x - style.WindowRounding, 0), ImColor(StyleProvider::MenuColourDark));
 
         ImGui::SetCursorPos(StyleProvider::Padding);
-        ImGui::BeginChild("Maple Side Bar", ImVec2(250, 600) * StyleProvider::Scale - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
+        ImGui::BeginChild("Side Bar", StyleProvider::MainMenuSideBarSize - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
         {
             const ImVec2 sideBarSize = ImGui::GetCurrentWindow()->Size;
 
@@ -42,7 +42,7 @@ void MainMenu::Render()
 
             ImGui::Spacing();
 
-            ImGui::BeginChild("User Info", ImVec2(sideBarSize.x, 100 * StyleProvider::Scale), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild("User Info", ImVec2(sideBarSize.x, StyleProvider::MainMenuUserInfoHeight), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 userInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 userInfoSize = ImGui::GetCurrentWindow()->Size;
@@ -63,14 +63,14 @@ void MainMenu::Render()
             }
             ImGui::EndChild();
 
-            ImGui::BeginChild("Tabs", ImVec2(sideBarSize.x, sideBarSize.y - ImGui::GetCursorPosY() - 50 * StyleProvider::Scale - style.ItemSpacing.y), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild("Tabs", ImVec2(sideBarSize.x, sideBarSize.y - ImGui::GetCursorPosY() - StyleProvider::MainMenuBuildInfoHeight - style.ItemSpacing.y), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 tabsPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 tabsSize = ImGui::GetCurrentWindow()->Size;
 
                 ImGui::GetWindowDrawList()->AddRectFilled(tabsPos, tabsPos + tabsSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
-                const float tabsHeight = (50 * StyleProvider::Scale) * 6;
+                const float tabsHeight = (50 * StyleProvider::Scale) * 6; //scaled tab height * tab count
                 ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, tabsSize.y / 2 - tabsHeight / 2));
                 ImGui::BeginChild("Tabs##001", ImVec2(tabsSize.x - (StyleProvider::Padding.x * 2), tabsHeight), false, ImGuiWindowFlags_NoBackground);
                 {
@@ -97,7 +97,7 @@ void MainMenu::Render()
             }
             ImGui::EndChild();
 
-            ImGui::BeginChild("Build Info", ImVec2(sideBarSize.x, 50 * StyleProvider::Scale), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild("Build Info", ImVec2(sideBarSize.x, StyleProvider::MainMenuBuildInfoHeight), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 buildInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 buildInfoSize = ImGui::GetCurrentWindow()->Size;
@@ -120,10 +120,12 @@ void MainMenu::Render()
         }
         ImGui::EndChild();
 
-        ImGui::PushFont(StyleProvider::FontDefault);
-        ImGui::SetCursorPos(ImVec2(250, 0) * StyleProvider::Scale + StyleProvider::Padding);
-        ImGui::BeginChild("Options", ImVec2(550, 600) * StyleProvider::Scale - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
+        
+        ImGui::SetCursorPos(ImVec2(StyleProvider::MainMenuSideBarSize.x, 0) + StyleProvider::Padding);
+        ImGui::BeginChild("Options", ImVec2(StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x, StyleProvider::MainMenuSize.y) - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
         {
+            ImGui::PushFont(StyleProvider::FontDefault);
+        	
             const float optionsWidth = ImGui::GetWindowWidth();
         	
         	if (currentTab == 0)
@@ -213,8 +215,8 @@ void MainMenu::Render()
                 Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
                     ImGui::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled);
-                    ImGui::InputText("Name", Config::Misc::SpoofedName.data(), 64);
-                    ImGui::InputText("Rank", Config::Misc::SpoofedRank.data(), 64);
+                    ImGui::InputText("Name", Config::Misc::SpoofedName, 64);
+                    ImGui::InputText("Rank", Config::Misc::SpoofedRank, 64);
                 }
                 Widgets::EndPanel();
             }
@@ -226,8 +228,9 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
             }
+
+            ImGui::PopFont();
         }
-        ImGui::PopFont();
         ImGui::EndChild();
     }
     ImGui::End();

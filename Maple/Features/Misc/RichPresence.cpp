@@ -7,7 +7,7 @@ void __fastcall RichPresence::SetLargeImageTextHook(void* instance, COMString* s
 	if (Config::Misc::RichPresenceSpooferEnabled && string)
 	{
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs (rank #%hs)", Config::Misc::SpoofedName.c_str(), Config::Misc::SpoofedRank.c_str());
+		swprintf_s(buf, 128, L"%hs (rank #%hs)", Config::Misc::SpoofedName, Config::Misc::SpoofedRank);
 
 		oSetLargeImageText(instance, COMString::CreateString(buf));
 	}

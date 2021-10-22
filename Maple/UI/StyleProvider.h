@@ -27,6 +27,10 @@ public:
 	static inline ImFont* FontHugeBold;
 
 	static inline float Scale = 1;
+	static inline ImVec2 MainMenuSize;
+	static inline ImVec2 MainMenuSideBarSize;
+	static inline float MainMenuUserInfoHeight;
+	static inline float MainMenuBuildInfoHeight;
 	static inline ImVec2 MapleLogoSize;
 	static inline ImVec2 Padding;
 
@@ -95,6 +99,10 @@ public:
 
 		ImGui::GetIO().FontGlobalScale = Scale;
 
+		MainMenuSize = ImVec2(800, 600) * Scale;
+		MainMenuSideBarSize = ImVec2(250, 600) * Scale;
+		MainMenuUserInfoHeight = 100 * Scale;
+		MainMenuBuildInfoHeight = 50 * Scale;
 		MapleLogoSize = ImVec2(24, 24) * Scale;
 
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -125,7 +133,6 @@ public:
 		const float menuColourMultiplier = MenuColour.x < 0.1f && MenuColour.y < 0.1f && MenuColour.z < 0.1f ? -1.f : 1.f;
 		const float controlColourMultiplier = (ControlColour.x < 0.05f && ControlColour.y < 0.05f && ControlColour.z < 0.05f) || (ControlColour.x > 0.95f && ControlColour.y > 0.95f && ControlColour.z > 0.95f) ? -1.f : 1.f;
 
-		
 		MottoColour = ImVec4(MenuColour.x + 0.2f * mottoColourMultiplier, MenuColour.y + 0.2f * mottoColourMultiplier, MenuColour.z + 0.2f * mottoColourMultiplier, MenuColour.w);
 		MenuColourDark = ImVec4(MenuColour.x - 0.05f * menuColourMultiplier, MenuColour.y - 0.05f * menuColourMultiplier, MenuColour.z - 0.05f * menuColourMultiplier, MenuColour.w);
 		MenuColourVeryDark = ImVec4(MenuColour.x - 0.1f * menuColourMultiplier, MenuColour.y - 0.1f * menuColourMultiplier, MenuColour.z - 0.1f * menuColourMultiplier, MenuColour.w);
