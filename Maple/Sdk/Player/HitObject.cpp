@@ -29,14 +29,11 @@ Vector2 HitObject::PositionAtLength(float length)
 				i = num2;
 				break;
 			}
+
 			if (CumulativeLengths[num2] < length)
-			{
 				i = num2 + 1;
-			}
 			else
-			{
 				num = num2 - 1;
-			}
 		}
 		i = ~i;
 
@@ -69,13 +66,9 @@ Vector2 HitObject::PositionAtTime(int time)
 
 		double num = static_cast<double>(time - StartTime) / (static_cast<double>(Duration) / static_cast<double>(SegmentCount));
 		if (fmod(num, 2.0) >= 1.0)
-		{
 			num = 1.0 - fmod(num, 1.0);
-		}
 		else
-		{
 			num = fmod(num, 1.0);
-		}
 
 		const auto length = static_cast<float>(SpatialLength * num);
 
