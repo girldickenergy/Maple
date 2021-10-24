@@ -112,24 +112,24 @@ int HitObjectManager::GetHitObjectsCount()
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
-	uintptr_t hitObjectInstance = getObject(index);
+	void* hitObjectInstance = reinterpret_cast<void*>(getObject(index));
 
-	HitObjectType type	 = *reinterpret_cast<HitObjectType*>(hitObjectInstance + hitObjectTypeField.GetOffset());
-	int startTime		 = *reinterpret_cast<int*>(hitObjectInstance + hitObjectStartTimeField.GetOffset());
-	int endTime			 = *reinterpret_cast<int*>(hitObjectInstance + hitObjectEndTimeField.GetOffset());
-	Vector2 position	 = *reinterpret_cast<Vector2*>(hitObjectInstance + hitObjectPositionField.GetOffset());
-	int segmentCount	 = *reinterpret_cast<int*>(hitObjectInstance + hitObjectSegmentCountField.GetOffset());
-	double spatialLength = *reinterpret_cast<double*>(hitObjectInstance + hitObjectSpatialLengthField.GetOffset());
+	HitObjectType type	 = *reinterpret_cast<HitObjectType*>(hitObjectTypeField.GetAddress(hitObjectInstance));
+	int startTime		 = *reinterpret_cast<int*>(hitObjectStartTimeField.GetAddress(hitObjectInstance));
+	int endTime			 = *reinterpret_cast<int*>(hitObjectEndTimeField.GetAddress(hitObjectInstance));
+	Vector2 position	 = *reinterpret_cast<Vector2*>(hitObjectPositionField.GetAddress(hitObjectInstance));
+	int segmentCount	 = *reinterpret_cast<int*>(hitObjectSegmentCountField.GetAddress(hitObjectInstance));
+	double spatialLength = *reinterpret_cast<double*>(hitObjectSpatialLengthField.GetAddress(hitObjectInstance));
 
 	if ((type & HitObjectType::Slider) > HitObjectType::None)
 	{
-		Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectInstance + hitObjectEndPositionField.GetOffset());
+		Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectEndPositionField.GetAddress(hitObjectInstance));
 
 		std::vector<Vector2> sliderCurvePoints;
 		std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines;
 		std::vector<double> cumulativeLengths;
 
-		uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectInstance + hitObjectSliderCurvePointsField.GetOffset());
+		uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurvePointsField.GetAddress(hitObjectInstance));
 		uintptr_t sliderCurvePointsItems   = *reinterpret_cast<uintptr_t*>(sliderCurvePointsPointer + 0x04);
 		int sliderCurvePointsCount		   = *reinterpret_cast<int*>(sliderCurvePointsItems + 0x0C);
 
@@ -141,7 +141,7 @@ HitObject HitObjectManager::GetHitObject(int index)
 			sliderCurvePoints.emplace_back(point1, point2);
 		}
 
-		uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectInstance + hitObjectSliderCurveSmoothLinesField.GetOffset());
+		uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
 		uintptr_t sliderCurveSmoothLinesItems   = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
 		int sliderCurveSmoothLinesCount			= *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
 
@@ -153,7 +153,7 @@ HitObject HitObjectManager::GetHitObject(int index)
 			sliderCurveSmoothLines.emplace_back(point1, point2);
 		}
 
-		uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectInstance + hitObjectCumulativeLengthsField.GetOffset());
+		uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
 		uintptr_t cumulativeLengthsItems   = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
 		int cumulativeLengthsCount		   = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
 
@@ -164,6 +164,14 @@ HitObject HitObjectManager::GetHitObject(int index)
 	}
 
 	return HitObject(type, startTime, endTime, position, position, segmentCount, spatialLength);
+}
+
+std::vector<HitObject> HitObjectManager::GetAllHitObjects()
+{
+	std::vector<HitObject> toReturn;
+	for (int i = 0; i < GetHitObjectsCount(); i++)
+		toReturn.push_back(GetHitObject(i));
+	return toReturn;
 }
 
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)

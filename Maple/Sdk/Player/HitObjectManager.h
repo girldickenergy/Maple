@@ -59,5 +59,6 @@ public:
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
 	HitObject GetHitObject(int index);
+	std::vector<HitObject> GetAllHitObjects();
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 };
