@@ -65,7 +65,7 @@ void Vanilla::populateAssemblies()
 
 		const auto asmCount = assemblies.count();
 
-		for (int i = 0; i < (int)asmCount; i++)
+		for (int i = 0; i < static_cast<int>(asmCount); i++)
 		{
 			IUnknownPtr unk = NULL;
 
