@@ -128,6 +128,9 @@
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp">
       <Filter>Features\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Player\HitObject.cpp">
+      <Filter>Sdk\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -219,6 +222,15 @@
     </Filter>
     <Filter Include="Features\Misc">
       <UniqueIdentifier>{352941ff-5d03-4da1-a3fc-e225188566fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\DataTypes">
+      <UniqueIdentifier>{6c308172-2b36-4234-896e-7e4b80f180f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\DataTypes\Enums">
+      <UniqueIdentifier>{60a09c3c-7c12-470c-bf5c-d123044bd0f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\DataTypes\Structs">
+      <UniqueIdentifier>{95cc3edf-ad76-4946-8e88-959991135327}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +440,15 @@
     </ClInclude>
     <ClInclude Include="Features\Misc\ScoreSubmission.h">
       <Filter>Features\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Player\HitObject.h">
+      <Filter>Sdk\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\DataTypes\Structs\Vector2.h">
+      <Filter>Sdk\DataTypes\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\DataTypes\Enums\HitObjectType.h">
+      <Filter>Sdk\DataTypes\Enums</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
