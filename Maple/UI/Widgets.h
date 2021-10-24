@@ -9,4 +9,5 @@ public:
 	static float CalcPanelHeight(int widgetCount, int textCount = 0, int spacingCount = 0);
 	static void BeginPanel(const char* label, const ImVec2& size);
 	static void EndPanel();
+	static bool Checkbox(const char* label, bool* v);
 };

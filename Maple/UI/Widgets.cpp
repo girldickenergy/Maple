@@ -2,6 +2,8 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
+#include <map>
+
 
 #include "StyleProvider.h"
 
@@ -191,4 +193,106 @@ void Widgets::BeginPanel(const char* label, const ImVec2& size)
 void Widgets::EndPanel()
 {
     ImGui::EndChild();
+}
+
+bool Widgets::Checkbox(const char* label, bool* v)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+
+    const ImVec2 checkMarkSize = ImVec2(ImGui::GetFrameHeight(), ImGui::GetFrameHeight());
+    const ImVec2 overlapAllowance = checkMarkSize / 6;
+    const ImVec2 checkboxSize = ImVec2(ImGui::GetFrameHeight() * 2 - overlapAllowance.x * 2, checkMarkSize.y - overlapAllowance.y * 2);
+
+    const ImVec2 pos = window->DC.CursorPos;
+    const ImRect total_bb(pos, pos + ImVec2(checkboxSize.x + overlapAllowance.x * 2 + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+
+    ImGui::ItemSize(total_bb, style.FramePadding.y);
+    if (!ImGui::ItemAdd(total_bb, id))
+    {
+        IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+        return false;
+    }
+
+    bool hovered, held;
+    bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
+    if (pressed)
+    {
+        *v = !(*v);
+        ImGui::MarkItemEdited(id);
+    }
+
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 250.f;
+
+    static std::map<ImGuiID, float> positionAnimationMap;
+    auto positionAnimation = positionAnimationMap.find(id);
+    if (positionAnimation == positionAnimationMap.end())
+    {
+        positionAnimationMap.insert({ id, 0.f });
+        positionAnimation = positionAnimationMap.find(id);
+    }
+	
+    if (*v && positionAnimation->second < 1.f)
+        positionAnimation->second += elapsed / animationTime;
+	
+    if (!*v && positionAnimation->second > 0.f)
+        positionAnimation->second -= elapsed / animationTime;
+
+    positionAnimation->second = ImClamp(positionAnimation->second, 0.f, 1.f);
+
+    static std::map<ImGuiID, float> colourAnimationMap;
+    auto colourAnimation = colourAnimationMap.find(id);
+    if (colourAnimation == colourAnimationMap.end())
+    {
+        colourAnimationMap.insert({ id, 0.f });
+        colourAnimation = colourAnimationMap.find(id);
+    }
+
+    if (positionAnimation->second == 0.f || positionAnimation->second == 1.f)
+    {
+        if (hovered && colourAnimation->second < 1.f)
+            colourAnimation->second += elapsed / animationTime;
+
+        if (!hovered && colourAnimation->second > 0.f)
+            colourAnimation->second -= elapsed / animationTime;
+
+        colourAnimation->second = ImClamp(colourAnimation->second, 0.f, 1.f);
+    }
+    else
+    {
+        colourAnimation->second = 0.f; //ignore colour animation while position animation is running
+    }
+
+    ImColor checkboxColour;
+    ImColor checkMarkColour;
+    if (positionAnimation->second > 0.f && positionAnimation->second < 1.f)
+    {
+        checkboxColour = ImLerp(style.Colors[ImGuiCol_FrameBgHovered], style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], positionAnimation->second);
+        checkMarkColour = ImLerp(StyleProvider::CheckMarkHoveredColour, *v? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, positionAnimation->second);
+    }
+    else
+    {
+        checkboxColour = ImLerp(style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], style.Colors[ImGuiCol_FrameBgHovered], colourAnimation->second);
+        checkMarkColour = ImLerp(*v ? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, StyleProvider::CheckMarkHoveredColour, colourAnimation->second);
+    }
+	
+    window->DrawList->AddRectFilled(total_bb.Min + overlapAllowance, total_bb.Min + overlapAllowance + checkboxSize, checkboxColour, 60.f);
+    window->DrawList->AddCircleFilled(ImVec2(total_bb.Min.x + checkMarkSize.x / 2 + ImLerp(0.f, checkboxSize.x - overlapAllowance.x - checkMarkSize.x / 2, positionAnimation->second), total_bb.Min.y + checkMarkSize.y / 2), checkMarkSize.y / 2, checkMarkColour, 36);
+
+    bool mixed_value = (window->DC.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
+    ImVec2 label_pos = ImVec2(total_bb.Min.x + overlapAllowance.x * 2 + checkboxSize.x + style.ItemInnerSpacing.x, total_bb.Min.y + style.FramePadding.y);
+    if (g.LogEnabled)
+	    ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
+    if (label_size.x > 0.0f)
+	    ImGui::RenderText(label_pos, label);
+
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+    return pressed;
 }

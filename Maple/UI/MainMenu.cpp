@@ -156,7 +156,7 @@ void MainMenu::Render()
         	{
                 Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    ImGui::Checkbox("Enabled", &Config::Timewarp::Enabled);
+                    Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled);
                     ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
                 }
                 Widgets::EndPanel();
@@ -165,9 +165,9 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    ImGui::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled);
+                    Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled);
                     ImGui::SliderFloat("AR", &Config::Visuals::AR, 0, 12);
-                    ImGui::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
+                    Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
                 }
                 Widgets::EndPanel();
 
@@ -175,8 +175,8 @@ void MainMenu::Render()
             	
                 Widgets::BeginPanel("HD & FL Removers", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    ImGui::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
-                    ImGui::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
+                    Widgets::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
+                    Widgets::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
                 }
                 Widgets::EndPanel();
 
@@ -205,8 +205,8 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    ImGui::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
-                    ImGui::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);
+                    Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
+                    Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);
                 }
                 Widgets::EndPanel();
 
@@ -214,7 +214,7 @@ void MainMenu::Render()
 
                 Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    ImGui::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled);
+                    Widgets::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled);
                     ImGui::InputText("Name", Config::Misc::SpoofedName, 64);
                     ImGui::InputText("Rank", Config::Misc::SpoofedRank, 64);
                 }
