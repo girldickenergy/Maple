@@ -17,6 +17,17 @@ class HitObjectManager
 	static inline Field hitObjectRadiusField;
 	static inline Field currentHitObjectIndexField;
 	static inline Field hitObjectsCountField;
+	/* HitObject + HitObjectSliderOsu specific fields | Maybe move these into a subclass*/
+	static inline Field hitObjectTypeField;
+	static inline Field hitObjectStartTimeField;
+	static inline Field hitObjectEndTimeField;
+	static inline Field hitObjectPositionField;
+	static inline Field hitObjectEndPositionField;
+	static inline Field hitObjectSegmentCountField;
+	static inline Field hitObjectSpatialLengthField;
+	static inline Field hitObjectSliderCurvePointsField;
+	static inline Field hitObjectCumulativeLengthsField;
+	static inline Field hitObjectSliderCurveSmoothLinesField;
 	
 	static inline TypeExplorer obfuscatedType;
 
@@ -30,6 +41,8 @@ class HitObjectManager
 	static inline fnGetObject getObject;
 public:
 	static inline TypeExplorer RawHitObjectManager;
+	static inline TypeExplorer RawHitObject;
+	static inline TypeExplorer RawHitObjectSliderOsu;
 	
 	static void Initialize();
 	static void* Instance();
