@@ -21,7 +21,7 @@ Method Type::GetMethodUnsafe(const std::string& name)
 
     mscorlib::_MethodInfoPtr method;
 
-    RawType->GetMethod_2(b_name, (mscorlib::BindingFlags)(mscorlib::BindingFlags_Instance |
+    RawType->GetMethod_2(b_name, static_cast<mscorlib::BindingFlags>(mscorlib::BindingFlags_Instance |
         mscorlib::BindingFlags_Public | mscorlib::BindingFlags_NonPublic |
         mscorlib::BindingFlags_Static), &method);
 
@@ -93,7 +93,7 @@ Method Type::GetMethodUnsafe(std::string name, SAFEARRAY* types)
 
     mscorlib::_MethodInfoPtr method;
 
-    RawType->GetMethod(b_name, (mscorlib::BindingFlags)(mscorlib::BindingFlags_Instance |
+    RawType->GetMethod(b_name, static_cast<mscorlib::BindingFlags>(mscorlib::BindingFlags_Instance |
         mscorlib::BindingFlags_Public | mscorlib::BindingFlags_NonPublic |
         mscorlib::BindingFlags_Static), nullptr, types, nullptr, &method);
 
@@ -109,7 +109,7 @@ Field Type::GetFieldUnsafe(const std::string& name)
 
     mscorlib::_FieldInfoPtr field;
 
-    RawType->GetField(b_name, (mscorlib::BindingFlags)(mscorlib::BindingFlags_Instance |
+    RawType->GetField(b_name, static_cast<mscorlib::BindingFlags>(mscorlib::BindingFlags_Instance |
         mscorlib::BindingFlags_Public | mscorlib::BindingFlags_NonPublic |
         mscorlib::BindingFlags_Static), &field);
 
@@ -131,7 +131,7 @@ std::vector<Method> Type::GetMethodsUnsafe()
 {
     SAFEARRAY* array;
 
-    RawType->GetMethods((mscorlib::BindingFlags)(
+    RawType->GetMethods(static_cast<mscorlib::BindingFlags>(
         mscorlib::BindingFlags_Instance |
         mscorlib::BindingFlags_Public | mscorlib::BindingFlags_NonPublic |
         mscorlib::BindingFlags_Static), &array);
@@ -158,7 +158,7 @@ std::vector<Field> Type::GetFieldsUnsafe()
 {
     SAFEARRAY* array;
 
-    RawType->GetFields((mscorlib::BindingFlags)(
+    RawType->GetFields(static_cast<mscorlib::BindingFlags>(
         mscorlib::BindingFlags_Instance |
         mscorlib::BindingFlags_Public | mscorlib::BindingFlags_NonPublic |
         mscorlib::BindingFlags_Static), &array);

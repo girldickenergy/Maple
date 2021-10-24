@@ -31,10 +31,10 @@ variant_t Method::InvokeUnsafe(variant_t obj, std::vector<variant_t>& args)
     SAFEARRAYBOUND rgsabound[1];
 
     rgsabound[0].lLbound = 0;
-    rgsabound[0].cElements = (ULONG)args.size();
+    rgsabound[0].cElements = static_cast<ULONG>(args.size());
     psa = SafeArrayCreate(VT_VARIANT, 1, rgsabound);
 
-    for (LONG i = 0; i < (LONG)args.size(); i++)
+    for (LONG i = 0; i < static_cast<LONG>(args.size()); i++)
         SafeArrayPutElement(psa, &i, &args[i]);
 
     variant_t ret = Method::InvokeUnsafe(obj, psa);

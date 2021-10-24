@@ -19,12 +19,12 @@ class JitHelpers
 
     static bool hasPrecode(void* pMethodDesc)
     {
-        return (*((byte*)pMethodDesc + 3) & 0x2) != 0;
+        return (*(reinterpret_cast<byte*>(pMethodDesc) + 3) & 0x2) != 0;
     }
 	
     static bool isUnboxingStub(void* pMethodDesc)
     {
-        return (*((byte*)pMethodDesc + 3) & 0x4) != 0;
+        return (*(reinterpret_cast<byte*>(pMethodDesc) + 3) & 0x4) != 0;
     }
 public:
     static void CompilePrecode(void* precodePointer, void* pMethodDesc)
@@ -35,12 +35,12 @@ public:
 		if (GetFunctionPointer(pMethodDesc) != nullptr)
 			return; //method is already jitted.
 
-		DWORD precodeDword = (DWORD)precodePointer;
-		if (*(BYTE*)precodeDword == 0xB8) //assuming it's first precode instruction (mov eax, pMethodDesc)
+		DWORD precodeDword = reinterpret_cast<DWORD>(precodePointer);
+		if (*reinterpret_cast<BYTE*>(precodeDword) == 0xB8) //assuming it's first precode instruction (mov eax, pMethodDesc)
 		{
-			if (*(BYTE*)(precodeDword + 0x5) == 0x90) //check if it's a remoting precode
+			if (*reinterpret_cast<BYTE*>(precodeDword + 0x5) == 0x90) //check if it's a remoting precode
 			{
-				DWORD precodeRemotingThunkOffset = *(DWORD*)(precodeDword + 0x7);
+				DWORD precodeRemotingThunkOffset = *reinterpret_cast<DWORD*>(precodeDword + 0x7);
 				DWORD precodeRemotingThunk = precodeDword + 0xB + precodeRemotingThunkOffset;
 
 				__asm
