@@ -30,6 +30,8 @@ public:
 	static void Initialize(IDirect3DDevice9* d3d9Device = nullptr);
 	static void Render();
 	static void ToggleMainMenu();
+	static void ShowScoreSubmissionDialogue();
+	static void HideScoreSubmissionDialogue();
 
 	static HWND GetWindowHandle();
 

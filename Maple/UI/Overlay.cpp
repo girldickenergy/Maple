@@ -4,6 +4,7 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_win32.h"
 #include "MainMenu.h"
+#include "ScoreSubmissionDialogue.h"
 #include "StyleProvider.h"
 #include "GL/gl3w.h"
 
@@ -92,13 +93,10 @@ void Overlay::Initialize(IDirect3DDevice9* d3d9Device)
 
 void Overlay::Render()
 {
-	if (MainMenu::IsOpen && !rawInputDisabled)
+	if ((MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen) && !rawInputDisabled)
 		disableRaw();
-	else if (!MainMenu::IsOpen && rawInputDisabled)
+	else if (!MainMenu::IsOpen && !ScoreSubmissionDialogue::IsOpen && rawInputDisabled)
 		enableRaw();
-
-	if (!MainMenu::IsOpen)
-		return;
 
 	if (Renderer == Renderer::OGL3)
 		ImGui_ImplOpenGL3_NewFrame();
@@ -109,13 +107,16 @@ void Overlay::Render()
 	ImGui::NewFrame();
 
 	ImGuiIO& io = ImGui::GetIO();
-	if (MainMenu::IsOpen)
+	if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
 		io.MouseDrawCursor = true;
 	else
 		io.MouseDrawCursor = false;
 
 	if (MainMenu::IsOpen)
 		MainMenu::Render();
+
+	if (ScoreSubmissionDialogue::IsOpen)
+		ScoreSubmissionDialogue::Render();
 	
 	ImGui::Render();
 
@@ -128,6 +129,16 @@ void Overlay::Render()
 void Overlay::ToggleMainMenu()
 {
 	MainMenu::IsOpen = !MainMenu::IsOpen;
+}
+
+void Overlay::ShowScoreSubmissionDialogue()
+{
+	ScoreSubmissionDialogue::IsOpen = true;
+}
+
+void Overlay::HideScoreSubmissionDialogue()
+{
+	ScoreSubmissionDialogue::IsOpen = false;
 }
 
 HWND Overlay::GetWindowHandle()
@@ -177,10 +188,11 @@ LRESULT Overlay::HandleInputHook(int nCode, WPARAM wParam, LPARAM lParam)
 			pMsg->message = WM_NULL;
 			MainMenu::IsOpen = false;
 		}
-		else ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
+		else if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
+			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
-	if (MainMenu::IsOpen)
+	if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
 	{
 		if (pMsg->message == WM_CHAR)
 			pMsg->message = WM_NULL;

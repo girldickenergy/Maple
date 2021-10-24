@@ -122,6 +122,12 @@
     <ClCompile Include="Features\Misc\RichPresence.cpp">
       <Filter>Features\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="UI\ScoreSubmissionDialogue.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Misc\ScoreSubmission.cpp">
+      <Filter>Features\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -415,6 +421,12 @@
       <Filter>Features\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Features\Misc\RichPresence.h">
+      <Filter>Features\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ScoreSubmissionDialogue.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Misc\ScoreSubmission.h">
       <Filter>Features\Misc</Filter>
     </ClInclude>
   </ItemGroup>

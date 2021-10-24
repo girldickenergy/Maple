@@ -3,6 +3,7 @@
 #include <Cinnamon.h>
 
 #include "../Features/Misc/RichPresence.h"
+#include "../Features/Misc/ScoreSubmission.h"
 #include "../Features/Misc/SpectateHandler.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
@@ -60,10 +61,15 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook PurgeFrames");
 
-	if (installManagedHook("UpdateStatus", Vanilla::Explorer["DiscordRPC.Assets"]["set_LargeImageText"].Method, RichPresence::SetLargeImageTextHook, reinterpret_cast<LPVOID*>(&RichPresence::oSetLargeImageText)) == CinnamonResult::Success)
+	if (installManagedHook("set_LargeImageText", Vanilla::Explorer["DiscordRPC.Assets"]["set_LargeImageText"].Method, RichPresence::SetLargeImageTextHook, reinterpret_cast<LPVOID*>(&RichPresence::oSetLargeImageText)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_LargeImageText");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_LargeImageText");
+
+	if (installManagedHook("Submit", Vanilla::Explorer["osu.GameplayElements.Scoring.Score"]["Submit"].Method, ScoreSubmission::SubmitHook, reinterpret_cast<LPVOID*>(&ScoreSubmission::oSubmit)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked Submit");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook Submit");
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)

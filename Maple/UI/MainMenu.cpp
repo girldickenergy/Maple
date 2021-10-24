@@ -130,7 +130,7 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
-                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
                 {
                     ImGui::Text("Nothing to see here yet uwu");
                 }
@@ -138,7 +138,7 @@ void MainMenu::Render()
 
                 ImGui::Spacing();
         		
-                Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
                 {
                     ImGui::Text("Nothing to see here yet uwu");
                 }
@@ -146,7 +146,7 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
                 {
                     ImGui::Text("Nothing to see here yet uwu");
                 }
@@ -182,7 +182,7 @@ void MainMenu::Render()
 
                 ImGui::Spacing();
 
-                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 1)));
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 0, 1)));
                 {
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
                     if (ImGui::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
@@ -222,7 +222,7 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
                 {
                     ImGui::Text("Nothing to see here yet uwu");
                 }

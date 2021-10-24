@@ -29,7 +29,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -183,6 +183,7 @@
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Features\Misc\RichPresence.cpp" />
+    <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Sdk\Player\Ruleset.cpp" />
     <ClCompile Include="UI\MainMenu.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
+    <ClCompile Include="UI\ScoreSubmissionDialogue.cpp" />
     <ClCompile Include="UI\Widgets.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
     <ClCompile Include="Utilities\Textures\TextureHelper.cpp" />
@@ -250,6 +252,7 @@
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Features\Misc\RichPresence.h" />
+    <ClInclude Include="Features\Misc\ScoreSubmission.h" />
     <ClInclude Include="Features\Misc\SpectateHandler.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
@@ -265,6 +268,7 @@
     <ClInclude Include="UI\Fonts.h" />
     <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="UI\Overlay.h" />
+    <ClInclude Include="UI\ScoreSubmissionDialogue.h" />
     <ClInclude Include="UI\StyleProvider.h" />
     <ClInclude Include="UI\Textures.h" />
     <ClInclude Include="UI\Widgets.h" />

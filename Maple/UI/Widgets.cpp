@@ -151,9 +151,13 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
     return pressed;
 }
 
-float Widgets::CalcPanelHeight(int controlsCount, int spacingCount)
+float Widgets::CalcPanelHeight(int widgetCount, int textCount, int spacingCount)
 {
-    return ImGui::GetFrameHeight() * static_cast<float>(controlsCount) + (ImGui::GetStyle().ItemSpacing.y * static_cast<float>(spacingCount) * 2) + (ImGui::GetStyle().ItemSpacing.y * static_cast<float>(controlsCount - 1));
+	const float totalWidgetHeight = ImGui::GetFrameHeight() * static_cast<float>(widgetCount);
+	const float totalTextHeight = ImGui::GetCurrentContext()->FontSize * static_cast<float>(textCount);
+	const float totalSpacingHeight = static_cast<float>(widgetCount + textCount + spacingCount - 1) * ImGui::GetStyle().ItemSpacing.y;
+	
+    return totalWidgetHeight + totalTextHeight + totalSpacingHeight;
 }
 
 void Widgets::BeginPanel(const char* label, const ImVec2& size)
