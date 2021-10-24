@@ -36,7 +36,7 @@ void NameCache::Initialize(Assembly assemblyToDeobfuscate, Assembly stub)
 		obfuscatedNameLookup[deobfuscatedTypeName] = name;
 		deobfuscatedNameLookup[name] = deobfuscatedTypeName;
 
-		for (auto field : type.GetFieldsUnsafe())
+		for (auto& field : type.GetFieldsUnsafe())
 		{
 			auto fieldName = field.GetFullNameUnsafe();
 
