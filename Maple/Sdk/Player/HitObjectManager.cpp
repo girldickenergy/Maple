@@ -29,7 +29,6 @@ void HitObjectManager::Initialize()
 	hitObjectCumulativeLengthsField		 = RawHitObjectSliderOsu["cumulativeLength"].Field;
 	hitObjectSliderCurveSmoothLinesField = RawHitObjectSliderOsu["sliderCurveSmoothLines"].Field;
 
-
 	obfuscatedType = activeModsField.GetTypeUnsafe();
 
 	obfuscatedType["get_Value"].Method.Compile();
