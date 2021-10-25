@@ -134,7 +134,8 @@ public:
 
 		const float mottoColourMultiplier = 0.2126f * MenuColour.x + 0.7152f * MenuColour.y + 0.0722f * MenuColour.z > 0.5f ? -1.f : 1.f;
 		const float menuColourMultiplier = MenuColour.x < 0.1f && MenuColour.y < 0.1f && MenuColour.z < 0.1f ? -1.f : 1.f;
-		const float controlColourMultiplier = (ControlColour.x < 0.05f && ControlColour.y < 0.05f && ControlColour.z < 0.05f) || (ControlColour.x > 0.90f && ControlColour.y > 0.90f && ControlColour.z > 0.90f) ? -1.f : 1.f;
+		const float controlColourMultiplier = ControlColour.x > 0.90f && ControlColour.y > 0.90f && ControlColour.z > 0.90f ? -1.f : 1.f;
+		const float controlActiveColourMultiplier = ControlColour.x < 0.05f && ControlColour.y < 0.05f && ControlColour.z < 0.05f ? -1.f : 1.f;
 
 		MottoColour = ImVec4(MenuColour.x + 0.2f * mottoColourMultiplier, MenuColour.y + 0.2f * mottoColourMultiplier, MenuColour.z + 0.2f * mottoColourMultiplier, MenuColour.w);
 		MenuColourDark = ImVec4(MenuColour.x - 0.05f * menuColourMultiplier, MenuColour.y - 0.05f * menuColourMultiplier, MenuColour.z - 0.05f * menuColourMultiplier, MenuColour.w);
@@ -145,7 +146,7 @@ public:
 		
 		style.Colors[ImGuiCol_FrameBg] = ControlColour;
 		style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.05f * controlColourMultiplier, ControlColour.y + 0.05f * controlColourMultiplier, ControlColour.z + 0.05f * controlColourMultiplier, ControlColour.w);
-		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f * controlColourMultiplier, ControlColour.y - 0.05f * controlColourMultiplier, ControlColour.z - 0.05f * controlColourMultiplier, ControlColour.w);
+		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f * controlActiveColourMultiplier, ControlColour.y - 0.05f * controlActiveColourMultiplier, ControlColour.z - 0.05f * controlActiveColourMultiplier, ControlColour.w);
 
 		CheckMarkColour = ImVec4(ControlColour.x + 0.05f * controlColourMultiplier, ControlColour.y + 0.05f * controlColourMultiplier, ControlColour.z + 0.05f * controlColourMultiplier, ControlColour.w);
 		CheckMarkHoveredColour = ImVec4(ControlColour.x + 0.1f * controlColourMultiplier, ControlColour.y + 0.1f * controlColourMultiplier, ControlColour.z + 0.1f * controlColourMultiplier, ControlColour.w);
