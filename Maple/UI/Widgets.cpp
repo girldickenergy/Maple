@@ -274,8 +274,8 @@ bool Widgets::Checkbox(const char* label, bool* v)
     ImColor checkMarkColour;
     if (positionAnimation->second > 0.f && positionAnimation->second < 1.f)
     {
-        checkboxColour = ImLerp(style.Colors[ImGuiCol_FrameBgHovered], style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], positionAnimation->second);
-        checkMarkColour = ImLerp(StyleProvider::CheckMarkHoveredColour, *v? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, positionAnimation->second);
+        checkboxColour = ImLerp(style.Colors[ImGuiCol_FrameBgHovered], style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], *v ? positionAnimation->second : 1.f - positionAnimation->second);
+        checkMarkColour = ImLerp(StyleProvider::CheckMarkHoveredColour, *v? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, *v ? positionAnimation->second : 1.f - positionAnimation->second);
     }
     else
     {
