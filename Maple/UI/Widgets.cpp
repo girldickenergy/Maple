@@ -289,7 +289,7 @@ bool Widgets::Checkbox(const char* label, bool* v)
     }
 
     const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
-    const float animationTime = 250.f;
+    const float animationTime = 150.f;
 
     static std::map<ImGuiID, float> positionAnimationMap;
     auto positionAnimation = positionAnimationMap.find(id);
