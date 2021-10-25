@@ -19,7 +19,7 @@ void MainMenu::Render()
 
         ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + StyleProvider::MainMenuSideBarSize, ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
         if (expanded)
-            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + StyleProvider::MainMenuSideBarSize, ImVec2(menuPos.x + StyleProvider::MainMenuSideBarSize.x - style.WindowRounding, 0), ImColor(StyleProvider::MenuColourDark));
+            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + ImVec2(StyleProvider::MainMenuSideBarSize.x, 0), menuPos + ImVec2(StyleProvider::MainMenuSideBarSize.x - style.WindowRounding, style.WindowRounding), ImColor(StyleProvider::MenuColourDark));
 
         ImGui::SetCursorPos(StyleProvider::Padding);
         ImGui::BeginChild("Side Bar", StyleProvider::MainMenuSideBarSize - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
