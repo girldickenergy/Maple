@@ -172,6 +172,12 @@ class Widgets
 		"VK_LMENU",
 		"VK_RMENU"
 	};
+
+	static const char* patchFormatStringFloatToInt(const char* fmt);
+	static inline int stepInt = 1;
+	static inline int stepFastInt = 10;
+	static inline float stepFloat = 0.1f;
+	static inline float stepFastFloat = 1.f;
 public:
 	static bool Tab(const char* label, void* icon, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg);
 	static float CalcPanelHeight(int widgetCount, int textCount = 0, int spacingCount = 0);
@@ -181,4 +187,8 @@ public:
 	static bool ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags);
 	static bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
 	static bool Hotkey(const char* label, int* k);
+	static bool InputScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_step = NULL, const void* p_step_fast = NULL, const char* format = NULL, ImGuiInputTextFlags flags = 0);
+	static bool SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags);
+	static bool SliderInt(const char* label, int* v, int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
+	static bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
 };

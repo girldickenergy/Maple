@@ -157,7 +157,7 @@ void MainMenu::Render()
                 Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled);
-                    ImGui::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%1f", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp);
                 }
                 Widgets::EndPanel();
         	}
@@ -166,7 +166,7 @@ void MainMenu::Render()
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled);
-                    ImGui::SliderFloat("AR", &Config::Visuals::AR, 0, 12);
+                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0, 12, "%.1f", ImGuiSliderFlags_AlwaysClamp);
                     Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
                 }
                 Widgets::EndPanel();

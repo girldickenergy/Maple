@@ -2,9 +2,31 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
+
 #include <map>
 
 #include "StyleProvider.h"
+
+const char* Widgets::patchFormatStringFloatToInt(const char* fmt)
+{
+    if (fmt[0] == '%' && fmt[1] == '.' && fmt[2] == '0' && fmt[3] == 'f' && fmt[4] == 0) // Fast legacy path for "%.0f" which is expected to be the most common case.
+        return "%d";
+    const char* fmt_start = ImParseFormatFindStart(fmt);    // Find % (if any, and ignore %%)
+    const char* fmt_end = ImParseFormatFindEnd(fmt_start);  // Find end of format specifier, which itself is an exercise of confidence/recklessness (because snprintf is dependent on libc or user).
+    if (fmt_end > fmt_start && fmt_end[-1] == 'f')
+    {
+#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+        if (fmt_start == fmt && fmt_end[0] == 0)
+            return "%d";
+        ImGuiContext& g = *GImGui;
+        ImFormatString(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer), "%.*s%%d%s", (int)(fmt_start - fmt), fmt, fmt_end); // Honor leading and trailing decorations, but lose alignment/precision.
+        return g.TempBuffer;
+#else
+        IM_ASSERT(0 && "DragInt(): Invalid format string!"); // Old versions used a default parameter of "%.0f", please replace with e.g. "%d"
+#endif
+    }
+    return fmt;
+}
 
 bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
 {
@@ -244,11 +266,12 @@ bool Widgets::Checkbox(const char* label, bool* v)
     const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
 
     const ImVec2 checkMarkSize = ImVec2(ImGui::GetFrameHeight(), ImGui::GetFrameHeight());
-    const ImVec2 overlapAllowance = checkMarkSize / 6;
+    const ImVec2 overlapAllowance = checkMarkSize / 8;
     const ImVec2 checkboxSize = ImVec2(ImGui::GetFrameHeight() * 2 - overlapAllowance.x * 2, checkMarkSize.y - overlapAllowance.y * 2);
 
     const ImVec2 pos = window->DC.CursorPos;
-    const ImRect total_bb(pos, pos + ImVec2(checkboxSize.x + overlapAllowance.x * 2 + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect frame_bb(pos, pos + ImVec2(checkboxSize.x + overlapAllowance.x * 2, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(pos, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.f));
 
     ImGui::ItemSize(total_bb, style.FramePadding.y);
     if (!ImGui::ItemAdd(total_bb, id))
@@ -258,7 +281,7 @@ bool Widgets::Checkbox(const char* label, bool* v)
     }
 
     bool hovered, held;
-    bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
+    bool pressed = ImGui::ButtonBehavior(frame_bb, id, &hovered, &held);
     if (pressed)
     {
         *v = !(*v);
@@ -320,11 +343,11 @@ bool Widgets::Checkbox(const char* label, bool* v)
         checkMarkColour = ImLerp(*v ? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, StyleProvider::CheckMarkHoveredColour, colourAnimation->second);
     }
 	
-    window->DrawList->AddRectFilled(total_bb.Min + overlapAllowance, total_bb.Min + overlapAllowance + checkboxSize, checkboxColour, 60.f);
-    window->DrawList->AddCircleFilled(ImVec2(total_bb.Min.x + checkMarkSize.x / 2 + ImLerp(0.f, checkboxSize.x - overlapAllowance.x - checkMarkSize.x / 2, positionAnimation->second), total_bb.Min.y + checkMarkSize.y / 2), checkMarkSize.y / 2, checkMarkColour, 36);
+    window->DrawList->AddRectFilled(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, checkboxColour, 60.f);
+    window->DrawList->AddCircleFilled(ImVec2(ImLerp(frame_bb.Min.x + checkMarkSize.x / 2, frame_bb.Max.x - checkMarkSize.x / 2, positionAnimation->second), frame_bb.Min.y + checkMarkSize.y / 2), checkMarkSize.y / 2, checkMarkColour, 36);
 
     bool mixed_value = (window->DC.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
-    ImVec2 label_pos = ImVec2(total_bb.Min.x + overlapAllowance.x * 2 + checkboxSize.x + style.ItemInnerSpacing.x, total_bb.Min.y + style.FramePadding.y);
+    ImVec2 label_pos = ImVec2(total_bb.Max.x - label_size.x, total_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
 	    ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
     if (label_size.x > 0.0f)
@@ -583,4 +606,179 @@ bool Widgets::Hotkey(const char* label, int* k)
     ImGui::RenderTextClipped(frame_bb.Min, frame_bb.Max, buf_display, NULL, &hotkey_size, ImVec2(0.5f, 0.5f), &frame_bb);
 
     return value_changed;
+}
+
+bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_step, const void* p_step_fast, const char* format, ImGuiInputTextFlags flags)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    ImGuiStyle& style = g.Style;
+
+    if (format == NULL)
+        format = ImGui::DataTypeGetInfo(data_type)->PrintFmt;
+
+    char buf[64];
+    ImGui::DataTypeFormatString(buf, IM_ARRAYSIZE(buf), data_type, p_data, format);
+
+    bool value_changed = false;
+    if ((flags & (ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsScientific)) == 0)
+        flags |= ImGuiInputTextFlags_CharsDecimal;
+    flags |= ImGuiInputTextFlags_AutoSelectAll;
+    flags |= ImGuiInputTextFlags_NoMarkEdited;  // We call MarkItemEdited() ourselves by comparing the actual data rather than the string.
+
+    if (p_step != NULL)
+    {
+        const float button_size = ImGui::GetFrameHeight();
+
+        ImGui::BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
+        ImGui::PushID(label);
+        ImGui::SetNextItemWidth(ImMax(1.0f, ImGui::CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
+        if (ImGui::InputText("", buf, IM_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected ID from outside point of view
+            value_changed = ImGui::DataTypeApplyOpFromText(buf, g.InputTextState.InitialTextA.Data, data_type, p_data, format);
+
+        // Step buttons
+        const ImVec2 backup_frame_padding = style.FramePadding;
+        style.FramePadding.x = style.FramePadding.y;
+        ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
+        if (flags & ImGuiInputTextFlags_ReadOnly)
+            button_flags |= ImGuiButtonFlags_Disabled;
+        ImGui::SameLine(0, style.ItemInnerSpacing.x);
+        if (ButtonEx("-", ImVec2(button_size, button_size), button_flags))
+        {
+	        ImGui::DataTypeApplyOp(data_type, '-', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            value_changed = true;
+        }
+        ImGui::SameLine(0, style.ItemInnerSpacing.x);
+        if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
+        {
+	        ImGui::DataTypeApplyOp(data_type, '+', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            value_changed = true;
+        }
+
+        const char* label_end = ImGui::FindRenderedTextEnd(label);
+        if (label != label_end)
+        {
+	        ImGui::SameLine(0, style.ItemInnerSpacing.x);
+	        ImGui::TextEx(label, label_end);
+        }
+        style.FramePadding = backup_frame_padding;
+
+        ImGui::PopID();
+        ImGui::EndGroup();
+    }
+    else
+    {
+        if (ImGui::InputText(label, buf, IM_ARRAYSIZE(buf), flags))
+            value_changed = ImGui::DataTypeApplyOpFromText(buf, g.InputTextState.InitialTextA.Data, data_type, p_data, format);
+    }
+    if (value_changed)
+	    ImGui::MarkItemEdited(window->DC.LastItemId);
+
+    return value_changed;
+}
+
+bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+    const float w = ImGui::CalcItemWidth();
+
+    const ImVec2 sliderGrabSize = ImVec2(ImGui::GetFrameHeight(), ImGui::GetFrameHeight());
+    const ImVec2 overlapAllowance = sliderGrabSize / 8;
+
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+
+    ImGui::ItemSize(total_bb, style.FramePadding.y);
+    if (!ImGui::ItemAdd(total_bb, id, &frame_bb))
+        return false;
+
+    // Default format string when passing NULL
+    if (format == NULL)
+        format = ImGui::DataTypeGetInfo(data_type)->PrintFmt;
+    else if (data_type == ImGuiDataType_S32 && strcmp(format, "%d") != 0) // (FIXME-LEGACY: Patch old "%.0f" format string to use "%d", read function more details.)
+        format = patchFormatStringFloatToInt(format);
+
+    const bool hovered = ImGui::ItemHoverable(frame_bb, id);
+    const bool clicked = (hovered && g.IO.MouseClicked[0]);
+    if (clicked || g.NavActivateId == id || g.NavInputId == id)
+    {
+        ImGui::SetActiveID(id, window);
+        ImGui::SetFocusID(id, window);
+        ImGui::FocusWindow(window);
+        g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
+    }
+
+    // Slider behavior
+    ImRect grab_bb;
+    ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
+    const bool value_changed = ImGui::SliderBehavior(ImRect(frame_bb.Min + ImVec2(sliderGrabSize.x / 2 - overlapAllowance.x, overlapAllowance.y), frame_bb.Max - ImVec2(sliderGrabSize.x / 2 - overlapAllowance.x, overlapAllowance.y)), id, data_type, p_data, p_min, p_max, format, flags, &grab_bb);
+    ImGui::PopStyleVar();
+	
+    if (value_changed)
+        ImGui::MarkItemEdited(id);
+
+    ImVec2 grabPos = grab_bb.GetCenter();
+    grabPos = ImClamp(grabPos, frame_bb.Min + ImVec2(sliderGrabSize.x / 2, 0), frame_bb.Max - ImVec2(sliderGrabSize.x / 2, 0));
+
+    // Draw frame
+    ImGui::RenderNavHighlight(frame_bb, id);
+    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, ImGui::GetColorU32(ImGuiCol_FrameBgActive), true, g.Style.FrameRounding);
+    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, ImVec2(grabPos.x, frame_bb.Max.y - overlapAllowance.y), ImGui::GetColorU32(ImGuiCol_FrameBg), true, g.Style.FrameRounding);
+	
+    // Render grab
+    window->DrawList->AddCircleFilled(grabPos, sliderGrabSize.y / 2, ImGui::GetColorU32(ImGuiCol_FrameBgHovered), 36);
+
+    if (label_size.x > 0.0f)
+	    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+	
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags);
+    return value_changed;
+}
+
+bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
+{
+    const float totalWidth = ImGui::GetWindowWidth() * 0.5f;
+    const float sliderWidth = totalWidth * 0.6f;
+    const float inputWidth = totalWidth - sliderWidth;
+	
+    ImGui::PushItemWidth(sliderWidth);
+	const bool sliderValueChanged = SliderScalar(("###slider-" + std::string(label)).c_str(), ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
+
+	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+    ImGui::PushItemWidth(inputWidth);
+	const bool inputValueChanged = InputScalar(label, ImGuiDataType_S32, v, &stepInt, &stepFastInt, format);
+
+    if ((flags & ImGuiSliderFlags_AlwaysClamp) != 0)
+        *v = ImClamp(*v, v_min, v_max);
+	
+    return sliderValueChanged || inputValueChanged;
+}
+
+bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+{
+    const float totalWidth = ImGui::GetWindowWidth() * 0.5f;
+    const float sliderWidth = totalWidth * 0.6f;
+    const float inputWidth = totalWidth - sliderWidth;
+
+    ImGui::PushItemWidth(sliderWidth);
+    const bool sliderValueChanged = SliderScalar(("###slider-" + std::string(label)).c_str(), ImGuiDataType_Float, v, &v_min, &v_max, format, flags);
+
+    ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+    ImGui::PushItemWidth(inputWidth);
+    const bool inputValueChanged = InputScalar(label, ImGuiDataType_Float, v, &stepFloat, &stepFastFloat, format);
+
+    if ((flags & ImGuiSliderFlags_AlwaysClamp) != 0)
+        *v = ImClamp(*v, v_min, v_max);
+
+    return sliderValueChanged || inputValueChanged;
 }
