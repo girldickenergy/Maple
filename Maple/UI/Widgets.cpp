@@ -4,7 +4,6 @@
 #include <imgui_internal.h>
 #include <map>
 
-
 #include "StyleProvider.h"
 
 bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
@@ -124,15 +123,53 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
     if (selected != was_selected) //-V547
         window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
 
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+	
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    static std::map<ImGuiID, float> holdAnimationMap;
+    auto holdAnimation = holdAnimationMap.find(id);
+    if (holdAnimation == holdAnimationMap.end())
+    {
+        holdAnimationMap.insert({ id, 0.f });
+        holdAnimation = holdAnimationMap.find(id);
+    }
+
+    if (held && holdAnimation->second < 1.f)
+        holdAnimation->second += elapsed / animationTime;
+
+    if (!held && holdAnimation->second > 0.f)
+        holdAnimation->second -= elapsed / animationTime;
+
+    holdAnimation->second = ImClamp(holdAnimation->second, 0.f, 1.f);
+	
     // Render
     if (held && (flags & ImGuiSelectableFlags_DrawHoveredWhenHeld))
         hovered = true;
-    if (hovered || selected)
-    {
-        const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
-        ImGui::RenderFrame(bb.Min, bb.Max, col, false, style.FrameRounding);
-        ImGui::RenderNavHighlight(bb, id, ImGuiNavHighlightFlags_TypeThin | ImGuiNavHighlightFlags_NoRounding);
-    }
+
+    ImColor col = ImLerp(selected ? style.Colors[ImGuiCol_Header] : ImVec4(style.Colors[ImGuiCol_Header].x, style.Colors[ImGuiCol_Header].y, style.Colors[ImGuiCol_Header].z, 0), style.Colors[ImGuiCol_HeaderHovered], hoverAnimation->second);
+	if (held)
+        col = ImLerp(col, style.Colors[ImGuiCol_HeaderActive], holdAnimation->second);
+    else
+        col = ImLerp(style.Colors[ImGuiCol_HeaderActive], col, 1.f - holdAnimation->second);
+
+    ImGui::RenderFrame(bb.Min, bb.Max, col, false, style.FrameRounding);
+    ImGui::RenderNavHighlight(bb, id, ImGuiNavHighlightFlags_TypeThin | ImGuiNavHighlightFlags_NoRounding);
 
     if (span_all_columns && window->DC.CurrentColumns)
         ImGui::PopColumnsBackground();
