@@ -29,7 +29,6 @@ void ScoreSubmissionDialogue::Render()
 	ImGui::SetNextWindowSize(windowSize);
 	ImGui::Begin("Score Submission Dialogue", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 	{
-		ImGui::SetCursorPos(ImVec2(0, 0));
 		Widgets::BeginPanel("Score Submission", ImVec2(windowSize.x, panelContentHeight));
 		{
 			const float panelContentWidth = ImGui::GetWindowWidth();
@@ -38,7 +37,7 @@ void ScoreSubmissionDialogue::Render()
 
 			const float buttonWidth = panelContentWidth / 1.5f;
 			ImGui::SetCursorPosX(panelContentWidth / 2 - buttonWidth / 2);
-			if (ImGui::Button("Yes", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+			if (Widgets::Button("Yes", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
 			{
 				ScoreSubmission::Submit();
 
@@ -47,7 +46,7 @@ void ScoreSubmissionDialogue::Render()
 			}
 
 			ImGui::SetCursorPosX(panelContentWidth / 2 - buttonWidth / 2);
-			if (ImGui::Button("No", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+			if (Widgets::Button("No", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
 			{
 				IsOpen = false;
 				resetPosition = true;

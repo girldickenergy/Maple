@@ -182,11 +182,15 @@ void MainMenu::Render()
 
                 ImGui::Spacing();
 
-                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 0, 1)));
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6, 0, 2)));
                 {
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
                     if (ImGui::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
                         StyleProvider::UpdateScale();
+
+                    ImGui::Spacing();
+
+                    ImGui::Button("Load background image");
 
                     ImGui::Spacing();
 

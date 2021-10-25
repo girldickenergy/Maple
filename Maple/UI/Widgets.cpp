@@ -333,3 +333,93 @@ bool Widgets::Checkbox(const char* label, bool* v)
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
     return pressed;
 }
+
+bool Widgets::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+
+    ImVec2 pos = window->DC.CursorPos;
+    if ((flags & ImGuiButtonFlags_AlignTextBaseLine) && style.FramePadding.y < window->DC.CurrLineTextBaseOffset) // Try to vertically align buttons that are smaller/have no padding so that text baseline matches (bit hacky, since it shouldn't be a flag)
+        pos.y += window->DC.CurrLineTextBaseOffset - style.FramePadding.y;
+    ImVec2 size = ImGui::CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+
+    const ImRect bb(pos, pos + size);
+    ImGui::ItemSize(size, style.FramePadding.y);
+    if (!ImGui::ItemAdd(bb, id))
+        return false;
+
+    if (window->DC.ItemFlags & ImGuiItemFlags_ButtonRepeat)
+        flags |= ImGuiButtonFlags_Repeat;
+    bool hovered, held;
+    const bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
+
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    static std::map<ImGuiID, float> holdAnimationMap;
+    auto holdAnimation = holdAnimationMap.find(id);
+    if (holdAnimation == holdAnimationMap.end())
+    {
+        holdAnimationMap.insert({ id, 0.f });
+        holdAnimation = holdAnimationMap.find(id);
+    }
+
+    if (held && holdAnimation->second < 1.f)
+        holdAnimation->second += elapsed / animationTime;
+
+    if (!held && holdAnimation->second > 0.f)
+        holdAnimation->second -= elapsed / animationTime;
+
+    holdAnimation->second = ImClamp(holdAnimation->second, 0.f, 1.f);
+
+    // Render
+    ImGui::RenderNavHighlight(bb, id);
+
+    ImColor col = ImLerp(style.Colors[ImGuiCol_Button], style.Colors[ImGuiCol_ButtonHovered], hoverAnimation->second);
+    if (held)
+        col = ImLerp(col, style.Colors[ImGuiCol_ButtonActive], holdAnimation->second);
+    else
+        col = ImLerp(style.Colors[ImGuiCol_ButtonActive], col, 1.f - holdAnimation->second);
+
+    ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+
+    if (g.LogEnabled)
+	    ImGui::LogSetNextTextDecoration("[", "]");
+
+    ImGui::RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
+
+    // Automatically close popups
+    if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
+	    ImGui::CloseCurrentPopup();
+
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.LastItemStatusFlags);
+    return pressed;
+}
+
+bool Widgets::Button(const char* label, const ImVec2& size_arg)
+{
+    return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
+}

@@ -118,6 +118,7 @@ public:
 		style.FrameRounding = 10 * Scale;
 		style.PopupRounding = 10 * Scale;
 		style.GrabRounding = 10 * Scale;
+		style.FramePadding = ImVec2(5, 5) * Scale;
 		style.PopupBorderSize = 0;
 
 		Padding = ImVec2(10, 10) * Scale;
@@ -155,6 +156,10 @@ public:
 		style.Colors[ImGuiCol_Header] = style.Colors[ImGuiCol_FrameBg];
 		style.Colors[ImGuiCol_HeaderHovered] = style.Colors[ImGuiCol_FrameBgHovered];
 		style.Colors[ImGuiCol_HeaderActive] = style.Colors[ImGuiCol_FrameBgActive];
+
+		style.Colors[ImGuiCol_Button] = style.Colors[ImGuiCol_FrameBg];
+		style.Colors[ImGuiCol_ButtonHovered] = style.Colors[ImGuiCol_FrameBgHovered];
+		style.Colors[ImGuiCol_ButtonActive] = style.Colors[ImGuiCol_FrameBgActive];
 
 		style.Colors[ImGuiCol_Text] = TextColour;
 	}

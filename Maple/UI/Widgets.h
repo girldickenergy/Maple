@@ -10,4 +10,6 @@ public:
 	static void BeginPanel(const char* label, const ImVec2& size);
 	static void EndPanel();
 	static bool Checkbox(const char* label, bool* v);
+	static bool ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags);
+	static bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
 };
