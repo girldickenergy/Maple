@@ -190,7 +190,7 @@ void MainMenu::Render()
 
                     ImGui::Spacing();
 
-                    ImGui::Button("Load background image");
+                    Widgets::Button("Load background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight()));
 
                     ImGui::Spacing();
 

@@ -423,3 +423,164 @@ bool Widgets::Button(const char* label, const ImVec2& size_arg)
 {
     return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
 }
+
+bool Widgets::Hotkey(const char* label, int* k)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+	
+    ImGuiContext& g = *GImGui;
+    ImGuiIO& io = g.IO;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+
+    char buf_display[64] = "None";
+
+    bool active = false;
+    if (*k != 0 && g.ActiveId != id)
+        strcpy_s(buf_display, keyNames[*k]);
+    else if (g.ActiveId == id)
+    {
+        active = true;
+        strcpy_s(buf_display, "<Press a key>");
+    }
+
+    const ImVec2 hotkey_size = ImGui::CalcTextSize(buf_display, NULL, true);
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + hotkey_size + ImVec2(style.FramePadding.x * 2, style.FramePadding.y * 2));
+    const ImRect total_bb(window->DC.CursorPos, frame_bb.Max);
+
+    ImGui::ItemSize(total_bb, style.FramePadding.y);
+    if (!ImGui::ItemAdd(total_bb, id))
+        return false;
+
+    const bool focus_requested = ImGui::FocusableItemRegister(window, g.ActiveId == id);
+    const bool hovered = ImGui::ItemHoverable(frame_bb, id);
+
+    if (hovered)
+    {
+        ImGui::SetHoveredID(id);
+        g.MouseCursor = ImGuiMouseCursor_TextInput;
+    }
+
+    const bool user_clicked = hovered && io.MouseClicked[0];
+
+    if (focus_requested || user_clicked)
+    {
+        if (g.ActiveId != id)
+        {
+            memset(io.MouseDown, 0, sizeof(io.MouseDown));
+            memset(io.KeysDown, 0, sizeof(io.KeysDown));
+            *k = 0;
+        }
+    	
+        ImGui::SetActiveID(id, window);
+        ImGui::FocusWindow(window);
+    }
+    else if (io.MouseClicked[0] && g.ActiveId == id)
+        ImGui::ClearActiveID();
+
+    bool value_changed = false;
+    int key = *k;
+
+    if (g.ActiveId == id)
+    {
+        for (auto i = 0; i <= 6; i++)
+        {
+            if (io.MouseDown[i] || GetAsyncKeyState(VK_XBUTTON1) || GetAsyncKeyState(VK_XBUTTON2))
+            {
+                switch (i)
+            	{
+	                case 0:
+	                    key = VK_LBUTTON;
+	                    break;
+	                case 1:
+	                    key = VK_RBUTTON;
+	                    break;
+	                case 2:
+	                    key = VK_MBUTTON;
+	                    break;
+                }
+            	
+                if (GetAsyncKeyState(VK_XBUTTON2))
+                    key = VK_XBUTTON2;
+            	
+                if (GetAsyncKeyState(VK_XBUTTON1))
+                    key = VK_XBUTTON1;
+
+                value_changed = true;
+                ImGui::ClearActiveID();
+            }
+        }
+    	
+        if (!value_changed)
+        {
+            for (auto i = VK_BACK; i <= VK_RMENU; i++)
+            {
+                if (io.KeysDown[i])
+                {
+                    key = i;
+                    value_changed = true;
+                	
+                    ImGui::ClearActiveID();
+                }
+            }
+        }
+
+        if (ImGui::IsKeyPressedMap(ImGuiKey_Escape, false))
+        {
+            *k = 0;
+            ImGui::ClearActiveID();
+        }
+        else
+            *k = key;
+    }
+
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    static std::map<ImGuiID, float> activeAnimationMap;
+    auto activeAnimation = activeAnimationMap.find(id);
+    if (activeAnimation == activeAnimationMap.end())
+    {
+        activeAnimationMap.insert({ id, 0.f });
+        activeAnimation = activeAnimationMap.find(id);
+    }
+
+    if (active && activeAnimation->second < 1.f)
+        activeAnimation->second += elapsed / animationTime;
+
+    if (!active && activeAnimation->second > 0.f)
+        activeAnimation->second -= elapsed / animationTime;
+
+    activeAnimation->second = ImClamp(activeAnimation->second, 0.f, 1.f);
+
+    ImColor col = ImLerp(style.Colors[ImGuiCol_FrameBg], style.Colors[ImGuiCol_FrameBgHovered], hoverAnimation->second);
+    if (active)
+        col = ImLerp(col, style.Colors[ImGuiCol_FrameBgActive], activeAnimation->second);
+    else
+        col = ImLerp(style.Colors[ImGuiCol_FrameBgActive], col, 1.f - activeAnimation->second);
+
+    window->DrawList->AddRectFilled(frame_bb.Min, frame_bb.Max, col, style.FrameRounding);
+	
+    ImGui::RenderText(ImVec2(total_bb.Max.x + style.ItemInnerSpacing.x, total_bb.Min.y + style.FramePadding.y), label);
+    ImGui::RenderTextClipped(frame_bb.Min, frame_bb.Max, buf_display, NULL, &hotkey_size, ImVec2(0.5f, 0.5f), &frame_bb);
+
+    return value_changed;
+}
