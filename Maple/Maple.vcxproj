@@ -195,6 +195,7 @@
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="Sdk\Osu\GameBase.cpp" />
+    <ClCompile Include="Sdk\Osu\GameField.cpp" />
     <ClCompile Include="Sdk\Player\HitObject.cpp" />
     <ClCompile Include="Sdk\Player\HitObjectManager.cpp" />
     <ClCompile Include="Sdk\Player\Player.cpp" />
@@ -265,6 +266,7 @@
     <ClInclude Include="Sdk\DataTypes\Structs\Vector2.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
+    <ClInclude Include="Sdk\Osu\GameField.h" />
     <ClInclude Include="Sdk\Player\HitObject.h" />
     <ClInclude Include="Sdk\Player\HitObjectManager.h" />
     <ClInclude Include="Sdk\Player\Player.h" />

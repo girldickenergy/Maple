@@ -131,6 +131,9 @@
     <ClCompile Include="Sdk\Player\HitObject.cpp">
       <Filter>Sdk\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Osu\GameField.cpp">
+      <Filter>Sdk\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -449,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="Sdk\DataTypes\Enums\HitObjectType.h">
       <Filter>Sdk\DataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Osu\GameField.h">
+      <Filter>Sdk\Osu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

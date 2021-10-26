@@ -15,6 +15,7 @@
 #include "Sdk/Player/Player.h"
 #include "Sdk/Player/Ruleset.h"
 #include "Utilities/Logging/Logger.h"
+#include "Sdk/Osu/GameField.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple(const std::string& username);
@@ -79,12 +80,13 @@ void InitializeLogging(const std::string& username)
 
 void InitializeSdk()
 {
-    Player::Initialize();
-    AudioEngine::Initialize();
-    GameBase::Initialize();
     Anticheat::Initialize();
+    GameBase::Initialize();
+    GameField::Initialize();
     ConfigManager::Initialize();
+    AudioEngine::Initialize();
     ModManager::Initialize();
+    Player::Initialize();
     Ruleset::Initialize();
     HitObjectManager::Initialize();
 }
