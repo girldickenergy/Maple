@@ -728,13 +728,36 @@ bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_d
     ImVec2 grabPos = grab_bb.GetCenter();
     grabPos = ImClamp(grabPos, frame_bb.Min + ImVec2(sliderGrabSize.x / 2, 0), frame_bb.Max - ImVec2(sliderGrabSize.x / 2, 0));
 
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    ImColor sliderColour = ImColor(ImLerp(style.Colors[ImGuiCol_FrameBgActive], style.Colors[ImGuiCol_FrameBgHovered], hoverAnimation->second));
+    ImColor sliderFillColour = ImColor(ImLerp(StyleProvider::SliderColour, StyleProvider::SliderHoveredColour, hoverAnimation->second));
+    ImColor sliderGrabColour = ImColor(ImLerp(StyleProvider::SliderGrabColour, StyleProvider::SliderGrabHoveredColour, hoverAnimation->second));
+	
     // Draw frame
     ImGui::RenderNavHighlight(frame_bb, id);
-    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, ImGui::GetColorU32(ImGuiCol_FrameBgActive), true, g.Style.FrameRounding);
-    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, ImVec2(grabPos.x, frame_bb.Max.y - overlapAllowance.y), ImGui::GetColorU32(ImGuiCol_FrameBg), true, g.Style.FrameRounding);
+    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, sliderColour, true, g.Style.FrameRounding);
+    ImGui::RenderFrame(frame_bb.Min + overlapAllowance, ImVec2(grabPos.x, frame_bb.Max.y - overlapAllowance.y), sliderFillColour, true, g.Style.FrameRounding);
 	
     // Render grab
-    window->DrawList->AddCircleFilled(grabPos, sliderGrabSize.y / 2, ImGui::GetColorU32(ImGuiCol_FrameBgHovered), 36);
+    window->DrawList->AddCircleFilled(grabPos, sliderGrabSize.y / 2, sliderGrabColour, 36);
 
     if (label_size.x > 0.0f)
 	    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);

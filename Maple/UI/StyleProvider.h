@@ -45,6 +45,10 @@ public:
 	static inline ImVec4 CheckMarkColour;
 	static inline ImVec4 CheckMarkHoveredColour;
 	static inline ImVec4 CheckMarkActiveColour;
+	static inline ImVec4 SliderGrabColour;
+	static inline ImVec4 SliderGrabHoveredColour;
+	static inline ImVec4 SliderColour;
+	static inline ImVec4 SliderHoveredColour;
 
 	static inline void* MapleLogoTexture;
 	static inline void* AvatarTexture;
@@ -136,24 +140,60 @@ public:
 
 		const float mottoColourMultiplier = 0.2126f * MenuColour.x + 0.7152f * MenuColour.y + 0.0722f * MenuColour.z > 0.5f ? -1.f : 1.f;
 		const float menuColourMultiplier = MenuColour.x < 0.1f && MenuColour.y < 0.1f && MenuColour.z < 0.1f ? -1.f : 1.f;
-		const float controlColourMultiplier = ControlColour.x > 0.90f && ControlColour.y > 0.90f && ControlColour.z > 0.90f ? -1.f : 1.f;
-		const float controlActiveColourMultiplier = ControlColour.x < 0.05f && ControlColour.y < 0.05f && ControlColour.z < 0.05f ? -1.f : 1.f;
 
+		style.Colors[ImGuiCol_FrameBg] = ControlColour;
+
+		//i can't think of a better way to implement this, sorry
+		if (ControlColour.x > 0.85f && ControlColour.y > 0.85f && ControlColour.z > 0.85f)
+		{
+			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x - 0.1f, ControlColour.y - 0.1f, ControlColour.z - 0.1f, ControlColour.w);
+			style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f, ControlColour.y - 0.05f, ControlColour.z - 0.05f, ControlColour.w);
+
+			CheckMarkColour = ImVec4(ControlColour.x - 0.05f, ControlColour.y - 0.05f, ControlColour.z - 0.05f, ControlColour.w);
+			CheckMarkHoveredColour = ImVec4(ControlColour.x - 0.15f, ControlColour.y - 0.15f, ControlColour.z - 0.15f, ControlColour.w);
+			CheckMarkActiveColour = ControlColour;
+
+			SliderColour = ControlColour;
+			SliderHoveredColour = ImVec4(ControlColour.x - 0.15f, ControlColour.y - 0.15f, ControlColour.z - 0.15f, ControlColour.w);
+			SliderGrabColour = ImVec4(ControlColour.x - 0.1f, ControlColour.y - 0.1f, ControlColour.z - 0.1f, ControlColour.w);
+			SliderGrabHoveredColour = ImVec4(ControlColour.x - 0.2f, ControlColour.y - 0.2f, ControlColour.z - 0.2f, ControlColour.w);
+		}
+		else if (ControlColour.x < 0.05f && ControlColour.y < 0.05f && ControlColour.z < 0.05f)
+		{
+			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.1f, ControlColour.y + 0.1f, ControlColour.z + 0.1f, ControlColour.w);
+			style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+			
+			CheckMarkColour = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+			CheckMarkHoveredColour = ImVec4(ControlColour.x + 0.15f, ControlColour.y + 0.15f, ControlColour.z + 0.15f, ControlColour.w);
+			CheckMarkActiveColour = ControlColour;
+
+			SliderColour = ControlColour;
+			SliderHoveredColour = ImVec4(ControlColour.x + 0.15f, ControlColour.y + 0.15f, ControlColour.z + 0.15f, ControlColour.w);
+			SliderGrabColour = ImVec4(ControlColour.x + 0.1f, ControlColour.y + 0.1f, ControlColour.z + 0.1f, ControlColour.w);
+			SliderGrabHoveredColour = ImVec4(ControlColour.x + 0.2f, ControlColour.y + 0.2f, ControlColour.z + 0.2f, ControlColour.w);
+		}
+		else
+		{
+			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+			style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f, ControlColour.y - 0.05f, ControlColour.z - 0.05f, ControlColour.w);
+
+			CheckMarkColour = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+			CheckMarkHoveredColour = ImVec4(ControlColour.x + 0.1f, ControlColour.y + 0.1f, ControlColour.z + 0.1f, ControlColour.w);
+			CheckMarkActiveColour = ControlColour;
+
+			SliderColour = ControlColour;
+			SliderHoveredColour = ImVec4(ControlColour.x + 0.1f, ControlColour.y + 0.1f, ControlColour.z + 0.1f, ControlColour.w);
+			SliderGrabColour = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
+			SliderGrabHoveredColour = ImVec4(ControlColour.x + 0.15f, ControlColour.y + 0.15f, ControlColour.z + 0.15f, ControlColour.w);
+		}
+		
 		MottoColour = ImVec4(MenuColour.x + 0.2f * mottoColourMultiplier, MenuColour.y + 0.2f * mottoColourMultiplier, MenuColour.z + 0.2f * mottoColourMultiplier, MenuColour.w);
 		MenuColourDark = ImVec4(MenuColour.x - 0.05f * menuColourMultiplier, MenuColour.y - 0.05f * menuColourMultiplier, MenuColour.z - 0.05f * menuColourMultiplier, MenuColour.w);
 		MenuColourVeryDark = ImVec4(MenuColour.x - 0.1f * menuColourMultiplier, MenuColour.y - 0.1f * menuColourMultiplier, MenuColour.z - 0.1f * menuColourMultiplier, MenuColour.w);
-		PanelGradientStartColour = ImColor(MenuColourVeryDark.x + 0.025f * menuColourMultiplier, MenuColourVeryDark.y + 0.025f * menuColourMultiplier, MenuColourVeryDark.z + 0.025f * menuColourMultiplier, StyleProvider::MenuColourVeryDark.w);
+		PanelGradientStartColour = ImColor(MenuColourVeryDark.x + 0.025f * menuColourMultiplier, MenuColourVeryDark.y + 0.025f * menuColourMultiplier, MenuColourVeryDark.z + 0.025f * menuColourMultiplier, MenuColourVeryDark.w);
 		
 		style.Colors[ImGuiCol_WindowBg] = MenuColour;
 		style.Colors[ImGuiCol_ChildBg] = MenuColourDark;
-		
-		style.Colors[ImGuiCol_FrameBg] = ControlColour;
-		style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.05f * controlColourMultiplier, ControlColour.y + 0.05f * controlColourMultiplier, ControlColour.z + 0.05f * controlColourMultiplier, ControlColour.w);
-		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x - 0.05f * controlActiveColourMultiplier, ControlColour.y - 0.05f * controlActiveColourMultiplier, ControlColour.z - 0.05f * controlActiveColourMultiplier, ControlColour.w);
-
-		CheckMarkColour = ImVec4(ControlColour.x + 0.05f * controlColourMultiplier, ControlColour.y + 0.05f * controlColourMultiplier, ControlColour.z + 0.05f * controlColourMultiplier, ControlColour.w);
-		CheckMarkHoveredColour = ImVec4(ControlColour.x + 0.1f * controlColourMultiplier, ControlColour.y + 0.1f * controlColourMultiplier, ControlColour.z + 0.1f * controlColourMultiplier, ControlColour.w);
-		CheckMarkActiveColour = ControlColour;
 		
 		style.Colors[ImGuiCol_Header] = style.Colors[ImGuiCol_FrameBg];
 		style.Colors[ImGuiCol_HeaderHovered] = style.Colors[ImGuiCol_FrameBgHovered];
