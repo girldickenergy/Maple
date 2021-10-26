@@ -11,6 +11,7 @@ void GameBase::Initialize()
 
 	instanceAddress = RawGameBase["Instance"].Field.GetAddress();
 	modeAddress = RawGameBase["Mode"].Field.GetAddress();
+	clientBoundsField = RawGameBase["ClientBounds"].Field;
 }
 
 void* GameBase::Instance()
@@ -26,4 +27,9 @@ OsuModes GameBase::Mode()
 bool GameBase::HasLogin()
 {
 	return hasLogin();
+}
+
+sRectangle* GameBase::GetClientBounds()
+{
+	return static_cast<sRectangle*>(clientBoundsField.GetAddress(Instance()));
 }

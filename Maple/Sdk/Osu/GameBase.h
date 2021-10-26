@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Explorer/TypeExplorer.h>
+#include "../DataTypes/Structs/sRectangle.h"
 
 enum class OsuModes
 {
@@ -38,6 +39,7 @@ class GameBase
 	
 	static inline void* instanceAddress = nullptr;
 	static inline void* modeAddress = nullptr;
+    static inline Field clientBoundsField;
 public:
 	static inline TypeExplorer RawGameBase;
 	
@@ -45,4 +47,5 @@ public:
 	static void* Instance();
     static OsuModes Mode();
     static bool HasLogin();
+    static sRectangle* GetClientBounds();
 };
