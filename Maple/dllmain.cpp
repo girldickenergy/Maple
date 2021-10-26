@@ -5,6 +5,7 @@
 
 #include "Features/Timewarp/Timewarp.h"
 #include "Features/Visuals/VisualsSpoofers.h"
+#include "Features/AimAssist/AimAssist.h"
 #include "Hooks/Hooks.h"
 #include "Sdk/Anticheat/Anticheat.h"
 #include "Sdk/Audio/AudioEngine.h"
@@ -38,17 +39,17 @@ std::string GetWorkingDirectory(const std::string& username)
 {
     char* val;
     size_t len;
-    errno_t err = _dupenv_s(&val, &len, "APPDATA"); //xor later
+    errno_t err = _dupenv_s(&val, &len, "APPDATA"); //TODO: xor later
 
     std::string path(val);
-    path += "\\" + username; //hash later
+    path += "\\" + username; //TODO: hash later
     
     return path;
 }
 
 DWORD WINAPI Initialize(LPVOID data_addr)
 {
-	//initialize comms stuff here
+	//TODO: initialize comms stuff here
     InitializeMaple("MapleRewriteTest");
 
     return 0;
@@ -97,4 +98,5 @@ void StartFunctions()
 	
     CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(Timewarp::TimewarpThread), nullptr, 0, nullptr);
     CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(VisualsSpoofers::FlashlightRemoverThread), nullptr, 0, nullptr);
+    CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(AimAssist::AssistThread), nullptr, 0, nullptr);
 }
