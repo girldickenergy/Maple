@@ -87,7 +87,7 @@ void Logger::Initialize(const std::string& logFilePath, LogSeverity scope, bool 
 	if (initializeConsole)
 	{
 		AllocConsole();
-		freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+		freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
 		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		SetConsoleTitle(consoleTitle);
