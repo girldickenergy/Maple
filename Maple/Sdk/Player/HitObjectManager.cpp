@@ -26,7 +26,7 @@ void HitObjectManager::Initialize()
 	hitObjectSegmentCountField			 = RawHitObject["SegmentCount"].Field;
 	hitObjectSpatialLengthField			 = RawHitObject["SpatialLength"].Field;
 	hitObjectSliderCurvePointsField		 = RawHitObjectSliderOsu["sliderCurvePoints"].Field;
-	hitObjectCumulativeLengthsField		 = RawHitObjectSliderOsu["cumulativeLength"].Field;
+	hitObjectCumulativeLengthsField		 = RawHitObjectSliderOsu["cumulativeLengths"].Field;
 	hitObjectSliderCurveSmoothLinesField = RawHitObjectSliderOsu["sliderCurveSmoothLines"].Field;
 
 	obfuscatedType = activeModsField.GetTypeUnsafe();
@@ -112,53 +112,54 @@ int HitObjectManager::GetHitObjectsCount()
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
-	void* hitObjectInstance = reinterpret_cast<void*>(getObject(index));
+	void* hitObjectInstance = getObject(Instance(), index);
 
-	HitObjectType type	 = *reinterpret_cast<HitObjectType*>(hitObjectTypeField.GetAddress(hitObjectInstance));
-	int startTime		 = *reinterpret_cast<int*>(hitObjectStartTimeField.GetAddress(hitObjectInstance));
-	int endTime			 = *reinterpret_cast<int*>(hitObjectEndTimeField.GetAddress(hitObjectInstance));
-	Vector2 position	 = *reinterpret_cast<Vector2*>(hitObjectPositionField.GetAddress(hitObjectInstance));
-	int segmentCount	 = *reinterpret_cast<int*>(hitObjectSegmentCountField.GetAddress(hitObjectInstance));
-	double spatialLength = *reinterpret_cast<double*>(hitObjectSpatialLengthField.GetAddress(hitObjectInstance));
+	const HitObjectType type   = *reinterpret_cast<HitObjectType*>(hitObjectTypeField.GetAddress(hitObjectInstance));
+	const int startTime		   = *reinterpret_cast<int*>(hitObjectStartTimeField.GetAddress(hitObjectInstance));
+	const int endTime		   = *reinterpret_cast<int*>(hitObjectEndTimeField.GetAddress(hitObjectInstance));
+	const Vector2 position	   = *reinterpret_cast<Vector2*>(hitObjectPositionField.GetAddress(hitObjectInstance));
+	const int segmentCount	   = *reinterpret_cast<int*>(hitObjectSegmentCountField.GetAddress(hitObjectInstance));
+	const double spatialLength = *reinterpret_cast<double*>(hitObjectSpatialLengthField.GetAddress(hitObjectInstance));
 
 	if ((type & HitObjectType::Slider) > HitObjectType::None)
 	{
-		Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectEndPositionField.GetAddress(hitObjectInstance));
+		const Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectEndPositionField.GetAddress(hitObjectInstance));
 
 		std::vector<Vector2> sliderCurvePoints;
 		std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines;
 		std::vector<double> cumulativeLengths;
 
-		uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurvePointsField.GetAddress(hitObjectInstance));
-		uintptr_t sliderCurvePointsItems   = *reinterpret_cast<uintptr_t*>(sliderCurvePointsPointer + 0x04);
-		int sliderCurvePointsCount		   = *reinterpret_cast<int*>(sliderCurvePointsItems + 0x0C);
+		const uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurvePointsField.GetAddress(hitObjectInstance));
+		const uintptr_t sliderCurvePointsItems   = *reinterpret_cast<uintptr_t*>(sliderCurvePointsPointer + 0x04);
+		const int sliderCurvePointsCount		 = *reinterpret_cast<int*>(sliderCurvePointsPointer + 0x0C);
 
-		for (uintptr_t i = 0, item = *reinterpret_cast<uintptr_t*>(sliderCurvePointsItems + 0x08 + 0x04 * i); i < sliderCurvePointsCount; i++)
+		for (int i = 0; i < sliderCurvePointsCount; i++)
 		{
-			Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
-			Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
+			Vector2 point = *reinterpret_cast<Vector2*>(sliderCurvePointsItems + 0x08 + 0x08 * i);
 
-			sliderCurvePoints.emplace_back(point1, point2);
+			sliderCurvePoints.emplace_back(point);
 		}
 
-		uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
-		uintptr_t sliderCurveSmoothLinesItems   = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
-		int sliderCurveSmoothLinesCount			= *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
+		const uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
+		const uintptr_t sliderCurveSmoothLinesItems   = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
+		const int sliderCurveSmoothLinesCount		  = *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
 
-		for (uintptr_t i = 0, item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * i); i < sliderCurveSmoothLinesCount; i++)
+		for (int i = 0; i < sliderCurveSmoothLinesCount; i++)
 		{
+			const uintptr_t item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * i);
+			
 			Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
 			Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
 
 			sliderCurveSmoothLines.emplace_back(point1, point2);
 		}
 
-		uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
-		uintptr_t cumulativeLengthsItems   = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
-		int cumulativeLengthsCount		   = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
+		const uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
+		const uintptr_t cumulativeLengthsItems   = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
+		const int cumulativeLengthsCount		 = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
 
-		for (double i = 0, item = *reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * static_cast<int>(i)); i < cumulativeLengthsCount; i++)
-			cumulativeLengths.emplace_back(item);
+		for (int i = 0; i < cumulativeLengthsCount; i++)
+			cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * i));
 
 		return HitObject(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
 	}

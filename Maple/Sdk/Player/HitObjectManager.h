@@ -37,7 +37,7 @@ class HitObjectManager
 	typedef void(__fastcall* fnObfuscatedSetValue)(void* instance, Mods value);
 	static inline fnObfuscatedSetValue obfuscatedSetValue;
 
-	typedef uintptr_t(__fastcall* fnGetObject)(int index);
+	typedef void*(__fastcall* fnGetObject)(void* instance, int index);
 	static inline fnGetObject getObject;
 public:
 	static inline TypeExplorer RawHitObjectManager;
@@ -58,7 +58,7 @@ public:
 	static float GetHitObjectRadius();
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
-	HitObject GetHitObject(int index);
-	std::vector<HitObject> GetAllHitObjects();
+	static HitObject GetHitObject(int index);
+	static std::vector<HitObject> GetAllHitObjects();
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 };
