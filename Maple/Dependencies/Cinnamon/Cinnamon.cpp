@@ -7,7 +7,7 @@ LONG __stdcall Cinnamon::hwbrkHandler(PEXCEPTION_POINTERS ExceptionInfo)
 {
 	if (ExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_SINGLE_STEP || ExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT)
 	{
-		for (auto hook : hooks)
+		for (const auto& hook : hooks)
 		{
 			if (hook->Type == HookType::HardwareBreakpoint)
 			{
@@ -29,7 +29,7 @@ void* __fastcall Cinnamon::hkBaseThreadInitThunk(ULONG Unknown, PVOID StartAddre
 	HANDLE	hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, GetCurrentThreadId());
 	if (hThread)
 	{
-		for (auto hook : hooks)
+		for (const auto& hook : hooks)
 		{
 			if (hook->Type == HookType::HardwareBreakpoint)
 			{
@@ -46,7 +46,7 @@ void* __fastcall Cinnamon::hkBaseThreadInitThunk(ULONG Unknown, PVOID StartAddre
 
 Hook* Cinnamon::findHook(std::string name)
 {
-	for (auto& hook : hooks)
+	for (const auto& hook : hooks)
 		if (hook->Name == name)
 			return hook;
 	
