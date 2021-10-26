@@ -146,9 +146,47 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::EasyMode ? 4 : 15)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+                    Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
+                    Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
+                    Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
+                    if (Config::AimAssist::EasyMode)
+                    {
+                        Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        // Recalculate aim assist values
+                        Config::AimAssist::Strength = Config::AimAssist::EasyModeStrength / 2.f < 0.7f ? 
+                            Config::AimAssist::EasyModeStrength / 2.f : (Config::AimAssist::EasyModeStrength / 2.f) - 0.214f;
+                        Config::AimAssist::BaseFOV = Config::AimAssist::EasyModeStrength * 50.f;
+                        Config::AimAssist::MaximumFOVScale = (Config::AimAssist::EasyModeStrength * 2.f) + .25f;
+                        Config::AimAssist::MinimumFOVTotal = 0;
+                        Config::AimAssist::MaximumFOVTotal = Config::AimAssist::EasyModeStrength * 220;
+                        Config::AimAssist::AssistOnSliders = true;
+                        Config::AimAssist::FlipSliderballDeadzone = false;
+                        Config::AimAssist::SliderballDeadzone = (Config::AimAssist::EasyModeStrength * 12.2f) + 2.1f;
+                        Config::AimAssist::StrengthMultiplier = 1.f;
+                        Config::AimAssist::AssistDeadzone = 3.f;
+                        Config::AimAssist::ResyncLeniency = 3.5f;
+                        if (Config::AimAssist::EasyModeStrength > 1.2f)
+                            Config::AimAssist::ResyncLeniencyFactor = 0.55f;
+                        else
+                            Config::AimAssist::ResyncLeniencyFactor = 0.693f;
+                    }
+                    else
+                    {
+                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders);
+                        Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone);
+                        Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999, "%.3f", ImGuiSliderFlags_ClampOnInput);
+                    }
                 }
                 Widgets::EndPanel();
             }
@@ -195,10 +233,10 @@ void MainMenu::Render()
                     ImGui::Spacing();
 
                     bool coloursChanged = false;
-                    coloursChanged |= ImGui::ColorEdit4("Accent colour", (float*)&Config::Visuals::AccentColour, ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Menu colour", (float*)&Config::Visuals::MenuColour, ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Control colour", (float*)&Config::Visuals::ControlColour, ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Text colour", (float*)&Config::Visuals::TextColour, ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Accent colour", reinterpret_cast<float*>(&Config::Visuals::AccentColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Menu colour", reinterpret_cast<float*>(&Config::Visuals::MenuColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Control colour", reinterpret_cast<float*>(&Config::Visuals::ControlColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Text colour", reinterpret_cast<float*>(&Config::Visuals::TextColour), ImGuiColorEditFlags_NoInputs);
 
                     if (coloursChanged)
                         StyleProvider::UpdateColours();
