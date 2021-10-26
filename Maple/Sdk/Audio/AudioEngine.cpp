@@ -13,11 +13,15 @@ void AudioEngine::Initialize()
     trackVirtualPlaybackRate = RawAudioTrackVirtual["playbackRate"].Field;
     audioStreamField = RawAudioTrack["<audioStream>k__BackingField"].Field;
     frequencyLockField = RawAudioTrack["<FrequencyLock>k__BackingField"].Field;
+    trackVirtualPositionField = RawAudioTrackVirtual["position"].Field;
 
     currentTrackInstanceAddress = RawAudioEngine["AudioTrack"].Field.GetAddress();
     initialFrequencyAddress = RawAudioEngine["InitialFrequency"].Field.GetAddress();
     nightcoreAddress = RawAudioEngine["Nightcore"].Field.GetAddress();
     lastAudioTimeAccurateSetAddress = RawAudioEngine["lastAudioTimeAccurateSet"].Field.GetAddress();
+    offsetAddress = RawAudioEngine["Offset"].Field.GetAddress();
+    extendedTimeAddress = RawAudioEngine["ExtendedTime"].Field.GetAddress();
+    timeAddress = RawAudioEngine["Time"].Field.GetAddress();
 }
 
 void* AudioEngine::CurrentTrackInstance()
@@ -81,4 +85,38 @@ void AudioEngine::SetPlaybackRate(double rate)
             }
         }
     }
+}
+
+int AudioEngine::Offset()
+{
+    return *static_cast<int*>(offsetAddress);
+}
+
+bool AudioEngine::ExtendedTime()
+{
+    return *static_cast<bool*>(extendedTimeAddress);
+}
+
+int AudioEngine::Time()
+{
+    return *static_cast<int*>(timeAddress);
+}
+
+int AudioEngine::TimeAccurate()
+{
+    void* trackInstance = CurrentTrackInstance();
+    if (!trackInstance || ExtendedTime())
+        return Time();
+
+    const int trackHandle = TrackHandle();
+
+    int time;
+    if (trackHandle == 0)
+        time = static_cast<int>(round(*static_cast<double*>(trackVirtualPositionField.GetAddress(trackInstance))));
+    else
+        time = static_cast<int>(round(channelBytes2Seconds(trackHandle, channelGetPosition(trackHandle, 0)))) * 1000;
+
+    time -= Offset();
+
+    return time;
 }
