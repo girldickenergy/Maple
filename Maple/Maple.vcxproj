@@ -182,6 +182,7 @@
     <ClCompile Include="Dependencies\Vanilla\NameCache.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Features\AimAssist\AimAssist.cpp" />
     <ClCompile Include="Features\Misc\RichPresence.cpp" />
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
@@ -191,7 +192,6 @@
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
-    <ClCompile Include="Sdk\AudioEngine\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
@@ -254,6 +254,7 @@
     <ClInclude Include="Dependencies\Vanilla\NameCache.h" />
     <ClInclude Include="Dependencies\Vanilla\Patching\Patch.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
+    <ClInclude Include="Features\AimAssist\AimAssist.h" />
     <ClInclude Include="Features\Misc\RichPresence.h" />
     <ClInclude Include="Features\Misc\ScoreSubmission.h" />
     <ClInclude Include="Features\Misc\SpectateHandler.h" />
@@ -261,10 +262,10 @@
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
-    <ClInclude Include="Sdk\AudioEngine\AudioEngine.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
     <ClInclude Include="Sdk\DataTypes\Enums\HitObjectType.h" />
+    <ClInclude Include="Sdk\DataTypes\Structs\sRectangle.h" />
     <ClInclude Include="Sdk\DataTypes\Structs\Vector2.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
