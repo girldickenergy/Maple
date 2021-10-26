@@ -7,6 +7,28 @@
 class Config
 {
 public:
+	struct AimAssist
+	{
+		static inline bool Enabled = false;
+		static inline bool EasyMode = true;
+		/* Easy mode arguments*/
+		static inline float EasyModeStrength = 0.5f;
+		/* Advanced mode arguments*/
+		static inline float Strength = 0.6f;
+		static inline int BaseFOV = 45;
+		static inline float MaximumFOVScale = 2.5f;
+		static inline float MinimumFOVTotal = 0.f;
+		static inline float MaximumFOVTotal = 225.f;
+		static inline float SliderballDeadzone = 12.5f;
+		static inline bool FlipSliderballDeadzone = true;
+		static inline float StrengthMultiplier = 1.f;
+		static inline float AssistDeadzone = 3.f;
+		static inline float ResyncLeniency = 3.5f;
+		static inline float ResyncLeniencyFactor = 0.698f;
+		static inline bool AssistOnSliders = true;
+		static inline bool DrawDebugOverlay = false;
+	};
+
 	struct Timewarp
 	{
 		static inline bool Enabled = false;
