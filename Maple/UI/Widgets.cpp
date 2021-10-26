@@ -233,11 +233,9 @@ void Widgets::BeginPanel(const char* label, const ImVec2& size)
 
     const float titleBarHeight = labelSize.y + StyleProvider::Padding.y * 2;
 
-    const ImColor gradientStartColour = ImColor(StyleProvider::MenuColourVeryDark.x + 0.025f, StyleProvider::MenuColourVeryDark.y + 0.025f, StyleProvider::MenuColourVeryDark.z + 0.025f, StyleProvider::MenuColourVeryDark.w);
-
     ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + titleBarHeight), ImColor(StyleProvider::MenuColourVeryDark), style.ChildRounding, ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_TopRight);
     ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + size.y + StyleProvider::Padding.y * 2), ImColor(StyleProvider::MenuColourDark), style.ChildRounding, ImDrawCornerFlags_BotLeft | ImDrawCornerFlags_BotRight);
-    ImGui::GetWindowDrawList()->AddRectFilledMultiColor(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + StyleProvider::Padding.y), gradientStartColour, gradientStartColour, ImColor(StyleProvider::MenuColourDark), ImColor(StyleProvider::MenuColourDark));
+    ImGui::GetWindowDrawList()->AddRectFilledMultiColor(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + StyleProvider::Padding.y), ImColor(StyleProvider::PanelGradientStartColour), ImColor(StyleProvider::PanelGradientStartColour), ImColor(StyleProvider::MenuColourDark), ImColor(StyleProvider::MenuColourDark));
 	
     ImGui::SetCursorScreenPos(ImVec2(pos.x + size.x / 2 - labelSize.x / 2, pos.y + titleBarHeight / 2 - labelSize.y / 2));
     ImGui::TextColored(StyleProvider::AccentColour, label);

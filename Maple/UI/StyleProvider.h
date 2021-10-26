@@ -41,6 +41,7 @@ public:
 	static inline ImVec4 MottoColour;
     static inline ImVec4 MenuColourDark;
     static inline ImVec4 MenuColourVeryDark;
+	static inline ImVec4 PanelGradientStartColour;
 	static inline ImVec4 CheckMarkColour;
 	static inline ImVec4 CheckMarkHoveredColour;
 	static inline ImVec4 CheckMarkActiveColour;
@@ -141,6 +142,7 @@ public:
 		MottoColour = ImVec4(MenuColour.x + 0.2f * mottoColourMultiplier, MenuColour.y + 0.2f * mottoColourMultiplier, MenuColour.z + 0.2f * mottoColourMultiplier, MenuColour.w);
 		MenuColourDark = ImVec4(MenuColour.x - 0.05f * menuColourMultiplier, MenuColour.y - 0.05f * menuColourMultiplier, MenuColour.z - 0.05f * menuColourMultiplier, MenuColour.w);
 		MenuColourVeryDark = ImVec4(MenuColour.x - 0.1f * menuColourMultiplier, MenuColour.y - 0.1f * menuColourMultiplier, MenuColour.z - 0.1f * menuColourMultiplier, MenuColour.w);
+		PanelGradientStartColour = ImColor(MenuColourVeryDark.x + 0.025f * menuColourMultiplier, MenuColourVeryDark.y + 0.025f * menuColourMultiplier, MenuColourVeryDark.z + 0.025f * menuColourMultiplier, StyleProvider::MenuColourVeryDark.w);
 		
 		style.Colors[ImGuiCol_WindowBg] = MenuColour;
 		style.Colors[ImGuiCol_ChildBg] = MenuColourDark;
