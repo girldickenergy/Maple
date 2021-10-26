@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -191,6 +191,7 @@
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
+    <ClCompile Include="Sdk\AudioEngine\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
+    <ClInclude Include="Sdk\AudioEngine\AudioEngine.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
     <ClInclude Include="Sdk\DataTypes\Enums\HitObjectType.h" />

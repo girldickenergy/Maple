@@ -235,6 +235,9 @@
     <Filter Include="Sdk\DataTypes\Structs">
       <UniqueIdentifier>{95cc3edf-ad76-4946-8e88-959991135327}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sdk\AudioEngine">
+      <UniqueIdentifier>{2d3e302b-1722-42ed-a3ce-002ba4097ba0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utilities\Logging\Logger.h">
