@@ -2,12 +2,15 @@
 
 #include <Cinnamon.h>
 
+
+#include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Misc/RichPresence.h"
 #include "../Features/Misc/ScoreSubmission.h"
 #include "../Features/Misc/SpectateHandler.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
 #include "../Sdk/ConfigManager/ConfigManager.h"
+#include "../Sdk/Player/Player.h"
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
 
@@ -70,6 +73,16 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked Submit");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook Submit");
+
+	if (installManagedHook("OnLoadComplete", Vanilla::Explorer["osu.GameModes.Play.Player"]["OnLoadComplete"].Method, Player::OnPlayerLoadCompleteHook, reinterpret_cast<LPVOID*>(&Player::oOnPlayerLoadComplete)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked OnLoadComplete");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook OnLoadComplete");
+
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition), HookType::HardwareBreakpoint) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)

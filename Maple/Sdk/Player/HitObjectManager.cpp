@@ -18,6 +18,8 @@ void HitObjectManager::Initialize()
 	hitWindow100Field					 = RawHitObjectManager["HitWindow100"].Field;
 	hitWindow50Field					 = RawHitObjectManager["HitWindow50"].Field;
 	hitObjectRadiusField				 = RawHitObjectManager["HitObjectRadius"].Field;
+	currentHitObjectIndexField			 = RawHitObjectManager["currentHitObjectIndex"].Field;
+	hitObjectsCountField				 = RawHitObjectManager["hitObjectsCount"].Field;
 	hitObjectTypeField					 = RawHitObject["Type"].Field;
 	hitObjectStartTimeField				 = RawHitObject["StartTime"].Field;
 	hitObjectEndTimeField				 = RawHitObject["EndTime"].Field;

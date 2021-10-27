@@ -2,6 +2,8 @@
 
 #include <Vanilla.h>
 
+#include "../../Features/AimAssist/AimAssist.h"
+
 void Player::Initialize()
 {
 	RawPlayer = Vanilla::Explorer["osu.GameModes.Play.Player"];
@@ -44,4 +46,12 @@ bool Player::IsPlaying()
 PlayModes Player::PlayMode()
 {
 	return *static_cast<PlayModes*>(modeAddress);
+}
+
+BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
+{
+	if (success)
+		AimAssist::Reset();
+
+	return oOnPlayerLoadComplete(instance, success);
 }

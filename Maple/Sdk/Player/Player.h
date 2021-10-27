@@ -29,4 +29,8 @@ public:
 	static bool IsRetrying();
 	static bool IsPlaying();
 	static PlayModes PlayMode();
+
+	typedef BOOL(__fastcall* fnOnPlayerLoadComplete)(void* instance, BOOL success);
+	static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete;
+	static BOOL __fastcall OnPlayerLoadCompleteHook(void* instance, BOOL success);
 };

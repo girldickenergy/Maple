@@ -120,9 +120,8 @@ void MainMenu::Render()
         }
         ImGui::EndChild();
 
-        
         ImGui::SetCursorPos(ImVec2(StyleProvider::MainMenuSideBarSize.x, 0) + StyleProvider::Padding);
-        ImGui::BeginChild("Options", ImVec2(StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x, StyleProvider::MainMenuSize.y) - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
+        ImGui::BeginChild("Options", ImVec2(StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x, StyleProvider::MainMenuSize.y) - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
         {
             ImGui::PushFont(StyleProvider::FontDefault);
         	
@@ -146,36 +145,30 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::EasyMode ? 4 : 15)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
                     Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
-                    if (Config::AimAssist::EasyMode)
+                }
+                Widgets::EndPanel();
+
+                ImGui::Spacing();
+
+            	if (Config::AimAssist::EasyMode)
+            	{
+                    Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
                     {
-                        Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        // Recalculate aim assist values
-                        Config::AimAssist::Strength = Config::AimAssist::EasyModeStrength / 2.f < 0.7f ? 
-                            Config::AimAssist::EasyModeStrength / 2.f : (Config::AimAssist::EasyModeStrength / 2.f) - 0.214f;
-                        Config::AimAssist::BaseFOV = Config::AimAssist::EasyModeStrength * 50.f;
-                        Config::AimAssist::MaximumFOVScale = (Config::AimAssist::EasyModeStrength * 2.f) + .25f;
-                        Config::AimAssist::MinimumFOVTotal = 0;
-                        Config::AimAssist::MaximumFOVTotal = Config::AimAssist::EasyModeStrength * 220;
-                        Config::AimAssist::AssistOnSliders = true;
-                        Config::AimAssist::FlipSliderballDeadzone = false;
-                        Config::AimAssist::SliderballDeadzone = (Config::AimAssist::EasyModeStrength * 12.2f) + 2.1f;
-                        Config::AimAssist::StrengthMultiplier = 1.f;
-                        Config::AimAssist::AssistDeadzone = 3.f;
-                        Config::AimAssist::ResyncLeniency = 3.5f;
-                        if (Config::AimAssist::EasyModeStrength > 1.2f)
-                            Config::AimAssist::ResyncLeniencyFactor = 0.55f;
-                        else
-                            Config::AimAssist::ResyncLeniencyFactor = 0.693f;
+                        Widgets::SliderFloat("Strength###EasyModeStrengthSlider", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                     }
-                    else
+                    Widgets::EndPanel();
+            	}
+                else
+                {
+                    Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                     {
-                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Strength###AdvancedModeStrengthSlider", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput);
@@ -187,8 +180,8 @@ void MainMenu::Render()
                         Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999, "%.3f", ImGuiSliderFlags_ClampOnInput);
                     }
+                    Widgets::EndPanel();
                 }
-                Widgets::EndPanel();
             }
         	if (currentTab == 2)
         	{

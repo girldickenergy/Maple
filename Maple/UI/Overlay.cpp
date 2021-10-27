@@ -6,6 +6,7 @@
 #include "MainMenu.h"
 #include "ScoreSubmissionDialogue.h"
 #include "StyleProvider.h"
+#include "../Features/AimAssist/AimAssist.h"
 #include "GL/gl3w.h"
 
 void Overlay::enableRaw()
@@ -117,6 +118,8 @@ void Overlay::Render()
 
 	if (ScoreSubmissionDialogue::IsOpen)
 		ScoreSubmissionDialogue::Render();
+
+	AimAssist::DrawDebugOverlay();
 	
 	ImGui::Render();
 
