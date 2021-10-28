@@ -1,60 +1,98 @@
 #pragma once
 
+#include <comdef.h>
 #include <string>
+#include <vector>
 
 #include "imgui.h"
 
 class Config
 {
+	static void ensureDirectoryExists();
+	static bool isSameName(const std::string& a, const std::string& b);
+	static bool isValidName(std::string name);
+	static ImVec4 parseImVec4(std::string vec);
+	static void loadDefaults();
 public:
+	static inline std::string Directory;
+	static inline std::vector<std::string> Configs;
+	static inline int CurrentConfig = 0;
+	static inline char NewConfigName[20] = { };
+
+	static void Initialize(const std::string& directoryName);
+	static void Load();
+	static void Save();
+	static void Create();
+	static void Refresh();
+
+	struct Relax
+	{
+		static inline bool Enabled;
+		static inline int Distribution;
+		static inline int Playstyle;
+		static inline int PrimaryKey;
+		static inline int SecondaryKey;
+		static inline int MaxSingletapBPM;
+		static inline int HitSpread;
+		static inline int AlternationHitSpread;
+		static inline bool HoldConsecutiveSpinners;
+		static inline bool SliderAlternationOverride;
+		static inline bool AccurateCalculations;
+		static inline bool PredictionEnabled;
+		static inline bool SliderPredictionEnabled;
+		static inline int PredictionAngle;
+		static inline float PredictionScale;
+	};
+	
 	struct AimAssist
 	{
-		static inline bool Enabled = false;
-		static inline bool EasyMode = true;
+		static inline bool Enabled;
+		static inline bool EasyMode;
 		/* Easy mode arguments*/
-		static inline float EasyModeStrength = 0.5f;
+		static inline float EasyModeStrength;
 		/* Advanced mode arguments*/
-		static inline float Strength = 0.6f;
-		static inline int BaseFOV = 45;
-		static inline float MaximumFOVScale = 2.5f;
-		static inline float MinimumFOVTotal = 0.f;
-		static inline float MaximumFOVTotal = 225.f;
-		static inline float SliderballDeadzone = 12.5f;
-		static inline bool FlipSliderballDeadzone = true;
-		static inline float StrengthMultiplier = 1.f;
-		static inline float AssistDeadzone = 3.f;
-		static inline float ResyncLeniency = 3.5f;
-		static inline float ResyncLeniencyFactor = 0.698f;
-		static inline bool AssistOnSliders = true;
-		static inline bool DrawDebugOverlay = false;
+		static inline float Strength;
+		static inline int BaseFOV;
+		static inline float MaximumFOVScale;
+		static inline float MinimumFOVTotal;
+		static inline float MaximumFOVTotal;
+		static inline float SliderballDeadzone;
+		static inline bool FlipSliderballDeadzone;
+		static inline float AssistDeadzone;
+		static inline float StrengthMultiplier;
+		static inline float ResyncLeniency;
+		static inline float ResyncLeniencyFactor;
+		static inline bool AssistOnSliders;
+		static inline bool DrawDebugOverlay;
 	};
 
 	struct Timewarp
 	{
-		static inline bool Enabled = false;
-		static inline int Rate = 100;
+		static inline bool Enabled;
+		static inline int Rate;
 	};
 
 	struct Visuals
 	{
-		static inline bool ARChangerEnabled = false;
-		static inline bool ARChangerAdjustToMods = false;
-		static inline float AR = 9.2f;
-		static inline bool HiddenDisabled = false;
-		static inline bool FlashlightDisabled = false;
-		static inline int MenuScale = 2;
-		static inline ImVec4 AccentColour = ImColor(232, 93, 155, 255).Value;
-		static inline ImVec4 MenuColour = ImColor(65, 65, 65, 255).Value;
-		static inline ImVec4 ControlColour = ImColor(76, 76, 76, 255).Value;
-		static inline ImVec4 TextColour = ImColor(255, 255, 255, 255).Value;
+		static inline bool ARChangerEnabled;
+		static inline bool ARChangerAdjustToMods;
+		static inline float AR;
+		static inline bool HiddenDisabled;
+		static inline bool FlashlightDisabled;
+		static inline int MenuScale;
+		static inline char MenuBackground[MAX_PATH];
+		static inline ImVec4 AccentColour;
+		static inline ImVec4 MenuColour;
+		static inline ImVec4 ControlColour;
+		static inline ImVec4 TextColour;
 	};
 
 	struct Misc
 	{
-		static inline bool DisableSpectators = false;
-		static inline bool PromptOnScoreSubmissionEnabled = false;
-		static inline bool RichPresenceSpooferEnabled = false;
-		static inline char SpoofedName[64] = "maple.software";
-		static inline char SpoofedRank[64] = "rocking osu! since 2021";
+		static inline bool DisableSpectators;
+		static inline bool PromptOnScoreSubmissionEnabled;
+		static inline bool RichPresenceSpooferEnabled;
+		static inline char SpoofedName[64];
+		static inline char SpoofedRank[64];
 	};
 };

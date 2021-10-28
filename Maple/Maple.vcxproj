@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config\Config.cpp" />
     <ClCompile Include="Dependencies\Cinnamon\Cinnamon.cpp" />
     <ClCompile Include="Dependencies\gl3w\GL\gl3w.c" />
     <ClCompile Include="Dependencies\hde32\hde32.c" />

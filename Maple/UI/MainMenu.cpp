@@ -129,17 +129,35 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
-                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(11)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+                    Widgets::Checkbox("Enabled", &Config::Relax::Enabled);
+                    const char* playstyles[] = { "Singletap", "Alternate", "TapX" };
+                    ImGui::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
+                    const char* distributions[] = { "Uniform", "Normal" };
+                    ImGui::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions));
+                    const char* keys[] = { "M1", "K1", "M2", "K2" };
+                    ImGui::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
+                    ImGui::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
+                    Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
+                    //Widgets::HitErrorBar(Config::Relax::HitSpread);
+                    Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
+                    //Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
+                    Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners);
+                    Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride);
+                    Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations);
                 }
                 Widgets::EndPanel();
 
                 ImGui::Spacing();
         		
-                Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+                    Widgets::Checkbox("Enabled", &Config::Relax::PredictionEnabled);
+                    Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled);
+                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, "%d", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
                 }
                 Widgets::EndPanel();
         	}
@@ -159,7 +177,7 @@ void MainMenu::Render()
             	{
                     Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
                     {
-                        Widgets::SliderFloat("Strength###EasyModeStrengthSlider", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                     }
                     Widgets::EndPanel();
             	}
@@ -167,7 +185,7 @@ void MainMenu::Render()
                 {
                     Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                     {
-                        Widgets::SliderFloat("Strength###AdvancedModeStrengthSlider", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
@@ -257,9 +275,70 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 0, 2)));
                 {
-                    ImGui::Text("Nothing to see here yet uwu");
+	                const float buttonWidth1 = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
+	                const float buttonWidth2 = ImGui::GetWindowWidth() * 0.5f;
+                    ImGui::Combo("Config", &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
+                    {
+                        auto& vector = *static_cast<std::vector<std::string>*>(vec);
+                        if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+                        *out_text = vector.at(idx).c_str();
+                        return true;
+                    }, reinterpret_cast<void*>(&Config::Configs), Config::Configs.size());
+
+                    if (Widgets::Button("Load", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                    {
+                        Config::Load();
+
+                        //loadBackground();
+                        StyleProvider::UpdateColours();
+                        StyleProvider::UpdateScale();
+                    }
+
+                    ImGui::SameLine();
+                	
+                    if (Config::CurrentConfig == 0)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+                	
+                    if (Widgets::Button("Save", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                        Config::Save();
+                	
+                    if (Config::CurrentConfig == 0)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::SameLine();
+                	
+                    if (Widgets::Button("Refresh", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                        Config::Refresh();
+
+                    ImGui::Spacing();
+
+                    ImGui::InputText("Config name", Config::NewConfigName, IM_ARRAYSIZE(Config::NewConfigName));
+                    if (Widgets::Button("Create new config", ImVec2(buttonWidth2, ImGui::GetFrameHeight())))
+                    {
+                        Config::Create();
+
+                        //loadBackground();
+                        StyleProvider::UpdateColours();
+                        StyleProvider::UpdateScale();
+                    }
+
+                    ImGui::Spacing();
+
+                    if (Widgets::Button("Open Maple folder", ImVec2(buttonWidth2, ImGui::GetFrameHeight())))
+                    {
+                        std::wstring wPath = std::wstring(Config::Directory.begin(), Config::Directory.end());
+                        LPCWSTR path = wPath.c_str();
+
+                        ShellExecute(NULL, L"open", path, NULL, NULL, SW_RESTORE);
+                    }
                 }
                 Widgets::EndPanel();
             }

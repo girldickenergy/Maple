@@ -137,6 +137,9 @@
     <ClCompile Include="Features\AimAssist\AimAssist.cpp">
       <Filter>Features\AimAssist</Filter>
     </ClCompile>
+    <ClCompile Include="Config\Config.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">

@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <clocale>
 
+
+#include "Config/Config.h"
 #include "Features/Timewarp/Timewarp.h"
 #include "Features/Visuals/VisualsSpoofers.h"
 #include "Hooks/Hooks.h"
@@ -19,7 +21,7 @@
 
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple(const std::string& username);
-void InitializeLogging(const std::string& username);
+void InitializeLogging(const std::string& directory);
 void InitializeSdk();
 void StartFunctions();
 
@@ -56,23 +58,27 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 
 void InitializeMaple(const std::string& username)
 {
+    std::string workingDirectory = GetWorkingDirectory(username);
+	
     Vanilla::Initialize();
 
-    InitializeLogging(username);
+    InitializeLogging(workingDirectory);
 
     InitializeSdk();
+
+    Config::Initialize(workingDirectory);
 
     Hooks::InstallAllHooks();
 
     StartFunctions();
 }
 
-void InitializeLogging(const std::string& username)
+void InitializeLogging(const std::string& directory)
 {
 #ifdef _DEBUG
     Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All);
+    Logger::Initialize(directory + "\\runtime.log", LogSeverity::All);
 #endif
 	
     Logger::Log(LogSeverity::Info, "Initialization started.");
