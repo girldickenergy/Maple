@@ -7,6 +7,7 @@
 #include "../Features/Misc/RichPresence.h"
 #include "../Features/Misc/ScoreSubmission.h"
 #include "../Features/Misc/SpectateHandler.h"
+#include "../Features/Relax/Relax.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
 #include "../Sdk/ConfigManager/ConfigManager.h"
@@ -74,12 +75,22 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook Submit");
 
+	if (installManagedHook("get_Item", Vanilla::Explorer["Microsoft.Xna.Framework.Input.KeyboardState"]["get_Item"].Method, Relax::UpdateKeyboardInput, reinterpret_cast<LPVOID*>(&Relax::oUpdateKeyboardInput)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked get_Item");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook get_Item");
+
+	if (installManagedHook("Initialize", Vanilla::Explorer["osu.GameModes.Play.Player"]["Initialize"].Method, Player::PlayerInitialize, reinterpret_cast<LPVOID*>(&Player::oPlayerInitialize)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked Initialize");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook Initialize");
+
 	if (installManagedHook("OnLoadComplete", Vanilla::Explorer["osu.GameModes.Play.Player"]["OnLoadComplete"].Method, Player::OnPlayerLoadCompleteHook, reinterpret_cast<LPVOID*>(&Player::oOnPlayerLoadComplete)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked OnLoadComplete");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook OnLoadComplete");
 
-	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition), HookType::HardwareBreakpoint) == CinnamonResult::Success)
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");

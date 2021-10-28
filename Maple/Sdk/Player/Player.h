@@ -30,6 +30,10 @@ public:
 	static bool IsPlaying();
 	static PlayModes PlayMode();
 
+	typedef void(__fastcall* fnPlayerInitialize)(uintptr_t instance);
+	static inline fnPlayerInitialize oPlayerInitialize;
+	static void __fastcall PlayerInitialize(uintptr_t instance);
+
 	typedef BOOL(__fastcall* fnOnPlayerLoadComplete)(void* instance, BOOL success);
 	static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete;
 	static BOOL __fastcall OnPlayerLoadCompleteHook(void* instance, BOOL success);

@@ -140,6 +140,18 @@
     <ClCompile Include="Config\Config.cpp">
       <Filter>Config</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Relax\Relax.cpp">
+      <Filter>Features\Relax</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\InputSimulator\InputSimulator.cpp">
+      <Filter>Dependencies\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Bindings\BindingManager.cpp">
+      <Filter>Sdk\Bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Input\InputManager.cpp">
+      <Filter>Sdk\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -243,6 +255,21 @@
     </Filter>
     <Filter Include="Features\AimAssist">
       <UniqueIdentifier>{0779f538-d051-4f75-a4e0-15b707827426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Relax">
+      <UniqueIdentifier>{ed7f7ba6-85d5-4d21-8871-9fd294167182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Timing">
+      <UniqueIdentifier>{fe509fc1-77b2-4dc6-a635-66624d6d0359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\InputManager">
+      <UniqueIdentifier>{4a80bedb-c526-4254-b44d-7607864dea91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Bindings">
+      <UniqueIdentifier>{de69af73-eecf-4296-a1e6-9d10fb0d2cd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sdk\Input">
+      <UniqueIdentifier>{93144979-b9de-4a6a-b0fb-05da91c4c8d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -470,6 +497,33 @@
     </ClInclude>
     <ClInclude Include="Sdk\DataTypes\Structs\sRectangle.h">
       <Filter>Sdk\DataTypes\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Relax\HitScanResult.h">
+      <Filter>Features\Relax</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Relax\HitTimings.h">
+      <Filter>Features\Relax</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Relax\Relax.h">
+      <Filter>Features\Relax</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Timing\WaitableTimer.h">
+      <Filter>Utilities\Timing</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\InputSimulator\InputSimulator.h">
+      <Filter>Dependencies\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\DataTypes\Enums\Bindings.h">
+      <Filter>Sdk\DataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\DataTypes\Enums\PlayKeys.h">
+      <Filter>Sdk\DataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Bindings\BindingManager.h">
+      <Filter>Sdk\Bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Input\InputManager.h">
+      <Filter>Sdk\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -114,7 +114,7 @@ int AudioEngine::TimeAccurate()
     if (trackHandle == 0)
         time = static_cast<int>(round(*static_cast<double*>(trackVirtualPositionField.GetAddress(trackInstance))));
     else
-        time = static_cast<int>(round(channelBytes2Seconds(trackHandle, channelGetPosition(trackHandle, 0)))) * 1000;
+        time = static_cast<int>(round(channelBytes2Seconds(trackHandle, channelGetPosition(trackHandle, 0)) * 1000.));
 
     time -= Offset();
 

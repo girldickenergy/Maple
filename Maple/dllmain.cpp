@@ -10,7 +10,9 @@
 #include "Hooks/Hooks.h"
 #include "Sdk/Anticheat/Anticheat.h"
 #include "Sdk/Audio/AudioEngine.h"
+#include "Sdk/Bindings/BindingManager.h"
 #include "Sdk/ConfigManager/ConfigManager.h"
+#include "Sdk/Input/InputManager.h"
 #include "Sdk/Mods/ModManager.h"
 #include "Sdk/Osu/GameBase.h"
 #include "Sdk/Player/HitObjectManager.h"
@@ -76,7 +78,7 @@ void InitializeMaple(const std::string& username)
 void InitializeLogging(const std::string& directory)
 {
 #ifdef _DEBUG
-    Logger::Initialize(GetWorkingDirectory(username) + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
+    Logger::Initialize(directory + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
 #else
     Logger::Initialize(directory + "\\runtime.log", LogSeverity::All);
 #endif
@@ -89,7 +91,9 @@ void InitializeSdk()
     Anticheat::Initialize();
     GameBase::Initialize();
     GameField::Initialize();
+    InputManager::Initialize();
     ConfigManager::Initialize();
+    BindingManager::Initialize();
     AudioEngine::Initialize();
     ModManager::Initialize();
     Player::Initialize();

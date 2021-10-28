@@ -3,6 +3,7 @@
 #include <Vanilla.h>
 
 #include "../../Features/AimAssist/AimAssist.h"
+#include "../../Features/Relax/Relax.h"
 
 void Player::Initialize()
 {
@@ -48,10 +49,20 @@ PlayModes Player::PlayMode()
 	return *static_cast<PlayModes*>(modeAddress);
 }
 
+void __fastcall Player::PlayerInitialize(uintptr_t instance)
+{
+	Relax::Stop();
+
+	oPlayerInitialize(instance);
+}
+
 BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 {
 	if (success)
+	{
+		Relax::Start();
 		AimAssist::Reset();
-
+	}
+	
 	return oOnPlayerLoadComplete(instance, success);
 }

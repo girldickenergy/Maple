@@ -173,6 +173,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\InputSimulator\InputSimulator.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Assembly.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Field.cpp" />
     <ClCompile Include="Dependencies\Vanilla\COM\Method.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="Features\Misc\RichPresence.cpp" />
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
+    <ClCompile Include="Features\Relax\Relax.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
@@ -194,7 +196,9 @@
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
+    <ClCompile Include="Sdk\Bindings\BindingManager.cpp" />
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp" />
+    <ClCompile Include="Sdk\Input\InputManager.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="Sdk\Osu\GameBase.cpp" />
     <ClCompile Include="Sdk\Osu\GameField.cpp" />
@@ -238,6 +242,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\InputSimulator\InputSimulator.h" />
     <ClInclude Include="Dependencies\stb\stb.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Assembly.h" />
@@ -259,15 +264,22 @@
     <ClInclude Include="Features\Misc\RichPresence.h" />
     <ClInclude Include="Features\Misc\ScoreSubmission.h" />
     <ClInclude Include="Features\Misc\SpectateHandler.h" />
+    <ClInclude Include="Features\Relax\HitScanResult.h" />
+    <ClInclude Include="Features\Relax\HitTimings.h" />
+    <ClInclude Include="Features\Relax\Relax.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
+    <ClInclude Include="Sdk\Bindings\BindingManager.h" />
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h" />
+    <ClInclude Include="Sdk\DataTypes\Enums\Bindings.h" />
     <ClInclude Include="Sdk\DataTypes\Enums\HitObjectType.h" />
+    <ClInclude Include="Sdk\DataTypes\Enums\PlayKeys.h" />
     <ClInclude Include="Sdk\DataTypes\Structs\sRectangle.h" />
     <ClInclude Include="Sdk\DataTypes\Structs\Vector2.h" />
+    <ClInclude Include="Sdk\Input\InputManager.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="Sdk\Osu\GameField.h" />
@@ -285,6 +297,7 @@
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
     <ClInclude Include="Utilities\Textures\TextureHelper.h" />
+    <ClInclude Include="Utilities\Timing\WaitableTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\DirectX\d3dx9math.inl" />
