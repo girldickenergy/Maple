@@ -978,7 +978,7 @@ bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_d
 
 bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
 {
-    const float totalWidth = ImGui::GetWindowWidth() * 0.5f;
+    const float totalWidth = ImGui::GetWindowWidth() * 0.5f - ImGui::GetStyle().ItemInnerSpacing.x;
     const float sliderWidth = totalWidth * 0.6f;
     const float inputWidth = totalWidth - sliderWidth;
 	
@@ -997,7 +997,7 @@ bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const c
 
 bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
-    const float totalWidth = ImGui::GetWindowWidth() * 0.5f;
+    const float totalWidth = ImGui::GetWindowWidth() * 0.5f - ImGui::GetStyle().ItemInnerSpacing.x;
     const float sliderWidth = totalWidth * 0.6f;
     const float inputWidth = totalWidth - sliderWidth;
 
