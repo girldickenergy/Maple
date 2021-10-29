@@ -1,15 +1,44 @@
 #include "MainMenu.h"
 
+#include <filesystem>
 #include <imgui.h>
 
 #include "StyleProvider.h"
 #include "Widgets.h"
 #include "../Config/Config.h"
+#include "3rd-party/FileDialog/imfilebrowser.h"
+
+bool fileDialogInitialized = false;
+ImGui::FileBrowser fileDialog;
+
+void MainMenu::updateBackground()
+{
+    if (Config::Visuals::MenuBackground[0] == '\0' || !std::filesystem::exists(Config::Visuals::MenuBackground))
+    {
+        if (backgroundTexture != nullptr)
+        {
+            if (Overlay::Renderer == Renderer::OGL3)
+                TextureHelper::FreeTextureOGL3(backgroundTexture);
+
+            backgroundTexture = nullptr;
+        }
+
+        return;
+    }
+
+    if (Overlay::Renderer == Renderer::OGL3)
+        backgroundTexture = TextureHelper::LoadTextureFromFileOGL3(Config::Visuals::MenuBackground);
+    else
+        backgroundTexture = TextureHelper::LoadTextureFromFileD3D9(Overlay::D3D9Device, Config::Visuals::MenuBackground);
+}
 
 void MainMenu::Render()
 {
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle& style = ImGui::GetStyle();
+
+    if (backgroundTexture != nullptr)
+        ImGui::GetBackgroundDrawList()->AddImage(backgroundTexture, ImVec2(0, 0), ImVec2(io.DisplaySize.x, io.DisplaySize.y));
 
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
@@ -223,7 +252,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6, 0, 2)));
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 7 : 6, 0, 2)));
                 {
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
                     if (ImGui::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
@@ -231,7 +260,40 @@ void MainMenu::Render()
 
                     ImGui::Spacing();
 
-                    Widgets::Button("Load background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight()));
+                    if (Widgets::Button("Load background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    {
+                    	if (!fileDialogInitialized)
+                    	{
+                            fileDialog.SetTitle("Select background image");
+                            fileDialog.SetTypeFilters({ ".png", ".jpg", ".jpeg", ".bmp", ".tga" });
+
+                            fileDialogInitialized = true;
+                    	}
+
+                        fileDialog.Open();
+                    }
+
+                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
+                    fileDialog.Display();
+                    ImGui::PopStyleVar();
+
+                    if (fileDialog.HasSelected())
+                    {
+                        strcpy_s(Config::Visuals::MenuBackground, fileDialog.GetSelected().string().c_str());
+                        fileDialog.ClearSelected();
+
+                        updateBackground();
+                    }
+
+                	if (backgroundTexture)
+                	{
+                        if (Widgets::Button("Remove background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        {
+                            Config::Visuals::MenuBackground[0] = '\0';
+
+                            updateBackground();
+                        }
+                	}
 
                     ImGui::Spacing();
 
@@ -281,7 +343,7 @@ void MainMenu::Render()
                     {
                         Config::Load();
 
-                        //loadBackground();
+                        updateBackground();
                         StyleProvider::UpdateColours();
                         StyleProvider::UpdateScale();
                     }
@@ -315,7 +377,7 @@ void MainMenu::Render()
                     {
                         Config::Create();
 
-                        //loadBackground();
+                        updateBackground();
                         StyleProvider::UpdateColours();
                         StyleProvider::UpdateScale();
                     }

@@ -271,6 +271,12 @@
     <Filter Include="Sdk\Input">
       <UniqueIdentifier>{93144979-b9de-4a6a-b0fb-05da91c4c8d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\3rd-party">
+      <UniqueIdentifier>{0675af4b-1ad2-4b9d-a30a-e3a2a8c3beeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\3rd-party\FileDialog">
+      <UniqueIdentifier>{0a9f1d5a-01db-48c5-9146-35ea23afbf8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utilities\Logging\Logger.h">
@@ -524,6 +530,9 @@
     </ClInclude>
     <ClInclude Include="Sdk\Input\InputManager.h">
       <Filter>Sdk\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\3rd-party\FileDialog\imfilebrowser.h">
+      <Filter>UI\3rd-party\FileDialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -194,6 +194,12 @@ public:
 		
 		style.Colors[ImGuiCol_WindowBg] = MenuColour;
 		style.Colors[ImGuiCol_ChildBg] = MenuColourDark;
+
+		style.Colors[ImGuiCol_PopupBg] = MenuColour;
+
+		style.Colors[ImGuiCol_TitleBg] = MenuColourVeryDark;
+		style.Colors[ImGuiCol_TitleBgActive] = MenuColourVeryDark;
+		style.Colors[ImGuiCol_TitleBgCollapsed] = MenuColourVeryDark;
 		
 		style.Colors[ImGuiCol_Header] = style.Colors[ImGuiCol_FrameBg];
 		style.Colors[ImGuiCol_HeaderHovered] = style.Colors[ImGuiCol_FrameBgHovered];

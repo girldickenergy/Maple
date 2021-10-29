@@ -287,6 +287,7 @@
     <ClInclude Include="Sdk\Player\HitObjectManager.h" />
     <ClInclude Include="Sdk\Player\Player.h" />
     <ClInclude Include="Sdk\Player\Ruleset.h" />
+    <ClInclude Include="UI\3rd-party\FileDialog\imfilebrowser.h" />
     <ClInclude Include="UI\Fonts.h" />
     <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="UI\Overlay.h" />

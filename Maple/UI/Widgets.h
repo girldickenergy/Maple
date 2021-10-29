@@ -179,6 +179,7 @@ class Widgets
 	static inline float stepFloat = 0.1f;
 	static inline float stepFastFloat = 1.f;
 public:
+	static bool Selectable(const char* label, bool selected = false, ImGuiSelectableFlags flags = 0, const ImVec2& size_arg = ImVec2(0, 0));
 	static bool Tab(const char* label, void* icon, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg);
 	static float CalcPanelHeight(int widgetCount, int textCount = 0, int spacingCount = 0);
 	static void BeginPanel(const char* label, const ImVec2& size);
@@ -186,6 +187,7 @@ public:
 	static bool Checkbox(const char* label, bool* v);
 	static bool ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags);
 	static bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
+	static bool SmallButton(const char* label);
 	static bool Hotkey(const char* label, int* k);
 	static bool InputScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_step = NULL, const void* p_step_fast = NULL, const char* format = NULL, ImGuiInputTextFlags flags = 0);
 	static bool SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags);
