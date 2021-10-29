@@ -70,7 +70,7 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	const float strengthMultiplier	  = Config::AimAssist::EasyMode ? 1.f : Config::AimAssist::StrengthMultiplier;
 	const float assistDeadzone		  = Config::AimAssist::EasyMode ? 3.f : Config::AimAssist::AssistDeadzone;
 	const float resyncLeniency		  = Config::AimAssist::EasyMode ? 3.5f : Config::AimAssist::ResyncLeniency;
-	const float resyncLeniencyFactor  = Config::AimAssist::EasyMode ? (Config::AimAssist::EasyModeStrength > 1.2f ? 0.55f : 0.693f) : Config::AimAssist::ResyncLeniencyFactor;
+	const float resyncLeniencyFactor  = Config::AimAssist::EasyMode ? 0.693f : Config::AimAssist::ResyncLeniencyFactor;
 
 	const int time = AudioEngine::Time();
 	if (time > (currentHitObject.IsType(HitObjectType::Slider) && assistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))

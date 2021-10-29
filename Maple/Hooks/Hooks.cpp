@@ -2,7 +2,6 @@
 
 #include <Cinnamon.h>
 
-
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Misc/RichPresence.h"
 #include "../Features/Misc/ScoreSubmission.h"

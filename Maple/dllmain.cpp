@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <clocale>
 
-
 #include "Config/Config.h"
 #include "Features/Timewarp/Timewarp.h"
 #include "Features/Visuals/VisualsSpoofers.h"
@@ -78,9 +77,9 @@ void InitializeMaple(const std::string& username)
 void InitializeLogging(const std::string& directory)
 {
 #ifdef _DEBUG
-    Logger::Initialize(directory + "\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
+    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(directory + "\\runtime.log", LogSeverity::All);
+    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::All);
 #endif
 	
     Logger::Log(LogSeverity::Info, "Initialization started.");
