@@ -90,7 +90,7 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook OnLoadComplete");
 
-	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition)) == CinnamonResult::Success)
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");

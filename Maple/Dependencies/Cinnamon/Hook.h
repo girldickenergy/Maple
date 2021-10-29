@@ -6,8 +6,9 @@
 
 enum class HookType : int
 {
-	ByteCodePatch	   = 0x0000,
-	HardwareBreakpoint = 0x1000
+	ByteCodePatch			= 0x0000,
+	HardwareBreakpoint		= 0x1000,
+	UndetectedByteCodePatch = 0x2000
 };
 
 /**

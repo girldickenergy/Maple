@@ -66,12 +66,23 @@ void Cinnamon::removeHook(std::string name)
 	}
 }
 
-std::vector<unsigned char> Cinnamon::getPrologue(void* functionAddress)
+unsigned int Cinnamon::getInstructionOffsetInBytes(void* functionAddress, unsigned int offset)
+{
+	hde32s hde;
+	
+	unsigned int length = 0;
+	for (unsigned int i = 0; i < offset; i++)
+		length += hde32_disasm(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(functionAddress) + length), &hde);
+	
+	return length;
+}
+
+std::vector<unsigned char> Cinnamon::getPrologue(void* functionAddress, unsigned int offset)
 {
 	hde32s hde;
 
-	unsigned int prologueLength = 0;
-	while (prologueLength < 5)
+	unsigned int prologueLength = offset;
+	while (prologueLength < 5 + offset)
 		prologueLength += hde32_disasm(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(functionAddress) + prologueLength), &hde);
 	
 	std::vector<unsigned char> originalBytes;
@@ -162,20 +173,20 @@ CinnamonResult Cinnamon::installHWBP(void* functionAddress, HANDLE hookThread, H
 	return CinnamonResult::Success;
 }
 
-void* Cinnamon::installTrampoline(void* functionAddress, void* hookFunctionAddress, std::vector<unsigned char> prologue)
+void* Cinnamon::installTrampoline(void* functionAddress, void* hookFunctionAddress, std::vector<unsigned char> prologue, unsigned int offset)
 {
 	void* codeCaveAddress = createCodeCave(functionAddress, prologue);
 
-	void* relativeAddress = reinterpret_cast<void*>(reinterpret_cast<DWORD>(hookFunctionAddress) - reinterpret_cast<DWORD>(functionAddress) - 0x5);
+	void* relativeAddress = reinterpret_cast<void*>(reinterpret_cast<DWORD>(hookFunctionAddress) - reinterpret_cast<DWORD>(functionAddress) - offset - 0x5);
 
 	DWORD oldProtect;
 	VirtualProtect(functionAddress, prologue.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
-	
-	*static_cast<unsigned char*>(functionAddress) = 0xE9;
-	*reinterpret_cast<void**>(reinterpret_cast<DWORD>(functionAddress) + 0x1) = relativeAddress;
 
-	for (unsigned int i = 5; i < prologue.size(); i++)
+	for (unsigned int i = 0; i < prologue.size(); i++)
 		*reinterpret_cast<unsigned char*>(reinterpret_cast<DWORD>(functionAddress) + i) = 0x90;
+	
+	*reinterpret_cast<unsigned char*>(reinterpret_cast<DWORD>(functionAddress) + offset) = 0xE9;
+	*reinterpret_cast<void**>(reinterpret_cast<DWORD>(functionAddress) + offset + 0x1) = relativeAddress;
 
 	VirtualProtect(functionAddress, prologue.size(), oldProtect, &oldProtect);
 
@@ -187,13 +198,16 @@ CinnamonResult Cinnamon::InstallHook(std::string name, void* functionAddress, vo
 	if (findHook(name) != nullptr)
 		return CinnamonResult::HookAlreadyInstalled;
 
-	std::vector<unsigned char> prologue = getPrologue(functionAddress);
+	const unsigned int offset = type == HookType::UndetectedByteCodePatch ? getInstructionOffsetInBytes(functionAddress, 1) : 0;
+
+	const std::vector<unsigned char> prologue = getPrologue(functionAddress, offset);
 	
 	switch (type)
 	{
+		case HookType::UndetectedByteCodePatch:
 		case HookType::ByteCodePatch:
 		{
-			void* codeCaveAddress = installTrampoline(functionAddress, hookFunctionAddress, prologue);
+			void* codeCaveAddress = installTrampoline(functionAddress, hookFunctionAddress, prologue, offset);
 
 			*originalFunction = codeCaveAddress;
 

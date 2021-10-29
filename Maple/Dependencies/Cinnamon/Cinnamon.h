@@ -21,11 +21,12 @@ class Cinnamon
 
 	static Hook* findHook(std::string name);
 	static void removeHook(std::string name);
-	
-	static std::vector<unsigned char> getPrologue(void* functionAddress);
+
+	static unsigned int getInstructionOffsetInBytes(void* functionAddress, unsigned int offset);
+	static std::vector<unsigned char> getPrologue(void* functionAddress, unsigned int offset);
 	static void relocateRelativeAddresses(void* oldLocation, void* newLocation, unsigned int length);
 	static void* createCodeCave(void* functionAddress, std::vector<unsigned char> prologue);
-	static void* installTrampoline(void* functionAddress, void* hookFunctionAddress, std::vector<unsigned char> prologue);
+	static void* installTrampoline(void* functionAddress, void* hookFunctionAddress, std::vector<unsigned char> prologue, unsigned int offset);
 	static CinnamonResult installHWBP(void* functionAddress, HANDLE hookThread, HANDLE hThread = nullptr);
 public:
 	static CinnamonResult InstallHook(std::string name, void* functionAddress, void* hookFunctionAddress, void** originalFunction, HookType typeOfhook = HookType::ByteCodePatch);
