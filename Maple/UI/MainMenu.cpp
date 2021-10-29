@@ -149,8 +149,6 @@ void MainMenu::Render()
                     Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations);
                 }
                 Widgets::EndPanel();
-
-                ImGui::Spacing();
         		
                 Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
@@ -170,8 +168,6 @@ void MainMenu::Render()
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
                 }
                 Widgets::EndPanel();
-
-                ImGui::Spacing();
 
             	if (Config::AimAssist::EasyMode)
             	{
@@ -219,8 +215,6 @@ void MainMenu::Render()
                     Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
                 }
                 Widgets::EndPanel();
-
-                ImGui::Spacing();
             	
                 Widgets::BeginPanel("HD & FL Removers", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
@@ -228,8 +222,6 @@ void MainMenu::Render()
                     Widgets::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
                 }
                 Widgets::EndPanel();
-
-                ImGui::Spacing();
 
                 Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6, 0, 2)));
                 {
@@ -262,8 +254,6 @@ void MainMenu::Render()
                     Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);
                 }
                 Widgets::EndPanel();
-
-                ImGui::Spacing();
 
                 Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
