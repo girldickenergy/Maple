@@ -107,17 +107,17 @@ void MainMenu::Render()
 
                     ImGui::PushFont(StyleProvider::FontDefaultBold);
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-                    if (Widgets::Tab("Relax", StyleProvider::RelaxIconTexture, currentTab == 0, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Relax", StyleProvider::RelaxIconTexture, currentTab == 0, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 0 ? -1 : 0;
-                    if (Widgets::Tab("Aim Assist", StyleProvider::AimAssistIconTexture, currentTab == 1, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Aim Assist", StyleProvider::AimAssistIconTexture, currentTab == 1, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 1 ? -1 : 1;
-                    if (Widgets::Tab("Timewarp", StyleProvider::TimewarpIconTexture, currentTab == 2, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Timewarp", StyleProvider::TimewarpIconTexture, currentTab == 2, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 2 ? -1 : 2;
-                    if (Widgets::Tab("Visuals", StyleProvider::VisualsIconTexture, currentTab == 3, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Visuals", StyleProvider::VisualsIconTexture, currentTab == 3, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 3 ? -1 : 3;
-                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 4, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 4 ? -1 : 4;
-                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 5, ImGuiSelectableFlags_NoPadWithHalfSpacing, tabSize))
+                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 5 ? -1 : 5;
                     ImGui::PopStyleVar();
                     ImGui::PopFont();

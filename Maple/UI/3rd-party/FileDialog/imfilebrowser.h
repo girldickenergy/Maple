@@ -346,7 +346,7 @@ inline void ImGui::FileBrowser::Display()
             char selectableStr[] = { driveCh, ':', '\0' };
             bool selected = currentDrive == driveCh;
 
-            if(Widgets::Selectable(selectableStr, selected) && !selected)
+            if(Widgets::Selectable(selectableStr, selected, ImGuiSelectableFlags_SpanAllColumns) && !selected)
             {
                 char newPwd[] = { driveCh, ':', '\\', '\0' };
                 SetPwd(newPwd);
@@ -495,7 +495,7 @@ inline void ImGui::FileBrowser::Display()
                          != selectedFilenames_.end();
 
             if(Widgets::Selectable(rsc.showName.c_str(), selected,
-                          ImGuiSelectableFlags_DontClosePopups))
+                          ImGuiSelectableFlags_DontClosePopups | ImGuiSelectableFlags_SpanAllColumns))
             {
                 const bool multiSelect =
                     (flags_ & ImGuiFileBrowserFlags_MultipleSelection) &&
@@ -638,7 +638,7 @@ inline void ImGui::FileBrowser::Display()
             for(size_t i = 0; i < typeFilters_.size(); ++i)
             {
                 bool selected = i == typeFilterIndex_;
-                if(Widgets::Selectable(typeFilters_[i].c_str(), selected) && !selected)
+                if(Widgets::Selectable(typeFilters_[i].c_str(), selected, ImGuiSelectableFlags_SpanAllColumns) && !selected)
                 {
                     typeFilterIndex_ = static_cast<unsigned int>(i);
                 }
