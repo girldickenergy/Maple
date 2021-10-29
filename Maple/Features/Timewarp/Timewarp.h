@@ -4,26 +4,21 @@
 
 class Timewarp
 {
-	typedef double(__fastcall* fnGetPlaybackRate)(void* instance);
+	typedef double(__fastcall* fnGetCurrentPlaybackRate)();
 	typedef void(__fastcall* fnAddParameter)(void* instance, COMString* name, COMString* value);
 	
 	static inline double tickrate = 1000.0 / 60.0;
 
-	static inline void* audioTrackBass_GetPlaybackRateReturnAddress = nullptr;
-	static double __fastcall audioTrackBass_GetPlaybackRateStub(void* instance);
-	static inline void* audioTrackVirtual_GetPlaybackRateReturnAddress = nullptr;
-	static double __fastcall audioTrackVirtual_GetPlaybackRateStub(void* instance);
+	static inline void* getCurrentPlaybackRateReturnAddress = nullptr;
+	static double __fastcall getCurrentPlaybackRateStub();
 
 	static void patchTickrate();
 public:
 	static void TimewarpThread();
 	static double GetRateMultiplier();
 
-	static inline fnGetPlaybackRate oAudioTrackBass_GetPlaybackRate;
-	static double __fastcall AudioTrackBass_GetPlaybackRateHook(void* instance);
-
-	static inline fnGetPlaybackRate oAudioTrackVirtual_GetPlaybackRate;
-	static double __fastcall AudioTrackVirtual_GetPlaybackRateHook(void* instance);
+	static inline fnGetCurrentPlaybackRate oGetCurrentPlaybackRate;
+	static double __fastcall GetCurrentPlaybackRateHook();
 
 	static inline fnAddParameter oAddParameter;
 	static void __fastcall AddParameterHook(void* instance, COMString* name, COMString* value);

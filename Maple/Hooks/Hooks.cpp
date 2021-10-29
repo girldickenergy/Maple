@@ -25,15 +25,10 @@ CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID
 
 void Hooks::InstallAllHooks()
 {
-	if (installManagedHook("AudioTrackBass.GetPlaybackRate", Vanilla::Explorer["osu.Audio.AudioTrackBass"]["get_PlaybackRate"].Method, Timewarp::AudioTrackBass_GetPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oAudioTrackBass_GetPlaybackRate)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked AudioTrackBass.GetPlaybackRate");
+	if (installManagedHook("get_CurrentPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["get_CurrentPlaybackRate"].Method, Timewarp::GetCurrentPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oGetCurrentPlaybackRate), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked get_CurrentPlaybackRate");
 	else
-		Logger::Log(LogSeverity::Error, "Failed to hook AudioTrackBass.GetPlaybackRate");
-
-	if (installManagedHook("AudioTrackVirtual.GetPlaybackRate", Vanilla::Explorer["osu.Audio.AudioTrackVirtual"]["get_PlaybackRate"].Method, Timewarp::AudioTrackVirtual_GetPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oAudioTrackVirtual_GetPlaybackRate)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked AudioTrackVirtual.GetPlaybackRate");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook AudioTrackVirtual.GetPlaybackRate");
+		Logger::Log(LogSeverity::Error, "Failed to hook get_CurrentPlaybackRate");
 
 	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");

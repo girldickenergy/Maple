@@ -8,22 +8,13 @@
 #include "../../Sdk/Player/Player.h"
 #include "../../Sdk/Player/Ruleset.h"
 
-double __fastcall Timewarp::audioTrackBass_GetPlaybackRateStub(void* instance)
+double __fastcall Timewarp::getCurrentPlaybackRateStub()
 {
-	if (*static_cast<uintptr_t*>(audioTrackBass_GetPlaybackRateReturnAddress) >= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) && 
-        *static_cast<uintptr_t*>(audioTrackBass_GetPlaybackRateReturnAddress) <= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) + Vanilla::GetModuleSize("clr.dll"))
-        return ModManager::ModPlaybackRate();
-	
-    return oAudioTrackBass_GetPlaybackRate(instance);
-}
-
-double __fastcall Timewarp::audioTrackVirtual_GetPlaybackRateStub(void* instance)
-{
-    if (*static_cast<uintptr_t*>(audioTrackVirtual_GetPlaybackRateReturnAddress) >= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) &&
-        *static_cast<uintptr_t*>(audioTrackVirtual_GetPlaybackRateReturnAddress) <= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) + Vanilla::GetModuleSize("clr.dll"))
+    if (*static_cast<uintptr_t*>(getCurrentPlaybackRateReturnAddress) >= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) &&
+        *static_cast<uintptr_t*>(getCurrentPlaybackRateReturnAddress) <= reinterpret_cast<uintptr_t>(GetModuleHandleA("clr.dll")) + Vanilla::GetModuleSize("clr.dll"))
         return ModManager::ModPlaybackRate();
 
-    return oAudioTrackVirtual_GetPlaybackRate(instance);
+    return oGetCurrentPlaybackRate();
 }
 
 void Timewarp::patchTickrate()
@@ -82,25 +73,12 @@ double Timewarp::GetRateMultiplier()
     return static_cast<double>(Config::Timewarp::Rate) / ModManager::ModPlaybackRate();
 }
 
-__declspec(naked) double Timewarp::AudioTrackBass_GetPlaybackRateHook(void* instance)
+double __fastcall Timewarp::GetCurrentPlaybackRateHook()
 {
     __asm
     {
-        add esp, 0x8
-        mov[audioTrackBass_GetPlaybackRateReturnAddress], esp
-        sub esp, 0x8
-        jmp audioTrackBass_GetPlaybackRateStub
-    }
-}
-
-__declspec(naked) double Timewarp::AudioTrackVirtual_GetPlaybackRateHook(void* instance)
-{
-    __asm
-    {
-        add esp, 0x8
-        mov[audioTrackVirtual_GetPlaybackRateReturnAddress], esp
-        sub esp, 0x8
-        jmp audioTrackVirtual_GetPlaybackRateStub
+        mov[getCurrentPlaybackRateReturnAddress], esp
+        jmp getCurrentPlaybackRateStub
     }
 }
 
