@@ -174,6 +174,8 @@ class Widgets
 	};
 
 	static const char* patchFormatStringFloatToInt(const char* fmt);
+	static bool items_ArrayGetter(void* data, int idx, const char** out_text);
+	static float calcMaxPopupHeightFromItemCount(int items_count);
 	static inline int stepInt = 1;
 	static inline int stepFastInt = 10;
 	static inline float stepFloat = 0.1f;
@@ -193,4 +195,7 @@ public:
 	static bool SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags);
 	static bool SliderInt(const char* label, int* v, int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
 	static bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
+	static bool BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags = 0);
+	static bool Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
+	static bool Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
 };

@@ -331,7 +331,7 @@ inline void ImGui::FileBrowser::Display()
     char driveStr[] = { currentDrive, ':', '\0' };
 
     PushItemWidth(4 * GetFontSize());
-    if(BeginCombo("##select_drive", driveStr))
+    if(Widgets::BeginCombo("##select_drive", driveStr))
     {
         ScopeGuard guard([&] { EndCombo(); });
 
@@ -630,7 +630,7 @@ inline void ImGui::FileBrowser::Display()
     {
         SameLine();
         PushItemWidth(8 * GetFontSize());
-        if(BeginCombo(
+        if(Widgets::BeginCombo(
             "##type_filters", typeFilters_[typeFilterIndex_].c_str()))
         {
             ScopeGuard guard([&] { EndCombo(); });

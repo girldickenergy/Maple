@@ -162,12 +162,12 @@ void MainMenu::Render()
                 {
                     Widgets::Checkbox("Enabled", &Config::Relax::Enabled);
                     const char* playstyles[] = { "Singletap", "Alternate", "TapX" };
-                    ImGui::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
+                    Widgets::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
                     const char* distributions[] = { "Uniform", "Normal" };
-                    ImGui::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions));
+                    Widgets::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions));
                     const char* keys[] = { "M1", "K1", "M2", "K2" };
-                    ImGui::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
-                    ImGui::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
+                    Widgets::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
+                    Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
                     Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput);
                     Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
                     //Widgets::HitErrorBar(Config::Relax::HitSpread);
@@ -255,7 +255,7 @@ void MainMenu::Render()
                 Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 7 : 6, 0, 2)));
                 {
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
-                    if (ImGui::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
+                    if (Widgets::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
                         StyleProvider::UpdateScale();
 
                     ImGui::Spacing();
@@ -331,7 +331,7 @@ void MainMenu::Render()
                 {
 	                const float buttonWidth1 = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
 	                const float buttonWidth2 = ImGui::GetWindowWidth() * 0.5f;
-                    ImGui::Combo("Config", &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
+                    Widgets::Combo("Config", &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
                     {
                         auto& vector = *static_cast<std::vector<std::string>*>(vec);
                         if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }

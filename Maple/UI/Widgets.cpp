@@ -28,6 +28,22 @@ const char* Widgets::patchFormatStringFloatToInt(const char* fmt)
     return fmt;
 }
 
+bool Widgets::items_ArrayGetter(void* data, int idx, const char** out_text)
+{
+    const char* const* items = (const char* const*)data;
+    if (out_text)
+        *out_text = items[idx];
+    return true;
+}
+
+float Widgets::calcMaxPopupHeightFromItemCount(int items_count)
+{
+    ImGuiContext& g = *GImGui;
+    if (items_count <= 0)
+        return FLT_MAX;
+    return (g.FontSize + g.Style.ItemSpacing.y) * items_count - g.Style.ItemSpacing.y + (g.Style.WindowPadding.y * 2);
+}
+
 bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -54,11 +70,11 @@ bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags 
         size.x = ImMax(label_size.x, max_x - min_x);
 
     // Text stays at the submission position, but bounding box may be extended on both sides
-    const ImVec2 text_min = pos;
-    const ImVec2 text_max(min_x + size.x, pos.y + size.y);
+    const ImVec2 text_min = ImVec2(pos.x + style.FramePadding.x, pos.y);
+    const ImVec2 text_max(min_x + size.x + style.FramePadding.x, pos.y + size.y);
 
     // Selectables are meant to be tightly packed together with no click-gap, so we extend their box to cover spacing between selectable.
-    ImRect bb(min_x, pos.y, text_max.x, text_max.y);
+    ImRect bb(min_x, pos.y, text_max.x - style.FramePadding.x, text_max.y);
     if ((flags & ImGuiSelectableFlags_NoPadWithHalfSpacing) == 0)
     {
         const float spacing_x = span_all_columns ? 0.0f : style.ItemSpacing.x;
@@ -996,4 +1012,189 @@ bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max,
         *v = ImClamp(*v, v_min, v_max);
 
     return sliderValueChanged || inputValueChanged;
+}
+
+bool Widgets::BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags)
+{
+    // Always consume the SetNextWindowSizeConstraint() call in our early return paths
+    ImGuiContext& g = *GImGui;
+    bool has_window_size_constraint = (g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint) != 0;
+    g.NextWindowData.Flags &= ~ImGuiNextWindowDataFlags_HasSizeConstraint;
+
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    IM_ASSERT((flags & (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)) != (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)); // Can't use both flags together
+
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+
+    const ImVec2 arrow_size = (flags & ImGuiComboFlags_NoArrowButton) ? ImVec2(0, 0) : ImVec2(ImGui::GetFrameHeight() / 1.5, ImGui::GetFrameHeight() / 1.5 * 0.625f);
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+    const float expected_w = ImGui::CalcItemWidth();
+    const float w = (flags & ImGuiComboFlags_NoPreview) ? arrow_size.x : expected_w;
+    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    ImGui::ItemSize(total_bb, style.FramePadding.y);
+    if (!ImGui::ItemAdd(total_bb, id, &frame_bb))
+        return false;
+
+    bool hovered, held;
+    bool pressed = ImGui::ButtonBehavior(frame_bb, id, &hovered, &held);
+    bool popup_open = ImGui::IsPopupOpen(id, ImGuiPopupFlags_None);
+
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    const ImColor frame_col = ImLerp(style.Colors[ImGuiCol_FrameBg], style.Colors[ImGuiCol_FrameBgHovered], hoverAnimation->second);
+    const float value_x2 = ImMax(frame_bb.Min.x, frame_bb.Max.x - arrow_size.x);
+    ImGui::RenderNavHighlight(frame_bb, id);
+    if (!(flags & ImGuiComboFlags_NoPreview))
+        window->DrawList->AddRectFilled(frame_bb.Min, frame_bb.Max, frame_col, style.FrameRounding, ImDrawFlags_RoundCornersAll);
+    if (!(flags & ImGuiComboFlags_NoArrowButton))
+    {
+        window->DrawList->AddImage(StyleProvider::ChevronIconTexture, ImVec2(frame_bb.Max.x - arrow_size.x - (frame_bb.Max.y - frame_bb.Min.y - arrow_size.y) / 2, frame_bb.Min.y + (frame_bb.Max.y - frame_bb.Min.y) / 2 - arrow_size.y / 2), ImVec2(frame_bb.Max.x - (frame_bb.Max.y - frame_bb.Min.y - arrow_size.y) / 2, frame_bb.Min.y + (frame_bb.Max.y - frame_bb.Min.y) / 2 + arrow_size.y / 2), ImVec2(0, 0), ImVec2(1, 1), ImColor(StyleProvider::TextColour));
+    }
+    ImGui::RenderFrameBorder(frame_bb.Min, frame_bb.Max, style.FrameRounding);
+    if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
+    {
+        ImVec2 preview_pos = frame_bb.Min + style.FramePadding;
+        if (g.LogEnabled)
+	        ImGui::LogSetNextTextDecoration("{", "}");
+        ImGui::RenderTextClipped(preview_pos, ImVec2(value_x2, frame_bb.Max.y), preview_value, NULL, NULL, ImVec2(0.0f, 0.0f));
+    }
+    if (label_size.x > 0)
+	    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+
+    if ((pressed || g.NavActivateId == id) && !popup_open)
+    {
+        if (window->DC.NavLayerCurrent == 0)
+            window->NavLastIds[0] = id;
+
+        ImGui::OpenPopupEx(id, ImGuiPopupFlags_None);
+        popup_open = true;
+    }
+
+    if (!popup_open)
+        return false;
+
+    if (has_window_size_constraint)
+    {
+        g.NextWindowData.Flags |= ImGuiNextWindowDataFlags_HasSizeConstraint;
+        g.NextWindowData.SizeConstraintRect.Min.x = ImMax(g.NextWindowData.SizeConstraintRect.Min.x, w);
+    }
+    else
+    {
+        if ((flags & ImGuiComboFlags_HeightMask_) == 0)
+            flags |= ImGuiComboFlags_HeightRegular;
+        IM_ASSERT(ImIsPowerOfTwo(flags & ImGuiComboFlags_HeightMask_));    // Only one
+        int popup_max_height_in_items = -1;
+        if (flags & ImGuiComboFlags_HeightRegular)     popup_max_height_in_items = 8;
+        else if (flags & ImGuiComboFlags_HeightSmall)  popup_max_height_in_items = 4;
+        else if (flags & ImGuiComboFlags_HeightLarge)  popup_max_height_in_items = 20;
+        ImGui::SetNextWindowSizeConstraints(ImVec2(w, 0.0f), ImVec2(FLT_MAX, calcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+    }
+
+    char name[16];
+    ImFormatString(name, IM_ARRAYSIZE(name), "##Combo_%02d", g.BeginPopupStack.Size); // Recycle windows based on depth
+
+    // Position the window given a custom constraint (peak into expected window size so we can position it)
+    // This might be easier to express with an hypothetical SetNextWindowPosConstraints() function.
+    if (ImGuiWindow* popup_window = ImGui::FindWindowByName(name))
+        if (popup_window->WasActive)
+        {
+            // Always override 'AutoPosLastDirection' to not leave a chance for a past value to affect us.
+            ImVec2 size_expected = ImGui::CalcWindowNextAutoFitSize(popup_window);
+            if (flags & ImGuiComboFlags_PopupAlignLeft)
+                popup_window->AutoPosLastDirection = ImGuiDir_Left; // "Below, Toward Left"
+            else
+                popup_window->AutoPosLastDirection = ImGuiDir_Down; // "Below, Toward Right (default)"
+            ImRect r_outer = ImGui::GetWindowAllowedExtentRect(popup_window);
+            ImVec2 pos = ImGui::FindBestWindowPosForPopupEx(frame_bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox);
+            ImGui::SetNextWindowPos(pos + ImVec2(0, style.ItemInnerSpacing.y));
+        }
+
+    // We don't use BeginPopupEx() solely because we have a custom name string, which we could make an argument to BeginPopupEx()
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove;
+
+    // Horizontally align ourselves with the framed text
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(style.FramePadding.x, style.WindowPadding.y));
+    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImGui::GetColorU32(ImGuiCol_FrameBgActive));
+    bool ret = ImGui::Begin(name, NULL, window_flags);
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar(2);
+    if (!ret)
+    {
+	    ImGui::EndPopup();
+        IM_ASSERT(0);   // This should never happen as we tested for IsPopupOpen() above
+        return false;
+    }
+    return true;
+}
+
+bool Widgets::Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items)
+{
+    ImGuiContext& g = *GImGui;
+
+    // Call the getter to obtain the preview string which is a parameter to BeginCombo()
+    const char* preview_value = NULL;
+    if (*current_item >= 0 && *current_item < items_count)
+        items_getter(data, *current_item, &preview_value);
+
+    // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need it, but we emulate it here.
+    if (popup_max_height_in_items != -1 && !(g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint))
+	    ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, calcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+
+    if (!BeginCombo(label, preview_value, ImGuiComboFlags_None))
+        return false;
+
+    // Display items
+    // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
+    bool value_changed = false;
+    for (int i = 0; i < items_count; i++)
+    {
+	    ImGui::PushID((void*)(intptr_t)i);
+        const bool item_selected = (i == *current_item);
+        const char* item_text;
+        if (!items_getter(data, i, &item_text))
+            item_text = "*Unknown item*";
+        if (Selectable(item_text, item_selected, ImGuiSelectableFlags_SpanAllColumns))
+        {
+            value_changed = true;
+            *current_item = i;
+        }
+        if (item_selected)
+	        ImGui::SetItemDefaultFocus();
+        ImGui::PopID();
+    }
+
+    ImGui::EndCombo();
+    if (value_changed)
+	    ImGui::MarkItemEdited(g.CurrentWindow->DC.LastItemId);
+
+    return value_changed;
+}
+
+bool Widgets::Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items)
+{
+    const bool value_changed = Combo(label, current_item, items_ArrayGetter, (void*)items, items_count, popup_max_height_in_items);
+    return value_changed;
 }
