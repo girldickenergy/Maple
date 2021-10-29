@@ -160,31 +160,31 @@ void MainMenu::Render()
         	{
                 Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(13)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Relax::Enabled);
+                    Widgets::Checkbox("Enabled", &Config::Relax::Enabled); Widgets::Tooltip("All hit objects will be automatically tapped by Maple.");
                     const char* playstyles[] = { "Singletap", "Alternate", "TapX" };
-                    Widgets::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
+                    Widgets::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles)); Widgets::Tooltip("Singletap - taps with the primary key and alternates only above certain BPM.\n\nAlternate - alternates all the time, regardless of the BPM.\n\nTapX - singletaps with M1 and alternates above certain BPM with Primary and Secondary keys.");
                     const char* distributions[] = { "Uniform", "Normal" };
                     Widgets::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions));
                     const char* keys[] = { "M1", "K1", "M2", "K2" };
                     Widgets::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
                     Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
-                    Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput);
-                    Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum BPM at which relax will singletap.");
+                    Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a spread for distribution function.\n\n100 is a full hit window 300.\n200 is a full hit window 100.\n300 is a full hit window50.");
                     Widgets::HitErrorBar(Config::Relax::HitSpread);
-                    Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Same as above, but for alternation.");
                     Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
-                    Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners);
-                    Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride);
-                    Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations);
+                    Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners); Widgets::Tooltip("Relax will keep holding the key if there's a spinner right after the last hit object.");
+                    Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride); Widgets::Tooltip("Changes the way how alternation of sliders is handled.\nIt is recommended to enable this option on techno maps.");
+                    Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations); Widgets::Tooltip("Allows relax to gather time and cursor position data more frequently, which results in more accurate calculations.");
                 }
                 Widgets::EndPanel();
         		
                 Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Relax::PredictionEnabled);
-                    Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled);
-                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, "%d", ImGuiSliderFlags_ClampOnInput);
-                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                    Widgets::Checkbox("Enabled", &Config::Relax::PredictionEnabled); Widgets::Tooltip("Predicts whether or not you're leaving the circle and clicks if you are.");
+                    Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled); Widgets::Tooltip("Same as above, but for sliders.\n\nOften yields false positive results. Enable this only if you really have to.");
+                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
+                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
                 }
                 Widgets::EndPanel();
         	}
@@ -210,18 +210,18 @@ void MainMenu::Render()
                 {
                     Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                     {
-                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders);
-                        Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone);
-                        Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999, "%.3f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                        Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                        Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
+                        Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
+                        Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
+                        Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
+                        Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                        Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
+                        Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
                     }
                     Widgets::EndPanel();
                 }
@@ -230,8 +230,8 @@ void MainMenu::Render()
         	{
                 Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled);
-                    Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp);
+                    Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled); Widgets::Tooltip("Slows down or speeds up the game.");
+                    Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
                 }
                 Widgets::EndPanel();
         	}
@@ -239,16 +239,16 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled);
-                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0, 12, "%.1f", ImGuiSliderFlags_AlwaysClamp);
-                    Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods);
+                    Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
+                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0, 12, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
+                    Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods); Widgets::Tooltip("If this option is enabled, AR Changer will adjust the AR you have set to currently selected mods.\n\nFor example, if you selected Easy mod, AR will be slightly lower.");
                 }
                 Widgets::EndPanel();
             	
                 Widgets::BeginPanel("HD & FL Removers", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    Widgets::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled);
-                    Widgets::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled);
+                    Widgets::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled); Widgets::Tooltip("Disables Hidden mod.");
+                    Widgets::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled); Widgets::Tooltip("Disables Flashlight mod.");
                 }
                 Widgets::EndPanel();
 
@@ -312,14 +312,14 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators);
-                    Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled);
+                    Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators); Widgets::Tooltip("Spectators will keep buffering infinitely.");
+                    Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled); Widgets::Tooltip("Before submitting the score Maple will ask you whether or not you really want to submit it.");
                 }
                 Widgets::EndPanel();
 
                 Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled);
+                    Widgets::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled); Widgets::Tooltip("Spoofs Name and Rank fields of your Discord Activity (aka Discord Rich Presence)");
                     ImGui::InputText("Name", Config::Misc::SpoofedName, 64);
                     ImGui::InputText("Rank", Config::Misc::SpoofedRank, 64);
                 }

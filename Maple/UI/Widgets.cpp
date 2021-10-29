@@ -1199,6 +1199,22 @@ bool Widgets::Combo(const char* label, int* current_item, const char* const item
     return value_changed;
 }
 
+void Widgets::Tooltip(const char* text)
+{
+    if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
+    {
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, ImGui::GetColorU32(ImGuiCol_FrameBg));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
+        ImGui::BeginTooltip();
+        ImGui::PopStyleVar();
+    	ImGui::PopStyleColor();
+        ImGui::PushTextWrapPos((StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x) * 0.5f);
+        ImGui::TextUnformatted(text);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
 void Widgets::HitErrorBar(int window)
 {
 	const float hitWindowWidth = (ImGui::GetWindowSize().x * 0.5f) / 6.0f;

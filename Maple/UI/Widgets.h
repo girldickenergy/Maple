@@ -198,5 +198,6 @@ public:
 	static bool BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags = 0);
 	static bool Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
 	static bool Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
+	static void Tooltip(const char* text);
 	static void HitErrorBar(int window);
 };
