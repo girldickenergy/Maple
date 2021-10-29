@@ -1198,3 +1198,15 @@ bool Widgets::Combo(const char* label, int* current_item, const char* const item
     const bool value_changed = Combo(label, current_item, items_ArrayGetter, (void*)items, items_count, popup_max_height_in_items);
     return value_changed;
 }
+
+void Widgets::HitErrorBar(int window)
+{
+	const float hitWindowWidth = (ImGui::GetWindowSize().x * 0.5f) / 6.0f;
+
+    ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetCurrentWindow()->DC.CursorPos, ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ImGui::GetWindowSize().x * 0.5f, ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight()), ImColor(218, 174, 70, 255), ImGui::GetStyle().FrameRounding);
+    ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + hitWindowWidth, ImGui::GetCurrentWindow()->DC.CursorPos.y), ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ImGui::GetWindowSize().x * 0.5f - hitWindowWidth, ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight()), ImColor(87, 227, 19, 255));
+    ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + hitWindowWidth * 2, ImGui::GetCurrentWindow()->DC.CursorPos.y), ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ImGui::GetWindowSize().x * 0.5f - hitWindowWidth * 2, ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight()), ImColor(50, 188, 231, 255));
+    ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ((ImGui::GetWindowSize().x * 0.5f) / 2.0f) - hitWindowWidth * (static_cast<float>(window) / 100.0f), ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetStyle().FramePadding.y), ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ((ImGui::GetWindowSize().x * 0.5f) / 2.0f) + hitWindowWidth * (static_cast<float>(window) / 100.0f), ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight() - ImGui::GetStyle().FramePadding.y), ImColor(StyleProvider::AccentColour), ImGui::GetStyle().FrameRounding);
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetFrameHeight() + ImGui::GetStyle().ItemSpacing.y);
+}

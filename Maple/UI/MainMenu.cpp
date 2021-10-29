@@ -158,7 +158,7 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
-                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(11)));
+                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(13)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Relax::Enabled);
                     const char* playstyles[] = { "Singletap", "Alternate", "TapX" };
@@ -170,9 +170,9 @@ void MainMenu::Render()
                     Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
                     Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput);
                     Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
-                    //Widgets::HitErrorBar(Config::Relax::HitSpread);
+                    Widgets::HitErrorBar(Config::Relax::HitSpread);
                     Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput);
-                    //Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
+                    Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
                     Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners);
                     Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride);
                     Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations);

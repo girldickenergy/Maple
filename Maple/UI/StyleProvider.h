@@ -140,6 +140,8 @@ public:
 		ControlColour = Config::Visuals::ControlColour;
 		TextColour = Config::Visuals::TextColour;
 
+		style.Colors[ImGuiCol_TextSelectedBg] = AccentColour;
+
 		const float mottoColourMultiplier = 0.2126f * MenuColour.x + 0.7152f * MenuColour.y + 0.0722f * MenuColour.z > 0.5f ? -1.f : 1.f;
 		const float menuColourMultiplier = MenuColour.x < 0.1f && MenuColour.y < 0.1f && MenuColour.z < 0.1f ? -1.f : 1.f;
 
