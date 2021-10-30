@@ -104,14 +104,14 @@ void VisualsSpoofers::FlashlightRemoverThread()
 	int i = 0;
 	while (true)
 	{
-		VM_SHARK_BLACK_START
-		
 		if (Player::IsLoaded() && !Player::IsReplayMode())
 		{
 			const float targetAlpha = roundf(Config::Visuals::FlashlightDisabled ? 0.f : 1.f);
 			if (roundf(Ruleset::GetFlashlightAlpha()) != targetAlpha)
 				Ruleset::SetFlashlightAlpha(targetAlpha);
 
+			VM_SHARK_BLACK_START
+			
 			if (i == 0)
 			{
 				DWORD check1 = 0x2F47C114;
@@ -119,15 +119,15 @@ void VisualsSpoofers::FlashlightRemoverThread()
 				if (check1 == 0x2F47C114)
 					Security::CorruptMemory();
 
-				Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle);
+				Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle, true);
 			}
 			i++;
 			if (i == 600)
 				i = 0;
+			
+			VM_SHARK_BLACK_END
 		}
 
 		Sleep(100);
-
-		VM_SHARK_BLACK_END
 	}
 }
