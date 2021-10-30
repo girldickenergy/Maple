@@ -25,10 +25,12 @@ void Timewarp::patchTickrate()
     const uintptr_t tickrate1 = Vanilla::FindSignature("\xDD\x05\x00\x00\x00\x00\xDC\x25\x00\x00\x00\x00\xD9\xC0\xDD\x05", "xx????xx????xxxx", entryPoint, 0x28E) + 0x10;
     const uintptr_t tickrate2 = Vanilla::FindSignature("\x1D\x00\x00\x00\x00\xDD\x05\x00\x00\x00\x00\xDC\x25", "x????xx????xx", entryPoint, 0x28E) + 0xD;
     const uintptr_t tickrate3 = Vanilla::FindSignature("\xDD\x05\x00\x00\x00\x00\xDD\x05\x00\x00\x00\x00\xDC\x25", "xx????xx????xx", entryPoint, 0x28E) + 0xE;
-
+    const uintptr_t tickrate4 = Vanilla::FindSignature("\xDD\x1D\x00\x00\x00\x00\xDD\x05\x00\x00\x00\x00\xDC\x35", "xx????xx????xx", entryPoint, 0x28E) + 0xE;
+	
     *reinterpret_cast<double**>(tickrate1) = &tickrate;
     *reinterpret_cast<double**>(tickrate2) = &tickrate;
     *reinterpret_cast<double**>(tickrate3) = &tickrate;
+    *reinterpret_cast<double**>(tickrate4) = &tickrate;
 }
 
 void Timewarp::TimewarpThread()
