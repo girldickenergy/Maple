@@ -9,7 +9,7 @@ void __fastcall ScoreSubmission::SubmitHook(void* instance)
 {
 	scoreInstance = instance;
 	
-	if (Config::Misc::PromptOnScoreSubmissionEnabled && GameBase::HasLogin() && !Player::IsRetrying())
+	if (Config::Misc::PromptOnScoreSubmissionEnabled /*&& GameBase::HasLogin()*/ && !Player::IsRetrying())
 		Overlay::ShowScoreSubmissionDialogue();
 	else
 		oSubmit(instance);
