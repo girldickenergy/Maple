@@ -152,6 +152,534 @@
     <ClCompile Include="Sdk\Input\InputManager.cpp">
       <Filter>Sdk\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\Wrapper\AES.cpp">
+      <Filter>Dependencies\cryptopp\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\Wrapper\RSADecrypt.cpp">
+      <Filter>Dependencies\cryptopp\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\wake.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\whrlpool.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\xed25519.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\xtr.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\xtrcrypt.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\xts.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\zdeflate.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\zinflate.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\zlib.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\3way.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\adler32.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\algebra.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\algparam.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\allocate.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\arc4.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\aria.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\aria_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ariatab.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\asn.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\authenc.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\base32.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\base64.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\basecode.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\bfinit.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\blake2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\blake2b_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\blake2s_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\blowfish.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\blumshub.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\camellia.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cast.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\casts.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cbcmac.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ccm.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\chacha.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\chacha_avx.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\chacha_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\chachapoly.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cham.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cham_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\channels.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cmac.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cpu.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\crc.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\crc_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\cryptlib.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\darn.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\default.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\des.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\dessp.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\dh.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\dh2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\dll.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\donna_32.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\donna_64.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\donna_sse.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\dsa.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\eax.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ec2n.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\eccrypto.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ecp.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\elgamal.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\emsa2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\eprecomp.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\esign.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\files.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\filters.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\fips140.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\fipsalgt.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gcm.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gcm_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gf2_32.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gf2n.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gf2n_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gf256.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gfpcrypt.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gost.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\gzip.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hc128.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hc256.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hex.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hight.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hmac.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\hrtimer.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ida.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\idea.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\integer.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\iterhash.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\kalyna.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\kalynatab.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\keccak.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\keccak_core.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\keccak_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\lea.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\lea_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\luc.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\mars.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\marss.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\md2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\md4.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\md5.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\misc.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\modes.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\mqueue.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\mqv.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\nbtheory.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\neon_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\oaep.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\osrng.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\padlkrng.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\panama.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\pch.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\pkcspad.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\poly1305.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\polynomi.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ppc_power7.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ppc_power8.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ppc_power9.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ppc_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\pssr.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\pubkey.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\queue.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rabbit.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rabin.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\randpool.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rc2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rc5.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rc6.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rdrand.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rdtables.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rijndael.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rijndael_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ripemd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rng.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rsa.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\rw.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\safer.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\salsa.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\scrypt.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\seal.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\seed.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\serpent.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sha.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sha_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sha3.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\shacal2.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\shacal2_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\shake.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\shark.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sharkbox.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\simeck.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\simon.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\simon128_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\simple.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\skipjack.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sm3.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sm4.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sm4_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sosemanuk.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\speck.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\speck128_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\square.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\squaretb.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\sse_simd.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\strciphr.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\tea.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\tftables.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\threefish.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\tiger.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\tigertab.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\ttmac.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\tweetnacl.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\twofish.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\cryptopp\vmac.cpp">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -276,6 +804,21 @@
     </Filter>
     <Filter Include="UI\3rd-party\FileDialog">
       <UniqueIdentifier>{0a9f1d5a-01db-48c5-9146-35ea23afbf8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\cryptopp">
+      <UniqueIdentifier>{00e9f981-3ff1-4410-a009-e071907ccda6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\curl">
+      <UniqueIdentifier>{a2379ea0-dc7c-4ddc-9bae-44dd5958cf85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication">
+      <UniqueIdentifier>{92c6f556-b833-4711-89bc-454c8db8026f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\ThemidaSDK">
+      <UniqueIdentifier>{ecb580cd-a8f7-4708-93ef-376e51275b65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\cryptopp\Wrapper">
+      <UniqueIdentifier>{efbaf5b8-e0c3-49b9-adec-dc6f574a0547}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -534,10 +1077,639 @@
     <ClInclude Include="UI\3rd-party\FileDialog\imfilebrowser.h">
       <Filter>UI\3rd-party\FileDialog</Filter>
     </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\Wrapper\AES.h">
+      <Filter>Dependencies\cryptopp\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\Wrapper\RSADecrypt.h">
+      <Filter>Dependencies\cryptopp\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\wake.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\whrlpool.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\words.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\xed25519.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\xtr.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\xtrcrypt.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\xts.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\zdeflate.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\zinflate.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\zlib.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\3way.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\adler32.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\adv_simd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\aes.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\aes_armv4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\algebra.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\algparam.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\allocate.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\arc4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\argnames.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\aria.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\arm_simd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\asn.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\authenc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\base32.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\base64.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\basecode.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\blake2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\blowfish.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\blumshub.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\camellia.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cast.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cbcmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ccm.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\chacha.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\chachapoly.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cham.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\channels.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_align.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_asm.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_cpu.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_cxx.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_dll.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_int.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_misc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_ns.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_os.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\config_ver.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cpu.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\crc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\cryptlib.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\darn.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\default.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\des.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\dh.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\dh2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\dll.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\dmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\donna.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\donna_32.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\donna_64.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\donna_sse.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\drbg.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\dsa.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\eax.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ec2n.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\eccrypto.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ecp.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ecpoint.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\elgamal.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\emsa2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\eprecomp.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\esign.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\factory.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\fhmqv.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\files.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\filters.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\fips140.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\fltrimpl.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gcm.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gf2_32.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gf2n.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gf256.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gfpcrypt.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gost.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\gzip.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hashfwd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hc128.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hc256.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hex.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hight.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hkdf.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hmqv.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\hrtimer.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ida.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\idea.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\integer.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\iterhash.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\kalyna.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\keccak.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\lea.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\lubyrack.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\luc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\mars.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\md2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\md4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\md5.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\mdc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\mersenne.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\misc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\modarith.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\modes.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\modexppc.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\mqueue.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\mqv.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\naclite.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\nbtheory.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\nr.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\oaep.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\oids.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\osrng.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ossig.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\padlkrng.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\panama.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\pch.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\pkcspad.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\poly1305.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\polynomi.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ppc_simd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\pssr.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\pubkey.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\pwdbased.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\queue.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rabbit.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rabin.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\randpool.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rc2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rc5.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rc6.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rdrand.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\resource.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rijndael.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ripemd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rng.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rsa.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\rw.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\safer.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\salsa.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\scrypt.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\seal.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\secblock.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\secblockfwd.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\seckey.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\seed.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\serpent.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\serpentp.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sha.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sha1_armv4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sha3.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sha256_armv4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sha512_armv4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\shacal2.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\shake.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\shark.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\simeck.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\simon.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\simple.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\siphash.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\skipjack.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sm3.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sm4.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\smartptr.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\sosemanuk.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\speck.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\square.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\stdcpp.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\strciphr.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\tea.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\threefish.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\tiger.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\trap.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\trunhash.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\ttmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\tweetnacl.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\twofish.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\cryptopp\vmac.h">
+      <Filter>Dependencies\cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\curl.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\curlver.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\easy.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\mprintf.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\multi.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\options.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\stdcheaders.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\system.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\typecheck-gcc.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\curl\urlapi.h">
+      <Filter>Dependencies\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_BorlandC_inline.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_GNU_inline.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_ICL_inline.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_LCC_inline.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_VC_inline.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\ThemidaSDK.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h">
+      <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\DirectX\d3dx9math.inl">
       <Filter>Dependencies\DirectX</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Dependencies\cryptopp\Readme.txt">
+      <Filter>Dependencies\cryptopp</Filter>
+    </Text>
   </ItemGroup>
 </Project>
