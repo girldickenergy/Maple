@@ -5,6 +5,7 @@
 
 #include "StyleProvider.h"
 #include "Widgets.h"
+#include "../Communication/Communication.h"
 #include "../Config/Config.h"
 #include "3rd-party/FileDialog/imfilebrowser.h"
 
@@ -87,7 +88,7 @@ void MainMenu::Render()
 
                 ImGui::PushFont(StyleProvider::FontDefault);
                 ImGui::SetCursorPos(ImVec2(userInfoSize.y / 4 + userInfoSize.y / 2 + style.ItemSpacing.x, userInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::AccentColour, "developer");
+                ImGui::TextColored(StyleProvider::AccentColour, Communication::CurrentUser->Username.c_str());
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -140,9 +141,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l20102021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l31102021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l21102021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l31102021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();

@@ -8,6 +8,7 @@
 #include "Textures.h"
 #include "../Utilities/Textures/TextureHelper.h"
 #include "Overlay.h"
+#include "../Communication/Communication.h"
 #include "../Config/Config.h"
 
 class StyleProvider
@@ -83,9 +84,19 @@ public:
 
 	static void LoadTextures()
 	{
+		if (Communication::CurrentUser->DiscordID != "-1" && Communication::CurrentUser->AvatarHash != "-1")
+		{
+			std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::CurrentUser->DiscordID + "/" + Communication::CurrentUser->AvatarHash + ".png?size=64";
+
+			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromURLOGL3(avatarURL) : TextureHelper::LoadTextureFromURLD3D9(Overlay::D3D9Device, avatarURL);
+		}
+		else
+			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+
+		if (!AvatarTexture)
+			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+		
 		MapleLogoTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::MapleLogo, Textures::MapleLogoSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::MapleLogo, Textures::MapleLogoSize);
-		//AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromFileOGL3("C:\\Users\\Flash\\Desktop\\a_f0b6abaa98e5a0c64e0d1fabdeb5926b.png") : TextureHelper::LoadTextureFromFileD3D9(Overlay::D3D9Device, "C:\\Users\\Flash\\Desktop\\a_f0b6abaa98e5a0c64e0d1fabdeb5926b.png");
-		AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
 		RelaxIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::RelaxIcon, Textures::RelaxIconSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::RelaxIcon, Textures::RelaxIconSize);
 		AimAssistIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::AimAssistIcon, Textures::AimAssistIconSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::AimAssistIcon, Textures::AimAssistIconSize);
 		TimewarpIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureHelper::LoadTextureFromMemoryOGL3(Textures::TimewarpIcon, Textures::TimewarpIconSize) : TextureHelper::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::TimewarpIcon, Textures::TimewarpIconSize);

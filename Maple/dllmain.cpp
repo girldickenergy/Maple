@@ -92,16 +92,16 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 {
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
-    auto pArgs = (CustomArgs*)data_addr;
+    //auto pArgs = (CustomArgs*)data_addr;
 
-    std::string data(pArgs->user_data, 255);
+    //std::string data(pArgs->user_data, 255);
 
-    std::vector<std::string> split = StringUtilities::Split(data);
+    //std::vector<std::string> split = StringUtilities::Split(data);
 
-    Communication::CurrentUser->Username = split[0];
-    Communication::CurrentUser->SessionID = split[1];
-    Communication::CurrentUser->DiscordID = split[2];
-    Communication::CurrentUser->AvatarHash = split[3];
+    Communication::CurrentUser->Username = "Maple Syrup";//split[0];
+    Communication::CurrentUser->SessionID = "dicks";//split[1];
+    Communication::CurrentUser->DiscordID = "894829685383528469";//split[2];
+    Communication::CurrentUser->AvatarHash = "dbd11a53e2e70eb3fced458816a87f62";//split[3];
 
     Communication::ConnectToServer();
 
@@ -146,9 +146,9 @@ void InitializeLogging(const std::string& directory)
         Security::CorruptMemory();
 	
 #ifdef _DEBUG
-    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning, true, NULL);
+    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::All);
+    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
 #endif
 	
     Logger::Log(LogSeverity::Info, xor ("Initialization started."));
