@@ -3,6 +3,10 @@
 #include <filesystem>
 #include <fstream>
 
+#include <ThemidaSDK.h>
+
+#include "../../Utilities/Security/xorstr.hpp"
+
 void Config::ensureDirectoryExists()
 {
 	if (!std::filesystem::exists(Directory))
@@ -21,7 +25,7 @@ bool Config::isSameName(const std::string& a, const std::string& b)
 
 bool Config::isValidName(std::string name)
 {
-	return !name.empty() && !isSameName(name, "default");
+	return !name.empty() && !isSameName(name, xor ("default"));
 }
 
 ImVec4 Config::parseImVec4(std::string vec)
@@ -44,6 +48,8 @@ ImVec4 Config::parseImVec4(std::string vec)
 
 void Config::loadDefaults()
 {
+	STR_ENCRYPT_START
+	
 	Relax::Enabled = false;
 	Relax::Distribution = 1;
 	Relax::Playstyle = 0;
@@ -95,8 +101,10 @@ void Config::loadDefaults()
 	Misc::DisableSpectators = false;
 	Misc::PromptOnScoreSubmissionEnabled = false;
 	Misc::RichPresenceSpooferEnabled = false;
-	strcpy_s(Misc::SpoofedName, "maple.software");
-	strcpy_s(Misc::SpoofedRank, "rocking osu! since 2021");
+	strcpy_s(Misc::SpoofedName, xor ("maple.software"));
+	strcpy_s(Misc::SpoofedRank, xor("rocking osu! since 2021"));
+
+	STR_ENCRYPT_END
 }
 
 void Config::Initialize(const std::string& directory)
@@ -110,6 +118,8 @@ void Config::Initialize(const std::string& directory)
 
 void Config::Load()
 {
+	STR_ENCRYPT_START
+	
 	ensureDirectoryExists();
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
 
@@ -230,10 +240,14 @@ void Config::Load()
 	}
 
 	file.close();
+
+	STR_ENCRYPT_END
 }
 
 void Config::Save()
 {
+	STR_ENCRYPT_START
+	
 	if (CurrentConfig == 0)
 		return;
 
@@ -299,6 +313,8 @@ void Config::Save()
 	ofs << "MiscSpoofedRank=" << Misc::SpoofedRank << std::endl;
 
 	ofs.close();
+
+	STR_ENCRYPT_END
 }
 
 void Config::Create()

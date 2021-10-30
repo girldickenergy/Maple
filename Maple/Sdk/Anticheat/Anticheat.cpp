@@ -1,11 +1,15 @@
 #include "Anticheat.h"
 
+#include <ThemidaSDK.h>
 #include <Vanilla.h>
 
 #include "../Osu/GameBase.h"
 
 void Anticheat::Initialize()
 {
+	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+	
 	Method gameBaseFreeAC = Vanilla::Explorer["osu.GameBase"]["FreeAC"].Method;
 	gameBaseFreeAC.Compile();
 	freeAC = static_cast<fnFreeAC>(gameBaseFreeAC.GetNativeStart());
@@ -35,10 +39,16 @@ void Anticheat::Initialize()
 	rulesetIncreaseScoreHitAddress = rulesetIncreaseScoreHit.GetNativeStart();
 	
 	acFlagAddress = Vanilla::Explorer["osu.GameModes.Play.Player"]["flag"].Field.GetAddress();
+
+	VM_SHARK_BLACK_END
+	STR_ENCRYPT_END
 }
 
 void Anticheat::DisableAnticheat()
 {
+	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+	
 	#ifdef _DEBUG
 		freeAC(GameBase::Instance());
 	#endif
@@ -50,11 +60,26 @@ void Anticheat::DisableAnticheat()
 	Vanilla::InstallPatch("PlayerHaxCheckMouse", reinterpret_cast<uintptr_t>(playerHaxCheckMouseAddress), "\x80\x3D\x00\x00\x00\x00\x00\x75\x14", "xx????xxx", 0x2C0, 7, "\x7D");
 	Vanilla::InstallPatch("PlayerCheckAimAssist", reinterpret_cast<uintptr_t>(playerCheckAimAssistAddress), "\x80\x38\x00\x74\x0B", "xxxxx", 0x212, 3, "\x7D");
 	Vanilla::InstallPatch("RulesetIncreaseScoreHit", reinterpret_cast<uintptr_t>(rulesetIncreaseScoreHitAddress), "\x80\x78\x7C\x00\x0F\x84", "xxxxxx", 0x1D36, 5, "\x8D");
+
+	STR_ENCRYPT_END
+	VM_SHARK_BLACK_END
 }
 
 void Anticheat::EnableAnticheat()
 {
+	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+	
 	Vanilla::RemovePatch("PlayerAllowSubmissionVariableConditions");
+	Vanilla::RemovePatch("PlayerHandleScoreSubmission");
+	Vanilla::RemovePatch("PlayerUpdate");
+	Vanilla::RemovePatch("PlayerCheckFlashlightHax");
+	Vanilla::RemovePatch("PlayerHaxCheckMouse");
+	Vanilla::RemovePatch("PlayerCheckAimAssist");
+	Vanilla::RemovePatch("RulesetIncreaseScoreHit");
+
+	STR_ENCRYPT_END
+	VM_SHARK_BLACK_END
 }
 
 int Anticheat::GetFlag()

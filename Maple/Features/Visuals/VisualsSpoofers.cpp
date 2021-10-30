@@ -1,11 +1,15 @@
 #include "VisualsSpoofers.h"
 
+#include <ThemidaSDK.h>
+
+#include "../../Communication/Communication.h"
 #include "../../Config/Config.h"
 #include "../../Sdk/Mods/ModManager.h"
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Sdk/Player/HitObjectManager.h"
 #include "../../Sdk/Player/Player.h"
 #include "../../Sdk/Player/Ruleset.h"
+#include "../../Utilities/Security/Security.h"
 
 void VisualsSpoofers::spoofVisuals()
 {
@@ -97,15 +101,33 @@ __declspec(naked) void VisualsSpoofers::AddFollowPointsHook(void* instance, int 
 
 void VisualsSpoofers::FlashlightRemoverThread()
 {
+	int i = 0;
 	while (true)
 	{
+		VM_SHARK_BLACK_START
+		
 		if (Player::IsLoaded() && !Player::IsReplayMode())
 		{
 			const float targetAlpha = roundf(Config::Visuals::FlashlightDisabled ? 0.f : 1.f);
 			if (roundf(Ruleset::GetFlashlightAlpha()) != targetAlpha)
 				Ruleset::SetFlashlightAlpha(targetAlpha);
+
+			if (i == 0)
+			{
+				DWORD check1 = 0x2F47C114;
+				CHECK_CODE_INTEGRITY(check1, 0xC0CEA1FA);
+				if (check1 == 0x2F47C114)
+					Security::CorruptMemory();
+
+				Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle);
+			}
+			i++;
+			if (i == 600)
+				i = 0;
 		}
 
 		Sleep(100);
+
+		VM_SHARK_BLACK_END
 	}
 }

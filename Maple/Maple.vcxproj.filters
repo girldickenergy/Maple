@@ -683,6 +683,33 @@
     <ClCompile Include="Utilities\Strings\StringUtilities.h">
       <Filter>Utilities\Strings</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Communication.cpp">
+      <Filter>Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\Request.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\Response.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\TCP\Client.cpp">
+      <Filter>Communication\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\TCP\TCP_Client.cpp">
+      <Filter>Communication\TCP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -828,6 +855,18 @@
     </Filter>
     <Filter Include="Utilities\Strings">
       <UniqueIdentifier>{5390f930-bc99-4c93-9d4c-9e04ec137d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets">
+      <UniqueIdentifier>{c0349f25-3a11-4a06-a070-4882857259b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets\Requests">
+      <UniqueIdentifier>{94ab900e-ecd2-4650-928e-182cab03fcad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets\Responses">
+      <UniqueIdentifier>{06734059-4aa8-4c45-a9d4-3b37e5e2d445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\TCP">
+      <UniqueIdentifier>{1d47f6d7-cb70-4947-9bcc-63ed5e5f9998}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1715,6 +1754,51 @@
     </ClInclude>
     <ClInclude Include="Utilities\Security\xorstr.hpp">
       <Filter>Utilities\Security</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Communication.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\MatchedClient.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\User.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\Request.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\RequestType.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\Response.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\ResponseType.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Client.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Client_Observer.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Pipe_Ret_T.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\TCP_Client.h">
+      <Filter>Communication\TCP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

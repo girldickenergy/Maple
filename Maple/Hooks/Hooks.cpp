@@ -2,6 +2,8 @@
 
 #include <Cinnamon.h>
 
+
+#include "../Communication/Communication.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Misc/RichPresence.h"
 #include "../Features/Misc/ScoreSubmission.h"
@@ -13,17 +15,27 @@
 #include "../Sdk/Player/Player.h"
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
+#include "../Utilities/Security/Security.h"
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
+	VM_SHARK_BLACK_START
 	method.Compile();
 	void* functionAddress = method.GetNativeStart();
 
-	return Cinnamon::InstallHook(name, functionAddress, pDetour, ppOriginal, hookType);
+	CinnamonResult result = Cinnamon::InstallHook(name, functionAddress, pDetour, ppOriginal, hookType);
+	VM_SHARK_BLACK_END
+	return result;
 }
 
 void Hooks::InstallAllHooks()
 {
+	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+	
+	if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+		Security::CorruptMemory();
+	
 	//TODO: causing weird access violations only in debug
 	#ifndef _DEBUG
 		if (installManagedHook("get_CurrentPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["get_CurrentPlaybackRate"].Method, Timewarp::GetCurrentPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oGetCurrentPlaybackRate), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
@@ -120,6 +132,9 @@ void Hooks::InstallAllHooks()
 		else
 			Logger::Log(LogSeverity::Error, "Failed to hook wglSwapBuffers");
 	}
+
+	STR_ENCRYPT_END
+	VM_SHARK_BLACK_END
 }
 
 void Hooks::UninstallAllHooks()

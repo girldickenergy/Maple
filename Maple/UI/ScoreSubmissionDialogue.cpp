@@ -1,6 +1,7 @@
 #include "ScoreSubmissionDialogue.h"
 
 #include <imgui.h>
+#include <ThemidaSDK.h>
 
 #include "StyleProvider.h"
 #include "Widgets.h"
@@ -8,6 +9,8 @@
 
 void ScoreSubmissionDialogue::Render()
 {
+	STR_ENCRYPT_START
+	
 	//hack hack hack
 	ImGui::PushFont(StyleProvider::FontDefaultBold);
 	const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize("Score Submission");
@@ -57,4 +60,6 @@ void ScoreSubmissionDialogue::Render()
 	ImGui::End();
 
 	ImGui::PopFont();
+
+	STR_ENCRYPT_END
 }

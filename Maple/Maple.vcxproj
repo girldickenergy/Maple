@@ -90,7 +90,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -110,7 +110,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -161,6 +161,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Communication\Communication.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\Request.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\Response.cpp" />
+    <ClCompile Include="Communication\TCP\Client.cpp" />
+    <ClCompile Include="Communication\TCP\TCP_Client.cpp" />
     <ClCompile Include="Config\Config.cpp" />
     <ClCompile Include="Dependencies\Cinnamon\Cinnamon.cpp" />
     <ClCompile Include="Dependencies\cryptopp\3way.cpp" />
@@ -391,6 +400,21 @@
     <ClCompile Include="Utilities\Textures\TextureHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Communication\Communication.h" />
+    <ClInclude Include="Communication\MatchedClient.h" />
+    <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\Request.h" />
+    <ClInclude Include="Communication\Packets\Requests\RequestType.h" />
+    <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\Response.h" />
+    <ClInclude Include="Communication\Packets\Responses\ResponseType.h" />
+    <ClInclude Include="Communication\TCP\Client.h" />
+    <ClInclude Include="Communication\TCP\Client_Observer.h" />
+    <ClInclude Include="Communication\TCP\Pipe_Ret_T.h" />
+    <ClInclude Include="Communication\TCP\TCP_Client.h" />
+    <ClInclude Include="Communication\User.h" />
     <ClInclude Include="Config\Config.h" />
     <ClInclude Include="Dependencies\Cinnamon\Cinnamon.h" />
     <ClInclude Include="Dependencies\Cinnamon\CinnamonResult.h" />
