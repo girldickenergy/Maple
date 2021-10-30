@@ -43,7 +43,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     DisableThreadLibraryCalls(hModule);
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-        CreateThread(nullptr, 0, Initialize, nullptr, 0, nullptr);
+        CreateThread(nullptr, 0, Initialize, lpReserved, 0, nullptr);
 	
     return TRUE;
 }

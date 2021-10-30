@@ -20,8 +20,6 @@ HeartbeatResponse::HeartbeatResponse(const char* msg, size_t size, MatchedClient
 	decryptedSplit[1].erase(decryptedSplit[1].begin());
 	std::string epoch = decryptedSplit[1];
 
-	std::cout << epoch << std::endl;
-
 	if (std::abs(msEpoch.count() - ((std::stoll(epoch) * 2) ^ 0xDA)) > 5000)
 	{
 		Result = HeartbeatResult::EpochTimedOut;
