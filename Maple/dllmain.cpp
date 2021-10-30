@@ -29,6 +29,8 @@
 #include <md5.h>
 #include <hex.h>
 
+#include <curl.h>
+
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple(const std::string& username);
 void InitializeLogging(const std::string& directory);
@@ -90,18 +92,20 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 {
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
-    //auto pArgs = (CustomArgs*)data_addr;
+    auto pArgs = (CustomArgs*)data_addr;
 
-    //std::string data(pArgs->user_data, 255);
+    std::string data(pArgs->user_data, 255);
 
-    //std::vector<std::string> split = StringUtilities::Split(data);
+    std::vector<std::string> split = StringUtilities::Split(data);
 
-    Communication::CurrentUser->Username = "Maple Syrup";//split[0];
-    Communication::CurrentUser->SessionID = "dicks";//split[1];
-    //Communication::CurrentUser->DiscordID = split[2];
-    //Communication::CurrentUser->AvatarHash = split[3];
+    Communication::CurrentUser->Username = split[0];
+    Communication::CurrentUser->SessionID = split[1];
+    Communication::CurrentUser->DiscordID = split[2];
+    Communication::CurrentUser->AvatarHash = split[3];
 
     Communication::ConnectToServer();
+
+    curl_global_init(CURL_GLOBAL_ALL);
 
     while (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
         Sleep(500);

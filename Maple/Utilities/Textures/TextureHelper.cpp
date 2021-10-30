@@ -8,6 +8,12 @@
 
 #include <GL/gl3w.h>
 
+#include <WinSock2.h>
+#include <curl.h>
+#include <vector>
+
+#include "../Strings/StringUtilities.h"
+
 void* TextureHelper::loadTextureInternalOGL3(unsigned char* data, int width, int height)
 {
 	GLuint tex;
@@ -59,6 +65,28 @@ void* TextureHelper::LoadTextureFromMemoryOGL3(const unsigned char* data, int si
 	return loadTextureInternalOGL3(textureData, width, height);
 }
 
+void* TextureHelper::LoadTextureFromURLOGL3(const std::string& url)
+{
+	CURL* curl = curl_easy_init();
+	if (curl)
+	{
+		std::string readBuffer;
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		CURLcode res = curl_easy_perform(curl);
+		if (res == CURLE_OK)
+		{
+			std::vector<unsigned char> bytes = StringUtilities::StringToByteArray(readBuffer);
+			return LoadTextureFromMemoryOGL3(bytes.data(), bytes.size());
+		}
+	}
+
+	return nullptr;
+}
+
 void TextureHelper::FreeTextureOGL3(void* textureId)
 {
 	GLuint texID = (GLuint)textureId;
@@ -82,4 +110,26 @@ void* TextureHelper::LoadTextureFromMemoryD3D9(IDirect3DDevice9* d3d9Device, LPC
 	HRESULT hr = D3DXCreateTextureFromFileInMemory(d3d9Device, data, size, &ret);
 
 	return hr == S_OK ? ret : nullptr;
+}
+
+void* TextureHelper::LoadTextureFromURLD3D9(IDirect3DDevice9* d3d9Device, const std::string& url)
+{
+	CURL* curl = curl_easy_init();
+	if (curl)
+	{
+		std::string readBuffer;
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		CURLcode res = curl_easy_perform(curl);
+		if (res == CURLE_OK)
+		{
+			std::vector<unsigned char> bytes = StringUtilities::StringToByteArray(readBuffer);
+			return LoadTextureFromMemoryD3D9(d3d9Device, bytes.data(), bytes.size());
+		}
+	}
+
+	return nullptr;
 }
