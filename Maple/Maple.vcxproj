@@ -387,6 +387,7 @@
     <ClCompile Include="UI\ScoreSubmissionDialogue.cpp" />
     <ClCompile Include="UI\Widgets.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
+    <ClCompile Include="Utilities\Strings\StringUtilities.h" />
     <ClCompile Include="Utilities\Textures\TextureHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -681,6 +682,8 @@
     <ClInclude Include="UI\Widgets.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
+    <ClInclude Include="Utilities\Security\Security.h" />
+    <ClInclude Include="Utilities\Security\xorstr.hpp" />
     <ClInclude Include="Utilities\Textures\TextureHelper.h" />
     <ClInclude Include="Utilities\Timing\WaitableTimer.h" />
   </ItemGroup>

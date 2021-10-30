@@ -680,6 +680,9 @@
     <ClCompile Include="Dependencies\cryptopp\vmac.cpp">
       <Filter>Dependencies\cryptopp</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities\Strings\StringUtilities.h">
+      <Filter>Utilities\Strings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -819,6 +822,12 @@
     </Filter>
     <Filter Include="Dependencies\cryptopp\Wrapper">
       <UniqueIdentifier>{efbaf5b8-e0c3-49b9-adec-dc6f574a0547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Security">
+      <UniqueIdentifier>{e914a1af-d50c-4bc4-9e6a-9a5105c0f363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Strings">
+      <UniqueIdentifier>{5390f930-bc99-4c93-9d4c-9e04ec137d23}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1700,6 +1709,12 @@
     </ClInclude>
     <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h">
       <Filter>Dependencies\ThemidaSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Security\Security.h">
+      <Filter>Utilities\Security</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Security\xorstr.hpp">
+      <Filter>Utilities\Security</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
