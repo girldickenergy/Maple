@@ -8,8 +8,8 @@
 void Player::Initialize()
 {
 	RawPlayer = Vanilla::Explorer["osu.GameModes.Play.Player"];
-	asyncLoadComplete = RawPlayer["AsyncLoadComplete"].Field;
-	replayModeStable = RawPlayer["replayModeStable"].Field;
+	asyncLoadCompleteField = RawPlayer["AsyncLoadComplete"].Field;
+	replayModeStableField = RawPlayer["replayModeStable"].Field;
 
 	instanceAddress = RawPlayer["Instance"].Field.GetAddress();
 	isRetryingAddress = RawPlayer["Retrying"].Field.GetAddress();
@@ -25,13 +25,15 @@ void* Player::Instance()
 bool Player::IsLoaded()
 {
 	void* instance = Instance();
+	if (!instance)
+		loadComplete = false;
 	
-	return instance && *static_cast<bool*>(asyncLoadComplete.GetAddress(instance));
+	return instance && (*static_cast<bool*>(asyncLoadCompleteField.GetAddress(instance)) || loadComplete);
 }
 
 bool Player::IsReplayMode()
 {
-	return *static_cast<bool*>(replayModeStable.GetAddress(Instance()));
+	return *static_cast<bool*>(replayModeStableField.GetAddress(Instance()));
 }
 
 bool Player::IsRetrying()
@@ -60,6 +62,8 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 {
 	if (success)
 	{
+		loadComplete = true;
+		
 		Relax::Start();
 		AimAssist::Reset();
 	}

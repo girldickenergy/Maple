@@ -12,8 +12,10 @@ enum class PlayModes : int
 
 class Player
 {
-	static inline Field asyncLoadComplete;
-	static inline Field replayModeStable;
+	static inline bool loadComplete = false;
+	
+	static inline Field asyncLoadCompleteField;
+	static inline Field replayModeStableField;
 	
 	static inline void* instanceAddress = nullptr;
 	static inline void* isRetryingAddress = nullptr;
