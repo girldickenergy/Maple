@@ -24,10 +24,13 @@ CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID
 
 void Hooks::InstallAllHooks()
 {
-	if (installManagedHook("get_CurrentPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["get_CurrentPlaybackRate"].Method, Timewarp::GetCurrentPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oGetCurrentPlaybackRate), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked get_CurrentPlaybackRate");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook get_CurrentPlaybackRate");
+	//TODO: causing weird access violations only in debug
+	#ifndef _DEBUG
+		if (installManagedHook("get_CurrentPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["get_CurrentPlaybackRate"].Method, Timewarp::GetCurrentPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oGetCurrentPlaybackRate), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
+			Logger::Log(LogSeverity::Info, "Hooked get_CurrentPlaybackRate");
+		else
+			Logger::Log(LogSeverity::Error, "Failed to hook get_CurrentPlaybackRate");
+	#endif
 
 	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
