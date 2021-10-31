@@ -54,10 +54,15 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook Parse");
 
-	if (installManagedHook("ApplyStacking", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["ApplyStacking"].Method, VisualsSpoofers::ApplyStackingHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oApplyStacking)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked ApplyStacking");
+	if (installManagedHook("UpdateStacking", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["UpdateStacking"].Method, VisualsSpoofers::UpdateStackingHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oUpdateStacking)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked UpdateStacking");
 	else
-		Logger::Log(LogSeverity::Error, "Failed to hook ApplyStacking");
+		Logger::Log(LogSeverity::Error, "Failed to hook UpdateStacking");
+
+	if (installManagedHook("ApplyOldStacking", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["ApplyOldStacking"].Method, VisualsSpoofers::ApplyOldStackingHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oApplyOldStacking)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ApplyOldStacking");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ApplyOldStacking");
 
 	if (installManagedHook("AddFollowPoints", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["AddFollowPoints"].Method, VisualsSpoofers::AddFollowPointsHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oAddFollowPoints)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddFollowPoints");

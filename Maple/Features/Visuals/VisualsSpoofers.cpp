@@ -72,7 +72,7 @@ __declspec(naked) void VisualsSpoofers::ParseHook(void* instance, int sectionsTo
 }
 
 //restore original preempts before stacking to fix stacking issue
-__declspec(naked) void VisualsSpoofers::ApplyStackingHook(void* instance)
+__declspec(naked) void VisualsSpoofers::UpdateStackingHook(void* instance, int startIndex, int endIndex)
 {
 	__asm
 	{
@@ -81,7 +81,20 @@ __declspec(naked) void VisualsSpoofers::ApplyStackingHook(void* instance)
 		call restorePreEmpt
 		popfd
 		popad
-		jmp oApplyStacking
+		jmp oUpdateStacking
+	}
+}
+
+__declspec(naked) void VisualsSpoofers::ApplyOldStackingHook(void* instance)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call restorePreEmpt
+		popfd
+		popad
+		jmp oApplyOldStacking
 	}
 }
 
