@@ -10,7 +10,7 @@ namespace ReplayEditor
 		int time;
 		int preempt;
 	public:
-		HitObjectOsu(int _time, int _preempt, Vector2 _position, Transformation _transformation = Transformation());
+		HitObjectOsu(int _time, int _preempt, int* _timer, Vector2 _position, Transformation _transformation = Transformation());
 		void SetTime(int _time);
 		int GetTime();
 		void SetPreempt(int _preempt);

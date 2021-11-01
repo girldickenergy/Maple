@@ -2,11 +2,12 @@
 
 using namespace ReplayEditor;
 
-Drawable::Drawable(DrawableType _drawableType, Vector2 _position, Transformation _transformation = Transformation())
+Drawable::Drawable(DrawableType _drawableType, int* _timer, Vector2 _position, Transformation _transformation = Transformation())
 {
 	drawableType = _drawableType;
+	timer = _timer;
 	position = _position;
-	transformation = _transformation;
+	transformations = std::vector<Transformation>{ _transformation };
 }
 
 DrawableType Drawable::GetDrawableType()
@@ -19,12 +20,22 @@ Vector2 Drawable::GetPosition()
 	return position;
 }
 
-Transformation ReplayEditor::Drawable::GetTransformation()
+std::vector<Transformation> Drawable::GetTransformations()
 {
-	return transformation;
+	return transformations;
 }
 
-void ReplayEditor::Drawable::SetTransformation(Transformation _transformation)
+bool Drawable::NeedsToDraw()
 {
-	transformation = _transformation;
+	return *timer >= transformations.front().GetTime1() && *timer < transformations.back().GetTime2();
+}
+
+void Drawable::PushTransformation(Transformation _transformation)
+{
+	transformations.push_back(_transformation);
+}
+
+int* Drawable::GetTimer()
+{
+	return timer;
 }
