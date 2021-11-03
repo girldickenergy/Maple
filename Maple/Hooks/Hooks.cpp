@@ -74,7 +74,7 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook PushNewFrame");
 
-	if (installManagedHook("PurgeFrames", Vanilla::Explorer["osu.Online.StreamingManager"]["PurgeFrames"].Method, SpectateHandler::PurgeFramesHook, reinterpret_cast<LPVOID*>(&SpectateHandler::oPurgeFrames)) == CinnamonResult::Success)
+	if (installManagedHook("PurgeFrames", Vanilla::Explorer["osu.Online.StreamingManager"]["PurgeFrames"].Method, SpectateHandler::PurgeFramesHook, reinterpret_cast<LPVOID*>(&SpectateHandler::oPurgeFrames), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked PurgeFrames");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook PurgeFrames");
