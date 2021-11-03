@@ -52,6 +52,7 @@ void Vanilla::populateAssemblies()
 	const std::wstring osuStubPattern1(L"w, Version");
 	const std::wstring osuStubPattern2(L"AlphaZero, Version"); //todo: regex maybe?
 	const std::wstring osuStubPattern3(L"9ade2f99-9f30-423b-ae0b-a1cd9d846d61, Version");
+	const std::wstring osuStubPattern4(L"e63a9542-eb0c-49a3-86f5-3d83a0fdad3f, Version");
 	const std::wstring mscorlibPattern(L"mscorlib, Version");
 
 	bool found_osu = false, found_auth = false, found_mscorlib = false;
@@ -85,7 +86,8 @@ void Vanilla::populateAssemblies()
 			}
 
 			if (!found_auth && (asmName.find(osuStubPattern1) != std::wstring::npos || 
-				asmName.find(osuStubPattern2) != std::wstring::npos || asmName.find(osuStubPattern3) != std::wstring::npos))
+				asmName.find(osuStubPattern2) != std::wstring::npos || asmName.find(osuStubPattern3) != std::wstring::npos
+				|| asmName.find(osuStubPattern4) != std::wstring::npos))
 			{
 				OsuStubAssembly = Assembly(assembly);
 				found_auth = true;
