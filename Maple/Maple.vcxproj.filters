@@ -710,6 +710,18 @@
     <ClCompile Include="Communication\TCP\TCP_Client.cpp">
       <Filter>Communication\TCP</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\Drawable.cpp">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\HitObjectOsu.cpp">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\Transformation.cpp">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Editor.cpp">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -867,6 +879,12 @@
     </Filter>
     <Filter Include="Communication\TCP">
       <UniqueIdentifier>{1d47f6d7-cb70-4947-9bcc-63ed5e5f9998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor">
+      <UniqueIdentifier>{c5f8cb50-9640-4301-9507-ea17e95f1e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Components">
+      <UniqueIdentifier>{95e374fc-93fd-41e6-ba4d-897ed5ac0cbe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1799,6 +1817,18 @@
     </ClInclude>
     <ClInclude Include="Communication\TCP\TCP_Client.h">
       <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\Drawable.h">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\HitObjectOsu.h">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\Transformation.h">
+      <Filter>Features\ReplayEditor\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Editor.h">
+      <Filter>Features\ReplayEditor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

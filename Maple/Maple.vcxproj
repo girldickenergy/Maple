@@ -374,6 +374,10 @@
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\Drawable.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\HitObjectOsu.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\Transformation.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Editor.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
@@ -676,6 +680,10 @@
     <ClInclude Include="Features\Relax\HitScanResult.h" />
     <ClInclude Include="Features\Relax\HitTimings.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\Drawable.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\HitObjectOsu.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\Transformation.h" />
+    <ClInclude Include="Features\ReplayEditor\Editor.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
