@@ -19,13 +19,20 @@ namespace ReplayEditor
 		Vector2 position;
 		std::vector<Transformation> transformations;
 		int* timer;
+		float opacity;
+		float scale;
 	public:
 		Drawable(DrawableType _drawableType, int* _timer, Vector2 _position, Transformation _transformation = Transformation());
 		DrawableType GetDrawableType();
 		Vector2 GetPosition();
 		std::vector<Transformation> GetTransformations();
+		std::tuple<int, int> GetDrawingTimes();
 		bool NeedsToDraw();
-		void PushTransformation(Transformation _transformation);
 		int* GetTimer();
+		void PushTransformation(Transformation _transformation);
+		void ApplyTransformation(Transformation _transformation);
+		void DoTransformations();
+		float GetOpacity();
+		float GetScale();
 	};
 }

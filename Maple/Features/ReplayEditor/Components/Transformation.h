@@ -1,9 +1,12 @@
 #pragma once
+#include <iostream>
+#include <cmath>
 
 namespace ReplayEditor
 {
-	enum TransformationType
+	enum TransformationType : int
 	{
+		Empty,
 		Fade,
 		Scale
 	};
@@ -13,16 +16,15 @@ namespace ReplayEditor
 		TransformationType transformationType;
 		float startFloat;
 		float endFloat;
-		int time1;
-		int time2;
+		int startTime;
+		int endTime;
 	public:
 		Transformation();
 		Transformation(TransformationType _transformationType, float _startFloat, float _endFloat, int _time1, int _time2);
-
 		TransformationType GetTransformationType();
 		float GetStartFloat();
 		float GetEndFloat();
-		int GetTime1();
-		int GetTime2();
+		int GetStartTime();
+		int GetEndTime();
 	};
 }

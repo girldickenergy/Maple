@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include "HitObjectManager.h"
 
 #include <Vanilla.h>
@@ -180,7 +182,7 @@ std::vector<HitObject> HitObjectManager::GetAllHitObjects()
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)
 {
 	if (adjustToMods)
-		difficulty = ModManager::IsModEnabled(Mods::Easy) ? max(0.0, difficulty / 2.0) : ModManager::IsModEnabled(Mods::HardRock) ? min(10.0, difficulty * 1.4) : difficulty;
+		difficulty = ModManager::IsModEnabled(Mods::Easy) ? std::max(0.0, difficulty / 2.0) : ModManager::IsModEnabled(Mods::HardRock) ? std::min(10.0, difficulty * 1.4) : difficulty;
 
 	if (difficulty > 5.)
 		return mid + (max - mid) * (difficulty - 5.) / 5.;

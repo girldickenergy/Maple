@@ -2,15 +2,18 @@
 
 using namespace ReplayEditor;
 
-Transformation::Transformation() { }
+Transformation::Transformation()
+{
+	transformationType = TransformationType::Empty;
+}
 
-Transformation::Transformation(TransformationType _transformationType, float _startFloat, float _endFloat, int _time1, int _time2)
+Transformation::Transformation(TransformationType _transformationType, float _startFloat, float _endFloat, int _startTime, int _endTime)
 {
 	transformationType = _transformationType;
 	startFloat = _startFloat;
 	endFloat = _endFloat;
-	time1 = _time1;
-	time2 = _time2;
+	startTime = _startTime;
+	endTime = _endTime;
 }
 
 TransformationType Transformation::GetTransformationType()
@@ -28,12 +31,12 @@ float ReplayEditor::Transformation::GetEndFloat()
 	return endFloat;
 }
 
-int ReplayEditor::Transformation::GetTime1()
+int ReplayEditor::Transformation::GetStartTime()
 {
-	return time1;
+	return startTime;
 }
 
-int ReplayEditor::Transformation::GetTime2()
+int ReplayEditor::Transformation::GetEndTime()
 {
-	return time2;
+	return endTime;
 }
