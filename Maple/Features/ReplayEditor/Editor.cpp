@@ -3,6 +3,14 @@
 #pragma warning(disable: 26812) // Disable enum unscoped warning
 #define NOMINMAX
 
+#include "../../Sdk/Beatmaps/Beatmap.h"
+#include "../../Sdk/Beatmaps/BeatmapManager.h"
+#include "../../Sdk/Player/HitObjectManager.h"
+#include "../../UI/StyleProvider.h"
+#include "../../UI/Widgets.h"
+
+#define COL(x) (x/255.f)
+
 using namespace ReplayEditor;
 
 inline bool init = false;
@@ -14,55 +22,52 @@ void Editor::Initialize()
 
 void Editor::DrawUI()
 {
-	// TODO: THIS ENTIRE FUNCTION IS A UNIT TEST
-	//			DO NOT DEPLOY THIS!
-	if (!init)
+	sRectangle* clientBounds = GameBase::GetClientBounds();
+
+	ImGui::SetNextWindowSize(ImVec2(clientBounds->Width, clientBounds->Height));
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::Begin("re", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground);
 	{
-		CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(TimerThread), nullptr, 0, nullptr);
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		
+		// Draw background 65,65,65
+		drawList->AddRectFilled(ImVec2(0,0), ImVec2(clientBounds->Width, clientBounds->Height), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(65.f), COL(65.f), COL(65.f), 1.f)));
 
-		HitObject ho = HitObject(HitObjectType::Normal, 5000, 5000, Vector2(256, 256), Vector2(256, 256), 0, 0);
-		HitObject ho1 = HitObject(HitObjectType::Normal, 6000, 6000, Vector2(200, 256), Vector2(200, 256), 0, 0);
-		HitObject ho2 = HitObject(HitObjectType::Normal, 7000, 7000, Vector2(400, 256), Vector2(400, 256), 0, 0);
-		HitObject ho3 = HitObject(HitObjectType::Normal, 8000, 8000, Vector2(256, 256), Vector2(256, 256), 0, 0);
-		HitObject ho4 = HitObject(HitObjectType::Normal, 9000, 9000, Vector2(200, 256), Vector2(200, 256), 0, 0);
+		// Draw the top bar 
+		// Width = Screen Width, Height = 5.75% of screen height * Scale
+		float topBarHeight = ((clientBounds->Height * 3.75f) / 100.f) * StyleProvider::Scale;
+		drawList->AddRectFilled(ImVec2(0, 0), ImVec2(clientBounds->Width, topBarHeight) , ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
 
-		ConstructDrawable(ho, 10.f, Mods::None);
-		ConstructDrawable(ho1, 10.f, Mods::None);
-		ConstructDrawable(ho2, 10.f, Mods::None);
-		ConstructDrawable(ho3, 10.f, Mods::None);
-		ConstructDrawable(ho4, 10.f, Mods::None);
+		ImGui::SetCursorPos(ImVec2(11 * StyleProvider::Scale, (topBarHeight*19.f)/100.f));
+		Widgets::Button("Load", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		ImGui::SetCursorPos(ImVec2(97 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
+		Widgets::Button("Save", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		ImGui::SetCursorPos(ImVec2(183 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
+		Widgets::Button("Export", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
+		Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		//ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight()))
 
-		init = true;
-	}
-
-	if (Config::AimAssist::DrawDebugOverlay && init) {
-		if (EditorState != EditorState::Playing)
-			Play();
-		ImGui::SetNextWindowSize(ImVec2(GameBase::GetClientBounds()->Width, GameBase::GetClientBounds()->Height));
-		ImGui::Begin("re", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground);
+		ImGui::SetCursorPos(ImVec2(10, ((clientBounds->Height * 18.75f) / 100.f)) * StyleProvider::Scale);
+		ImVec2 ToolBoxSize = ImVec2((((clientBounds->Width * 15.5f) / 100.f) * StyleProvider::Scale), Widgets::CalcPanelHeight(2));
+		Widgets::BeginPanel("Toolbox", ToolBoxSize);
 		{
-			ImDrawList* drawList = ImGui::GetWindowDrawList();
-			for (auto& drawable : Drawables)
-			{
-				if (drawable.NeedsToDraw())
-				{
-					drawable.DoTransformations();
-					Vector2 screenPos = GameField::FieldToDisplay(drawable.GetPosition());
-					drawList->AddCircleFilled(ImVec2(screenPos.X, screenPos.Y), 55.f * drawable.GetScale(), ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 255.f, 0.f, drawable.GetOpacity())));
-				}
-			}
+			Widgets::Button("Select", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ToolBoxSize.y - ((ToolBoxSize.y * 10.f) / 100.f)) * StyleProvider::Scale);
+			Widgets::Button("Keypress", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ToolBoxSize.y - ((ToolBoxSize.y * 10.f) / 100.f)) * StyleProvider::Scale);
 		}
-		ImGui::End();
+		Widgets::EndPanel();
 	}
+	ImGui::End();
 }
 
-void Editor::ConstructDrawable(HitObject hitObject, float approachRate, Mods mods)
+void Editor::ConstructDrawable(HitObject hitObject, float approachRate, float overallDifficulty, Mods mods)
 {
 	int preEmpt = approachRate;
-	if ((mods & Mods::Easy) > Mods::None)
+	int hitWindow300 = 0, hitWindow100 = 0, hitWindow50 = 0;
+	if ((mods & Mods::Easy) > Mods::None) 
 		preEmpt = std::max(0.0f, preEmpt / 2.0f);
-	if ((mods & Mods::HardRock) > Mods::None)
+	if ((mods & Mods::HardRock) > Mods::None) 
 		preEmpt = std::min(10.0f, preEmpt * 1.4f);
 
 	if (preEmpt > 5.0f)

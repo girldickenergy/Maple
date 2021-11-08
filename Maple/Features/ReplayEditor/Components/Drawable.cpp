@@ -65,10 +65,9 @@ int* Drawable::GetTimer()
 void Drawable::ApplyTransformation(Transformation _transformation)
 {
 	int duration = _transformation.GetEndTime() - _transformation.GetStartTime();
-	float t = *timer - _transformation.GetStartTime() / duration;
+	float t = (static_cast<float>(*timer) - static_cast<float>(_transformation.GetStartTime())) / static_cast<float>(duration);
 	t = std::clamp(t, 0.f, 1.f);
 
-	printf("[x] transformation -> end: %i start: %i type: %i\n", _transformation.GetEndTime(), _transformation.GetStartTime(), _transformation.GetTransformationType());
 	switch (_transformation.GetTransformationType())
 	{
 	case TransformationType::Fade:

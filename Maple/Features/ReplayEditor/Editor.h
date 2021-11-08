@@ -27,7 +27,7 @@ namespace ReplayEditor
 	public:
 		static void Initialize();
 		static void DrawUI();
-		static void ConstructDrawable(HitObject hitObject, float approachRate, Mods mods);
+		static void ConstructDrawable(HitObject hitObject, float approachRate, float overallDifficulty, Mods mods);
 		static void Pause();
 		static void Play();
 		static void TimerThread();

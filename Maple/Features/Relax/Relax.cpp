@@ -91,7 +91,7 @@ void Relax::reset()
 {
 	primaryKey = BindingManager::GetPlayKey(PlayKeys::K1);
 	secondaryKey = BindingManager::GetPlayKey(PlayKeys::K2);
-	currentKey = (PlayKeys)Config::Relax::PrimaryKey;
+	currentKey = static_cast<PlayKeys>(Config::Relax::PrimaryKey);
 	isKeyDown = false;
 
 	hitObjectsCount = HitObjectManager::GetHitObjectsCount();

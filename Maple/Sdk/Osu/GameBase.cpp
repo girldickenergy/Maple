@@ -31,5 +31,5 @@ bool GameBase::HasLogin()
 
 sRectangle* GameBase::GetClientBounds()
 {
-	return static_cast<sRectangle*>(clientBoundsField.GetAddress(Instance()));
+	return static_cast<sRectangle*>(clientBoundsField.GetAddress());
 }

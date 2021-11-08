@@ -43,6 +43,12 @@ void HitObjectManager::Initialize()
 
 	RawHitObjectManager["GetObject"].Method.Compile();
 	getObject = static_cast<fnGetObject>(RawHitObjectManager["GetObject"].Method.GetNativeStart());
+
+	RawHitObjectManager["SetBeatmap"].Method.Compile();
+	setBeatmap = static_cast<fnSetBeatmap>(RawHitObjectManager["SetBeatmap"].Method.GetNativeStart());
+
+	RawHitObjectManager["Load"].Method.Compile();
+	load = static_cast<fnLoad>(RawHitObjectManager["Load"].Method.GetNativeStart());
 }
 
 void* HitObjectManager::Instance()
@@ -177,6 +183,16 @@ std::vector<HitObject> HitObjectManager::GetAllHitObjects()
 	for (int i = 0; i < GetHitObjectsCount(); i++)
 		toReturn.push_back(GetHitObject(i));
 	return toReturn;
+}
+
+void HitObjectManager::SetBeatmap(void* beatmap)
+{
+	setBeatmap(Instance(), beatmap, GetActiveMods());
+}
+
+bool HitObjectManager::Load(bool processHeaders)
+{
+	return load(Instance(), processHeaders);
 }
 
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)
