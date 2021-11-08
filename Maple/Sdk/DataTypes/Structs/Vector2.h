@@ -41,6 +41,16 @@ struct Vector2
 		return Vector2(f2, f2) * (*this);
 	}
 
+	Vector2 operator*(int f2)
+	{
+		return Vector2(f2, f2) * (*this);
+	}
+
+	Vector2 operator+(int v2)
+	{
+		return Vector2(X + v2, Y + v2);
+	}
+
 	Vector2 operator /(float f2)
 	{
 		float invDiv = 1.0f / f2;

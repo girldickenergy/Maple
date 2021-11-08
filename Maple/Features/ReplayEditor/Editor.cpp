@@ -10,10 +10,26 @@
 #include "../../UI/Widgets.h"
 
 #define COL(x) (x/255.f)
+#define PERC(x, y) ( (x * y) / 100.f)
 
 using namespace ReplayEditor;
 
 inline bool init = false;
+
+Vector2 Editor::ConvertToPlayArea(Vector2 position)
+{
+	float screen_position_x = (position.X / 512.f * playfieldSize.x) + playfieldOffset.x;
+	float screen_position_y = (position.Y / 384.f * playfieldSize.y) + playfieldOffset.y;
+	return Vector2(screen_position_x, screen_position_y);
+}
+
+void Editor::DrawCursor(ImDrawList* drawList, Vector2 cursorPosition)
+{
+	Vector2 cursorScreenPosition = ConvertToPlayArea(cursorPosition);
+	printf("[x] x->%f y->%f\n", cursorScreenPosition.X, cursorScreenPosition.Y);
+	drawList->AddCircleFilled(ImVec2(cursorScreenPosition.X, cursorScreenPosition.Y), 4.f, ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
+	drawList->AddCircle(ImVec2(cursorScreenPosition.X, cursorScreenPosition.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)), 0, 1.5f);
+}
 
 void Editor::Initialize()
 {
@@ -34,8 +50,40 @@ void Editor::DrawUI()
 		// Draw background 65,65,65
 		drawList->AddRectFilled(ImVec2(0,0), ImVec2(clientBounds->Width, clientBounds->Height), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(65.f), COL(65.f), COL(65.f), 1.f)));
 
-		// Draw the top bar 
-		// Width = Screen Width, Height = 5.75% of screen height * Scale
+#pragma region Draw Playarea
+		// Draw initial playarea
+		float playAreaHeightDisplay = PERC(clientBounds->Height, 80.f);
+		float playAreaWidthDisplay = playAreaHeightDisplay * (512.f / 386.f);
+
+		float playAreaPositionX = (clientBounds->Width / 2.f) - (playAreaWidthDisplay / 2.f);
+		float playAreaPositionY = PERC(clientBounds->Height, 10.f);
+		playfieldOffset = ImVec2(playAreaPositionX, playAreaPositionY);
+
+		playfieldSize = ImVec2(playAreaWidthDisplay, playAreaHeightDisplay);
+		printf("[x] off  x->%f y->%f\n", playfieldOffset.x, playfieldOffset.y);
+		printf("[x] size x->%f y->%f\n", playfieldSize.x, playfieldSize.y);
+		drawList->AddRectFilled(playfieldOffset, ImVec2(playfieldOffset.x + playAreaWidthDisplay, playfieldOffset.y + playAreaHeightDisplay), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
+
+		// Draw arrows
+		float arrowWidth = PERC(playAreaWidthDisplay, 1.25f);
+		float arrowLength = PERC(playAreaWidthDisplay, 10.f);
+
+		float arrow1XOrigin = playAreaPositionX - arrowWidth;
+		float arrow1YOrigin = playAreaPositionY - arrowWidth;
+		float arrow1XDestin = arrow1XOrigin + arrowLength;
+		float arrow1YDestin = arrow1YOrigin + arrowLength;
+		ImVec2 arrow1Origin = ImVec2(arrow1XOrigin, arrow1YOrigin);
+		ImVec2 arrow1XDesti = ImVec2(arrow1XDestin, arrow1YOrigin);
+		ImVec2 arrow1YDesti = ImVec2(arrow1XOrigin, arrow1YDestin);
+
+
+		printf("[x] arrow1  x->%f y->%f\n", arrow1Origin.x, arrow1Origin.y);
+		drawList->AddRectFilled(arrow1Origin, arrow1XDesti, ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
+		drawList->AddRectFilled(arrow1Origin, arrow1YDesti, ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
+
+#pragma endregion
+		
+#pragma region Draw Topbar
 		float topBarHeight = ((clientBounds->Height * 3.75f) / 100.f) * StyleProvider::Scale;
 		drawList->AddRectFilled(ImVec2(0, 0), ImVec2(clientBounds->Width, topBarHeight) , ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
 
@@ -47,16 +95,20 @@ void Editor::DrawUI()
 		Widgets::Button("Export", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
 		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
-		//ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight()))
+#pragma endregion
 
 		ImGui::SetCursorPos(ImVec2(10, ((clientBounds->Height * 18.75f) / 100.f)) * StyleProvider::Scale);
-		ImVec2 ToolBoxSize = ImVec2((((clientBounds->Width * 15.5f) / 100.f) * StyleProvider::Scale), Widgets::CalcPanelHeight(2));
+		ImVec2 ToolBoxSize = ImVec2(((clientBounds->Width * 15.5f) / 100.f) * 0.8f, Widgets::CalcPanelHeight(2)) * StyleProvider::Scale;
 		Widgets::BeginPanel("Toolbox", ToolBoxSize);
 		{
-			Widgets::Button("Select", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ToolBoxSize.y - ((ToolBoxSize.y * 10.f) / 100.f)) * StyleProvider::Scale);
-			Widgets::Button("Keypress", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ToolBoxSize.y - ((ToolBoxSize.y * 10.f) / 100.f)) * StyleProvider::Scale);
+			Widgets::Button("Select", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ((ToolBoxSize.y - 4.f) / 2.f) - ((((ToolBoxSize.y - 4.f) / 2.f) * 10.f) / 100.f)));
+			Widgets::Button("Keypress", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ((ToolBoxSize.y - 4.f) / 2.f) - ((((ToolBoxSize.y - 4.f) / 2.f) * 10.f) / 100.f)));
 		}
 		Widgets::EndPanel();
+
+		DrawCursor(drawList, Vector2(0, 0));
+		DrawCursor(drawList, Vector2(256, 193));
+		DrawCursor(drawList, Vector2(512, 386));
 	}
 	ImGui::End();
 }

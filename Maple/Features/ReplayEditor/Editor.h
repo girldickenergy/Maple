@@ -24,6 +24,11 @@ namespace ReplayEditor
 
 		static inline int Time;
 		static inline EditorState EditorState = EditorState::Initializing;
+		static inline ImVec2 playfieldOffset;
+		static inline ImVec2 playfieldSize;
+
+		static Vector2 ConvertToPlayArea(Vector2 position);
+		static void DrawCursor(ImDrawList* drawList, Vector2 cursorPosition);
 	public:
 		static void Initialize();
 		static void DrawUI();
