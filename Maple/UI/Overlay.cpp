@@ -7,7 +7,7 @@
 #include "ScoreSubmissionDialogue.h"
 #include "StyleProvider.h"
 #include "../Features/AimAssist/AimAssist.h"
-#include "../Features/ReplayEditor/Editor.h"
+#include "../Sdk/Osu/GameBase.h"
 #include "GL/gl3w.h"
 
 void Overlay::enableRaw()
@@ -115,10 +115,7 @@ void Overlay::Render()
 		io.MouseDrawCursor = false;
 
 	if (MainMenu::IsOpen)
-	{
 		MainMenu::Render();
-		ReplayEditor::Editor::DrawUI();
-	}
 
 	if (ScoreSubmissionDialogue::IsOpen)
 		ScoreSubmissionDialogue::Render();
