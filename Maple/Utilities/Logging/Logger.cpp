@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 
+#include "../../Config/Config.h"
+
 void Logger::clearLogFile()
 {
 	if (logFilePath.empty())
@@ -20,6 +22,9 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
+	if (Config::Misc::DisableLogging)
+		return;
+	
 	std::ostringstream entry;
 
 	auto time = std::time(nullptr);

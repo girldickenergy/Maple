@@ -8,6 +8,9 @@ class VisualsSpoofers
 	typedef void(__fastcall* fnUpdateStacking)(void* instance, int startIndex, int endIndex);
 	typedef void(__fastcall* fnApplyOldStacking)(void* instance);
 	typedef void(__fastcall* fnAddFollowPoints)(void* instance, int startIndex, int endIndex);
+	typedef void(__fastcall* fnLoadFlashlight)(void* instance);
+	typedef void(__fastcall* fnUpdateFlashlight)(void* instance);
+	typedef BOOL(__fastcall* fnHasHiddenSprites)(void* instance);
 	
 	static void spoofVisuals();
 
@@ -29,5 +32,15 @@ public:
 	static inline fnAddFollowPoints oAddFollowPoints;
 	static void __fastcall AddFollowPointsHook(void* instance, int startIndex, int endIndex);
 	
-	static void FlashlightRemoverThread();
+	static inline fnLoadFlashlight oLoadFlashlight;
+	static void __fastcall LoadFlashlightHook(void* instance);
+
+	static inline fnLoadFlashlight oLoadFlashlightMania;
+	static void __fastcall LoadFlashlightManiaHook(void* instance);
+
+	static inline fnUpdateFlashlight oUpdateFlashlight;
+	static void __fastcall UpdateFlashlightHook(void* instance);
+
+	static inline fnHasHiddenSprites oHasHiddenSprites;
+	static BOOL __fastcall HasHiddenSpritesHook(void* instance);
 };

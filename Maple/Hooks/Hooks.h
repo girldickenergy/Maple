@@ -7,6 +7,7 @@
 
 typedef BOOL(WINAPI* fnWglSwapBuffers) (_In_ HDC hdc);
 typedef HRESULT(WINAPI* fnEndScene) (IDirect3DDevice9* pDevice);
+typedef void(__fastcall* fnSubmitError)(void* err);
 
 class Hooks
 {
@@ -15,6 +16,9 @@ class Hooks
 	
 	static inline fnEndScene oEndScene;
 	static HRESULT WINAPI endSceneHook(IDirect3DDevice9* pDevice);
+
+	static inline fnSubmitError oSubmitError;
+	static void __fastcall SubmitErrorHook(void* err);
 	
 	static CinnamonResult installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType = HookType::ByteCodePatch);
 public:

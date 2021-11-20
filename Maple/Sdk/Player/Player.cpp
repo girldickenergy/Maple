@@ -4,6 +4,8 @@
 
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
+#include "../../Features/Timewarp/Timewarp.h"
+#include "../../UI/MainMenu.h"
 
 void Player::Initialize()
 {
@@ -33,7 +35,12 @@ bool Player::IsLoaded()
 
 bool Player::IsReplayMode()
 {
-	return *static_cast<bool*>(replayModeStableField.GetAddress(Instance()));
+	void* instance = Instance();
+	
+	if (!instance)
+		return false;
+	
+	return *static_cast<bool*>(replayModeStableField.GetAddress(instance));
 }
 
 bool Player::IsRetrying()
@@ -53,6 +60,8 @@ PlayModes Player::PlayMode()
 
 void __fastcall Player::PlayerInitialize(uintptr_t instance)
 {
+	MainMenu::IsOpen = false;
+	
 	Relax::Stop();
 
 	oPlayerInitialize(instance);
@@ -63,9 +72,10 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 	if (success)
 	{
 		loadComplete = true;
-		
+
 		Relax::Start();
 		AimAssist::Reset();
+		Timewarp::UpdateCatcherSpeed();
 	}
 	
 	return oOnPlayerLoadComplete(instance, success);

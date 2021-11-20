@@ -12,6 +12,9 @@ class AimAssist
 	static inline bool canAssist;
 	static inline int currentIndex = 0;
 
+	static inline int hitWindow50;
+	static inline int preEmpt;
+
 	static inline HitObject currentHitObject;
 	static inline HitObject previousHitObject;
 	

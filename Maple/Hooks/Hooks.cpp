@@ -2,7 +2,6 @@
 
 #include <Cinnamon.h>
 
-
 #include "../Communication/Communication.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Misc/RichPresence.h"
@@ -11,6 +10,7 @@
 #include "../Features/Relax/Relax.h"
 #include "../Features/Timewarp/Timewarp.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
+#include "../Sdk/Anticheat/Anticheat.h"
 #include "../Sdk/ConfigManager/ConfigManager.h"
 #include "../Sdk/Player/Player.h"
 #include "../UI/Overlay.h"
@@ -35,6 +35,16 @@ void Hooks::InstallAllHooks()
 	
 	if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
 		Security::CorruptMemory();
+
+	if (installManagedHook("SubmitError", Vanilla::Explorer["osu.Helpers.ErrorSubmission"]["Submit"].Method, SubmitErrorHook, reinterpret_cast<LPVOID*>(&oSubmitError)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked SubmitError");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook SubmitError");
+
+	if (installManagedHook("sendCurrentTrack", Vanilla::Explorer["osu.Helpers.Scrobbler"]["sendCurrentTrack"].Method, Anticheat::SendCurrentTrackHook, reinterpret_cast<LPVOID*>(&Anticheat::oSendCurrentTrack)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked sendCurrentTrack");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook sendCurrentTrack");
 	
 	//TODO: causing weird access violations only in debug
 	#ifndef _DEBUG
@@ -43,6 +53,11 @@ void Hooks::InstallAllHooks()
 		else
 			Logger::Log(LogSeverity::Error, "Failed to hook get_CurrentPlaybackRate");
 	#endif
+	
+	if (installManagedHook("set_CurrentPlaybackRate", Vanilla::Explorer["osu.Audio.AudioEngine"]["set_CurrentPlaybackRate"].Method, Timewarp::SetCurrentPlaybackRateHook, reinterpret_cast<LPVOID*>(&Timewarp::oSetCurrentPlaybackRate)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked set_CurrentPlaybackRate");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook set_CurrentPlaybackRate");
 
 	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
@@ -68,6 +83,26 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked AddFollowPoints");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddFollowPoints");
+
+	if (installManagedHook("LoadFlashlight", Vanilla::Explorer["osu.GameModes.Play.Rulesets.Ruleset"]["loadFlashlight"].Method, VisualsSpoofers::LoadFlashlightHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oLoadFlashlight)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked LoadFlashlight");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook LoadFlashlight");
+	
+	if (installManagedHook("LoadFlashlightMania", Vanilla::Explorer["osu.GameModes.Play.Rulesets.Mania.RulesetMania"]["loadFlashlight"].Method, VisualsSpoofers::LoadFlashlightManiaHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oLoadFlashlightMania)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked LoadFlashlightMania");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook LoadFlashlightMania");
+
+	if (installManagedHook("UpdateFlashlight", Vanilla::Explorer["osu.GameModes.Play.Player"]["UpdateFlashlight"].Method, VisualsSpoofers::UpdateFlashlightHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oUpdateFlashlight)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked UpdateFlashlight");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook UpdateFlashlight");
+
+	if (installManagedHook("HasHiddenSprites", Vanilla::Explorer["osu.GameModes.Play.Rulesets.Mania.StageMania"]["get_hasHiddenSprites"].Method, VisualsSpoofers::HasHiddenSpritesHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oHasHiddenSprites)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked HasHiddenSprites");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook HasHiddenSprites");
 
 	if (installManagedHook("PushNewFrame", Vanilla::Explorer["osu.Online.StreamingManager"]["PushNewFrame"].Method, SpectateHandler::PushNewFrameHook, reinterpret_cast<LPVOID*>(&SpectateHandler::oPushNewFrame)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked PushNewFrame");

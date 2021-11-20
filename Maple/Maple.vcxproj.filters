@@ -722,6 +722,9 @@
     <ClCompile Include="Features\ReplayEditor\Editor.cpp">
       <Filter>Features\ReplayEditor</Filter>
     </ClCompile>
+    <ClCompile Include="Hooks\ErrorSubmission.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -1829,6 +1832,9 @@
     </ClInclude>
     <ClInclude Include="Features\ReplayEditor\Editor.h">
       <Filter>Features\ReplayEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\GCHelpers.h">
+      <Filter>Dependencies\Vanilla\COM\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

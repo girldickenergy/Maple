@@ -33,10 +33,6 @@ enum class OsuModes
 
 class GameBase
 {
-    typedef bool (__fastcall* fnHasLogin)();
-
-    static inline fnHasLogin hasLogin = nullptr;
-	
 	static inline void* instanceAddress = nullptr;
 	static inline void* modeAddress = nullptr;
     static inline Field clientBoundsField;
@@ -46,6 +42,5 @@ public:
 	static void Initialize();
 	static void* Instance();
     static OsuModes Mode();
-    static bool HasLogin();
     static sRectangle* GetClientBounds();
 };

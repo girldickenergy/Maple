@@ -3,6 +3,8 @@
 #include <ThemidaSDK.h>
 #include <Vanilla.h>
 
+#include "../../Utilities/Logging/Logger.h"
+#include "../../Utilities/Security/xorstr.hpp"
 #include "../Osu/GameBase.h"
 
 void Anticheat::Initialize()
@@ -39,6 +41,7 @@ void Anticheat::Initialize()
 	rulesetIncreaseScoreHitAddress = rulesetIncreaseScoreHit.GetNativeStart();
 	
 	acFlagAddress = Vanilla::Explorer["osu.GameModes.Play.Player"]["flag"].Field.GetAddress();
+	scrobblerFlagAddress = Vanilla::Explorer["osu.OsuMain"]["startupValue"].Field.GetAddress();
 
 	VM_SHARK_BLACK_END
 	STR_ENCRYPT_END
@@ -84,5 +87,30 @@ void Anticheat::EnableAnticheat()
 
 int Anticheat::GetFlag()
 {
-	return *static_cast<bool*>(acFlagAddress);
+	return *static_cast<int*>(acFlagAddress);
+}
+
+void Anticheat::ResetFlag()
+{
+	*static_cast<int*>(acFlagAddress) = 0;
+}
+
+int Anticheat::GetScrobblerFlag()
+{
+	return *static_cast<int*>(scrobblerFlagAddress);
+}
+
+void Anticheat::ResetScrobblerFlag()
+{
+	*static_cast<int*>(scrobblerFlagAddress) = 0;
+}
+
+void __fastcall Anticheat::SendCurrentTrackHook(BOOL scrobble)
+{
+	if (GetScrobblerFlag() != 0)
+		Logger::Log(LogSeverity::Warning, xor ("Scrobbler flag is not zero! Flag -> %d"), GetScrobblerFlag());
+
+	ResetScrobblerFlag();
+
+	oSendCurrentTrack(scrobble);
 }

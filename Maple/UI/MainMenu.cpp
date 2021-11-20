@@ -141,9 +141,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l03112021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l19112021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l03112021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l19112021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -159,13 +159,13 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
-                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(13)));
+                Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Relax::Enabled); Widgets::Tooltip("All hit objects will be automatically tapped by Maple.");
                     const char* playstyles[] = { "Singletap", "Alternate", "TapX" };
                     Widgets::Combo("Playstyle", &Config::Relax::Playstyle, playstyles, IM_ARRAYSIZE(playstyles)); Widgets::Tooltip("Singletap - taps with the primary key and alternates only above certain BPM.\n\nAlternate - alternates all the time, regardless of the BPM.\n\nTapX - singletaps with M1 and alternates above certain BPM with Primary and Secondary keys.");
                     const char* distributions[] = { "Uniform", "Normal" };
-                    Widgets::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions));
+                    Widgets::Combo("Distribution", &Config::Relax::Distribution, distributions, IM_ARRAYSIZE(distributions)); Widgets::Tooltip("Specifies how hits will look on hit error bar.\n\nUniform - a widely used random distribution, looks like a rectangle on hit error bar.\n\nNormal - aka Gauss Distribution, looks like a bell on hit error bar. It will look legit to most players, however it may yield very low unstable rates on certain configurations and beatmaps.");
                     const char* keys[] = { "M1", "K1", "M2", "K2" };
                     Widgets::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
                     Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
@@ -176,7 +176,6 @@ void MainMenu::Render()
                     Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
                     Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners); Widgets::Tooltip("Relax will keep holding the key if there's a spinner right after the last hit object.");
                     Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride); Widgets::Tooltip("Changes the way how alternation of sliders is handled.\nIt is recommended to enable this option on techno maps.");
-                    Widgets::Checkbox("Accurate calculations", &Config::Relax::AccurateCalculations); Widgets::Tooltip("Allows relax to gather time and cursor position data more frequently, which results in more accurate calculations.");
                 }
                 Widgets::EndPanel();
         		
@@ -311,10 +310,11 @@ void MainMenu::Render()
             }
             if (currentTab == 4)
             {
-                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
                     Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators); Widgets::Tooltip("Spectators will keep buffering infinitely.");
                     Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled); Widgets::Tooltip("Before submitting the score Maple will ask you whether or not you really want to submit it.");
+                    Widgets::Checkbox("Disable logging", &Config::Misc::DisableLogging); Widgets::Tooltip("Disables Maple's log output to both console and runtime.log file.");
                 }
                 Widgets::EndPanel();
 

@@ -114,7 +114,8 @@ void Overlay::Render()
 	else
 		io.MouseDrawCursor = false;
 
-	if (MainMenu::IsOpen) {
+	if (MainMenu::IsOpen)
+	{
 		MainMenu::Render();
 		ReplayEditor::Editor::DrawUI();
 	}
@@ -134,6 +135,9 @@ void Overlay::Render()
 
 void Overlay::ToggleMainMenu()
 {
+	if (!MainMenu::IsOpen && GameBase::Mode() == OsuModes::Play)
+		return;
+	
 	MainMenu::IsOpen = !MainMenu::IsOpen;
 }
 

@@ -37,7 +37,6 @@ public:
 		static inline int AlternationHitSpread;
 		static inline bool HoldConsecutiveSpinners;
 		static inline bool SliderAlternationOverride;
-		static inline bool AccurateCalculations;
 		static inline bool PredictionEnabled;
 		static inline bool SliderPredictionEnabled;
 		static inline int PredictionAngle;
@@ -91,6 +90,7 @@ public:
 	{
 		static inline bool DisableSpectators;
 		static inline bool PromptOnScoreSubmissionEnabled;
+		static inline bool DisableLogging;
 		static inline bool RichPresenceSpooferEnabled;
 		static inline char SpoofedName[64];
 		static inline char SpoofedRank[64];

@@ -51,6 +51,8 @@ void ScoreSubmissionDialogue::Render()
 			ImGui::SetCursorPosX(panelContentWidth / 2 - buttonWidth / 2);
 			if (Widgets::Button("No", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
 			{
+				ScoreSubmission::AbortSubmission();
+				
 				IsOpen = false;
 				resetPosition = true;
 			}

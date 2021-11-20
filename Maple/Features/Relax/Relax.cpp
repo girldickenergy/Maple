@@ -36,7 +36,7 @@ void Relax::relaxThread()
 	{
 		WaitableTimer::Sleep(5000); //500 microseconds
 		
-		time = Config::Relax::AccurateCalculations ? AudioEngine::TimeAccurate() : AudioEngine::Time();
+		time = AudioEngine::TimeAccurate();
 		if (time < currentHitObject.StartTime - hitWindow50 || !Player::IsPlaying())
 			continue;
 
@@ -212,8 +212,8 @@ HitScanResult Relax::getHitScanResult()
 HitScanResult Relax::getNormalHitScanResult()
 {
 	Vector2 lastCursorPosition = cursorPosition;
-	cursorPosition = Config::Relax::AccurateCalculations ? InputManager::CursorPositionAccurate() : InputManager::CursorPosition();
-
+	cursorPosition = InputManager::CursorPosition();
+	
 	const float distanceToObject = cursorPosition.Distance(currentHitObject.Position);
 	const float lastDistanceToObject = lastCursorPosition.IsNull ? 0 : lastCursorPosition.Distance(currentHitObject.Position);
 	const float distanceToNext = nextHitObject.IsNull ? 0 : cursorPosition.Distance(nextHitObject.Position);
@@ -261,7 +261,7 @@ HitScanResult Relax::getNormalHitScanResult()
 HitScanResult Relax::getSliderHitScanResult()
 {
 	Vector2 lastCursorPosition = cursorPosition;
-	cursorPosition = Config::Relax::AccurateCalculations ? InputManager::CursorPositionAccurate() : InputManager::CursorPosition();
+	cursorPosition = InputManager::CursorPosition();
 
 	const float distanceToObject = cursorPosition.Distance(currentHitObject.Position);
 

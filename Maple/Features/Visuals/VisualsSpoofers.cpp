@@ -1,26 +1,18 @@
 #include "VisualsSpoofers.h"
 
-#include <ThemidaSDK.h>
-
-#include "../../Communication/Communication.h"
 #include "../../Config/Config.h"
 #include "../../Sdk/Mods/ModManager.h"
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Sdk/Player/HitObjectManager.h"
 #include "../../Sdk/Player/Player.h"
-#include "../../Sdk/Player/Ruleset.h"
-#include "../../Utilities/Security/Security.h"
 
 void VisualsSpoofers::spoofVisuals()
 {
-	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || Player::IsReplayMode())
 		return;
-
-	originalPreEmpt = HitObjectManager::GetPreEmpt();
-	originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
 	
 	spoofPreEmpt();
-
+	
 	if (Config::Visuals::HiddenDisabled)
 	{
 		Mods mods = HitObjectManager::GetActiveMods();
@@ -36,6 +28,9 @@ void VisualsSpoofers::spoofPreEmpt()
 {
 	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
 		return;
+
+	originalPreEmpt = HitObjectManager::GetPreEmpt();
+	originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
 
 	if (Config::Visuals::ARChangerEnabled)
 	{
@@ -112,35 +107,34 @@ __declspec(naked) void VisualsSpoofers::AddFollowPointsHook(void* instance, int 
 	}
 }
 
-void VisualsSpoofers::FlashlightRemoverThread()
+void __fastcall VisualsSpoofers::LoadFlashlightHook(void* instance)
 {
-	int i = 0;
-	while (true)
-	{
-		if (Player::IsLoaded() && !Player::IsReplayMode())
-		{
-			const float targetAlpha = roundf(Config::Visuals::FlashlightDisabled ? 0.f : 1.f);
-			if (roundf(Ruleset::GetFlashlightAlpha()) != targetAlpha)
-				Ruleset::SetFlashlightAlpha(targetAlpha);
+	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+		return;
 
-			VM_SHARK_BLACK_START
-			
-			if (i == 0)
-			{
-				DWORD check1 = 0x2F47C114;
-				CHECK_CODE_INTEGRITY(check1, 0xC0CEA1FA);
-				if (check1 == 0x2F47C114)
-					Security::CorruptMemory();
+	oLoadFlashlight(instance);
+}
 
-				Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle, true);
-			}
-			i++;
-			if (i == 600)
-				i = 0;
-			
-			VM_SHARK_BLACK_END
-		}
+void __fastcall VisualsSpoofers::LoadFlashlightManiaHook(void* instance)
+{
+	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+		return;
 
-		Sleep(100);
-	}
+	oLoadFlashlightMania(instance);
+}
+
+void __fastcall VisualsSpoofers::UpdateFlashlightHook(void* instance)
+{
+	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+		return;
+
+	oUpdateFlashlight(instance);
+}
+
+BOOL __fastcall VisualsSpoofers::HasHiddenSpritesHook(void* instance)
+{
+	if (Config::Visuals::HiddenDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+		return FALSE;
+
+	return oHasHiddenSprites(instance);
 }

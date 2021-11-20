@@ -93,7 +93,7 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	Vector2 playfieldCoords = GameField::DisplayToField(realPosition);
 	
 	const auto arScale = std::clamp(
-		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - HitObjectManager::GetHitWindow50())) / static_cast<float>((HitObjectManager::GetPreEmpt()) * 3.f) + 1.f)) * 1.4f,
+		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
 		0.f,
 		maximumFOVScale);
 
@@ -175,6 +175,9 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 
 void AimAssist::Reset()
 {
+	hitWindow50 = HitObjectManager::GetHitWindow50();
+	preEmpt = HitObjectManager::GetPreEmpt();
+	
 	currentIndex = HitObjectManager::GetCurrentHitObjectIndex();
 	currentHitObject = HitObjectManager::GetHitObject(currentIndex);
 	previousHitObject = currentIndex > 0 ? HitObjectManager::GetHitObject(currentIndex) : HitObject();

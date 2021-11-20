@@ -60,7 +60,6 @@ void Config::loadDefaults()
 	Relax::AlternationHitSpread = 90;
 	Relax::HoldConsecutiveSpinners = false;
 	Relax::SliderAlternationOverride = false;
-	Relax::AccurateCalculations = true;
 	Relax::PredictionEnabled = false;
 	Relax::SliderPredictionEnabled = false;
 	Relax::PredictionAngle = 45;
@@ -100,6 +99,7 @@ void Config::loadDefaults()
 
 	Misc::DisableSpectators = false;
 	Misc::PromptOnScoreSubmissionEnabled = false;
+	Misc::DisableLogging = false;
 	Misc::RichPresenceSpooferEnabled = false;
 	strcpy_s(Misc::SpoofedName, xor ("maple.software"));
 	strcpy_s(Misc::SpoofedRank, xor("rocking osu! since 2021"));
@@ -155,8 +155,6 @@ void Config::Load()
 			Relax::HoldConsecutiveSpinners = value == "1";
 		if (variable == "RelaxSliderAlternationOverride")
 			Relax::SliderAlternationOverride = value == "1";
-		if (variable == "RelaxAccurateCalculations")
-			Relax::AccurateCalculations = value == "1";
 		if (variable == "RelaxPredictionEnabled")
 			Relax::PredictionEnabled = value == "1";
 		if (variable == "RelaxSliderPredictionEnabled")
@@ -231,6 +229,8 @@ void Config::Load()
 			Misc::DisableSpectators = value == "1";
 		if (variable == "MiscPromptOnScoreSubmissionEnabled")
 			Misc::PromptOnScoreSubmissionEnabled = value == "1";
+		if (variable == "MiscDisableLogging")
+			Misc::DisableLogging = value == "1";
 		if (variable == "MiscRichPresenceSpooferEnabled")
 			Misc::RichPresenceSpooferEnabled = value == "1";
 		if (variable == "MiscSpoofedName")
@@ -268,7 +268,6 @@ void Config::Save()
 	ofs << "RelaxAlternationHitSpread=" << Relax::AlternationHitSpread << std::endl;
 	ofs << "RelaxHoldConsecutiveSpinners=" << Relax::HoldConsecutiveSpinners << std::endl;
 	ofs << "RelaxSliderAlternationOverride=" << Relax::SliderAlternationOverride << std::endl;
-	ofs << "RelaxAccurateCalculations=" << Relax::AccurateCalculations << std::endl;
 	ofs << "RelaxPredictionEnabled=" << Relax::PredictionEnabled << std::endl;
 	ofs << "RelaxSliderPredictionEnabled=" << Relax::SliderPredictionEnabled << std::endl;
 	ofs << "RelaxPredictionAngle=" << Relax::PredictionAngle << std::endl;
@@ -308,6 +307,7 @@ void Config::Save()
 
 	ofs << "MiscDisableSpectators=" << Misc::DisableSpectators << std::endl;
 	ofs << "MiscPromptOnScoreSubmissionEnabled=" << Misc::PromptOnScoreSubmissionEnabled << std::endl;
+	ofs << "MiscDisableLogging=" << Misc::DisableLogging << std::endl;
 	ofs << "MiscRichPresenceSpooferEnabled=" << Misc::RichPresenceSpooferEnabled << std::endl;
 	ofs << "MiscSpoofedName=" << Misc::SpoofedName << std::endl;
 	ofs << "MiscSpoofedRank=" << Misc::SpoofedRank << std::endl;

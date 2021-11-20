@@ -381,6 +381,7 @@
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
+    <ClCompile Include="Hooks\ErrorSubmission.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\SwapBuffers.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
@@ -662,6 +663,7 @@
     <ClInclude Include="Dependencies\Vanilla\COM\COMString.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Field.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Helpers\FieldHelpers.h" />
+    <ClInclude Include="Dependencies\Vanilla\COM\Helpers\GCHelpers.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Helpers\JItHelpers.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\Method.h" />
     <ClInclude Include="Dependencies\Vanilla\COM\SafeVector.h" />

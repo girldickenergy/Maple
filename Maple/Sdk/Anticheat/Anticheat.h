@@ -1,6 +1,9 @@
 #pragma once
 
+#include <comdef.h>
+
 typedef void(__thiscall* fnFreeAC)(void* instance);
+typedef void(__thiscall* fnSendCurrentTrack)(BOOL scrobble);
 
 class Anticheat
 {
@@ -15,9 +18,16 @@ class Anticheat
 	static inline void* rulesetIncreaseScoreHitAddress = nullptr;
 	
 	static inline void* acFlagAddress = nullptr;
+	static inline void* scrobblerFlagAddress = nullptr;
 public:
 	static void Initialize();
 	static void DisableAnticheat();
 	static void EnableAnticheat();
 	static int GetFlag();
+	static void ResetFlag();
+	static int GetScrobblerFlag();
+	static void ResetScrobblerFlag();
+
+	static inline fnSendCurrentTrack oSendCurrentTrack;
+	static void __fastcall SendCurrentTrackHook(BOOL scrobble);
 };
