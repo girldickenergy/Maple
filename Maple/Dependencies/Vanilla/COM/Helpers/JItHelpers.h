@@ -9,7 +9,7 @@ class JitHelpers
 	//static inline reset_t reset = reinterpret_cast<reset_t>(reinterpret_cast<uintptr_t>(GetModuleHandle(L"clr.dll")) + 0x3367EA);
 
 	typedef void* (__thiscall* doPreStub_t)(void* pMethodDesc, void* pDispatchingMT);
-    static inline doPreStub_t doPreStub = reinterpret_cast<doPreStub_t>(Vanilla::FindSignature("\x6A\x48\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xD9\x33\xF6", "xxx????x????xxxx", (uintptr_t)GetModuleHandleA("clr.dll"), Vanilla::GetModuleSize("clr.dll")));
+	static inline doPreStub_t doPreStub = reinterpret_cast<doPreStub_t>(Vanilla::FindSignature("\x6A\x00\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xD9\x33\x00\x89\x00\xD4", "x?x????x????xxx?x?x", (uintptr_t)GetModuleHandleA("clr.dll"), Vanilla::GetModuleSize("clr.dll")));
 
 	typedef void* (__thiscall* getWrappedMethodDesc_t)(void* pMethodDesc);
 	static inline getWrappedMethodDesc_t getWrappedMethodDesc = reinterpret_cast<getWrappedMethodDesc_t>(Vanilla::FindSignature("\xF6\x41\x03\x04\x0F\x85\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x85\xC0\x0F\x84", "xxxxxx????x????xxxx", (uintptr_t)GetModuleHandleA("clr.dll"), Vanilla::GetModuleSize("clr.dll")));
