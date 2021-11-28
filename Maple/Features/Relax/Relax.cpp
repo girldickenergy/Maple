@@ -174,10 +174,12 @@ bool Relax::updateAlternation()
 
 	int bpm = Config::Relax::MaxSingletapBPM / rateMultiplier;
 
-	if (currentIndex > 0 && 60000 / (currentHitObject.StartTime - (lastHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? lastHitObject.StartTime : lastHitObject.EndTime)) / 4 > bpm || Config::Relax::Playstyle == 1)
+	int diff1 = std::clamp(currentHitObject.StartTime - (lastHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? lastHitObject.StartTime : lastHitObject.EndTime), 1, 60000);
+	if (currentIndex > 0 && 60000 / diff1 / 4 > bpm || Config::Relax::Playstyle == 1)
 		alternateCurrentNote = true;
 
-	if (currentIndex + 1 < hitObjectsCount && 60000 / (nextHitObject.StartTime - (currentHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? currentHitObject.StartTime : currentHitObject.EndTime)) / 4 > bpm)
+	int diff2 = std::clamp(nextHitObject.StartTime - (currentHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? currentHitObject.StartTime : currentHitObject.EndTime), 1, 60000);
+	if (currentIndex + 1 < hitObjectsCount && 60000 / diff2 / 4 > bpm)
 		alternateNextNote = true;
 
 	if (Config::Relax::Playstyle == 1 && currentIndex == 0)
