@@ -1,8 +1,6 @@
 #include "Timewarp.h"
 
-#include <ThemidaSDK.h>
 #include <Vanilla.h>
-
 
 #include "../../Communication/Communication.h"
 #include "../../Config/Config.h"
@@ -11,7 +9,6 @@
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Sdk/Player/Player.h"
 #include "../../Sdk/Player/Ruleset.h"
-#include "../../Utilities/Security/Security.h"
 
 double __fastcall Timewarp::getCurrentPlaybackRateStub()
 {
@@ -40,17 +37,6 @@ void Timewarp::Initialize()
 
 void Timewarp::UpdateCatcherSpeed()
 {
-    VM_SHARK_BLACK_START
-
-    DWORD check1 = 0x2F47C114;
-    CHECK_CODE_INTEGRITY(check1, 0xC0CEA1FA);
-    if (check1 == 0x2F47C114)
-        Security::CorruptMemory();
-
-    Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle, true);
-
-    VM_SHARK_BLACK_END
-	
     if (Player::PlayMode() == PlayModes::Catch)
         Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? Config::Timewarp::Rate : ModManager::ModPlaybackRate()) / 100.f);
 }

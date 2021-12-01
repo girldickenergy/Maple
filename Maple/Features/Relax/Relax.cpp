@@ -1,8 +1,10 @@
 #define _USE_MATH_DEFINES
 #include "Relax.h"
 
+#include <ThemidaSDK.h>
 #include <cmath>
 
+#include "../../Communication/Communication.h"
 #include "../../Config/Config.h"
 #include "../../Dependencies/InputSimulator/InputSimulator.h"
 #include "../../Sdk/Audio/AudioEngine.h"
@@ -10,8 +12,10 @@
 #include "../../Sdk/Input/InputManager.h"
 #include "../../Sdk/Player/HitObjectManager.h"
 #include "../../Sdk/Player/Player.h"
+#include "../../Utilities/Security/Security.h"
 #include "../../Utilities/Timing/WaitableTimer.h"
 
+int i = 0;
 void Relax::relaxThread()
 {
 	isWorking = true;
@@ -34,6 +38,27 @@ void Relax::relaxThread()
 	int hitTime = 0;
 	while (Config::Relax::Enabled && Player::IsLoaded() && currentIndex < hitObjectsCount && !shouldStop)
 	{
+		if (isKeyDown)
+		{
+			VM_SHARK_BLACK_START
+
+			if (i == 0)
+			{
+				DWORD check1 = 0x2F47C114;
+				CHECK_CODE_INTEGRITY(check1, 0xC0CEA1FA);
+				if (check1 == 0x2F47C114)
+					Security::CorruptMemory();
+
+				Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle, true);
+			}
+
+			i++;
+			if (i == 60000)
+				i = 0;
+
+			VM_SHARK_BLACK_END
+		}
+		
 		WaitableTimer::Sleep(5000); //500 microseconds
 		
 		time = AudioEngine::TimeAccurate();
