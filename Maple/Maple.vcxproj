@@ -395,6 +395,7 @@
     <ClCompile Include="UI\MainMenu.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
     <ClCompile Include="UI\ScoreSubmissionDialogue.cpp" />
+    <ClCompile Include="UI\SnowVisualisation.cpp" />
     <ClCompile Include="UI\Widgets.cpp" />
     <ClCompile Include="Utilities\Logging\Logger.cpp" />
     <ClCompile Include="Utilities\Strings\StringUtilities.h" />
@@ -703,6 +704,7 @@
     <ClInclude Include="UI\MainMenu.h" />
     <ClInclude Include="UI\Overlay.h" />
     <ClInclude Include="UI\ScoreSubmissionDialogue.h" />
+    <ClInclude Include="UI\SnowVisualisation.h" />
     <ClInclude Include="UI\StyleProvider.h" />
     <ClInclude Include="UI\Textures.h" />
     <ClInclude Include="UI\Widgets.h" />

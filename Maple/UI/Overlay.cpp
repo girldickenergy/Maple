@@ -9,6 +9,7 @@
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Sdk/Osu/GameBase.h"
 #include "GL/gl3w.h"
+#include "SnowVisualisation.h"
 
 void Overlay::enableRaw()
 {
@@ -113,6 +114,9 @@ void Overlay::Render()
 		io.MouseDrawCursor = true;
 	else
 		io.MouseDrawCursor = false;
+
+	if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
+		SnowVisualisation::Draw();
 
 	if (MainMenu::IsOpen)
 		MainMenu::Render();
