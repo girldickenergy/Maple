@@ -33,8 +33,6 @@ public:
 	static void ShowScoreSubmissionDialogue();
 	static void HideScoreSubmissionDialogue();
 
-	static HWND GetWindowHandle();
-
 	static inline HHOOK oHandleInput;
 	static LRESULT CALLBACK HandleInputHook(int nCode, WPARAM wParam, LPARAM lParam);
 	

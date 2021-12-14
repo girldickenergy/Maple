@@ -87,7 +87,7 @@ void Overlay::Initialize(IDirect3DDevice9* d3d9Device)
 	StyleProvider::UpdateColours();
 	StyleProvider::UpdateScale();
 
-	ImGui_ImplWin32_Init(GetWindowHandle());
+	ImGui_ImplWin32_Init(GameBase::GetWindowHandle());
 
 	oHandleInput = SetWindowsHookEx(WH_GETMESSAGE, HandleInputHook, NULL, GetCurrentThreadId());
 
@@ -150,33 +150,6 @@ void Overlay::ShowScoreSubmissionDialogue()
 void Overlay::HideScoreSubmissionDialogue()
 {
 	ScoreSubmissionDialogue::IsOpen = false;
-}
-
-HWND Overlay::GetWindowHandle()
-{
-	if (window)
-		return window;
-
-	EnumWindows([](HWND hwnd, LPARAM lparam) -> BOOL
-	{
-		DWORD id;
-		GetWindowThreadProcessId(hwnd, &id);
-
-		if (GetCurrentProcessId() == id && GetConsoleWindow() != hwnd)
-		{
-			char windowTitle[256];
-			GetWindowTextA(hwnd, windowTitle, sizeof(windowTitle));
-			if (windowTitle[0] == 'o') //LMFAO
-			{
-				window = hwnd;
-
-				return 0;
-			}
-		}
-		return 1;
-	}, 0);
-
-	return window;
 }
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

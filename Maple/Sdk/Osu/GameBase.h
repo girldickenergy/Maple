@@ -36,6 +36,12 @@ class GameBase
 	static inline void* instanceAddress = nullptr;
 	static inline void* modeAddress = nullptr;
     static inline Field clientBoundsField;
+
+    typedef void* (__fastcall* fnGetWindow)(void* instance);
+    static inline fnGetWindow getWindow = nullptr;
+
+    typedef HWND (__fastcall* fnGetHandle)(void* instance);
+    static inline fnGetHandle getHandle = nullptr;
 public:
 	static inline TypeExplorer RawGameBase;
 	
@@ -43,4 +49,5 @@ public:
 	static void* Instance();
     static OsuModes Mode();
     static sRectangle* GetClientBounds();
+    static HWND GetWindowHandle();
 };
