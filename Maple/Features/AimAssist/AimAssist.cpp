@@ -13,7 +13,7 @@
 
 void AimAssist::DrawDebugOverlay()
 {
-	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay)
+	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded())
 	{
 		// Draw small debug box uwu
 		ImGui::SetNextWindowSize(ImVec2(GameBase::GetClientBounds()->Width, GameBase::GetClientBounds()->Height));
@@ -248,15 +248,15 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 	Vector2 hitObjectPosition = GameField::FieldToDisplay(currentHitObject.Position);
 
 	Vector2 displacement = hitObjectPosition - realPosition;
-	auto fov = (40.f * Config::AimAssist::Strength);
+	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
 
 	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime, hitWindow50, preEmpt) * fov)) {
-		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Strength && !previousHitObject.IsNull) {
-			const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Strength);
+		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
+			const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Algorithmv2Power);
 
 			if (interpolant > std::numeric_limits<float>::epsilon()) {
-				offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Strength * 16.f), Config::AimAssist::Strength * 16.f);
-				offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Strength * 16.f), Config::AimAssist::Strength * 16.f);
+				offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
 			}
 		}
 	}

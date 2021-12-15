@@ -190,7 +190,7 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, 4));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
                     const char* algorithms[] = { "v1", "v2" };
