@@ -141,9 +141,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l11122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l15122021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l11122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l15122021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -190,40 +190,48 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, 4));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
-                    Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
+                    const char* algorithms[] = { "v1", "v2" };
+                    Widgets::Combo("Algorithm", &Config::AimAssist::Algorithm, algorithms, IM_ARRAYSIZE(algorithms));
+                    if (Config::AimAssist::Algorithm == 0)
+                        Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
+                    else
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
                 }
                 Widgets::EndPanel();
 
-            	if (Config::AimAssist::EasyMode)
-            	{
-                    Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
-                    {
-                        Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                    }
-                    Widgets::EndPanel();
-            	}
-                else
+                if (Config::AimAssist::Algorithm == 0)
                 {
-                    Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
+                    if (Config::AimAssist::EasyMode)
                     {
-                        Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
-                        Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                        Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
-                        Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                        Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
-                        Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
-                        Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
-                        Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
-                        Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
-                        Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
+                        Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                        {
+                            Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        }
+                        Widgets::EndPanel();
                     }
-                    Widgets::EndPanel();
+                    else
+                    {
+                        Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
+                        {
+                            Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                            Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                            Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                            Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
+                            Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
+                            Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
+                            Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
+                            Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                            Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
+                            Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
+                        }
+                        Widgets::EndPanel();
+                    }
                 }
             }
         	if (currentTab == 2)

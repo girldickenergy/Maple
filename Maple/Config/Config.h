@@ -46,6 +46,7 @@ public:
 	struct AimAssist
 	{
 		static inline bool Enabled;
+		static inline int Algorithm;
 		static inline bool EasyMode;
 		/* Easy mode arguments*/
 		static inline float EasyModeStrength;
@@ -63,6 +64,7 @@ public:
 		static inline float ResyncLeniencyFactor;
 		static inline bool AssistOnSliders;
 		static inline bool DrawDebugOverlay;
+		static inline float Algorithmv2Power;
 	};
 
 	struct Timewarp

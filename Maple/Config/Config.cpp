@@ -66,6 +66,7 @@ void Config::loadDefaults()
 	Relax::PredictionScale = 0.8f;
 
 	AimAssist::Enabled = false;
+	AimAssist::Algorithm = 0;
 	AimAssist::EasyMode = true;
 	AimAssist::EasyModeStrength = 0.5f;
 	AimAssist::Strength = 0.6f;
@@ -81,6 +82,7 @@ void Config::loadDefaults()
 	AimAssist::ResyncLeniency = 3.5f;
 	AimAssist::ResyncLeniencyFactor = 0.698f;
 	AimAssist::DrawDebugOverlay = false;
+	AimAssist::Algorithmv2Power = 0.5f;
 
 	Timewarp::Enabled = false;
 	Timewarp::Rate = 100;
@@ -166,6 +168,8 @@ void Config::Load()
 
 		if (variable == "AimAssistEnabled")
 			AimAssist::Enabled = value == "1";
+		if (variable == "AimAssistAlgorithm")
+			AimAssist::Algorithm = std::stoi(value);
 		if (variable == "AimAssistEasyMode")
 			AimAssist::EasyMode = value == "1";
 		if (variable == "AimAssistEasyModeStrength")
@@ -196,6 +200,8 @@ void Config::Load()
 			AimAssist::FlipSliderballDeadzone = value == "1";
 		if (variable == "AimAssistSliderballDeadzone")
 			AimAssist::SliderballDeadzone = std::stof(value);
+		if (variable == "AimAssistAlgorithmv2Power")
+			AimAssist::Algorithmv2Power = std::stof(value);
 
 		if (variable == "TimewarpEnabled")
 			Timewarp::Enabled = value == "1";
@@ -274,6 +280,7 @@ void Config::Save()
 	ofs << "RelaxPredictionScale=" << Relax::PredictionScale << std::endl;
 
 	ofs << "AimAssistEnabled=" << AimAssist::Enabled << std::endl;
+	ofs << "AimAssistAlgorithm=" << AimAssist::Algorithm << std::endl;
 	ofs << "AimAssistEasyMode=" << AimAssist::EasyMode << std::endl;
 	ofs << "AimAssistEasyModeStrength=" << AimAssist::EasyModeStrength << std::endl;
 	ofs << "AimAssistStrength=" << AimAssist::Strength << std::endl;
@@ -289,6 +296,7 @@ void Config::Save()
 	ofs << "AimAssistDrawDebugOverlay=" << AimAssist::DrawDebugOverlay << std::endl;
 	ofs << "AimAssistFlipSliderballDeadzone=" << AimAssist::FlipSliderballDeadzone << std::endl;
 	ofs << "AimAssistSliderballDeadzone=" << AimAssist::SliderballDeadzone << std::endl;
+	ofs << "AimAssistAlgorithmv2Power=" << AimAssist::Algorithmv2Power << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
 	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;

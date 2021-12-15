@@ -42,12 +42,15 @@ void AimAssist::DrawDebugOverlay()
 				drawList->AddCircleFilled(ImVec2(assistedPosition.X, assistedPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
 
 				// Draw Last position
-				Vector2 screen = GameField::FieldToDisplay(lastPos);
+				Vector2 screen = Config::AimAssist::Algorithm == 0 ? GameField::FieldToDisplay(lastPos) : lastPos;
 				drawList->AddCircleFilled(ImVec2(screen.X, screen.Y), 20.f, ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 111.f, 70.f, 0.4f)));
 
 				// Draw Sliderball position
-				Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
-				drawList->AddCircleFilled(ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
+				if (Config::AimAssist::Algorithm == 0)
+				{
+					Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
+					drawList->AddCircleFilled(ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
+				}
 			}
 		}
 		ImGui::End();
@@ -173,6 +176,100 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	return assistedPosition;
 }
 
+static auto __forceinline calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
+	return _mm_min_ps(
+		_mm_max_ps(
+			_mm_mul_ps(
+				_mm_add_ps(
+					_mm_div_ps(_mm_sub_ps(_mm_load_ps(&begin), _mm_load_ps(&hit_window_50)), _mm_mul_ps(_mm_load_ps(&pre_empt), _mm_set_ps1(3.f))),
+					_mm_set_ps1(1.f)),
+				_mm_load_ps(&magnitude)),
+			_mm_set_ps1(0.f)),
+		_mm_set_ps1(max))
+		.m128_f32[0];
+}
+
+static auto __forceinline point_in_radius(const Vector2& point, const Vector2& anchor, float radius) {
+	return _mm_sqrt_ps(_mm_add_ps(
+		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.X), _mm_load_ps(&point.X)), _mm_set_ps1(2.f)),
+		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.Y), _mm_load_ps(&point.Y)), _mm_set_ps1(2.f))))
+		.m128_f32[0] <= radius;
+}
+
+static auto __forceinline lerp(float x, float y, float t) {
+	_mm_store_ps(&t, _mm_min_ps(_mm_max_ps(_mm_load_ps(&t), _mm_set_ps1(0.f)), _mm_set_ps1(1.f)));
+
+	const auto candidate = _mm_add_ps(_mm_load_ps(&x), _mm_mul_ps(_mm_sub_ps(_mm_load_ps(&y), _mm_load_ps(&x)), _mm_load_ps(&t)));
+
+	if (!_mm_testz_ps(_mm_xor_ps(candidate, _mm_set_ps1(__builtin_huge_valf())), _mm_set_ps1(-0.f))) {
+		return _mm_max_ps(_mm_set_ps1(x), _mm_set_ps1(y)).m128_f32[0];
+	}
+
+	return candidate.m128_f32[0];
+}
+
+static auto __forceinline _mm_abs_ps(__m128 _A) {
+	return _mm_andnot_ps(_mm_set1_ps(-0.0f), _A);
+}
+
+static auto __forceinline calc_interpolant(const Vector2& window_size, float displacement, float strength) {
+	return _mm_min_ps(
+		_mm_set_ps1(1.f),
+		_mm_mul_ps(
+			_mm_abs_ps(_mm_div_ps(
+				_mm_load_ps(&displacement), _mm_div_ps(_mm_min_ps(_mm_load_ps(&window_size.X), _mm_load_ps(&window_size.Y)), _mm_set_ps1(2.f)))),
+			_mm_load_ps(&strength)))
+		.m128_f32[0];
+}
+
+Vector2 AimAssist::doAssistv2(Vector2 realPosition)
+{
+	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
+		return realPosition;
+
+	const int time = AudioEngine::Time();
+	if (time > currentHitObject.StartTime)
+	{
+		currentIndex++;
+
+		if (currentIndex >= HitObjectManager::GetHitObjectsCount())
+		{
+			canAssist = false;
+
+			return realPosition;
+		}
+
+		previousHitObject = currentHitObject;
+		currentHitObject = HitObjectManager::GetHitObject(currentIndex);
+	}
+
+	rawPosition = realPosition;
+
+	Vector2 hitObjectPosition = GameField::FieldToDisplay(currentHitObject.Position);
+
+	Vector2 displacement = hitObjectPosition - realPosition;
+	auto fov = (40.f * Config::AimAssist::Strength);
+
+	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime, hitWindow50, preEmpt) * fov)) {
+		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Strength && !previousHitObject.IsNull) {
+			const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Strength);
+
+			if (interpolant > std::numeric_limits<float>::epsilon()) {
+				offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Strength * 16.f), Config::AimAssist::Strength * 16.f);
+				offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Strength * 16.f), Config::AimAssist::Strength * 16.f);
+			}
+		}
+	}
+	else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
+		offset = offset * Vector2(.95f, .95f); // could probably make this a little better, but it works perfectly lmao
+	}
+
+	lastPos = realPosition;
+	assistedPosition = realPosition + offset;
+	return assistedPosition;
+
+}
+
 void AimAssist::Reset()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
@@ -186,11 +283,14 @@ void AimAssist::Reset()
 	
 	decided = true;
 	lastPos = Vector2(0, 0);
+
+	windowSize = Vector2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
+	offset = Vector2();
 }
 
 void __stdcall AimAssist::UpdateCursorPosition(float x, float y)
 {
-	const Vector2 assistedPosition = doAssist(Vector2(x, y));
+	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : doAssistv2(Vector2(x, y));
 
 	oUpdateCursorPosition(assistedPosition.X, assistedPosition.Y);
 }
