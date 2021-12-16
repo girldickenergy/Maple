@@ -141,9 +141,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l15122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l16122021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l15122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l16122021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -190,7 +190,7 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::Algorithm == 0 ? 4 : 5)));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
                     const char* algorithms[] = { "v1", "v2" };
@@ -198,7 +198,10 @@ void MainMenu::Render()
                     if (Config::AimAssist::Algorithm == 0)
                         Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
                     else
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                    {
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.5f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::Checkbox("Assist on sliders###algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
+                    }
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
                 }
                 Widgets::EndPanel();

@@ -65,6 +65,7 @@ public:
 		static inline bool AssistOnSliders;
 		static inline bool DrawDebugOverlay;
 		static inline float Algorithmv2Power;
+		static inline bool Algorithmv2AssistOnSliders;
 	};
 
 	struct Timewarp

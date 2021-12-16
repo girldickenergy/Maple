@@ -83,6 +83,7 @@ void Config::loadDefaults()
 	AimAssist::ResyncLeniencyFactor = 0.698f;
 	AimAssist::DrawDebugOverlay = false;
 	AimAssist::Algorithmv2Power = 0.5f;
+	AimAssist::Algorithmv2AssistOnSliders = true;
 
 	Timewarp::Enabled = false;
 	Timewarp::Rate = 100;
@@ -202,6 +203,8 @@ void Config::Load()
 			AimAssist::SliderballDeadzone = std::stof(value);
 		if (variable == "AimAssistAlgorithmv2Power")
 			AimAssist::Algorithmv2Power = std::stof(value);
+		if (variable == "AimAssistAlgorithmv2AssistOnSliders")
+			AimAssist::Algorithmv2AssistOnSliders = value == "1";
 
 		if (variable == "TimewarpEnabled")
 			Timewarp::Enabled = value == "1";
@@ -297,6 +300,7 @@ void Config::Save()
 	ofs << "AimAssistFlipSliderballDeadzone=" << AimAssist::FlipSliderballDeadzone << std::endl;
 	ofs << "AimAssistSliderballDeadzone=" << AimAssist::SliderballDeadzone << std::endl;
 	ofs << "AimAssistAlgorithmv2Power=" << AimAssist::Algorithmv2Power << std::endl;
+	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
 	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;

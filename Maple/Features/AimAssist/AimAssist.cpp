@@ -228,7 +228,7 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 		return realPosition;
 
 	const int time = AudioEngine::Time();
-	if (time > currentHitObject.StartTime)
+	if (time > currentHitObject.EndTime)
 	{
 		currentIndex++;
 
@@ -245,12 +245,12 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 	rawPosition = realPosition;
 
-	Vector2 hitObjectPosition = GameField::FieldToDisplay(currentHitObject.Position);
+	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
 	Vector2 displacement = hitObjectPosition - realPosition;
 	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
 
-	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime, hitWindow50, preEmpt) * fov)) {
+	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
 		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
 			const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Algorithmv2Power);
 
