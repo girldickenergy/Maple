@@ -59,6 +59,11 @@ struct Vector2
 			Y * invDiv);
 	}
 
+	Vector2 operator /(Vector2 v2)
+	{
+		return Vector2(X / v2.X, Y * v2.Y);
+	}
+
 	bool operator !=(Vector2 v2)
 	{
 		if (X != v2.X || Y != v2.Y)

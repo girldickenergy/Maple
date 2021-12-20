@@ -41,6 +41,28 @@ void MainMenu::Render()
     if (backgroundTexture != nullptr)
         ImGui::GetBackgroundDrawList()->AddImage(backgroundTexture, ImVec2(0, 0), ImVec2(io.DisplaySize.x, io.DisplaySize.y));
 
+    ImVec2 firstSize = ImGui::CalcTextSize("Our discord server has been terminated.");
+    ImVec2 secondSize = ImVec2(ImGui::CalcTextSize("Click here").x + ImGui::GetStyle().FramePadding.x * 2 + ImGui::CalcTextSize("to join our new server!").x, ImGui::GetFrameHeight());
+
+    ImVec2 wndSize = StyleProvider::Padding * 2 + ImVec2(firstSize.x, firstSize.y + secondSize.y + ImGui::GetStyle().ItemSpacing.y);
+    ImGui::SetNextWindowSize(wndSize);
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - wndSize.x / 2, ImGui::GetIO().DisplaySize.y - wndSize.y - StyleProvider::Padding.y));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, StyleProvider::MenuColourDark);
+    ImGui::Begin("dcord", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+    {
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+        ImGui::SetCursorPos(StyleProvider::Padding);
+        ImGui::Text("Our discord server has been terminated.");
+        ImGui::SetCursorPosX(wndSize.x / 2 - secondSize.x / 2);
+        if (Widgets::Button("Click here"))
+            ShellExecuteA(NULL, "open", "https://maple.software/discord", NULL, NULL, SW_SHOWNORMAL);
+        ImGui::SameLine();
+        ImGui::Text("to join our new server!");
+    }
+    ImGui::End();
+
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
@@ -141,9 +163,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l16122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l18122021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l16122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l18122021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -190,7 +212,7 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::Algorithm == 0 ? 4 : 5)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::Algorithm == 0 ? 4 : 5) + (Config::AimAssist::Algorithm == 0 ? 0 : ImGui::GetFontSize() * 3 + ImGui::GetStyle().ItemSpacing.y * 3)));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
                     const char* algorithms[] = { "v1", "v2" };
@@ -199,7 +221,10 @@ void MainMenu::Render()
                         Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
                     else
                     {
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.5f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        ImGui::Text("Power has been capped at 1 due to possible weird movements on");
+                        ImGui::Text("higher values.");
+                        ImGui::Text("This will be fixed in the next update.");
                         Widgets::Checkbox("Assist on sliders###algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
                     }
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);

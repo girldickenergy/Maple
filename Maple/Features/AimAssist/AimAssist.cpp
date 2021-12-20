@@ -250,18 +250,35 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 	Vector2 displacement = hitObjectPosition - realPosition;
 	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
 
-	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
-		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
-			const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Algorithmv2Power);
+	if (point_in_radius(realPosition, hitObjectPosition, hitObjectRadius))
+	{
+		auto delta = lastPos - realPosition;
+		offset = offset - delta * .5f;
+	}
+	else
+	{
+		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
+			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
+				const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Algorithmv2Power);
 
-			if (interpolant > std::numeric_limits<float>::epsilon()) {
-				offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
-				offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				if (interpolant > std::numeric_limits<float>::epsilon()) {
+					offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+					offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				}
 			}
 		}
-	}
-	else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
-		offset = offset * Vector2(.95f, .95f); // could probably make this a little better, but it works perfectly lmao
+		else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
+			const auto dt = ImGui::GetIO().DeltaTime;
+
+			if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
+				if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
+					auto dpi = delta * (Config::AimAssist::Algorithmv2Power * .3f);
+
+					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
+					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
+				}
+			}
+		}
 	}
 
 	lastPos = realPosition;
@@ -274,6 +291,7 @@ void AimAssist::Reset()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
 	preEmpt = HitObjectManager::GetPreEmpt();
+	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	
 	currentIndex = HitObjectManager::GetCurrentHitObjectIndex();
 	currentHitObject = HitObjectManager::GetHitObject(currentIndex);

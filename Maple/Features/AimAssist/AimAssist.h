@@ -16,6 +16,7 @@ class AimAssist
 
 	static inline int hitWindow50;
 	static inline int preEmpt;
+	static inline float hitObjectRadius;
 
 	static inline HitObject currentHitObject;
 	static inline HitObject previousHitObject;
