@@ -8,18 +8,16 @@
 
 class Config
 {
-	static void ensureDirectoryExists();
 	static bool isSameName(const std::string& a, const std::string& b);
 	static bool isValidName(std::string name);
 	static ImVec4 parseImVec4(std::string vec);
 	static void loadDefaults();
 public:
-	static inline std::string Directory;
 	static inline std::vector<std::string> Configs;
 	static inline int CurrentConfig = 0;
 	static inline char NewConfigName[20] = { };
 
-	static void Initialize(const std::string& directoryName);
+	static void Initialize();
 	static void Load();
 	static void Save();
 	static void Create();

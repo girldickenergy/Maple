@@ -6,14 +6,14 @@
 #include <fstream>
 
 #include "../../Config/Config.h"
+#include "../Directories/DirectoryHelper.h"
 
 void Logger::clearLogFile()
 {
 	if (logFilePath.empty())
 		return;
 
-	if (!exists(logFilePath.parent_path()))
-		create_directories(logFilePath.parent_path());
+	DirectoryHelper::EnsureDirectoriesExist();
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
@@ -75,8 +75,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	if (logFilePath.empty())
 		return;
 
-	if (!exists(logFilePath.parent_path()))
-		create_directories(logFilePath.parent_path());
+	DirectoryHelper::EnsureDirectoriesExist();
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
@@ -84,9 +83,9 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	logFile.close();
 }
 
-void Logger::Initialize(const std::string& logFilePath, LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
+void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
 {
-	Logger::logFilePath = logFilePath;
+	Logger::logFilePath = DirectoryHelper::LogsDirectory + "\\runtime.log";
 	Logger::scope = scope;
 	
 	if (initializeConsole)

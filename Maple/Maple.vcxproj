@@ -374,8 +374,10 @@
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
+    <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
+    <ClCompile Include="Hooks\AddParameter.cpp" />
     <ClCompile Include="Hooks\EndScene.cpp" />
     <ClCompile Include="Hooks\ErrorSubmission.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
@@ -679,6 +681,7 @@
     <ClInclude Include="Features\Relax\HitScanResult.h" />
     <ClInclude Include="Features\Relax\HitTimings.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
+    <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
     <ClInclude Include="Hooks\Hooks.h" />
@@ -708,6 +711,8 @@
     <ClInclude Include="UI\StyleProvider.h" />
     <ClInclude Include="UI\Textures.h" />
     <ClInclude Include="UI\Widgets.h" />
+    <ClInclude Include="Utilities\Crypto\CryptoHelper.h" />
+    <ClInclude Include="Utilities\Directories\DirectoryHelper.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
     <ClInclude Include="Utilities\Security\Security.h" />

@@ -6,12 +6,7 @@
 #include <ThemidaSDK.h>
 
 #include "../../Utilities/Security/xorstr.hpp"
-
-void Config::ensureDirectoryExists()
-{
-	if (!std::filesystem::exists(Directory))
-		std::filesystem::create_directory(Directory);
-}
+#include "../Utilities/Directories/DirectoryHelper.h"
 
 bool Config::isSameName(const std::string& a, const std::string& b)
 {
@@ -110,10 +105,8 @@ void Config::loadDefaults()
 	STR_ENCRYPT_END
 }
 
-void Config::Initialize(const std::string& directory)
+void Config::Initialize()
 {
-	Directory = directory;
-
 	Refresh();
 
 	Load();
@@ -123,13 +116,13 @@ void Config::Load()
 {
 	STR_ENCRYPT_START
 	
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
 
 	if (CurrentConfig == 0)
 		return;
 
-	std::ifstream file(Directory + "\\" + Configs[CurrentConfig] + ".cfg");
+	std::ifstream file(DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg");
 	std::string line;
 
 	while (std::getline(file, line))
@@ -260,9 +253,9 @@ void Config::Save()
 	if (CurrentConfig == 0)
 		return;
 
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
-	const std::string cfgPath = Directory + "\\" + Configs[CurrentConfig] + ".cfg";
+	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg";
 
 	std::ofstream ofs;
 	ofs.open(cfgPath, std::ofstream::out | std::ofstream::trunc);
@@ -331,9 +324,9 @@ void Config::Save()
 
 void Config::Create()
 {
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
-	const std::string cfgPath = Directory + "\\" + NewConfigName + ".cfg";
+	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + NewConfigName + ".cfg";
 
 	if (!isValidName(NewConfigName) || std::filesystem::exists(cfgPath))
 		return;
@@ -353,12 +346,12 @@ void Config::Create()
 
 void Config::Refresh()
 {
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
 	Configs.clear();
 	Configs.emplace_back("default");
 
-	for (const auto& file : std::filesystem::directory_iterator(Directory))
+	for (const auto& file : std::filesystem::directory_iterator(DirectoryHelper::ConfigsDirectory))
 		if (file.path().extension() == ".cfg" && isValidName(file.path().filename().stem().string()))
 			Configs.push_back(file.path().filename().stem().string());
 }

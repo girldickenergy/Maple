@@ -212,14 +212,11 @@ static auto __forceinline _mm_abs_ps(__m128 _A) {
 	return _mm_andnot_ps(_mm_set1_ps(-0.0f), _A);
 }
 
-static auto __forceinline calc_interpolant(const Vector2& window_size, float displacement, float strength) {
-	return _mm_min_ps(
-		_mm_set_ps1(1.f),
-		_mm_mul_ps(
-			_mm_abs_ps(_mm_div_ps(
-				_mm_load_ps(&displacement), _mm_div_ps(_mm_min_ps(_mm_load_ps(&window_size.X), _mm_load_ps(&window_size.Y)), _mm_set_ps1(2.f)))),
-			_mm_load_ps(&strength)))
-		.m128_f32[0];
+static auto __forceinline calc_interpolant(const Vector2& object, const Vector2& mouse, const Vector2& screen, float weighting) {
+	const auto dx = std::abs(mouse.X - object.X) * weighting;
+	const auto dy = std::abs(mouse.Y - object.Y) * weighting;
+
+	return Vector2(std::fminf(1.f, dx / screen.X), std::fminf(1.f, dy / screen.Y));
 }
 
 Vector2 AimAssist::doAssistv2(Vector2 realPosition)
@@ -247,36 +244,29 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
-	Vector2 displacement = hitObjectPosition - realPosition;
+	Vector2 distance = hitObjectPosition - realPosition;
 	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
+	const auto clamp_range = Config::AimAssist::Algorithmv2Power * 16.f; // * 8.f
 
-	if (point_in_radius(realPosition, hitObjectPosition, hitObjectRadius))
-	{
-		auto delta = lastPos - realPosition;
-		offset = offset - delta * .5f;
-	}
-	else
-	{
-		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
-			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
-				const auto interpolant = calc_interpolant(windowSize, displacement.Length(), Config::AimAssist::Algorithmv2Power);
+	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
+		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power) {
+			auto interpolant = calc_interpolant(hitObjectPosition, realPosition, windowSize, Config::AimAssist::Algorithmv2Power);
+			if (interpolant.Length() > std::numeric_limits<float>::epsilon()) {
 
-				if (interpolant > std::numeric_limits<float>::epsilon()) {
-					offset.X = std::clamp(lerp(offset.X, displacement.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
-					offset.Y = std::clamp(lerp(offset.Y, displacement.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
-				}
+				offset.X = std::clamp(lerp(offset.X, distance.X, interpolant.X), -clamp_range, clamp_range);
+				offset.Y = std::clamp(lerp(offset.Y, distance.Y, interpolant.Y), -clamp_range, clamp_range);
 			}
 		}
-		else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
-			const auto dt = ImGui::GetIO().DeltaTime;
+	}
+	else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
+		const auto dt = ImGui::GetIO().DeltaTime;
 
-			if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
-				if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
-					auto dpi = delta * (Config::AimAssist::Algorithmv2Power * .3f);
+		if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
+			if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
+				auto dpi = delta * (offset.Length() / clamp_range) * .15f;
 
-					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
-					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
-				}
+				offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
+				offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
 			}
 		}
 	}

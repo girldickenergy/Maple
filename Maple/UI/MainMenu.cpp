@@ -8,6 +8,8 @@
 #include "../Communication/Communication.h"
 #include "../Config/Config.h"
 #include "3rd-party/FileDialog/imfilebrowser.h"
+#include "../Features/Spoofer/Spoofer.h"
+#include "../Utilities/Directories/DirectoryHelper.h"
 
 bool fileDialogInitialized = false;
 ImGui::FileBrowser fileDialog;
@@ -122,11 +124,11 @@ void MainMenu::Render()
 
                 ImGui::GetWindowDrawList()->AddRectFilled(tabsPos, tabsPos + tabsSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
-                const float tabsHeight = (50 * StyleProvider::Scale) * 6; //scaled tab height * tab count
+                const float tabsHeight = (45 * StyleProvider::Scale) * 7; //scaled tab height * tab count
                 ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, tabsSize.y / 2 - tabsHeight / 2));
                 ImGui::BeginChild("Tabs##001", ImVec2(tabsSize.x - (StyleProvider::Padding.x * 2), tabsHeight), false, ImGuiWindowFlags_NoBackground);
                 {
-                    const ImVec2 tabSize = ImVec2(ImGui::GetCurrentWindow()->Size.x, 50 * StyleProvider::Scale);
+                    const ImVec2 tabSize = ImVec2(ImGui::GetCurrentWindow()->Size.x, 45 * StyleProvider::Scale);
 
                     ImGui::PushFont(StyleProvider::FontDefaultBold);
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
@@ -138,10 +140,12 @@ void MainMenu::Render()
                         currentTab = currentTab == 2 ? -1 : 2;
                     if (Widgets::Tab("Visuals", StyleProvider::VisualsIconTexture, currentTab == 3, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 3 ? -1 : 3;
-                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Spoofer", StyleProvider::SpooferIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 4 ? -1 : 4;
-                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 5 ? -1 : 5;
+                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 6, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                        currentTab = currentTab == 6 ? -1 : 6;
                     ImGui::PopStyleVar();
                     ImGui::PopFont();
                 }
@@ -221,7 +225,7 @@ void MainMenu::Render()
                         Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
                     else
                     {
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         ImGui::Text("Power has been capped at 1 due to possible weird movements on");
                         ImGui::Text("higher values.");
                         ImGui::Text("This will be fixed in the next update.");
@@ -346,11 +350,79 @@ void MainMenu::Render()
             }
             if (currentTab == 4)
             {
-                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                Widgets::BeginPanel("Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1, 1)));
+                {
+                    const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
+                    const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
+
+                    const float buttonWidth = (ImGui::GetWindowWidth() * 0.5f - style.ItemSpacing.x) / 2;
+
+                    Widgets::Combo("Profiles", &Spoofer::SelectedProfile, [](void* vec, int idx, const char** out_text)
+                    {
+                        auto& vector = *static_cast<std::vector<std::string>*>(vec);
+                        if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+                        *out_text = vector.at(idx).c_str();
+                        return true;
+                    }, reinterpret_cast<void*>(&Spoofer::Profiles), Spoofer::Profiles.size());
+
+                    ImGui::Text("Current profile: %s", Spoofer::Profiles[Spoofer::LoadedProfile].c_str());
+
+                    if (sameProfile)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button("Load", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+                        Spoofer::Load();
+
+                    if (sameProfile)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::SameLine();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button("Delete", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+                        Spoofer::Delete();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::Spacing();
+
+                    ImGui::InputText("Profile name", Spoofer::NewProfileName, IM_ARRAYSIZE(Spoofer::NewProfileName));
+
+                    if (Widgets::Button("Create new profile", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Spoofer::Create();
+                }
+                Widgets::EndPanel();
+            }
+            if (currentTab == 5)
+            {
+                Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
                     Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators); Widgets::Tooltip("Spectators will keep buffering infinitely.");
                     Widgets::Checkbox("Prompt on score submission", &Config::Misc::PromptOnScoreSubmissionEnabled); Widgets::Tooltip("Before submitting the score Maple will ask you whether or not you really want to submit it.");
                     Widgets::Checkbox("Disable logging", &Config::Misc::DisableLogging); Widgets::Tooltip("Disables Maple's log output to both console and runtime.log file.");
+
+                    if (Widgets::Button("Open Maple folder", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    {
+                        std::wstring wPath = std::wstring(DirectoryHelper::WorkingDirectory.begin(), DirectoryHelper::WorkingDirectory.end());
+                        LPCWSTR path = wPath.c_str();
+
+                        ShellExecute(NULL, L"open", path, NULL, NULL, SW_RESTORE);
+                    }
                 }
                 Widgets::EndPanel();
 
@@ -362,12 +434,11 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
             }
-            if (currentTab == 5)
+            if (currentTab == 6)
             {
-                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 0, 2)));
+                Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 0, 1)));
                 {
-	                const float buttonWidth1 = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
-	                const float buttonWidth2 = ImGui::GetWindowWidth() * 0.5f;
+	                const float buttonWidth = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
                     Widgets::Combo("Config", &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
                     {
                         auto& vector = *static_cast<std::vector<std::string>*>(vec);
@@ -376,7 +447,7 @@ void MainMenu::Render()
                         return true;
                     }, reinterpret_cast<void*>(&Config::Configs), Config::Configs.size());
 
-                    if (Widgets::Button("Load", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                    if (Widgets::Button("Load", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                     {
                         Config::Load();
 
@@ -393,7 +464,7 @@ void MainMenu::Render()
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
                     }
                 	
-                    if (Widgets::Button("Save", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                    if (Widgets::Button("Save", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                         Config::Save();
                 	
                     if (Config::CurrentConfig == 0)
@@ -404,29 +475,19 @@ void MainMenu::Render()
 
                     ImGui::SameLine();
                 	
-                    if (Widgets::Button("Refresh", ImVec2(buttonWidth1, ImGui::GetFrameHeight())))
+                    if (Widgets::Button("Refresh", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                         Config::Refresh();
 
                     ImGui::Spacing();
 
                     ImGui::InputText("Config name", Config::NewConfigName, IM_ARRAYSIZE(Config::NewConfigName));
-                    if (Widgets::Button("Create new config", ImVec2(buttonWidth2, ImGui::GetFrameHeight())))
+                    if (Widgets::Button("Create new config", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {
                         Config::Create();
 
                         updateBackground();
                         StyleProvider::UpdateColours();
                         StyleProvider::UpdateScale();
-                    }
-
-                    ImGui::Spacing();
-
-                    if (Widgets::Button("Open Maple folder", ImVec2(buttonWidth2, ImGui::GetFrameHeight())))
-                    {
-                        std::wstring wPath = std::wstring(Config::Directory.begin(), Config::Directory.end());
-                        LPCWSTR path = wPath.c_str();
-
-                        ShellExecute(NULL, L"open", path, NULL, NULL, SW_RESTORE);
                     }
                 }
                 Widgets::EndPanel();

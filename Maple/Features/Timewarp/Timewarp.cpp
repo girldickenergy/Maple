@@ -35,7 +35,7 @@ void Timewarp::Initialize()
     *reinterpret_cast<double**>(tickrate4) = &tickrate;
 }
 
-void Timewarp::UpdateCatcherSpeed()
+void Timewarp::UpdateCatcherSpeed() 
 {
     if (Player::PlayMode() == PlayModes::Catch)
         Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? Config::Timewarp::Rate : ModManager::ModPlaybackRate()) / 100.f);
@@ -65,19 +65,4 @@ double __fastcall Timewarp::GetCurrentPlaybackRateHook()
         mov[getCurrentPlaybackRateReturnAddress], esp
         jmp getCurrentPlaybackRateStub
     }
-}
-
-void __fastcall Timewarp::AddParameterHook(void* instance, COMString* name, COMString* value)
-{
-    if (name->Data() == L"st" && Config::Timewarp::Enabled)
-    {
-        const int newValue = static_cast<int>(std::stod(value->Data().data()) * GetRateMultiplier());
-
-        wchar_t buf[16];
-        swprintf_s(buf, 16, L"%d", newValue);
-
-        oAddParameter(instance, name, COMString::CreateString(buf));
-    }
-    else
-		oAddParameter(instance, name, value);
 }

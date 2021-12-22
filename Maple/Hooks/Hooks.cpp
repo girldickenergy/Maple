@@ -16,6 +16,7 @@
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
 #include "../Utilities/Security/Security.h"
+#include "../Features/Spoofer/Spoofer.h"
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
@@ -59,10 +60,15 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_CurrentPlaybackRate");
 
-	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
+	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Hooks::AddParameterHook, reinterpret_cast<LPVOID*>(&Hooks::oAddParameter)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddParameter");
+
+	if (installManagedHook("CheckCertificate", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["checkCertificate"].Method, Spoofer::CheckCertificateHook, reinterpret_cast<LPVOID*>(&Spoofer::oCheckCertificate)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked CheckCertificate");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook CheckCertificate");
 
 	if (installManagedHook("Parse", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["parse"].Method, VisualsSpoofers::ParseHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oParse)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked Parse");
