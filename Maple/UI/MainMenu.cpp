@@ -167,9 +167,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l18122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l23122021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l18122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l23122021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -225,7 +225,7 @@ void MainMenu::Render()
                         Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
                     else
                     {
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         ImGui::Text("Power has been capped at 1 due to possible weird movements on");
                         ImGui::Text("higher values.");
                         ImGui::Text("This will be fixed in the next update.");

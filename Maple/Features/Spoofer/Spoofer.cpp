@@ -140,12 +140,6 @@ void Spoofer::refresh()
 
 void Spoofer::Initialize()
 {
-	std::cout << "---REAL---" << std::endl;
-	std::wcout << GameBase::GetClientHash() << std::endl;
-	std::wcout << GameBase::GetUniqueID() << std::endl;
-	std::wcout << GameBase::GetUniqueID2() << std::endl;
-	std::wcout << GameBase::GetUniqueCheck() << std::endl;
-
 	configFilepath = DirectoryHelper::ProfilesDirectory + "\\" + Communication::CurrentUser->UsernameHashed + ".cfg";
 
 	realClientHash = GameBase::GetClientHash();

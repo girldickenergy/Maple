@@ -16,6 +16,7 @@ class Anticheat
 	static inline void* playerHaxCheckMouseAddress = nullptr;
 	static inline void* playerCheckAimAssistAddress = nullptr;
 	static inline void* rulesetIncreaseScoreHitAddress = nullptr;
+	static inline void* playerHaxCheckPassAddress = nullptr;
 	
 	static inline void* acFlagAddress = nullptr;
 	static inline void* scrobblerFlagAddress = nullptr;

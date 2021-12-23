@@ -23,12 +23,12 @@ void __fastcall Hooks::AddParameterHook(void* instance, COMString* name, COMStri
         std::wstring uniqueId = GameBase::GetUniqueID() + L"|" + GameBase::GetUniqueID2();
         oAddParameter(instance, name, COMString::CreateString(uniqueId.c_str()));
     }
-    else if (name->Data() == L"s")
+    //client hash is not re-generated here, yay, peppy is an idiot! though keep in mind that this may change at any point.
+    /*else if (name->Data() == L"s")
     {
         Spoofer::Update();
-        //todo: figure out if clienthash is being re-generated here
         oAddParameter(instance, name, value);
-    }
+    }*/
     else
         oAddParameter(instance, name, value);
 }

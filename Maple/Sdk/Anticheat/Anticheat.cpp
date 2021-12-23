@@ -23,6 +23,7 @@ void Anticheat::Initialize()
 	Method playerHaxCheckMouse = Vanilla::Explorer["osu.GameModes.Play.Player"]["HaxCheckMouse"].Method;
 	Method playerCheckAimAssist = Vanilla::Explorer["osu.GameModes.Play.Player"]["CheckAimAssist"].Method;
 	Method rulesetIncreaseScoreHit = Vanilla::Explorer["osu.GameModes.Play.Rulesets.Ruleset"]["IncreaseScoreHit"].Method;
+	Method playerHaxCheckPass = Vanilla::Explorer["osu.GameModes.Play.Player"]["HaxCheckPass"].Method;
 
 	playerAllowSubmissionVariableConditions.Compile();
 	playerHandleScoreSubmission.Compile();
@@ -31,6 +32,7 @@ void Anticheat::Initialize()
 	playerHaxCheckMouse.Compile();
 	playerCheckAimAssist.Compile();
 	rulesetIncreaseScoreHit.Compile();
+	playerHaxCheckPass.Compile();
 
 	playerAllowSubmissionVariableConditionsAddress = playerAllowSubmissionVariableConditions.GetNativeStart();
 	playerHandleScoreSubmissionAddress = playerHandleScoreSubmission.GetNativeStart();
@@ -39,6 +41,7 @@ void Anticheat::Initialize()
 	playerHaxCheckMouseAddress = playerHaxCheckMouse.GetNativeStart();
 	playerCheckAimAssistAddress = playerCheckAimAssist.GetNativeStart();
 	rulesetIncreaseScoreHitAddress = rulesetIncreaseScoreHit.GetNativeStart();
+	playerHaxCheckPassAddress = playerHaxCheckPass.GetNativeStart();
 	
 	acFlagAddress = Vanilla::Explorer["osu.GameModes.Play.Player"]["flag"].Field.GetAddress();
 	scrobblerFlagAddress = Vanilla::Explorer["osu.OsuMain"]["startupValue"].Field.GetAddress();
@@ -63,6 +66,7 @@ void Anticheat::DisableAnticheat()
 	Vanilla::InstallPatch("PlayerHaxCheckMouse", reinterpret_cast<uintptr_t>(playerHaxCheckMouseAddress), "\x80\x3D\x00\x00\x00\x00\x00\x75\x14", "xx????xxx", 0x2C0, 7, "\x7D");
 	Vanilla::InstallPatch("PlayerCheckAimAssist", reinterpret_cast<uintptr_t>(playerCheckAimAssistAddress), "\x80\x38\x00\x74\x0B", "xxxxx", 0x212, 3, "\x7D");
 	Vanilla::InstallPatch("RulesetIncreaseScoreHit", reinterpret_cast<uintptr_t>(rulesetIncreaseScoreHitAddress), "\x80\x78\x7C\x00\x0F\x84", "xxxxxx", 0x1D36, 5, "\x8D");
+	Vanilla::InstallNOPPatch("PlayerHaxCheckPass", reinterpret_cast<uintptr_t>(playerHaxCheckPassAddress), "\xEB\x02\x33\xC0\x85\xC0\x75\x13", "xxxxxxxx", 0x400, 0x8, 7);
 
 	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END
@@ -80,6 +84,7 @@ void Anticheat::EnableAnticheat()
 	Vanilla::RemovePatch("PlayerHaxCheckMouse");
 	Vanilla::RemovePatch("PlayerCheckAimAssist");
 	Vanilla::RemovePatch("RulesetIncreaseScoreHit");
+	Vanilla::RemovePatch("PlayerHaxCheckPass");
 
 	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END
