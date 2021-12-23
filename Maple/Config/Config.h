@@ -69,7 +69,9 @@ public:
 	struct Timewarp
 	{
 		static inline bool Enabled;
+		static inline int Type;
 		static inline int Rate;
+		static inline float Multiplier;
 	};
 
 	struct Visuals

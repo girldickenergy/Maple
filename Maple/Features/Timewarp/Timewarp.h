@@ -14,6 +14,7 @@ class Timewarp
 public:
 	static void Initialize();
 	static void UpdateCatcherSpeed();
+	static double GetRate();
 	static double GetRateMultiplier();
 
 	static inline fnSetCurrentPlaybackRate oSetCurrentPlaybackRate;

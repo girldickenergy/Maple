@@ -81,7 +81,9 @@ void Config::loadDefaults()
 	AimAssist::Algorithmv2AssistOnSliders = true;
 
 	Timewarp::Enabled = false;
+	Timewarp::Type = 0;
 	Timewarp::Rate = 100;
+	Timewarp::Multiplier = 1.;
 
 	Visuals::ARChangerEnabled = false;
 	Visuals::AR = 9.2f;
@@ -201,8 +203,12 @@ void Config::Load()
 
 		if (variable == "TimewarpEnabled")
 			Timewarp::Enabled = value == "1";
+		if (variable == "TimewarpType")
+			Timewarp::Type = std::stoi(value);
 		if (variable == "TimewarpRate")
 			Timewarp::Rate = std::stoi(value);
+		if (variable == "TimewarpMultiplier")
+			Timewarp::Multiplier = std::stof(value);
 
 		if (variable == "VisualsARChangerEnabled")
 			Visuals::ARChangerEnabled = value == "1";
@@ -296,7 +302,9 @@ void Config::Save()
 	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
+	ofs << "TimewarpType" << Timewarp::Type << std::endl;
 	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;
+	ofs << "TimewarpMultiplier" << Timewarp::Multiplier << std::endl;
 
 	ofs << "VisualsARChangerEnabled=" << Visuals::ARChangerEnabled << std::endl;
 	ofs << "VisualsARChangerAR=" << Visuals::AR << std::endl;

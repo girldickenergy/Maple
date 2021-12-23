@@ -271,7 +271,16 @@ void MainMenu::Render()
                 Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled); Widgets::Tooltip("Slows down or speeds up the game.");
-                    Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
+                    const char* types[] = { "Rate", "Multiplier" };
+                    Widgets::Combo("Type", &Config::Timewarp::Type, types, IM_ARRAYSIZE(types));
+                    if (Config::Timewarp::Type == 0)
+                    {
+                        Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
+                    }
+                    else
+                    {
+                        Widgets::SliderFloat("Rate", &Config::Timewarp::Multiplier, 0.25f, 1.5f, "%.01f", ImGuiSliderFlags_AlwaysClamp);
+                    }
                 }
                 Widgets::EndPanel();
         	}

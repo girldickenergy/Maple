@@ -38,19 +38,24 @@ void Timewarp::Initialize()
 void Timewarp::UpdateCatcherSpeed() 
 {
     if (Player::PlayMode() == PlayModes::Catch)
-        Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? Config::Timewarp::Rate : ModManager::ModPlaybackRate()) / 100.f);
+        Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? GetRate() : ModManager::ModPlaybackRate()) / 100.f);
+}
+
+double Timewarp::GetRate()
+{
+    return Config::Timewarp::Type == 0 ? Config::Timewarp::Rate : ModManager::ModPlaybackRate() * Config::Timewarp::Multiplier;
 }
 
 double Timewarp::GetRateMultiplier()
 {
-    return static_cast<double>(Config::Timewarp::Rate) / ModManager::ModPlaybackRate();
+    return GetRate() / ModManager::ModPlaybackRate();
 }
 
 void __fastcall Timewarp::SetCurrentPlaybackRateHook(double rate)
 {
     if (Config::Timewarp::Enabled && GameBase::Mode() == OsuModes::Play && Player::Instance() && !Player::IsReplayMode())
     {
-        rate = Config::Timewarp::Rate;
+        rate = GetRate();
         tickrate = 1000. / 60. * (1. / GetRateMultiplier());
     }
     else tickrate = 1000. / 60.;
