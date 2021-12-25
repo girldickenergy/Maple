@@ -5,8 +5,6 @@
 
 class Spoofer
 {
-	typedef void(__fastcall* fnCheckCertificate)(void* instance);
-
 	static inline std::wstring fileMD5;
 	static inline std::wstring realClientHash;
 	static inline std::wstring realUniqueID;
@@ -29,6 +27,7 @@ class Spoofer
 	static void saveConfigFile();
 	static void loadConfigFile();
 	static void refresh();
+	static void updateCOM();
 public:
 	static inline std::vector<std::string> Profiles;
 	static inline int SelectedProfile = 0;
@@ -40,7 +39,4 @@ public:
 	static void Delete();
 	static void Create();
 	static void Update();
-
-	static inline fnCheckCertificate oCheckCertificate;
-	static void __fastcall CheckCertificateHook(void* instance);
 };

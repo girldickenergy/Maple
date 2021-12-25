@@ -167,9 +167,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l23122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l25122021");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l23122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l25122021");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -268,7 +268,7 @@ void MainMenu::Render()
             }
         	if (currentTab == 2)
         	{
-                Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                Widgets::BeginPanel("Timewarp", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Timewarp::Enabled); Widgets::Tooltip("Slows down or speeds up the game.");
                     const char* types[] = { "Rate", "Multiplier" };

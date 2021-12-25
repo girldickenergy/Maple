@@ -138,6 +138,36 @@ void Spoofer::refresh()
 			Profiles.push_back(file.path().filename().stem().string());
 }
 
+void Spoofer::updateCOM()
+{
+	TypeExplorer obfuscatedStringType = GameBase::RawGameBase["UniqueId"].Field.GetTypeUnsafe();
+
+	Method obfuscatedStringSetValue = obfuscatedStringType["set_Value"].Method;
+	Field obfuscatedStringChangesField = obfuscatedStringType["c"].Field;
+
+	variant_t uniqueIdInstance = GameBase::RawGameBase["UniqueId"].Field.GetValueUnsafe(variant_t());
+	variant_t uniqueId2Instance = GameBase::RawGameBase["UniqueId2"].Field.GetValueUnsafe(variant_t());
+	variant_t uniqueCheckInstance = GameBase::RawGameBase["UniqueCheck"].Field.GetValueUnsafe(variant_t());
+
+	GameBase::RawGameBase["ClientHash"].Field.SetValueUnsafe(variant_t(), variant_t(currentClientHash.c_str()));
+
+	std::vector<variant_t> args;
+	
+	args.push_back(variant_t(currentUniqueID.c_str()));
+	obfuscatedStringSetValue.InvokeUnsafe(uniqueIdInstance, args);
+	obfuscatedStringChangesField.SetValueUnsafe(uniqueIdInstance, variant_t(obfuscatedStringChangesField.GetValueUnsafe(uniqueIdInstance).intVal - 1));
+
+	args.clear();
+	args.push_back(variant_t(currentUniqueID2.c_str()));
+	obfuscatedStringSetValue.InvokeUnsafe(uniqueId2Instance, args);
+	obfuscatedStringChangesField.SetValueUnsafe(uniqueId2Instance, variant_t(obfuscatedStringChangesField.GetValueUnsafe(uniqueId2Instance).intVal - 1));
+
+	args.clear();
+	args.push_back(variant_t(currentUniqueCheck.c_str()));
+	obfuscatedStringSetValue.InvokeUnsafe(uniqueCheckInstance, args);
+	obfuscatedStringChangesField.SetValueUnsafe(uniqueCheckInstance, variant_t(obfuscatedStringChangesField.GetValueUnsafe(uniqueCheckInstance).intVal - 1));
+}
+
 void Spoofer::Initialize()
 {
 	configFilepath = DirectoryHelper::ProfilesDirectory + "\\" + Communication::CurrentUser->UsernameHashed + ".cfg";
@@ -200,7 +230,7 @@ void Spoofer::Load()
 		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoHelper::GetMD5Hash(currentAdapters) + L":" + CryptoHelper::GetMD5Hash(currentUniqueID) + L":" + CryptoHelper::GetMD5Hash(currentUniqueID2) + L":";
 	}
 
-	Update();
+	updateCOM();
 
 	LoadedProfile = SelectedProfile;
 
@@ -259,9 +289,4 @@ void Spoofer::Update()
 	GameBase::SetUniqueID(currentUniqueID);
 	GameBase::SetUniqueID2(currentUniqueID2);
 	GameBase::SetUniqueCheck(currentUniqueCheck);
-}
-
-void __fastcall Spoofer::CheckCertificateHook(void* instance)
-{
-	return;
 }

@@ -1,5 +1,8 @@
 #include "SnowVisualisation.h"
 
+#include <algorithm>
+#include <imgui_internal.h>
+
 int randInt(int min, int max)
 {
 	return min + rand() / (RAND_MAX / (max - min));
@@ -42,7 +45,10 @@ void SnowVisualisation::Draw()
 	{
 		snowflake.Update();
 
-		ImGui::GetBackgroundDrawList()->AddCircleFilled(snowflake.Position, snowflake.Radius, ImColor(255, 255, 255, (int)(snowflake.Alpha * 255.0)), 16);
+		float meltingHeight = ImGui::GetIO().DisplaySize.y - ImGui::GetIO().DisplaySize.y * 0.1f;
+		float alpha = snowflake.Position.y >= meltingHeight ? ImLerp(snowflake.Alpha, 0.f, std::clamp((snowflake.Position.y - meltingHeight) / (ImGui::GetIO().DisplaySize.y - meltingHeight), 0.f, 1.f)) : snowflake.Alpha;
+
+		ImGui::GetBackgroundDrawList()->AddCircleFilled(snowflake.Position, snowflake.Radius, ImColor(255, 255, 255, (int)(alpha * 255.f)), 16);
 	}
 
     snowflakes.erase(std::remove_if(snowflakes.begin(), snowflakes.end(), [](Snowflake& snowflake)

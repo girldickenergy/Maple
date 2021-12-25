@@ -65,11 +65,6 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddParameter");
 
-	if (installManagedHook("CheckCertificate", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["checkCertificate"].Method, Spoofer::CheckCertificateHook, reinterpret_cast<LPVOID*>(&Spoofer::oCheckCertificate)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked CheckCertificate");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook CheckCertificate");
-
 	if (installManagedHook("Parse", Vanilla::Explorer["osu.GameplayElements.HitObjectManager"]["parse"].Method, VisualsSpoofers::ParseHook, reinterpret_cast<LPVOID*>(&VisualsSpoofers::oParse)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked Parse");
 	else
