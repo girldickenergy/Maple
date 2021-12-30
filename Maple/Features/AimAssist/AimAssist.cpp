@@ -11,6 +11,8 @@
 #include "../../Dependencies/ImGui/imgui.h"
 #include "../../UI/StyleProvider.h"
 
+#include <cmath>
+
 void AimAssist::DrawDebugOverlay()
 {
 	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded())
@@ -196,18 +198,6 @@ static auto __forceinline point_in_radius(const Vector2& point, const Vector2& a
 		.m128_f32[0] <= radius;
 }
 
-static auto __forceinline lerp(float x, float y, float t) {
-	_mm_store_ps(&t, _mm_min_ps(_mm_max_ps(_mm_load_ps(&t), _mm_set_ps1(0.f)), _mm_set_ps1(1.f)));
-
-	const auto candidate = _mm_add_ps(_mm_load_ps(&x), _mm_mul_ps(_mm_sub_ps(_mm_load_ps(&y), _mm_load_ps(&x)), _mm_load_ps(&t)));
-
-	if (!_mm_testz_ps(_mm_xor_ps(candidate, _mm_set_ps1(__builtin_huge_valf())), _mm_set_ps1(-0.f))) {
-		return _mm_max_ps(_mm_set_ps1(x), _mm_set_ps1(y)).m128_f32[0];
-	}
-
-	return candidate.m128_f32[0];
-}
-
 static auto __forceinline _mm_abs_ps(__m128 _A) {
 	return _mm_andnot_ps(_mm_set1_ps(-0.0f), _A);
 }
@@ -251,25 +241,28 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
 	const auto clamp_range = Config::AimAssist::Algorithmv2Power * 16.f; // * 8.f
 
-	if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
-		if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
-			const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2Power);
+	if (!currentHitObject.IsType(HitObjectType::Slider))
+	{
+		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
+			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
+				const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2Power);
 
-			if (interpolant > std::numeric_limits<float>::epsilon()) {
-				offset.X = std::clamp(lerp(offset.X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
-				offset.Y = std::clamp(lerp(offset.Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				if (interpolant > std::numeric_limits<float>::epsilon()) {
+					offset.X = std::clamp(std::lerp(offset.X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+					offset.Y = std::clamp(std::lerp(offset.Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				}
 			}
 		}
-	}
-	else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
-		const auto dt = ImGui::GetIO().DeltaTime;
+		else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
+			const auto dt = ImGui::GetIO().DeltaTime;
 
-		if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
-			if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
-				auto dpi = delta * (offset.Length() / clamp_range) * .15f;
+			if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
+				if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
+					auto dpi = delta * (offset.Length() / clamp_range) * .15f;
 
-				offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
-				offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
+					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
+					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
+				}
 			}
 		}
 	}
