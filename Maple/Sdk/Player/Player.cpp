@@ -17,6 +17,7 @@ void Player::Initialize()
 	isRetryingAddress = RawPlayer["Retrying"].Field.GetAddress();
 	modeAddress = RawPlayer["mode"].Field.GetAddress();
 	playingAddress = RawPlayer["Playing"].Field.GetAddress();
+	pausedAddress = RawPlayer["Paused"].Field.GetAddress();
 }
 
 void* Player::Instance()
@@ -56,6 +57,11 @@ bool Player::IsPlaying()
 PlayModes Player::PlayMode()
 {
 	return *static_cast<PlayModes*>(modeAddress);
+}
+
+bool Player::IsPaused()
+{
+	return *static_cast<bool*>(pausedAddress);
 }
 
 void __fastcall Player::PlayerInitialize(uintptr_t instance)

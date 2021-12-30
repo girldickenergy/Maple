@@ -21,6 +21,7 @@ class Player
 	static inline void* isRetryingAddress = nullptr;
 	static inline void* playingAddress = nullptr;
 	static inline void* modeAddress = nullptr;
+	static inline void* pausedAddress = nullptr;
 public:
 	static inline TypeExplorer RawPlayer;
 	
@@ -31,6 +32,7 @@ public:
 	static bool IsRetrying();
 	static bool IsPlaying();
 	static PlayModes PlayMode();
+	static bool IsPaused();
 
 	typedef void(__fastcall* fnPlayerInitialize)(uintptr_t instance);
 	static inline fnPlayerInitialize oPlayerInitialize;

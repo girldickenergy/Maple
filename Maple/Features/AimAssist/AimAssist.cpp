@@ -241,7 +241,7 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
 	const auto clamp_range = Config::AimAssist::Algorithmv2Power * 16.f; // * 8.f
 
-	if (!currentHitObject.IsType(HitObjectType::Slider))
+	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
 	{
 		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
 			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
