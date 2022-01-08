@@ -39,6 +39,7 @@ public:
 		static inline bool SliderPredictionEnabled;
 		static inline int PredictionAngle;
 		static inline float PredictionScale;
+		static inline bool UseLowestPossibleHoldTimes;
 	};
 	
 	struct AimAssist

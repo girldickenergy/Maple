@@ -12,50 +12,43 @@
 #include "../../UI/StyleProvider.h"
 
 #include <cmath>
+#include "../../Sdk/Osu/WindowManager.h"
 
 void AimAssist::DrawDebugOverlay()
 {
 	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded())
 	{
-		// Draw small debug box uwu
-		ImGui::SetNextWindowSize(ImVec2(GameBase::GetClientBounds()->Width, GameBase::GetClientBounds()->Height));
-		ImGui::Begin("aa", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground);
+		Vector2 viewportPosition = WindowManager::ViewportPosition();
+		ImVec2 positionOffset = ImVec2(viewportPosition.X, viewportPosition.Y);
+
+		if (!assistedPosition.IsNull && canAssist)
 		{
-			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-			if (!assistedPosition.IsNull && canAssist)
+			// Draw circle on *actual* cursor position
+			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), 12.f, ImColor(StyleProvider::AccentColour));
+
+			// Draw Last position
+			Vector2 screen = Config::AimAssist::Algorithm == 0 ? GameField::FieldToDisplay(lastPos) : lastPos;
+			drawList->AddCircleFilled(positionOffset + ImVec2(screen.X, screen.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(StyleProvider::AccentColour.x, StyleProvider::AccentColour.y, StyleProvider::AccentColour.z, 0.5f)));
+
+			// Draw FOV
+			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
+
+			// Draw Sliderball position
+			if (Config::AimAssist::Algorithm == 0)
 			{
-				std::string assistX = "X:" + std::to_string(assistedPosition.X);
-				std::string assistY = "Y:" + std::to_string(assistedPosition.Y);
-				drawList->AddRectFilled(ImVec2(assistedPosition.X + 30, assistedPosition.Y + 30), ImVec2(assistedPosition.X + 110, assistedPosition.Y + 70), ImGui::ColorConvertFloat4ToU32(ImVec4(227.f, 227.f, 227.f, 1.f)), 2.f);
-
-				ImGui::PushFont(StyleProvider::FontSmallBold);
-				ImGui::SetCursorPos(ImVec2(assistedPosition.X - 28, assistedPosition.Y - 28));
-				ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), assistX.c_str());
-				ImGui::SetCursorPos(ImVec2(assistedPosition.X - 28, assistedPosition.Y - 13));
-				ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), assistY.c_str());
-				ImGui::PopFont();
-
-				// Draw circle on *actual* cursor position
-				drawList->AddCircleFilled(ImVec2(rawPosition.X, rawPosition.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 255.f, 0.f, 0.6f)));
-
-				// Draw FOV
-				drawList->AddCircleFilled(ImVec2(assistedPosition.X, assistedPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
-
-				// Draw Last position
-				Vector2 screen = Config::AimAssist::Algorithm == 0 ? GameField::FieldToDisplay(lastPos) : lastPos;
-				drawList->AddCircleFilled(ImVec2(screen.X, screen.Y), 20.f, ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 111.f, 70.f, 0.4f)));
-
-				// Draw Sliderball position
-				if (Config::AimAssist::Algorithm == 0)
-				{
-					Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
-					drawList->AddCircleFilled(ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
-				}
+				Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
+				drawList->AddCircleFilled(positionOffset + ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2.f, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
 			}
+
+			// Draw small debug box uwu
+			ImGui::PushFont(StyleProvider::FontSmallBold);
+			std::string positionString = "(" + std::to_string((int)assistedPosition.X) + "; " + std::to_string((int)assistedPosition.Y) + ")";
+			drawList->AddRectFilled(positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20), positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20) + ImGui::CalcTextSize(positionString.c_str()) + StyleProvider::Padding * 2, ImColor(StyleProvider::MenuColourDark), 10.f);
+			drawList->AddText(positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20) + StyleProvider::Padding, ImColor(255.f, 255.f, 255.f, 255.f), positionString.c_str());
+			ImGui::PopFont();
 		}
-		ImGui::End();
 	}
 }
 

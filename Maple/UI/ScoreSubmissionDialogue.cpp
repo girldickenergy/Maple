@@ -6,6 +6,8 @@
 #include "StyleProvider.h"
 #include "Widgets.h"
 #include "../Features/Misc/ScoreSubmission.h"
+#include "../Sdk/Osu/GameBase.h"
+#include "../Sdk/Osu/WindowManager.h"
 
 void ScoreSubmissionDialogue::Render()
 {
@@ -24,7 +26,9 @@ void ScoreSubmissionDialogue::Render()
 
 	if (resetPosition)
 	{
-		ImGui::SetNextWindowPos(ImGui::GetIO().DisplaySize / 2 - windowSize / 2);
+		Vector2 viewportPosition = WindowManager::ViewportPosition();
+
+		ImGui::SetNextWindowPos(ImVec2(viewportPosition.X, viewportPosition.Y) + ImVec2(WindowManager::Width() / 2 - windowSize.x / 2, WindowManager::Height() / 2 - windowSize.y / 2));
 
 		resetPosition = false;
 	}

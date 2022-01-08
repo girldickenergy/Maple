@@ -10,6 +10,7 @@
 #include "3rd-party/FileDialog/imfilebrowser.h"
 #include "../Features/Spoofer/Spoofer.h"
 #include "../Utilities/Directories/DirectoryHelper.h"
+#include "../Sdk/Osu/WindowManager.h"
 
 bool fileDialogInitialized = false;
 ImGui::FileBrowser fileDialog;
@@ -43,37 +44,15 @@ void MainMenu::Render()
     if (backgroundTexture != nullptr)
         ImGui::GetBackgroundDrawList()->AddImage(backgroundTexture, ImVec2(0, 0), ImVec2(io.DisplaySize.x, io.DisplaySize.y));
 
-    ImVec2 firstSize = ImGui::CalcTextSize("Our discord server has been terminated.");
-    ImVec2 secondSize = ImVec2(ImGui::CalcTextSize("Click here").x + ImGui::GetStyle().FramePadding.x * 2 + ImGui::CalcTextSize("to join our new server!").x, ImGui::GetFrameHeight());
-
-    ImVec2 wndSize = StyleProvider::Padding * 2 + ImVec2(firstSize.x, firstSize.y + secondSize.y + ImGui::GetStyle().ItemSpacing.y);
-    ImGui::SetNextWindowSize(wndSize);
-    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x / 2 - wndSize.x / 2, ImGui::GetIO().DisplaySize.y - wndSize.y - StyleProvider::Padding.y));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, StyleProvider::MenuColourDark);
-    ImGui::Begin("dcord", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
-    {
-        ImGui::PopStyleColor();
-        ImGui::PopStyleVar();
-        ImGui::SetCursorPos(StyleProvider::Padding);
-        ImGui::Text("Our discord server has been terminated.");
-        ImGui::SetCursorPosX(wndSize.x / 2 - secondSize.x / 2);
-        if (Widgets::Button("Click here"))
-            ShellExecuteA(NULL, "open", "https://maple.software/discord", NULL, NULL, SW_SHOWNORMAL);
-        ImGui::SameLine();
-        ImGui::Text("to join our new server!");
-    }
-    ImGui::End();
-
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
+    ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_Once);
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     {
+        const ImVec2 menuSize = ImGui::GetCurrentWindow()->Size;
         const ImVec2 menuPos = ImGui::GetCurrentWindow()->Pos;
 
-        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + StyleProvider::MainMenuSideBarSize, ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
-        if (expanded)
-            ImGui::GetWindowDrawList()->AddRectFilled(menuPos + ImVec2(StyleProvider::MainMenuSideBarSize.x, 0), menuPos + ImVec2(StyleProvider::MainMenuSideBarSize.x - style.WindowRounding, style.WindowRounding), ImColor(StyleProvider::MenuColourDark));
+        ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + StyleProvider::MainMenuSideBarSize, ImColor(StyleProvider::MenuColourDark), style.WindowRounding, expanded ? ImDrawFlags_RoundCornersAll & ~ImDrawFlags_RoundCornersTopRight : ImDrawFlags_RoundCornersAll);
 
         ImGui::SetCursorPos(StyleProvider::Padding);
         ImGui::BeginChild("Side Bar", StyleProvider::MainMenuSideBarSize - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
@@ -167,9 +146,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l30122021");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l08012022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l30122021");
+                ImGui::TextColored(StyleProvider::MottoColour, "l08012022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -185,6 +164,13 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
+                Widgets::BeginPanel("Note", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 2)));
+                {
+                    ImGui::TextColored(StyleProvider::AccentColour, "Current relax can be detected. A better version of it is coming in the next updates.");
+                    ImGui::TextColored(StyleProvider::AccentColour, "We don't recommend using relax unless you really want to.");
+                }
+                Widgets::EndPanel();
+
                 Widgets::BeginPanel("Relax", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Relax::Enabled); Widgets::Tooltip("All hit objects will be automatically tapped by Maple.");
@@ -211,6 +197,13 @@ void MainMenu::Render()
                     Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled); Widgets::Tooltip("Same as above, but for sliders.\n\nOften yields false positive results. Enable this only if you really have to.");
                     Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
                     Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
+                }
+                Widgets::EndPanel();
+
+                Widgets::BeginPanel("Blatant", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1, 1)));
+                {
+                    ImGui::TextColored(StyleProvider::AccentColour, "Don't use this on legit servers!");
+                    Widgets::Checkbox("Use lowest possible hold times", &Config::Relax::UseLowestPossibleHoldTimes);
                 }
                 Widgets::EndPanel();
         	}
@@ -279,7 +272,7 @@ void MainMenu::Render()
                     }
                     else
                     {
-                        Widgets::SliderFloat("Rate", &Config::Timewarp::Multiplier, 0.25f, 1.5f, "%.01f", ImGuiSliderFlags_AlwaysClamp);
+                        Widgets::SliderFloat("Multiplier", &Config::Timewarp::Multiplier, 0.25f, 1.5f, "%.01f", ImGuiSliderFlags_AlwaysClamp);
                     }
                 }
                 Widgets::EndPanel();
@@ -505,6 +498,9 @@ void MainMenu::Render()
             ImGui::PopFont();
         }
         ImGui::EndChild();
+
+        ImGui::SetWindowPos(ImVec2(std::clamp(menuPos.x, WindowManager::ViewportPosition().X, WindowManager::ViewportPosition().X + WindowManager::Width() - menuSize.x), std::clamp(menuPos.y, WindowManager::ViewportPosition().Y, WindowManager::ViewportPosition().Y + WindowManager::Height() - menuSize.y)));
     }
+
     ImGui::End();
 }

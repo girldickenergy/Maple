@@ -59,6 +59,7 @@ void Config::loadDefaults()
 	Relax::SliderPredictionEnabled = false;
 	Relax::PredictionAngle = 45;
 	Relax::PredictionScale = 0.8f;
+	Relax::UseLowestPossibleHoldTimes = false;
 
 	AimAssist::Enabled = false;
 	AimAssist::Algorithm = 0;
@@ -161,6 +162,8 @@ void Config::Load()
 			Relax::PredictionAngle = std::stoi(value);
 		if (variable == "RelaxPredictionScale")
 			Relax::PredictionScale = std::stof(value);
+		if (variable == "RelaxUseLowestPossibleHoldTimes")
+			Relax::UseLowestPossibleHoldTimes = value == "1";
 
 		if (variable == "AimAssistEnabled")
 			AimAssist::Enabled = value == "1";
@@ -280,6 +283,7 @@ void Config::Save()
 	ofs << "RelaxSliderPredictionEnabled=" << Relax::SliderPredictionEnabled << std::endl;
 	ofs << "RelaxPredictionAngle=" << Relax::PredictionAngle << std::endl;
 	ofs << "RelaxPredictionScale=" << Relax::PredictionScale << std::endl;
+	ofs << "RelaxUseLowestPossibleHoldTimes=" << Relax::UseLowestPossibleHoldTimes << std::endl;
 
 	ofs << "AimAssistEnabled=" << AimAssist::Enabled << std::endl;
 	ofs << "AimAssistAlgorithm=" << AimAssist::Algorithm << std::endl;
@@ -302,9 +306,9 @@ void Config::Save()
 	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
-	ofs << "TimewarpType" << Timewarp::Type << std::endl;
+	ofs << "TimewarpType=" << Timewarp::Type << std::endl;
 	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;
-	ofs << "TimewarpMultiplier" << Timewarp::Multiplier << std::endl;
+	ofs << "TimewarpMultiplier=" << Timewarp::Multiplier << std::endl;
 
 	ofs << "VisualsARChangerEnabled=" << Visuals::ARChangerEnabled << std::endl;
 	ofs << "VisualsARChangerAR=" << Visuals::AR << std::endl;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Explorer/TypeExplorer.h>
-#include "../DataTypes/Structs/sRectangle.h"
 #include <COM/COMString.h>
 
 enum class OsuModes
@@ -36,7 +35,6 @@ class GameBase
 {
 	static inline void* instanceAddress = nullptr;
 	static inline void* modeAddress = nullptr;
-    static inline Field clientBoundsField;
 
     typedef void* (__fastcall* fnGetWindow)(void* instance);
     static inline fnGetWindow getWindow = nullptr;
@@ -62,7 +60,6 @@ public:
 	static void Initialize();
 	static void* Instance();
     static OsuModes Mode();
-    static sRectangle* GetClientBounds();
     static HWND GetWindowHandle();
     static std::wstring GetClientHash();
     static void SetClientHash(const std::wstring& clientHash);

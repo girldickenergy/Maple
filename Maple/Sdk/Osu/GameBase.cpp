@@ -8,7 +8,6 @@ void GameBase::Initialize()
 
 	instanceAddress = RawGameBase["Instance"].Field.GetAddress();
 	modeAddress = RawGameBase["Mode"].Field.GetAddress();
-	clientBoundsField = RawGameBase["ClientBounds"].Field;
 
 	RawGameBase["get_Window"].Method.Compile();
 	getWindow = (fnGetWindow)RawGameBase["get_Window"].Method.GetNativeStart();
@@ -40,11 +39,6 @@ void* GameBase::Instance()
 OsuModes GameBase::Mode()
 {
 	return *static_cast<OsuModes*>(modeAddress);
-}
-
-sRectangle* GameBase::GetClientBounds()
-{
-	return static_cast<sRectangle*>(clientBoundsField.GetAddress());
 }
 
 HWND GameBase::GetWindowHandle()

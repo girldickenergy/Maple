@@ -27,6 +27,7 @@
 #include "Utilities/Directories/DirectoryHelper.h"
 
 #include <curl.h>
+#include "Sdk/Osu/WindowManager.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple();
@@ -129,6 +130,7 @@ void InitializeSdk()
     Anticheat::Initialize();
     GameBase::Initialize();
     GameField::Initialize();
+    WindowManager::Initialize();
     InputManager::Initialize();
     ConfigManager::Initialize();
     BindingManager::Initialize();

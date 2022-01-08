@@ -722,6 +722,9 @@
     <ClCompile Include="Hooks\AddParameter.cpp">
       <Filter>Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Osu\WindowManager.cpp">
+      <Filter>Sdk\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -1835,6 +1838,9 @@
     </ClInclude>
     <ClInclude Include="Utilities\Directories\DirectoryHelper.h">
       <Filter>Utilities\Directories</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Osu\WindowManager.h">
+      <Filter>Sdk\Osu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
