@@ -47,13 +47,8 @@ class GameBase
     static inline void* uniqueID2Address = nullptr;
     static inline void* uniqueCheckAddress = nullptr;
 
-    static inline Field obfuscatedStringChangesField;
-
-    typedef COMString*(__fastcall* fnObfuscatedStringGetValue)(void* instance);
-    static inline fnObfuscatedStringGetValue obfuscatedStringGetValue;
-
-    typedef void(__fastcall* fnObfuscatedStringSetValue)(void* instance, COMString* value);
-    static inline fnObfuscatedStringSetValue obfuscatedStringSetValue;
+    static inline Field obfuscatedRandomValueField;
+    static inline Field obfuscatedValueField;
 public:
 	static inline TypeExplorer RawGameBase;
 	
@@ -61,12 +56,11 @@ public:
 	static void* Instance();
     static OsuModes Mode();
     static HWND GetWindowHandle();
+    static void* GetUniqueIDInstance();
+    static void* GetUniqueID2Instance();
+    static void* GetUniqueCheckInstance();
     static std::wstring GetClientHash();
-    static void SetClientHash(const std::wstring& clientHash);
     static std::wstring GetUniqueID();
-    static void SetUniqueID(const std::wstring& uniqueID);
     static std::wstring GetUniqueID2();
-    static void SetUniqueID2(const std::wstring& uniqueID2);
     static std::wstring GetUniqueCheck();
-    static void SetUniqueCheck(const std::wstring& uniqueCheck);
 };

@@ -145,6 +145,17 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");
 
+	TypeExplorer obfuscatedStringType = Vanilla::Explorer["osu.GameBase"]["UniqueId"].Field.GetTypeUnsafe();
+	if (installManagedHook("ObfuscatedStringGetValue", obfuscatedStringType["get_Value"].Method, Spoofer::ObfuscatedStringGetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringGetValue)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ObfuscatedStringGetValue");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ObfuscatedStringGetValue");
+
+	if (installManagedHook("ObfuscatedStringSetValue", obfuscatedStringType["set_Value"].Method, Spoofer::ObfuscatedStringSetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringSetValue)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ObfuscatedStringSetValue");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ObfuscatedStringSetValue");
+
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked GetKeyboardState");

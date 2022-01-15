@@ -3,8 +3,13 @@
 #include <string>
 #include <vector>
 
+#include <COM/COMString.h>
+
 class Spoofer
 {
+	typedef COMString* (__fastcall* fnObfuscatedStringGetValue)(void* instance);
+	typedef void (__fastcall* fnObfuscatedStringSetValue)(void* instance, COMString* value);
+
 	static inline std::wstring fileMD5;
 	static inline std::wstring realClientHash;
 	static inline std::wstring realUniqueID;
@@ -27,7 +32,6 @@ class Spoofer
 	static void saveConfigFile();
 	static void loadConfigFile();
 	static void refresh();
-	static void updateCOM();
 public:
 	static inline std::vector<std::string> Profiles;
 	static inline int SelectedProfile = 0;
@@ -38,5 +42,10 @@ public:
 	static void Load();
 	static void Delete();
 	static void Create();
-	static void Update();
+
+	static inline fnObfuscatedStringGetValue oObfuscatedStringGetValue = nullptr;
+	static COMString* __fastcall ObfuscatedStringGetValueHook(void* instance);
+
+	static inline fnObfuscatedStringSetValue oObfuscatedStringSetValue = nullptr;
+	static void __fastcall ObfuscatedStringSetValueHook(void* instance, COMString* value);
 };

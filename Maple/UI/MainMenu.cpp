@@ -146,9 +146,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l08012022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l15012022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l08012022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l15012022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -164,9 +164,10 @@ void MainMenu::Render()
         	
         	if (currentTab == 0)
         	{
-                Widgets::BeginPanel("Note", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 2)));
+                Widgets::BeginPanel("Note", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 3)));
                 {
-                    ImGui::TextColored(StyleProvider::AccentColour, "Current relax can be detected. A better version of it is coming in the next updates.");
+                    ImGui::TextColored(StyleProvider::AccentColour, "Current relax can be detected. A better version of it is coming");
+                    ImGui::TextColored(StyleProvider::AccentColour, "in the next updates.");
                     ImGui::TextColored(StyleProvider::AccentColour, "We don't recommend using relax unless you really want to.");
                 }
                 Widgets::EndPanel();

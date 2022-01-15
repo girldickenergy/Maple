@@ -22,13 +22,8 @@ void GameBase::Initialize()
 
 	TypeExplorer obfuscatedStringType = RawGameBase["UniqueId"].Field.GetTypeUnsafe();
 
-	obfuscatedStringChangesField = obfuscatedStringType["c"].Field;
-
-	obfuscatedStringType["get_Value"].Method.Compile();
-	obfuscatedStringGetValue = static_cast<fnObfuscatedStringGetValue>(obfuscatedStringType["get_Value"].Method.GetNativeStart());
-
-	obfuscatedStringType["set_Value"].Method.Compile();
-	obfuscatedStringSetValue = static_cast<fnObfuscatedStringSetValue>(obfuscatedStringType["set_Value"].Method.GetNativeStart());
+	obfuscatedRandomValueField = obfuscatedStringType["Randomvalue"].Field;
+	obfuscatedValueField = obfuscatedStringType["_Value"].Field;
 }
 
 void* GameBase::Instance()
@@ -48,60 +43,64 @@ HWND GameBase::GetWindowHandle()
 	return getHandle(windowInstance);
 }
 
+void* GameBase::GetUniqueIDInstance()
+{
+	return *static_cast<void**>(uniqueIDAddress);
+}
+
+void* GameBase::GetUniqueID2Instance()
+{
+	return *static_cast<void**>(uniqueID2Address);
+}
+
+void* GameBase::GetUniqueCheckInstance()
+{
+	return *static_cast<void**>(uniqueCheckAddress);
+}
+
 std::wstring GameBase::GetClientHash()
 {
 	return (*(COMString**)clientHashAddress)->Data().data();
 }
 
-void GameBase::SetClientHash(const std::wstring& clientHash)
-{
-	*(COMString**)clientHashAddress = COMString::CreateString(clientHash.c_str());
-}
-
 std::wstring GameBase::GetUniqueID()
 {
-	void* uniqueIDInstance = *static_cast<void**>(uniqueIDAddress);
+	void* uniqueIDInstance = GetUniqueIDInstance();
 
-	return obfuscatedStringGetValue(uniqueIDInstance)->Data().data();
-}
+	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueIDInstance);
+	std::wstring obfuscatedUniqueID = (*(COMString**)obfuscatedValueField.GetAddress(uniqueIDInstance))->Data().data();
+	std::wstring deobfuscatedUniqueID = {};
 
-void GameBase::SetUniqueID(const std::wstring& uniqueID)
-{
-	void* uniqueIDInstance = *static_cast<void**>(uniqueIDAddress);
-	obfuscatedStringSetValue(uniqueIDInstance, COMString::CreateString(uniqueID.c_str()));
+	for (int i = 0; i < obfuscatedUniqueID.length(); i++)
+		deobfuscatedUniqueID += obfuscatedUniqueID[i] ^ salt;
 
-	void* changesFieldAddress = obfuscatedStringChangesField.GetAddress(uniqueIDInstance);
-	*(int*)changesFieldAddress = *(int*)changesFieldAddress - 1;
+	return deobfuscatedUniqueID;
 }
 
 std::wstring GameBase::GetUniqueID2()
 {
-	void* uniqueID2Instance = *static_cast<void**>(uniqueID2Address);
+	void* uniqueID2Instance = GetUniqueID2Instance();
 
-	return obfuscatedStringGetValue(uniqueID2Instance)->Data().data();
-}
+	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueID2Instance);
+	std::wstring obfuscatedUniqueID2 = (*(COMString**)obfuscatedValueField.GetAddress(uniqueID2Instance))->Data().data();
+	std::wstring deobfuscatedUniqueID2 = {};
 
-void GameBase::SetUniqueID2(const std::wstring& uniqueID2)
-{
-	void* uniqueID2Instance = *static_cast<void**>(uniqueID2Address);
-	obfuscatedStringSetValue(uniqueID2Instance, COMString::CreateString(uniqueID2.c_str()));
+	for (int i = 0; i < obfuscatedUniqueID2.length(); i++)
+		deobfuscatedUniqueID2 += obfuscatedUniqueID2[i] ^ salt;
 
-	void* changesFieldAddress = obfuscatedStringChangesField.GetAddress(uniqueID2Instance);
-	*(int*)changesFieldAddress = *(int*)changesFieldAddress - 1;
+	return deobfuscatedUniqueID2;
 }
 
 std::wstring GameBase::GetUniqueCheck()
 {
-	void* uniqueCheckInstance = *static_cast<void**>(uniqueCheckAddress);
+	void* uniqueCheckInstance = GetUniqueCheckInstance();
 
-	return obfuscatedStringGetValue(uniqueCheckInstance)->Data().data();
-}
+	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueCheckInstance);
+	std::wstring obfuscatedUniqueCheck = (*(COMString**)obfuscatedValueField.GetAddress(uniqueCheckInstance))->Data().data();
+	std::wstring deobfuscatedUniqueCheck = {};
 
-void GameBase::SetUniqueCheck(const std::wstring& uniqueCheck)
-{
-	void* uniqueCheckInstance = *static_cast<void**>(uniqueCheckAddress);
-	obfuscatedStringSetValue(uniqueCheckInstance, COMString::CreateString(uniqueCheck.c_str()));
+	for (int i = 0; i < obfuscatedUniqueCheck.length(); i++)
+		deobfuscatedUniqueCheck += obfuscatedUniqueCheck[i] ^ salt;
 
-	void* changesFieldAddress = obfuscatedStringChangesField.GetAddress(uniqueCheckInstance);
-	*(int*)changesFieldAddress = *(int*)changesFieldAddress - 1;
+	return deobfuscatedUniqueCheck;
 }

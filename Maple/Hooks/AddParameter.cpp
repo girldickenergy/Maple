@@ -2,8 +2,6 @@
 
 #include "../Config/Config.h"
 #include "../Features/Timewarp/Timewarp.h"
-#include "../Features/Spoofer/Spoofer.h"
-#include "../Sdk/Osu/GameBase.h"
 
 void __fastcall Hooks::AddParameterHook(void* instance, COMString* name, COMString* value)
 {
@@ -16,19 +14,7 @@ void __fastcall Hooks::AddParameterHook(void* instance, COMString* name, COMStri
 
         oAddParameter(instance, name, COMString::CreateString(buf));
     }
-    else if (name->Data() == L"c1")
-    {
-        Spoofer::Update();
-
-        std::wstring uniqueId = GameBase::GetUniqueID() + L"|" + GameBase::GetUniqueID2();
-        oAddParameter(instance, name, COMString::CreateString(uniqueId.c_str()));
-    }
-    //client hash is not re-generated here, yay, peppy is an idiot! though keep in mind that this may change at any point.
-    /*else if (name->Data() == L"s")
-    {
-        Spoofer::Update();
-        oAddParameter(instance, name, value);
-    }*/
-    else
-        oAddParameter(instance, name, value);
+    // c1 argument is handled in set_Value hook of Spoofer.
+    // s argument is not handled anywhere yet, osu doesn't re-generate client hash.
+    else oAddParameter(instance, name, value);
 }
