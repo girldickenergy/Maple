@@ -6,6 +6,7 @@
 #include "../../Features/Relax/Relax.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../UI/MainMenu.h"
+#include "../../Features/Visuals/VisualsSpoofers.h"
 
 void Player::Initialize()
 {
@@ -82,6 +83,7 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 		Relax::Start();
 		AimAssist::Reset();
 		Timewarp::UpdateCatcherSpeed();
+		VisualsSpoofers::LoadPreemptiveDots();
 	}
 	
 	return oOnPlayerLoadComplete(instance, success);

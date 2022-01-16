@@ -1,6 +1,12 @@
 #pragma once
 
+#include <imgui.h>
+
+#include <vector>
+#include <tuple>
+
 #include "../../Sdk/Mods/ModManager.h"
+#include "../../Sdk/Player/HitObjectManager.h"
 
 class VisualsSpoofers
 {
@@ -14,12 +20,18 @@ class VisualsSpoofers
 	
 	static void spoofVisuals();
 
+	static inline float preemtiveDotRadius;
+	static inline std::vector<std::tuple<ImVec2, int>> preemptiveDots;
+
 	static inline int originalPreEmpt;
 	static inline int originalPreEmptSliderComplete;
 	
 	static void spoofPreEmpt();
 	static void restorePreEmpt();
 public:
+	static void LoadPreemptiveDots();
+	static void DrawPreemptiveDots();
+
 	static inline fnParse oParse;
 	static void __fastcall ParseHook(void* instance, int sectionsToParse, BOOL updateChecksum, BOOL applyParsingLimits);
 

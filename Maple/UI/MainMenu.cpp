@@ -146,9 +146,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l15012022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l16012022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l15012022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l16012022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -280,11 +280,22 @@ void MainMenu::Render()
         	}
             if (currentTab == 3)
             {
-                Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
                     Widgets::SliderFloat("AR", &Config::Visuals::AR, 0, 12, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
                     Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods); Widgets::Tooltip("If this option is enabled, AR Changer will adjust the AR you have set to currently selected mods.\n\nFor example, if you selected Easy mod, AR will be slightly lower.");
+                    Widgets::Checkbox("Adjust to rate", &Config::Visuals::ARChangerAdjustToRate);
+                    Widgets::Checkbox("Draw preemptive dot", &Config::Visuals::ARChangerDrawPreemptiveDot);
+                    ImGui::ColorEdit4("Preemptive dot colour", reinterpret_cast<float*>(&Config::Visuals::ARChangerPreemptiveDotColour), ImGuiColorEditFlags_NoInputs);
+                }
+                Widgets::EndPanel();
+
+                Widgets::BeginPanel("CS Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2, 1)));
+                {
+                    ImGui::TextColored(StyleProvider::AccentColour, "Don't use this on legit servers!");
+                    Widgets::Checkbox("Enabled", &Config::Visuals::CSChangerEnabled);
+                    Widgets::SliderFloat("CS", &Config::Visuals::CS, 0, 10, "%.1f", ImGuiSliderFlags_AlwaysClamp);
                 }
                 Widgets::EndPanel();
             	

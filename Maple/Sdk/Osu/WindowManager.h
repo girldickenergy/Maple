@@ -7,6 +7,8 @@
 class WindowManager
 {
 	static inline void* instanceAddress = nullptr;
+	static inline void* isFullscreenAddress = nullptr;
+
 	static inline Field widthField;
 	static inline Field heightField;
 	static inline Field clientBoundsField;
@@ -15,6 +17,7 @@ public:
 
 	static void Initialize();
 	static void* Instance();
+	static bool IsFullscreen();
 	static int Width();
 	static int Height();
 	static Vector2 ViewportPosition();

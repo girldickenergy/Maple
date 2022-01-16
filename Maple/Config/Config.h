@@ -78,10 +78,15 @@ public:
 	struct Visuals
 	{
 		static inline bool ARChangerEnabled;
-		static inline bool ARChangerAdjustToMods;
 		static inline float AR;
+		static inline bool ARChangerAdjustToMods;
+		static inline bool ARChangerAdjustToRate;
+		static inline bool ARChangerDrawPreemptiveDot;
+		static inline ImVec4 ARChangerPreemptiveDotColour;
 		static inline bool HiddenDisabled;
 		static inline bool FlashlightDisabled;
+		static inline bool CSChangerEnabled;
+		static inline float CS;
 		static inline int MenuScale;
 		static inline char MenuBackground[MAX_PATH];
 		static inline ImVec4 AccentColour;

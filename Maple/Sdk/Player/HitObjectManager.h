@@ -14,7 +14,12 @@ class HitObjectManager
 	static inline Field hitWindow300Field;
 	static inline Field hitWindow100Field;
 	static inline Field hitWindow50Field;
+	static inline Field spriteDisplaySizeField;
 	static inline Field hitObjectRadiusField;
+	static inline Field spriteManagerField;
+	static inline Field gamefieldSpriteRatioField;
+	static inline Field spriteRatioField;
+	static inline Field stackOffsetField;
 	static inline Field currentHitObjectIndexField;
 	static inline Field hitObjectsCountField;
 	/* HitObject + HitObjectSliderOsu specific fields | Maybe move these into a subclass*/
@@ -61,7 +66,16 @@ public:
 	static int GetHitWindow300();
 	static int GetHitWindow100();
 	static int GetHitWindow50();
+	static float GetSpriteDisplaySize();
+	static void SetSpriteDisplaySize(float size);
 	static float GetHitObjectRadius();
+	static void SetHitObjectRadius(float radius);
+	static float GetSpriteRatio();
+	static void SetSpriteRatio(float ratio);
+	static float GetGamefieldSpriteRatio();
+	static void SetGamefieldSpriteRatio(float ratio);
+	static float GetStackOffset();
+	static void SetStackOffset(float offset);
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
 	static HitObject GetHitObject(int index);

@@ -89,6 +89,11 @@ void Config::loadDefaults()
 	Visuals::ARChangerEnabled = false;
 	Visuals::AR = 9.2f;
 	Visuals::ARChangerAdjustToMods = false;
+	Visuals::ARChangerAdjustToRate = false;
+	Visuals::ARChangerDrawPreemptiveDot = false;
+	Visuals::ARChangerPreemptiveDotColour = ImColor(232, 93, 155, 255).Value;
+	Visuals::CSChangerEnabled = false;
+	Visuals::CS = 4.2f;
 	Visuals::HiddenDisabled = false;
 	Visuals::FlashlightDisabled = false;
 	Visuals::MenuScale = 2;
@@ -219,6 +224,16 @@ void Config::Load()
 			Visuals::AR = std::stof(value);
 		if (variable == "VisualsAdjustToMods")
 			Visuals::ARChangerAdjustToMods = value == "1";
+		if (variable == "VisualsAdjustToRate")
+			Visuals::ARChangerAdjustToRate = value == "1";
+		if (variable == "VisualsDrawPreemptiveDot")
+			Visuals::ARChangerDrawPreemptiveDot = value == "1";
+		if (variable == "VisualsPreemptiveDotColour")
+			Visuals::ARChangerPreemptiveDotColour = parseImVec4(value);
+		if (variable == "VisualsCSChangerEnabled")
+			Visuals::CSChangerEnabled = value == "1";
+		if (variable == "VisualsCSChangerCS")
+			Visuals::CS = std::stof(value);
 		if (variable == "VisualsHiddenDisabled")
 			Visuals::HiddenDisabled = value == "1";
 		if (variable == "VisualsFlashlightDisabled")
@@ -313,6 +328,11 @@ void Config::Save()
 	ofs << "VisualsARChangerEnabled=" << Visuals::ARChangerEnabled << std::endl;
 	ofs << "VisualsARChangerAR=" << Visuals::AR << std::endl;
 	ofs << "VisualsAdjustToMods=" << Visuals::ARChangerAdjustToMods << std::endl;
+	ofs << "VisualsAdjustToRate=" << Visuals::ARChangerAdjustToRate << std::endl;
+	ofs << "VisualsDrawPreemptiveDot=" << Visuals::ARChangerDrawPreemptiveDot << std::endl;
+	ofs << "VisualsPreemptiveDotColour=" << Visuals::ARChangerPreemptiveDotColour.x << "," << Visuals::ARChangerPreemptiveDotColour.y << "," << Visuals::ARChangerPreemptiveDotColour.z << "," << Visuals::ARChangerPreemptiveDotColour.w << std::endl;
+	ofs << "VisualsCSChangerEnabled=" << Visuals::CSChangerEnabled << std::endl;
+	ofs << "VisualsCSChangerCS=" << Visuals::CS << std::endl;
 	ofs << "VisualsHiddenDisabled=" << Visuals::HiddenDisabled << std::endl;
 	ofs << "VisualsFlashlightDisabled=" << Visuals::FlashlightDisabled << std::endl;
 	ofs << "VisualsMenuScale=" << Visuals::MenuScale << std::endl;

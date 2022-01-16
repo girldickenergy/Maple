@@ -1,10 +1,16 @@
 #include "VisualsSpoofers.h"
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui_internal.h>
+
 #include "../../Config/Config.h"
 #include "../../Sdk/Mods/ModManager.h"
 #include "../../Sdk/Osu/GameBase.h"
-#include "../../Sdk/Player/HitObjectManager.h"
 #include "../../Sdk/Player/Player.h"
+#include "../Timewarp/Timewarp.h"
+#include "../../Sdk/Osu/GameField.h"
+#include "../../Sdk/Audio/AudioEngine.h"
+#include "../../Sdk/Osu/WindowManager.h"
 
 void VisualsSpoofers::spoofVisuals()
 {
@@ -12,6 +18,19 @@ void VisualsSpoofers::spoofVisuals()
 		return;
 	
 	spoofPreEmpt();
+
+	if (Config::Visuals::CSChangerEnabled)
+	{
+		float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CS - 5.f) / 5.f));
+		float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
+		float spriteRatio = spriteDisplaySize / 128.f;
+
+		HitObjectManager::SetSpriteDisplaySize(spriteDisplaySize);
+		HitObjectManager::SetHitObjectRadius(hitObjectRadius);
+		HitObjectManager::SetSpriteRatio(spriteRatio);
+		HitObjectManager::SetGamefieldSpriteRatio(spriteRatio);
+		HitObjectManager::SetStackOffset(hitObjectRadius / 10.f);
+	}
 	
 	if (Config::Visuals::HiddenDisabled)
 	{
@@ -34,7 +53,8 @@ void VisualsSpoofers::spoofPreEmpt()
 
 	if (Config::Visuals::ARChangerEnabled)
 	{
-		const int preEmpt = static_cast<int>(HitObjectManager::MapDifficultyRange(static_cast<double>(Config::Visuals::AR), 1800., 1200., 450., Config::Visuals::ARChangerAdjustToMods));
+		const double rateMultiplier = Config::Visuals::ARChangerAdjustToRate ? ((Config::Timewarp::Enabled ? Timewarp::GetRate() : ModManager::ModPlaybackRate()) / 100.) : 1.;
+		const int preEmpt = static_cast<int>(HitObjectManager::MapDifficultyRange(static_cast<double>(Config::Visuals::AR), 1800., 1200., 450., Config::Visuals::ARChangerAdjustToMods) * rateMultiplier);
 
 		HitObjectManager::SetPreEmpt(preEmpt);
 		HitObjectManager::SetPreEmptSliderComplete(preEmpt * 2 / 3);
@@ -50,6 +70,35 @@ void VisualsSpoofers::restorePreEmpt()
 	{
 		HitObjectManager::SetPreEmpt(originalPreEmpt);
 		HitObjectManager::SetPreEmptSliderComplete(originalPreEmptSliderComplete);
+	}
+}
+
+void VisualsSpoofers::LoadPreemptiveDots()
+{
+	preemtiveDotRadius = HitObjectManager::GetSpriteDisplaySize() / 10.f;
+	preemptiveDots.clear();
+
+	Vector2 viewportPosition = WindowManager::ViewportPosition();
+	ImVec2 positionOffset = ImVec2(viewportPosition.X, viewportPosition.Y);
+
+	std::vector<HitObject> hitObjects = HitObjectManager::GetAllHitObjects();
+	for (int i = 0; i < hitObjects.size(); i++)
+	{
+		Vector2 displayPos = GameField::FieldToDisplay(hitObjects[i].Position);
+		preemptiveDots.emplace_back(ImVec2(displayPos.X, displayPos.Y) + positionOffset, hitObjects[i].StartTime - originalPreEmpt);
+	}
+}
+
+void VisualsSpoofers::DrawPreemptiveDots()
+{
+	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded())
+	{
+		for (int i = 0; i < preemptiveDots.size(); i++)
+		{
+			int time = std::get<1>(preemptiveDots[i]);
+			if (AudioEngine::Time() >= time && AudioEngine::Time() < time + originalPreEmpt)
+				ImGui::GetBackgroundDrawList()->AddCircleFilled(std::get<0>(preemptiveDots[i]), preemtiveDotRadius, ImColor(Config::Visuals::ARChangerPreemptiveDotColour), 32);
+		}
 	}
 }
 
