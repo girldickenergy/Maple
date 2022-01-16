@@ -1,9 +1,9 @@
-#include "Hooks.h"
+#include "AddParameter.h"
 
 #include "../Config/Config.h"
 #include "../Features/Timewarp/Timewarp.h"
 
-void __fastcall Hooks::AddParameterHook(void* instance, COMString* name, COMString* value)
+void __fastcall AddParameter::AddParameterHook(void* instance, COMString* name, COMString* value)
 {
     if (name->Data() == L"st" && Config::Timewarp::Enabled)
     {

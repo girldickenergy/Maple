@@ -91,7 +91,7 @@ void VisualsSpoofers::LoadPreemptiveDots()
 
 void VisualsSpoofers::DrawPreemptiveDots()
 {
-	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded())
+	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode())
 	{
 		for (int i = 0; i < preemptiveDots.size(); i++)
 		{

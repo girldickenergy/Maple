@@ -65,12 +65,6 @@
     <ClCompile Include="UI\Widgets.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\EndScene.cpp">
-      <Filter>Hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="Hooks\SwapBuffers.cpp">
-      <Filter>Hooks</Filter>
-    </ClCompile>
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp">
       <Filter>Sdk\ConfigManager</Filter>
     </ClCompile>
@@ -724,6 +718,9 @@
     </ClCompile>
     <ClCompile Include="Sdk\Osu\WindowManager.cpp">
       <Filter>Sdk\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Rendering.cpp">
+      <Filter>Hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1841,6 +1838,15 @@
     </ClInclude>
     <ClInclude Include="Sdk\Osu\WindowManager.h">
       <Filter>Sdk\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\Rendering.h">
+      <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\ErrorSubmission.h">
+      <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\AddParameter.h">
+      <Filter>Hooks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

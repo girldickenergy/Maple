@@ -378,10 +378,9 @@
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
     <ClCompile Include="Hooks\AddParameter.cpp" />
-    <ClCompile Include="Hooks\EndScene.cpp" />
     <ClCompile Include="Hooks\ErrorSubmission.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
-    <ClCompile Include="Hooks\SwapBuffers.cpp" />
+    <ClCompile Include="Hooks\Rendering.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Bindings\BindingManager.cpp" />
@@ -685,7 +684,10 @@
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
+    <ClInclude Include="Hooks\AddParameter.h" />
+    <ClInclude Include="Hooks\ErrorSubmission.h" />
     <ClInclude Include="Hooks\Hooks.h" />
+    <ClInclude Include="Hooks\Rendering.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\Bindings\BindingManager.h" />
