@@ -75,7 +75,7 @@ void VisualsSpoofers::restorePreEmpt()
 
 void VisualsSpoofers::LoadPreemptiveDots()
 {
-	preemtiveDotRadius = HitObjectManager::GetSpriteDisplaySize() / 10.f;
+	preemtiveDotRadius = HitObjectManager::GetSpriteDisplaySize() / 15.f;
 	preemptiveDots.clear();
 
 	Vector2 viewportPosition = WindowManager::ViewportPosition();
@@ -85,7 +85,8 @@ void VisualsSpoofers::LoadPreemptiveDots()
 	for (int i = 0; i < hitObjects.size(); i++)
 	{
 		Vector2 displayPos = GameField::FieldToDisplay(hitObjects[i].Position);
-		preemptiveDots.emplace_back(ImVec2(displayPos.X, displayPos.Y) + positionOffset, hitObjects[i].StartTime - originalPreEmpt);
+		if (i == 0 || hitObjects[i].StartTime - hitObjects[i - 1].EndTime > originalPreEmpt)
+			preemptiveDots.emplace_back(ImVec2(displayPos.X, displayPos.Y) + positionOffset, hitObjects[i].StartTime - originalPreEmpt);
 	}
 }
 
