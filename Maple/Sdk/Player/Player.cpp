@@ -6,6 +6,7 @@
 #include "../../Features/Relax/Relax.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../UI/MainMenu.h"
+#include "../../Features/Visuals/VisualsSpoofers.h"
 
 void Player::Initialize()
 {
@@ -17,6 +18,7 @@ void Player::Initialize()
 	isRetryingAddress = RawPlayer["Retrying"].Field.GetAddress();
 	modeAddress = RawPlayer["mode"].Field.GetAddress();
 	playingAddress = RawPlayer["Playing"].Field.GetAddress();
+	pausedAddress = RawPlayer["Paused"].Field.GetAddress();
 }
 
 void* Player::Instance()
@@ -58,6 +60,11 @@ PlayModes Player::PlayMode()
 	return *static_cast<PlayModes*>(modeAddress);
 }
 
+bool Player::IsPaused()
+{
+	return *static_cast<bool*>(pausedAddress);
+}
+
 void __fastcall Player::PlayerInitialize(uintptr_t instance)
 {
 	MainMenu::IsOpen = false;
@@ -76,6 +83,7 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 		Relax::Start();
 		AimAssist::Reset();
 		Timewarp::UpdateCatcherSpeed();
+		VisualsSpoofers::LoadPreemptiveDots();
 	}
 	
 	return oOnPlayerLoadComplete(instance, success);

@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -374,12 +374,13 @@
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
+    <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
-    <ClCompile Include="Hooks\EndScene.cpp" />
+    <ClCompile Include="Hooks\AddParameter.cpp" />
     <ClCompile Include="Hooks\ErrorSubmission.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
-    <ClCompile Include="Hooks\SwapBuffers.cpp" />
+    <ClCompile Include="Hooks\Rendering.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Bindings\BindingManager.cpp" />
@@ -388,6 +389,7 @@
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="Sdk\Osu\GameBase.cpp" />
     <ClCompile Include="Sdk\Osu\GameField.cpp" />
+    <ClCompile Include="Sdk\Osu\WindowManager.cpp" />
     <ClCompile Include="Sdk\Player\HitObject.cpp" />
     <ClCompile Include="Sdk\Player\HitObjectManager.cpp" />
     <ClCompile Include="Sdk\Player\Player.cpp" />
@@ -679,9 +681,13 @@
     <ClInclude Include="Features\Relax\HitScanResult.h" />
     <ClInclude Include="Features\Relax\HitTimings.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
+    <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
+    <ClInclude Include="Hooks\AddParameter.h" />
+    <ClInclude Include="Hooks\ErrorSubmission.h" />
     <ClInclude Include="Hooks\Hooks.h" />
+    <ClInclude Include="Hooks\Rendering.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\Bindings\BindingManager.h" />
@@ -695,6 +701,7 @@
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="Sdk\Osu\GameField.h" />
+    <ClInclude Include="Sdk\Osu\WindowManager.h" />
     <ClInclude Include="Sdk\Player\HitObject.h" />
     <ClInclude Include="Sdk\Player\HitObjectManager.h" />
     <ClInclude Include="Sdk\Player\Player.h" />
@@ -708,6 +715,8 @@
     <ClInclude Include="UI\StyleProvider.h" />
     <ClInclude Include="UI\Textures.h" />
     <ClInclude Include="UI\Widgets.h" />
+    <ClInclude Include="Utilities\Crypto\CryptoHelper.h" />
+    <ClInclude Include="Utilities\Directories\DirectoryHelper.h" />
     <ClInclude Include="Utilities\Logging\Logger.h" />
     <ClInclude Include="Utilities\Logging\LogSeverity.h" />
     <ClInclude Include="Utilities\Security\Security.h" />

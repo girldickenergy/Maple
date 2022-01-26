@@ -61,8 +61,11 @@ Vector2 HitObject::PositionAtTime(int time)
 		if (SliderCurveSmoothLines.empty())
 			return Position;
 
-		if (time < StartTime || time > EndTime)
+		if (time < StartTime)
 			return Position;
+
+		if (time > EndTime)
+			return EndPosition;
 
 		double num = static_cast<double>(time - StartTime) / (static_cast<double>(Duration) / static_cast<double>(SegmentCount));
 		if (fmod(num, 2.0) >= 1.0)

@@ -15,7 +15,7 @@ class Logger
 	static void clearLogFile();
 	static void createLogEntry(LogSeverity severity, std::string message);
 public:
-	static void Initialize(const std::string& logFilePath = "", LogSeverity scope = LogSeverity::None, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
+	static void Initialize(LogSeverity scope = LogSeverity::None, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
 	static void Log(LogSeverity severity, const char* format, ...);
 	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);
 };

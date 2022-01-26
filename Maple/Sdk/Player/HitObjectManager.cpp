@@ -19,7 +19,12 @@ void HitObjectManager::Initialize()
 	hitWindow300Field					 = RawHitObjectManager["HitWindow300"].Field;
 	hitWindow100Field					 = RawHitObjectManager["HitWindow100"].Field;
 	hitWindow50Field					 = RawHitObjectManager["HitWindow50"].Field;
+	spriteDisplaySizeField				 = RawHitObjectManager["SpriteDisplaySize"].Field;
 	hitObjectRadiusField				 = RawHitObjectManager["HitObjectRadius"].Field;
+	spriteRatioField					 = RawHitObjectManager["SpriteRatio"].Field;
+	spriteManagerField					 = RawHitObjectManager["spriteManager"].Field;
+	gamefieldSpriteRatioField			 = Vanilla::Explorer["osu.Graphics.Sprites.SpriteManager"]["GamefieldSpriteRatio"].Field;
+	stackOffsetField					 = RawHitObjectManager["StackOffset"].Field;
 	currentHitObjectIndexField			 = RawHitObjectManager["currentHitObjectIndex"].Field;
 	hitObjectsCountField				 = RawHitObjectManager["hitObjectsCount"].Field;
 	hitObjectTypeField					 = RawHitObject["Type"].Field;
@@ -105,9 +110,60 @@ int HitObjectManager::GetHitWindow50()
 	return *static_cast<int*>(hitWindow50Field.GetAddress(Instance()));
 }
 
+float HitObjectManager::GetSpriteDisplaySize()
+{
+	return *static_cast<float*>(spriteDisplaySizeField.GetAddress(Instance()));
+}
+
+void HitObjectManager::SetSpriteDisplaySize(float size)
+{
+	*static_cast<float*>(spriteDisplaySizeField.GetAddress(Instance())) = size;
+}
+
 float HitObjectManager::GetHitObjectRadius()
 {
 	return *static_cast<float*>(hitObjectRadiusField.GetAddress(Instance()));
+}
+
+void HitObjectManager::SetHitObjectRadius(float radius)
+{
+	*static_cast<float*>(hitObjectRadiusField.GetAddress(Instance())) = radius;
+}
+
+float HitObjectManager::GetSpriteRatio()
+{
+	return *static_cast<float*>(spriteRatioField.GetAddress(Instance()));
+}
+
+void HitObjectManager::SetSpriteRatio(float ratio)
+{
+	*static_cast<float*>(spriteRatioField.GetAddress(Instance())) = ratio;
+}
+
+float HitObjectManager::GetGamefieldSpriteRatio()
+{
+	void* spriteManagerInstance = *static_cast<void**>(spriteManagerField.GetAddress(Instance()));
+	if (spriteManagerInstance != nullptr)
+		return *static_cast<float*>(gamefieldSpriteRatioField.GetAddress(spriteManagerInstance));
+
+	return 0.f;
+}
+
+void HitObjectManager::SetGamefieldSpriteRatio(float ratio)
+{
+	void* spriteManagerInstance = *static_cast<void**>(spriteManagerField.GetAddress(Instance()));
+	if (spriteManagerInstance != nullptr)
+		*static_cast<float*>(gamefieldSpriteRatioField.GetAddress(spriteManagerInstance)) = ratio;
+}
+
+float HitObjectManager::GetStackOffset()
+{
+	return *static_cast<float*>(stackOffsetField.GetAddress(Instance()));
+}
+
+void HitObjectManager::SetStackOffset(float offset)
+{
+	*static_cast<float*>(stackOffsetField.GetAddress(Instance())) = offset;
 }
 
 int HitObjectManager::GetCurrentHitObjectIndex()

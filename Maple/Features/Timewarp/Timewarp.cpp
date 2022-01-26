@@ -35,22 +35,27 @@ void Timewarp::Initialize()
     *reinterpret_cast<double**>(tickrate4) = &tickrate;
 }
 
-void Timewarp::UpdateCatcherSpeed()
+void Timewarp::UpdateCatcherSpeed() 
 {
     if (Player::PlayMode() == PlayModes::Catch)
-        Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? Config::Timewarp::Rate : ModManager::ModPlaybackRate()) / 100.f);
+        Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? GetRate() : ModManager::ModPlaybackRate()) / 100.f);
+}
+
+double Timewarp::GetRate()
+{
+    return Config::Timewarp::Type == 0 ? Config::Timewarp::Rate : ModManager::ModPlaybackRate() * Config::Timewarp::Multiplier;
 }
 
 double Timewarp::GetRateMultiplier()
 {
-    return static_cast<double>(Config::Timewarp::Rate) / ModManager::ModPlaybackRate();
+    return GetRate() / ModManager::ModPlaybackRate();
 }
 
 void __fastcall Timewarp::SetCurrentPlaybackRateHook(double rate)
 {
     if (Config::Timewarp::Enabled && GameBase::Mode() == OsuModes::Play && Player::Instance() && !Player::IsReplayMode())
     {
-        rate = Config::Timewarp::Rate;
+        rate = GetRate();
         tickrate = 1000. / 60. * (1. / GetRateMultiplier());
     }
     else tickrate = 1000. / 60.;
@@ -65,19 +70,4 @@ double __fastcall Timewarp::GetCurrentPlaybackRateHook()
         mov[getCurrentPlaybackRateReturnAddress], esp
         jmp getCurrentPlaybackRateStub
     }
-}
-
-void __fastcall Timewarp::AddParameterHook(void* instance, COMString* name, COMString* value)
-{
-    if (name->Data() == L"st" && Config::Timewarp::Enabled)
-    {
-        const int newValue = static_cast<int>(std::stod(value->Data().data()) * GetRateMultiplier());
-
-        wchar_t buf[16];
-        swprintf_s(buf, 16, L"%d", newValue);
-
-        oAddParameter(instance, name, COMString::CreateString(buf));
-    }
-    else
-		oAddParameter(instance, name, value);
 }

@@ -23,16 +23,15 @@
 #include "Sdk/Osu/GameField.h"
 #include "Utilities/Security/Security.h"
 #include "Utilities/Strings/StringUtilities.h"
-
-#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-#include <md5.h>
-#include <hex.h>
+#include "Features/Spoofer/Spoofer.h"
+#include "Utilities/Directories/DirectoryHelper.h"
 
 #include <curl.h>
+#include "Sdk/Osu/WindowManager.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
-void InitializeMaple(const std::string& username);
-void InitializeLogging(const std::string& directory);
+void InitializeMaple();
+void InitializeLogging();
 void InitializeSdk();
 void StartFunctions();
 
@@ -45,36 +44,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         CreateThread(nullptr, 0, Initialize, lpReserved, 0, nullptr);
 	
     return TRUE;
-}
-
-std::string GetWorkingDirectory(const std::string& username)
-{
-    VM_FISH_RED_START
-    STR_ENCRYPT_START
-	
-    char* val;
-    size_t len;
-    errno_t err = _dupenv_s(&val, &len, xor ("APPDATA")); //TODO: xor later
-
-    std::string path(val);
-
-    CryptoPP::Weak1::MD5 hash;
-    byte digest[CryptoPP::Weak1::MD5::DIGESTSIZE];
-
-    hash.CalculateDigest(digest, (byte*)username.c_str(), username.length());
-
-    CryptoPP::HexEncoder encoder;
-    std::string usernameHashed;
-    encoder.Attach(new CryptoPP::StringSink(usernameHashed));
-    encoder.Put(digest, sizeof(digest));
-    encoder.MessageEnd();
-	
-    path += "\\" + usernameHashed;
-
-    VM_FISH_RED_END
-    STR_ENCRYPT_END
-    
-    return path;
 }
 
 struct ArgsBase
@@ -97,10 +66,7 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 
     std::vector<std::string> split = StringUtilities::Split(data);
 
-    Communication::CurrentUser->Username = split[0];
-    Communication::CurrentUser->SessionID = split[1];
-    Communication::CurrentUser->DiscordID = split[2];
-    Communication::CurrentUser->AvatarHash = split[3];
+    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
 
     Communication::ConnectToServer();
 
@@ -109,34 +75,34 @@ DWORD WINAPI Initialize(LPVOID data_addr)
     while (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
         Sleep(500);
 
-    InitializeMaple(Communication::CurrentUser->Username);
+    InitializeMaple();
     STR_ENCRYPT_END
     VM_SHARK_BLACK_END
 
     return 0;
 }
 
-void InitializeMaple(const std::string& username)
+void InitializeMaple()
 {
     if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
         Security::CorruptMemory();
-	
-    std::string workingDirectory = GetWorkingDirectory(username);
+
+    DirectoryHelper::Initialize();
 	
     Vanilla::Initialize();
 
-    InitializeLogging(workingDirectory);
+    InitializeLogging();
 
     InitializeSdk();
 
-    Config::Initialize(workingDirectory);
+    Config::Initialize();
 
     Hooks::InstallAllHooks();
 
     StartFunctions();
 }
 
-void InitializeLogging(const std::string& directory)
+void InitializeLogging()
 {
     VM_FISH_RED_START
     STR_ENCRYPT_START
@@ -145,9 +111,9 @@ void InitializeLogging(const std::string& directory)
         Security::CorruptMemory();
 	
 #ifdef _DEBUG
-    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::All, true, L"Runtime log | Maple");
+    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(directory + "\\logs\\runtime.log", LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
+    Logger::Initialize(LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
 #endif
 	
     Logger::Log(LogSeverity::Info, xor ("Initialization started."));
@@ -164,6 +130,7 @@ void InitializeSdk()
     Anticheat::Initialize();
     GameBase::Initialize();
     GameField::Initialize();
+    WindowManager::Initialize();
     InputManager::Initialize();
     ConfigManager::Initialize();
     BindingManager::Initialize();
@@ -183,6 +150,7 @@ void StartFunctions()
 	
     Anticheat::DisableAnticheat();
     Timewarp::Initialize();
+    Spoofer::Initialize();
 
     VM_FISH_RED_END
 }

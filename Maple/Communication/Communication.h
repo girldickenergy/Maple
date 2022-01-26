@@ -21,7 +21,7 @@ public:
 	static inline TcpClient TCPClient = TcpClient();
 	static inline MatchedClient* MatchedClient = nullptr;
 
-	static inline User* CurrentUser = new User("", "", "", "");
+	static inline User* CurrentUser;
 	static inline bool EstablishedConnection = false;
 
 	static inline bool HandshakeSucceeded = false;

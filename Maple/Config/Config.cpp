@@ -6,12 +6,7 @@
 #include <ThemidaSDK.h>
 
 #include "../../Utilities/Security/xorstr.hpp"
-
-void Config::ensureDirectoryExists()
-{
-	if (!std::filesystem::exists(Directory))
-		std::filesystem::create_directory(Directory);
-}
+#include "../Utilities/Directories/DirectoryHelper.h"
 
 bool Config::isSameName(const std::string& a, const std::string& b)
 {
@@ -64,8 +59,10 @@ void Config::loadDefaults()
 	Relax::SliderPredictionEnabled = false;
 	Relax::PredictionAngle = 45;
 	Relax::PredictionScale = 0.8f;
+	Relax::UseLowestPossibleHoldTimes = false;
 
 	AimAssist::Enabled = false;
+	AimAssist::Algorithm = 0;
 	AimAssist::EasyMode = true;
 	AimAssist::EasyModeStrength = 0.5f;
 	AimAssist::Strength = 0.6f;
@@ -81,13 +78,22 @@ void Config::loadDefaults()
 	AimAssist::ResyncLeniency = 3.5f;
 	AimAssist::ResyncLeniencyFactor = 0.698f;
 	AimAssist::DrawDebugOverlay = false;
+	AimAssist::Algorithmv2Power = 0.5f;
+	AimAssist::Algorithmv2AssistOnSliders = true;
 
 	Timewarp::Enabled = false;
+	Timewarp::Type = 0;
 	Timewarp::Rate = 100;
+	Timewarp::Multiplier = 1.;
 
 	Visuals::ARChangerEnabled = false;
 	Visuals::AR = 9.2f;
 	Visuals::ARChangerAdjustToMods = false;
+	Visuals::ARChangerAdjustToRate = false;
+	Visuals::ARChangerDrawPreemptiveDot = false;
+	Visuals::ARChangerPreemptiveDotColour = ImColor(232, 93, 155, 255).Value;
+	Visuals::CSChangerEnabled = false;
+	Visuals::CS = 4.2f;
 	Visuals::HiddenDisabled = false;
 	Visuals::FlashlightDisabled = false;
 	Visuals::MenuScale = 2;
@@ -107,10 +113,8 @@ void Config::loadDefaults()
 	STR_ENCRYPT_END
 }
 
-void Config::Initialize(const std::string& directory)
+void Config::Initialize()
 {
-	Directory = directory;
-
 	Refresh();
 
 	Load();
@@ -120,13 +124,13 @@ void Config::Load()
 {
 	STR_ENCRYPT_START
 	
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
 
 	if (CurrentConfig == 0)
 		return;
 
-	std::ifstream file(Directory + "\\" + Configs[CurrentConfig] + ".cfg");
+	std::ifstream file(DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg");
 	std::string line;
 
 	while (std::getline(file, line))
@@ -163,9 +167,13 @@ void Config::Load()
 			Relax::PredictionAngle = std::stoi(value);
 		if (variable == "RelaxPredictionScale")
 			Relax::PredictionScale = std::stof(value);
+		if (variable == "RelaxUseLowestPossibleHoldTimes")
+			Relax::UseLowestPossibleHoldTimes = value == "1";
 
 		if (variable == "AimAssistEnabled")
 			AimAssist::Enabled = value == "1";
+		if (variable == "AimAssistAlgorithm")
+			AimAssist::Algorithm = std::stoi(value);
 		if (variable == "AimAssistEasyMode")
 			AimAssist::EasyMode = value == "1";
 		if (variable == "AimAssistEasyModeStrength")
@@ -196,11 +204,19 @@ void Config::Load()
 			AimAssist::FlipSliderballDeadzone = value == "1";
 		if (variable == "AimAssistSliderballDeadzone")
 			AimAssist::SliderballDeadzone = std::stof(value);
+		if (variable == "AimAssistAlgorithmv2Power")
+			AimAssist::Algorithmv2Power = std::stof(value);
+		if (variable == "AimAssistAlgorithmv2AssistOnSliders")
+			AimAssist::Algorithmv2AssistOnSliders = value == "1";
 
 		if (variable == "TimewarpEnabled")
 			Timewarp::Enabled = value == "1";
+		if (variable == "TimewarpType")
+			Timewarp::Type = std::stoi(value);
 		if (variable == "TimewarpRate")
 			Timewarp::Rate = std::stoi(value);
+		if (variable == "TimewarpMultiplier")
+			Timewarp::Multiplier = std::stof(value);
 
 		if (variable == "VisualsARChangerEnabled")
 			Visuals::ARChangerEnabled = value == "1";
@@ -208,6 +224,16 @@ void Config::Load()
 			Visuals::AR = std::stof(value);
 		if (variable == "VisualsAdjustToMods")
 			Visuals::ARChangerAdjustToMods = value == "1";
+		if (variable == "VisualsAdjustToRate")
+			Visuals::ARChangerAdjustToRate = value == "1";
+		if (variable == "VisualsDrawPreemptiveDot")
+			Visuals::ARChangerDrawPreemptiveDot = value == "1";
+		if (variable == "VisualsPreemptiveDotColour")
+			Visuals::ARChangerPreemptiveDotColour = parseImVec4(value);
+		if (variable == "VisualsCSChangerEnabled")
+			Visuals::CSChangerEnabled = value == "1";
+		if (variable == "VisualsCSChangerCS")
+			Visuals::CS = std::stof(value);
 		if (variable == "VisualsHiddenDisabled")
 			Visuals::HiddenDisabled = value == "1";
 		if (variable == "VisualsFlashlightDisabled")
@@ -251,9 +277,9 @@ void Config::Save()
 	if (CurrentConfig == 0)
 		return;
 
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
-	const std::string cfgPath = Directory + "\\" + Configs[CurrentConfig] + ".cfg";
+	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg";
 
 	std::ofstream ofs;
 	ofs.open(cfgPath, std::ofstream::out | std::ofstream::trunc);
@@ -272,8 +298,10 @@ void Config::Save()
 	ofs << "RelaxSliderPredictionEnabled=" << Relax::SliderPredictionEnabled << std::endl;
 	ofs << "RelaxPredictionAngle=" << Relax::PredictionAngle << std::endl;
 	ofs << "RelaxPredictionScale=" << Relax::PredictionScale << std::endl;
+	ofs << "RelaxUseLowestPossibleHoldTimes=" << Relax::UseLowestPossibleHoldTimes << std::endl;
 
 	ofs << "AimAssistEnabled=" << AimAssist::Enabled << std::endl;
+	ofs << "AimAssistAlgorithm=" << AimAssist::Algorithm << std::endl;
 	ofs << "AimAssistEasyMode=" << AimAssist::EasyMode << std::endl;
 	ofs << "AimAssistEasyModeStrength=" << AimAssist::EasyModeStrength << std::endl;
 	ofs << "AimAssistStrength=" << AimAssist::Strength << std::endl;
@@ -289,13 +317,22 @@ void Config::Save()
 	ofs << "AimAssistDrawDebugOverlay=" << AimAssist::DrawDebugOverlay << std::endl;
 	ofs << "AimAssistFlipSliderballDeadzone=" << AimAssist::FlipSliderballDeadzone << std::endl;
 	ofs << "AimAssistSliderballDeadzone=" << AimAssist::SliderballDeadzone << std::endl;
+	ofs << "AimAssistAlgorithmv2Power=" << AimAssist::Algorithmv2Power << std::endl;
+	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
+	ofs << "TimewarpType=" << Timewarp::Type << std::endl;
 	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;
+	ofs << "TimewarpMultiplier=" << Timewarp::Multiplier << std::endl;
 
 	ofs << "VisualsARChangerEnabled=" << Visuals::ARChangerEnabled << std::endl;
 	ofs << "VisualsARChangerAR=" << Visuals::AR << std::endl;
 	ofs << "VisualsAdjustToMods=" << Visuals::ARChangerAdjustToMods << std::endl;
+	ofs << "VisualsAdjustToRate=" << Visuals::ARChangerAdjustToRate << std::endl;
+	ofs << "VisualsDrawPreemptiveDot=" << Visuals::ARChangerDrawPreemptiveDot << std::endl;
+	ofs << "VisualsPreemptiveDotColour=" << Visuals::ARChangerPreemptiveDotColour.x << "," << Visuals::ARChangerPreemptiveDotColour.y << "," << Visuals::ARChangerPreemptiveDotColour.z << "," << Visuals::ARChangerPreemptiveDotColour.w << std::endl;
+	ofs << "VisualsCSChangerEnabled=" << Visuals::CSChangerEnabled << std::endl;
+	ofs << "VisualsCSChangerCS=" << Visuals::CS << std::endl;
 	ofs << "VisualsHiddenDisabled=" << Visuals::HiddenDisabled << std::endl;
 	ofs << "VisualsFlashlightDisabled=" << Visuals::FlashlightDisabled << std::endl;
 	ofs << "VisualsMenuScale=" << Visuals::MenuScale << std::endl;
@@ -319,9 +356,9 @@ void Config::Save()
 
 void Config::Create()
 {
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
-	const std::string cfgPath = Directory + "\\" + NewConfigName + ".cfg";
+	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + NewConfigName + ".cfg";
 
 	if (!isValidName(NewConfigName) || std::filesystem::exists(cfgPath))
 		return;
@@ -341,12 +378,12 @@ void Config::Create()
 
 void Config::Refresh()
 {
-	ensureDirectoryExists();
+	DirectoryHelper::EnsureDirectoriesExist();
 
 	Configs.clear();
 	Configs.emplace_back("default");
 
-	for (const auto& file : std::filesystem::directory_iterator(Directory))
+	for (const auto& file : std::filesystem::directory_iterator(DirectoryHelper::ConfigsDirectory))
 		if (file.path().extension() == ".cfg" && isValidName(file.path().filename().stem().string()))
 			Configs.push_back(file.path().filename().stem().string());
 }

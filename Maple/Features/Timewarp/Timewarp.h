@@ -6,7 +6,6 @@ class Timewarp
 {
 	typedef double(__fastcall* fnGetCurrentPlaybackRate)();
 	typedef void(__fastcall* fnSetCurrentPlaybackRate)(double rate);
-	typedef void(__fastcall* fnAddParameter)(void* instance, COMString* name, COMString* value);
 	
 	static inline double tickrate = 1000.0 / 60.0;
 
@@ -15,6 +14,7 @@ class Timewarp
 public:
 	static void Initialize();
 	static void UpdateCatcherSpeed();
+	static double GetRate();
 	static double GetRateMultiplier();
 
 	static inline fnSetCurrentPlaybackRate oSetCurrentPlaybackRate;
@@ -22,7 +22,4 @@ public:
 
 	static inline fnGetCurrentPlaybackRate oGetCurrentPlaybackRate;
 	static double __fastcall GetCurrentPlaybackRateHook();
-
-	static inline fnAddParameter oAddParameter;
-	static void __fastcall AddParameterHook(void* instance, COMString* name, COMString* value);
 };

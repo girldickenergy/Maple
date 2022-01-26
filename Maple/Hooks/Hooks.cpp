@@ -16,6 +16,10 @@
 #include "../UI/Overlay.h"
 #include "../Utilities/Logging/Logger.h"
 #include "../Utilities/Security/Security.h"
+#include "../Features/Spoofer/Spoofer.h"
+#include "ErrorSubmission.h"
+#include "AddParameter.h"
+#include "Rendering.h"
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
@@ -36,7 +40,7 @@ void Hooks::InstallAllHooks()
 	if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
 		Security::CorruptMemory();
 
-	if (installManagedHook("SubmitError", Vanilla::Explorer["osu.Helpers.ErrorSubmission"]["Submit"].Method, SubmitErrorHook, reinterpret_cast<LPVOID*>(&oSubmitError)) == CinnamonResult::Success)
+	if (installManagedHook("SubmitError", Vanilla::Explorer["osu.Helpers.ErrorSubmission"]["Submit"].Method, ErrorSubmission::SubmitErrorHook, reinterpret_cast<LPVOID*>(&ErrorSubmission::oSubmitError)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked SubmitError");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook SubmitError");
@@ -59,7 +63,7 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_CurrentPlaybackRate");
 
-	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, Timewarp::AddParameterHook, reinterpret_cast<LPVOID*>(&Timewarp::oAddParameter)) == CinnamonResult::Success)
+	if (installManagedHook("AddParameter", Vanilla::Explorer["osu_common.Helpers.pWebRequest"]["AddParameter"].Method, AddParameter::AddParameterHook, reinterpret_cast<LPVOID*>(&AddParameter::oAddParameter)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked AddParameter");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook AddParameter");
@@ -144,30 +148,41 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");
 
+	TypeExplorer obfuscatedStringType = Vanilla::Explorer["osu.GameBase"]["UniqueId"].Field.GetTypeUnsafe();
+	if (installManagedHook("ObfuscatedStringGetValue", obfuscatedStringType["get_Value"].Method, Spoofer::ObfuscatedStringGetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringGetValue)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ObfuscatedStringGetValue");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ObfuscatedStringGetValue");
+
+	if (installManagedHook("ObfuscatedStringSetValue", obfuscatedStringType["set_Value"].Method, Spoofer::ObfuscatedStringSetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringSetValue)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked ObfuscatedStringSetValue");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook ObfuscatedStringSetValue");
+
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA("user32.dll"), "GetKeyboardState");
 	if (Cinnamon::InstallHook("GetKeyboardState", pGetKeyboardState, Overlay::HandleKeyboardInputHook, reinterpret_cast<LPVOID*>(&Overlay::oHandleKeyboardInput)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked GetKeyboardState");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook GetKeyboardState");
 
-	//hook swapbuffers/endscene AFTER everything else. make menu inaccessible for as long as possible because hooking of other functions can take a while with themida.
+	//hook swapbuffers/present AFTER everything else. make menu inaccessible for as long as possible because hooking of other functions can take a while with themida.
 	if (ConfigManager::CompatibilityContext())
 	{
-		uintptr_t pEndScene = Vanilla::FindSignature("\x6A\x14\xB8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x75\x08\x8B\xDE\xF7\xDB", "xxx????x????xxxxxxx", reinterpret_cast<uintptr_t>(GetModuleHandleA("d3d9.dll")), Vanilla::GetModuleSize("d3d9.dll"));
-		if (pEndScene)
+		uintptr_t pPresent = Vanilla::FindSignature("\x8B\xFF\x55\x8B\xEC\xFF\x75\x1C", "xxxxxxxx", reinterpret_cast<uintptr_t>(GetModuleHandleA("d3d9.dll")), Vanilla::GetModuleSize("d3d9.dll"));
+		if (pPresent)
 		{
-			if (Cinnamon::InstallHook("EndScene", reinterpret_cast<void*>(pEndScene), endSceneHook, reinterpret_cast<void**>(&oEndScene)) == CinnamonResult::Success)
-				Logger::Log(LogSeverity::Info, "Hooked EndScene");
+			if (Cinnamon::InstallHook("Present", reinterpret_cast<void*>(pPresent), Rendering::PresentHook, reinterpret_cast<void**>(&Rendering::oPresent)) == CinnamonResult::Success)
+				Logger::Log(LogSeverity::Info, "Hooked Present");
 			else
-				Logger::Log(LogSeverity::Error, "Failed to hook EndScene");
+				Logger::Log(LogSeverity::Error, "Failed to hook Present");
 		}
-		else
-			Logger::Log(LogSeverity::Error, "Failed to hook EndScene");
+		else 
+			Logger::Log(LogSeverity::Error, "Failed to hook Present");
 	}
 	else
 	{
 		void* pWglSwapBuffers = GetProcAddress(GetModuleHandleA("opengl32.dll"), "wglSwapBuffers");
-		if (Cinnamon::InstallHook("SwapBuffers", pWglSwapBuffers, wglSwapBuffersHook, reinterpret_cast<LPVOID*>(&oWglSwapBuffers)) == CinnamonResult::Success)
+		if (Cinnamon::InstallHook("SwapBuffers", pWglSwapBuffers, Rendering::WglSwapBuffersHook, reinterpret_cast<LPVOID*>(&Rendering::oWglSwapBuffers)) == CinnamonResult::Success)
 			Logger::Log(LogSeverity::Info, "Hooked wglSwapBuffers");
 		else
 			Logger::Log(LogSeverity::Error, "Failed to hook wglSwapBuffers");

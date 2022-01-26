@@ -1,6 +1,6 @@
-#include "Hooks.h"
+#include "ErrorSubmission.h"
 
-void __fastcall Hooks::SubmitErrorHook(void* err)
+void __fastcall ErrorSubmission::SubmitErrorHook(void* err)
 {
 	return;
 }

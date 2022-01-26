@@ -6,6 +6,8 @@
 
 class AimAssist
 {
+	static inline Vector2 windowSize;
+
 	static inline Vector2 rawPosition;
 	static inline Vector2 assistedPosition;
 	
@@ -14,6 +16,7 @@ class AimAssist
 
 	static inline int hitWindow50;
 	static inline int preEmpt;
+	static inline float hitObjectRadius;
 
 	static inline HitObject currentHitObject;
 	static inline HitObject previousHitObject;
@@ -34,6 +37,10 @@ class AimAssist
 	// This is the first version of the algorithm, it's pretty bad but it works!
 	static Vector2 Algorithmv0(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, float strengthMultiplier);
 
+	//kat's algo
+	static inline Vector2 offset = Vector2();
+
+	static Vector2 doAssistv2(Vector2 realPosition);
 public:
 	static void DrawDebugOverlay();
 	static void Reset();

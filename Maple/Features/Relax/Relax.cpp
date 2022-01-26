@@ -189,6 +189,10 @@ HitTimings Relax::calculateTimings(bool alternating)
 				holdTime = diff;
 		}
 	}
+
+	if (Config::Relax::UseLowestPossibleHoldTimes)
+		holdTime = (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
+
 	return HitTimings(static_cast<int>(offset), static_cast<int>(holdTime));
 }
 

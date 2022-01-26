@@ -9,6 +9,7 @@ void GameField::Initialize()
 	gameFieldInstanceAddress = GameBase::RawGameBase["GameField"].Field.GetAddress();
 	
 	heightField = RawGameField["<Height>k__BackingField"].Field;
+	widthField = RawGameField["<Width>k__BackingField"].Field;
 	offsetField = RawGameField["<OffsetVector1>k__BackingField"].Field;
 }
 
@@ -20,6 +21,11 @@ void* GameField::Instance()
 float GameField::GetHeight()
 {
 	return *static_cast<float*>(heightField.GetAddress(Instance()));
+}
+
+float GameField::GetWidth()
+{
+	return *static_cast<float*>(widthField.GetAddress(Instance()));
 }
 
 float GameField::GetRatio()

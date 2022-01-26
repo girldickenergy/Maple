@@ -11,46 +11,44 @@
 #include "../../Dependencies/ImGui/imgui.h"
 #include "../../UI/StyleProvider.h"
 
+#include <cmath>
+#include "../../Sdk/Osu/WindowManager.h"
+
 void AimAssist::DrawDebugOverlay()
 {
-	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay)
+	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded())
 	{
-		// Draw small debug box uwu
-		ImGui::SetNextWindowSize(ImVec2(GameBase::GetClientBounds()->Width, GameBase::GetClientBounds()->Height));
-		ImGui::Begin("aa", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground);
+		Vector2 viewportPosition = WindowManager::ViewportPosition();
+		ImVec2 positionOffset = ImVec2(viewportPosition.X, viewportPosition.Y);
+
+		if (!assistedPosition.IsNull && canAssist)
 		{
-			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-			if (!assistedPosition.IsNull && canAssist)
+			// Draw circle on *actual* cursor position
+			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), 12.f, ImColor(StyleProvider::AccentColour));
+
+			// Draw Last position
+			Vector2 screen = Config::AimAssist::Algorithm == 0 ? GameField::FieldToDisplay(lastPos) : lastPos;
+			drawList->AddCircleFilled(positionOffset + ImVec2(screen.X, screen.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(StyleProvider::AccentColour.x, StyleProvider::AccentColour.y, StyleProvider::AccentColour.z, 0.5f)));
+
+			// Draw FOV
+			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
+
+			// Draw Sliderball position
+			if (Config::AimAssist::Algorithm == 0)
 			{
-				std::string assistX = "X:" + std::to_string(assistedPosition.X);
-				std::string assistY = "Y:" + std::to_string(assistedPosition.Y);
-				drawList->AddRectFilled(ImVec2(assistedPosition.X + 30, assistedPosition.Y + 30), ImVec2(assistedPosition.X + 110, assistedPosition.Y + 70), ImGui::ColorConvertFloat4ToU32(ImVec4(227.f, 227.f, 227.f, 1.f)), 2.f);
-
-				ImGui::PushFont(StyleProvider::FontSmallBold);
-				ImGui::SetCursorPos(ImVec2(assistedPosition.X - 28, assistedPosition.Y - 28));
-				ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), assistX.c_str());
-				ImGui::SetCursorPos(ImVec2(assistedPosition.X - 28, assistedPosition.Y - 13));
-				ImGui::TextColored(ImVec4(0.f, 0.f, 0.f, 1.f), assistY.c_str());
-				ImGui::PopFont();
-
-				// Draw circle on *actual* cursor position
-				drawList->AddCircleFilled(ImVec2(rawPosition.X, rawPosition.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 255.f, 0.f, 0.6f)));
-
-				// Draw FOV
-				drawList->AddCircleFilled(ImVec2(assistedPosition.X, assistedPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
-
-				// Draw Last position
-				Vector2 screen = GameField::FieldToDisplay(lastPos);
-				drawList->AddCircleFilled(ImVec2(screen.X, screen.Y), 20.f, ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 111.f, 70.f, 0.4f)));
-
-				// Draw Sliderball position
 				Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
-				drawList->AddCircleFilled(ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
+				drawList->AddCircleFilled(positionOffset + ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2.f, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
 			}
+
+			// Draw small debug box uwu
+			ImGui::PushFont(StyleProvider::FontSmallBold);
+			std::string positionString = "(" + std::to_string((int)assistedPosition.X) + "; " + std::to_string((int)assistedPosition.Y) + ")";
+			drawList->AddRectFilled(positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20), positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20) + ImGui::CalcTextSize(positionString.c_str()) + StyleProvider::Padding * 2, ImColor(StyleProvider::MenuColourDark), 10.f);
+			drawList->AddText(positionOffset + ImVec2(assistedPosition.X + 20, assistedPosition.Y + 20) + StyleProvider::Padding, ImColor(255.f, 255.f, 255.f, 255.f), positionString.c_str());
+			ImGui::PopFont();
 		}
-		ImGui::End();
 	}
 }
 
@@ -173,10 +171,106 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	return assistedPosition;
 }
 
+static auto __forceinline calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
+	return _mm_min_ps(
+		_mm_max_ps(
+			_mm_mul_ps(
+				_mm_add_ps(
+					_mm_div_ps(_mm_sub_ps(_mm_load_ps(&begin), _mm_load_ps(&hit_window_50)), _mm_mul_ps(_mm_load_ps(&pre_empt), _mm_set_ps1(3.f))),
+					_mm_set_ps1(1.f)),
+				_mm_load_ps(&magnitude)),
+			_mm_set_ps1(0.f)),
+		_mm_set_ps1(max))
+		.m128_f32[0];
+}
+
+static auto __forceinline point_in_radius(const Vector2& point, const Vector2& anchor, float radius) {
+	return _mm_sqrt_ps(_mm_add_ps(
+		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.X), _mm_load_ps(&point.X)), _mm_set_ps1(2.f)),
+		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.Y), _mm_load_ps(&point.Y)), _mm_set_ps1(2.f))))
+		.m128_f32[0] <= radius;
+}
+
+static auto __forceinline _mm_abs_ps(__m128 _A) {
+	return _mm_andnot_ps(_mm_set1_ps(-0.0f), _A);
+}
+
+static auto __forceinline calc_interpolant(const Vector2& window_size, float displacement, float strength) {
+	return _mm_min_ps(
+		_mm_set_ps1(1.f),
+		_mm_mul_ps(
+			_mm_abs_ps(_mm_div_ps(
+				_mm_load_ps(&displacement), _mm_div_ps(_mm_min_ps(_mm_load_ps(&window_size.X), _mm_load_ps(&window_size.Y)), _mm_set_ps1(2.f)))),
+			_mm_load_ps(&strength)))
+		.m128_f32[0];
+}
+
+Vector2 AimAssist::doAssistv2(Vector2 realPosition)
+{
+	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
+		return realPosition;
+
+	const int time = AudioEngine::Time();
+	if (time > currentHitObject.EndTime)
+	{
+		currentIndex++;
+
+		if (currentIndex >= HitObjectManager::GetHitObjectsCount())
+		{
+			canAssist = false;
+
+			return realPosition;
+		}
+
+		previousHitObject = currentHitObject;
+		currentHitObject = HitObjectManager::GetHitObject(currentIndex);
+	}
+
+	rawPosition = realPosition;
+
+	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
+
+	Vector2 distance = hitObjectPosition - realPosition;
+	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
+	const auto clamp_range = Config::AimAssist::Algorithmv2Power * 16.f; // * 8.f
+
+	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
+	{
+		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
+			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
+				const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2Power);
+
+				if (interpolant > std::numeric_limits<float>::epsilon()) {
+					offset.X = std::clamp(std::lerp(offset.X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+					offset.Y = std::clamp(std::lerp(offset.Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+				}
+			}
+		}
+		else if (offset.Length() > std::numeric_limits<float>::epsilon()) {
+			const auto dt = ImGui::GetIO().DeltaTime;
+
+			if (auto delta = lastPos - realPosition; delta.Length() > std::numeric_limits<float>::epsilon()) {
+				if (auto change = (delta / offset) * dt; std::isfinite(change.Length())) {
+					auto dpi = delta * (offset.Length() / clamp_range) * .15f;
+
+					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
+					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
+				}
+			}
+		}
+	}
+
+	lastPos = realPosition;
+	assistedPosition = realPosition + offset;
+	return assistedPosition;
+
+}
+
 void AimAssist::Reset()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
 	preEmpt = HitObjectManager::GetPreEmpt();
+	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	
 	currentIndex = HitObjectManager::GetCurrentHitObjectIndex();
 	currentHitObject = HitObjectManager::GetHitObject(currentIndex);
@@ -186,11 +280,14 @@ void AimAssist::Reset()
 	
 	decided = true;
 	lastPos = Vector2(0, 0);
+
+	windowSize = Vector2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
+	offset = Vector2();
 }
 
 void __stdcall AimAssist::UpdateCursorPosition(float x, float y)
 {
-	const Vector2 assistedPosition = doAssist(Vector2(x, y));
+	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : doAssistv2(Vector2(x, y));
 
 	oUpdateCursorPosition(assistedPosition.X, assistedPosition.Y);
 }

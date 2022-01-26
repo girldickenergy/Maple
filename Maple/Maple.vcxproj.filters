@@ -65,12 +65,6 @@
     <ClCompile Include="UI\Widgets.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks\EndScene.cpp">
-      <Filter>Hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="Hooks\SwapBuffers.cpp">
-      <Filter>Hooks</Filter>
-    </ClCompile>
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp">
       <Filter>Sdk\ConfigManager</Filter>
     </ClCompile>
@@ -716,6 +710,18 @@
     <ClCompile Include="UI\SnowVisualisation.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Spoofer\Spoofer.cpp">
+      <Filter>Features\Spoofer</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\AddParameter.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Osu\WindowManager.cpp">
+      <Filter>Sdk\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Rendering.cpp">
+      <Filter>Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -873,6 +879,15 @@
     </Filter>
     <Filter Include="Communication\TCP">
       <UniqueIdentifier>{1d47f6d7-cb70-4947-9bcc-63ed5e5f9998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Crypto">
+      <UniqueIdentifier>{28131193-6b33-4dcc-9bc1-02d4c500c47b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Spoofer">
+      <UniqueIdentifier>{33c699d8-e0c4-44b0-b502-749c4cb46549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Directories">
+      <UniqueIdentifier>{4a7b8ff9-6dd8-462b-a25f-4dc3438eec09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1811,6 +1826,27 @@
     </ClInclude>
     <ClInclude Include="UI\SnowVisualisation.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Crypto\CryptoHelper.h">
+      <Filter>Utilities\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Spoofer\Spoofer.h">
+      <Filter>Features\Spoofer</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Directories\DirectoryHelper.h">
+      <Filter>Utilities\Directories</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Osu\WindowManager.h">
+      <Filter>Sdk\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\Rendering.h">
+      <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\ErrorSubmission.h">
+      <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\AddParameter.h">
+      <Filter>Hooks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

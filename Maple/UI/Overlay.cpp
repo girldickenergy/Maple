@@ -10,6 +10,7 @@
 #include "../Sdk/Osu/GameBase.h"
 #include "GL/gl3w.h"
 #include "SnowVisualisation.h"
+#include "../Features/Visuals/VisualsSpoofers.h"
 
 void Overlay::enableRaw()
 {
@@ -125,6 +126,7 @@ void Overlay::Render()
 		ScoreSubmissionDialogue::Render();
 
 	AimAssist::DrawDebugOverlay();
+	VisualsSpoofers::DrawPreemptiveDots();
 	
 	ImGui::Render();
 
