@@ -296,7 +296,7 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	distanceScaled = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv3BaseFOV) * arScale, Config::AimAssist::Algorithmv3MinimumFOVTotal, Config::AimAssist::Algorithmv3MaximumFOVTotal);
 	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
 	{
-		if (hitObjectPosition.Distance(cursorPosition) <= distanceScaled || (!previousHitObject.IsNull && (Config::AimAssist::Algorithmv3AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position).Distance(cursorPosition) <= distanceScaled))
+		if (hitObjectPosition.Distance(cursorPosition) <= distanceScaled)
 		{
 			if (lastPos.Distance(cursorPosition) >= Config::AimAssist::Algorithmv3AccelerationFactor)
 			{
@@ -389,8 +389,6 @@ Vector2 AimAssist::Algorithmv0(float strength, float distance, Vector2 hitObject
 Vector2 AimAssist::Algorithmv3(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, Vector2 offset)
 {
 	float dist = hitObjectPosition.Distance(cursorPosition);
-	if (dist > distance)
-		return offset;
 
 	float t = (1.0f - (dist / distance)) * strength;
 	t = std::clamp(t, 0.f, 1.f);
