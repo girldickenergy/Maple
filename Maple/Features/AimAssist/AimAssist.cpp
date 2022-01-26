@@ -393,5 +393,5 @@ Vector2 AimAssist::Algorithmv3(float strength, float distance, Vector2 hitObject
 	float t = (1.0f - (dist / distance)) * strength;
 	t = std::clamp(t, 0.f, 1.f);
 
-	return offset + ((hitObjectPosition - cursorPosition) * t - offset) * strength;
+	return offset + ((hitObjectPosition - cursorPosition) * t - offset) * t;
 }
