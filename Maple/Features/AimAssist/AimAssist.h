@@ -36,11 +36,14 @@ class AimAssist
 
 	// This is the first version of the algorithm, it's pretty bad but it works!
 	static Vector2 Algorithmv0(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, float strengthMultiplier);
+	static Vector2 Algorithmv3(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, Vector2 offset);
 
 	//kat's algo
 	static inline Vector2 offset = Vector2();
 
 	static Vector2 doAssistv2(Vector2 realPosition);
+	
+	static Vector2 doAssistv3(Vector2 realPosition);
 public:
 	static void DrawDebugOverlay();
 	static void Reset();

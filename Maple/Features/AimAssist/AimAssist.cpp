@@ -16,7 +16,7 @@
 
 void AimAssist::DrawDebugOverlay()
 {
-	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded())
+	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::IsLoaded() && !Player::IsReplayMode())
 	{
 		Vector2 viewportPosition = WindowManager::ViewportPosition();
 		ImVec2 positionOffset = ImVec2(viewportPosition.X, viewportPosition.Y);
@@ -28,12 +28,8 @@ void AimAssist::DrawDebugOverlay()
 			// Draw circle on *actual* cursor position
 			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), 12.f, ImColor(StyleProvider::AccentColour));
 
-			// Draw Last position
-			Vector2 screen = Config::AimAssist::Algorithm == 0 ? GameField::FieldToDisplay(lastPos) : lastPos;
-			drawList->AddCircleFilled(positionOffset + ImVec2(screen.X, screen.Y), 12.f, ImGui::ColorConvertFloat4ToU32(ImVec4(StyleProvider::AccentColour.x, StyleProvider::AccentColour.y, StyleProvider::AccentColour.z, 0.5f)));
-
 			// Draw FOV
-			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), distanceScaled, ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
+			drawList->AddCircleFilled(positionOffset + ImVec2(rawPosition.X, rawPosition.Y), distanceScaled * GameField::GetRatio(), ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
 
 			// Draw Sliderball position
 			if (Config::AimAssist::Algorithm == 0)
@@ -57,24 +53,24 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
 
-	const float strength			  = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength / 2.f < 0.7f ? Config::AimAssist::EasyModeStrength / 2.f : (Config::AimAssist::EasyModeStrength / 2.f) - 0.214f : Config::AimAssist::Strength;
-	const int baseFOV				  = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 50.f : Config::AimAssist::BaseFOV;
-	const float maximumFOVScale		  = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 2.f + .25f : Config::AimAssist::MaximumFOVScale;
-	const float minimumFOVTotal		  = Config::AimAssist::EasyMode ? 0 : Config::AimAssist::MinimumFOVTotal;
-	const float maximumFOVTotal		  = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 220 : Config::AimAssist::MaximumFOVTotal;
-	const bool assistOnSliders		  = Config::AimAssist::EasyMode ? true : Config::AimAssist::AssistOnSliders;
+	const float strength = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength / 2.f < 0.7f ? Config::AimAssist::EasyModeStrength / 2.f : (Config::AimAssist::EasyModeStrength / 2.f) - 0.214f : Config::AimAssist::Strength;
+	const int baseFOV = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 50.f : Config::AimAssist::BaseFOV;
+	const float maximumFOVScale = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 2.f + .25f : Config::AimAssist::MaximumFOVScale;
+	const float minimumFOVTotal = Config::AimAssist::EasyMode ? 0 : Config::AimAssist::MinimumFOVTotal;
+	const float maximumFOVTotal = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 220 : Config::AimAssist::MaximumFOVTotal;
+	const bool assistOnSliders = Config::AimAssist::EasyMode ? true : Config::AimAssist::AssistOnSliders;
 	const bool flipSliderballDeadzone = Config::AimAssist::EasyMode ? false : Config::AimAssist::FlipSliderballDeadzone;
-	const float sliderballDeadzone	  = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 12.2f + 2.1f : Config::AimAssist::SliderballDeadzone;
-	const float strengthMultiplier	  = Config::AimAssist::EasyMode ? 1.f : Config::AimAssist::StrengthMultiplier;
-	const float assistDeadzone		  = Config::AimAssist::EasyMode ? 3.f : Config::AimAssist::AssistDeadzone;
-	const float resyncLeniency		  = Config::AimAssist::EasyMode ? 3.5f : Config::AimAssist::ResyncLeniency;
-	const float resyncLeniencyFactor  = Config::AimAssist::EasyMode ? 0.693f : Config::AimAssist::ResyncLeniencyFactor;
+	const float sliderballDeadzone = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 12.2f + 2.1f : Config::AimAssist::SliderballDeadzone;
+	const float strengthMultiplier = Config::AimAssist::EasyMode ? 1.f : Config::AimAssist::StrengthMultiplier;
+	const float assistDeadzone = Config::AimAssist::EasyMode ? 3.f : Config::AimAssist::AssistDeadzone;
+	const float resyncLeniency = Config::AimAssist::EasyMode ? 3.5f : Config::AimAssist::ResyncLeniency;
+	const float resyncLeniencyFactor = Config::AimAssist::EasyMode ? 0.693f : Config::AimAssist::ResyncLeniencyFactor;
 
 	const int time = AudioEngine::Time();
 	if (time > (currentHitObject.IsType(HitObjectType::Slider) && assistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))
 	{
 		currentIndex++;
-		
+
 		if (currentIndex >= HitObjectManager::GetHitObjectsCount())
 		{
 			canAssist = false;
@@ -89,7 +85,7 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 	rawPosition = realPosition;
 
 	Vector2 playfieldCoords = GameField::DisplayToField(realPosition);
-	
+
 	const auto arScale = std::clamp(
 		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
 		0.f,
@@ -156,7 +152,7 @@ Vector2 AimAssist::doAssist(Vector2 realPosition)
 			}
 		}
 	}
-	
+
 	if (lastPos.Distance(playfieldCoords) > (resyncLeniency * 0.8f) && lastPos != Vector2(0, 0))
 	{
 		Vector2 offset = lastPos - playfieldCoords;
@@ -266,6 +262,83 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 }
 
+Vector2 AimAssist::doAssistv3(Vector2 realPosition)
+{
+	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
+		return realPosition;
+
+	const int time = AudioEngine::Time();
+	if (time > (currentHitObject.IsType(HitObjectType::Slider) && Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))
+	{
+		currentIndex++;
+
+		if (currentIndex >= HitObjectManager::GetHitObjectsCount())
+		{
+			canAssist = false;
+
+			return realPosition;
+		}
+
+		previousHitObject = currentHitObject;
+		currentHitObject = HitObjectManager::GetHitObject(currentIndex);
+	}
+
+	rawPosition = realPosition;
+
+	Vector2 cursorPosition = GameField::DisplayToField(realPosition);
+	Vector2 hitObjectPosition = Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position;
+
+	const auto arScale = std::clamp(
+		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
+		0.f,
+		Config::AimAssist::Algorithmv3MaximumFOVScale);
+
+	distanceScaled = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv3BaseFOV) * arScale, Config::AimAssist::Algorithmv3MinimumFOVTotal, Config::AimAssist::Algorithmv3MaximumFOVTotal);
+	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
+	{
+		if (hitObjectPosition.Distance(cursorPosition) <= distanceScaled || (!previousHitObject.IsNull && (Config::AimAssist::Algorithmv3AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position).Distance(cursorPosition) <= distanceScaled))
+		{
+			if (lastPos.Distance(cursorPosition) >= Config::AimAssist::Algorithmv3AccelerationFactor)
+			{
+				if (!previousHitObject.IsNull)
+				{
+					const float diffobj = std::min(preEmpt, currentHitObject.StartTime - (Config::AimAssist::Algorithmv3AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime));
+					const float fromobj = currentHitObject.StartTime - time;
+					const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
+
+					offset = Algorithmv3((1.0f - t) * Config::AimAssist::Algorithmv3Strength, distanceScaled, hitObjectPosition, cursorPosition, offset);
+				}
+				else
+				{
+					const float diffobj = 1000.f;
+					const float fromobj = currentHitObject.StartTime - time;
+					const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
+
+					offset = Algorithmv3((1.0f - t) * Config::AimAssist::Algorithmv3Strength, distanceScaled, hitObjectPosition, cursorPosition, offset);
+				}
+			}
+		}
+		else if (offset.Length() > std::numeric_limits<float>::epsilon())
+		{
+			const auto dt = ImGui::GetIO().DeltaTime;
+			if (auto delta = lastPos - cursorPosition; delta.Length() > std::numeric_limits<float>::epsilon())
+			{
+				if (auto change = (delta / offset) * dt; std::isfinite(change.Length()))
+				{
+					auto dpi = delta * (offset.Length() / (Config::AimAssist::Algorithmv3Strength * 8.f)) * .15f;
+
+					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
+					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
+				}
+			}
+		}
+	}
+
+	lastPos = cursorPosition;
+	assistedPosition = GameField::FieldToDisplay(cursorPosition + offset);
+	return assistedPosition;
+}
+
 void AimAssist::Reset()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
@@ -287,7 +360,7 @@ void AimAssist::Reset()
 
 void __stdcall AimAssist::UpdateCursorPosition(float x, float y)
 {
-	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : doAssistv2(Vector2(x, y));
+	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : Config::AimAssist::Algorithm == 1 ? doAssistv2(Vector2(x, y)) : doAssistv3(Vector2(x, y));
 
 	oUpdateCursorPosition(assistedPosition.X, assistedPosition.Y);
 }
@@ -311,4 +384,16 @@ Vector2 AimAssist::Algorithmv0(float strength, float distance, Vector2 hitObject
 	t = std::clamp(t, 0.f, 1.f);
 	return cursorPosition + ((hitObjectPosition - cursorPosition) * std::clamp(t, 0.f,
 		std::clamp(t * strengthMultiplier, 0.f, 1.f)));
+}
+
+Vector2 AimAssist::Algorithmv3(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, Vector2 offset)
+{
+	float dist = hitObjectPosition.Distance(cursorPosition);
+	if (dist > distance)
+		return offset;
+
+	float t = (1.0f - (dist / distance)) * strength;
+	t = std::clamp(t, 0.f, 1.f);
+
+	return offset + ((hitObjectPosition - cursorPosition) * t - offset) * strength;
 }

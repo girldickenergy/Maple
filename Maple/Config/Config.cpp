@@ -80,6 +80,13 @@ void Config::loadDefaults()
 	AimAssist::DrawDebugOverlay = false;
 	AimAssist::Algorithmv2Power = 0.5f;
 	AimAssist::Algorithmv2AssistOnSliders = true;
+	AimAssist::Algorithmv3Strength = 0.6f;
+	AimAssist::Algorithmv3AssistOnSliders = true;
+	AimAssist::Algorithmv3BaseFOV = 45;
+	AimAssist::Algorithmv3MaximumFOVScale = 2.5f;
+	AimAssist::Algorithmv3MinimumFOVTotal = 0.f;
+	AimAssist::Algorithmv3MaximumFOVTotal = 225.f;
+	AimAssist::Algorithmv3AccelerationFactor = 1.f;
 
 	Timewarp::Enabled = false;
 	Timewarp::Type = 0;
@@ -208,6 +215,20 @@ void Config::Load()
 			AimAssist::Algorithmv2Power = std::stof(value);
 		if (variable == "AimAssistAlgorithmv2AssistOnSliders")
 			AimAssist::Algorithmv2AssistOnSliders = value == "1";
+		if (variable == "AimAssistAlgorithmv3Strength")
+			AimAssist::Algorithmv3Strength = std::stof(value);
+		if (variable == "AimAssistAlgorithmv3AssistOnSliders")
+			AimAssist::Algorithmv3AssistOnSliders = value == "1";
+		if (variable == "AimAssistAlgorithmv3BaseFOV")
+			AimAssist::Algorithmv3BaseFOV = std::stoi(value);
+		if (variable == "AimAssistAlgorithmv3MaximumFOVScale")
+			AimAssist::Algorithmv3MaximumFOVScale = std::stof(value);
+		if (variable == "AimAssistAlgorithmv3MinimumFOVTotal")
+			AimAssist::Algorithmv3MinimumFOVTotal = std::stof(value);
+		if (variable == "AimAssistAlgorithmv3MaximumFOVTotal")
+			AimAssist::Algorithmv3MaximumFOVTotal = std::stof(value);
+		if (variable == "AimAssistAlgorithmv3AccelerationFactor")
+			AimAssist::Algorithmv3AccelerationFactor = std::stof(value);
 
 		if (variable == "TimewarpEnabled")
 			Timewarp::Enabled = value == "1";
@@ -319,6 +340,13 @@ void Config::Save()
 	ofs << "AimAssistSliderballDeadzone=" << AimAssist::SliderballDeadzone << std::endl;
 	ofs << "AimAssistAlgorithmv2Power=" << AimAssist::Algorithmv2Power << std::endl;
 	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
+	ofs << "AimAssistAlgorithmv3Strength=" << AimAssist::Algorithmv3Strength << std::endl;
+	ofs << "AimAssistAlgorithmv3AssistOnSliders=" << AimAssist::Algorithmv3AssistOnSliders << std::endl;
+	ofs << "AimAssistAlgorithmv3BaseFOV=" << AimAssist::Algorithmv3BaseFOV << std::endl;
+	ofs << "AimAssistAlgorithmv3MaximumFOVScale=" << AimAssist::Algorithmv3MaximumFOVScale << std::endl;
+	ofs << "AimAssistAlgorithmv3MinimumFOVTotal=" << AimAssist::Algorithmv3MinimumFOVTotal << std::endl;
+	ofs << "AimAssistAlgorithmv3MaximumFOVTotal=" << AimAssist::Algorithmv3MaximumFOVTotal << std::endl;
+	ofs << "AimAssistAlgorithmv3AccelerationFactor=" << AimAssist::Algorithmv3AccelerationFactor << std::endl;
 
 	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
 	ofs << "TimewarpType=" << Timewarp::Type << std::endl;
