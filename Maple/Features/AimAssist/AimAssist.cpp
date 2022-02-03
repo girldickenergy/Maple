@@ -286,7 +286,11 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	rawPosition = realPosition;
 
 	Vector2 cursorPosition = GameField::DisplayToField(realPosition);
-	Vector2 hitObjectPosition = Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position;
+	Vector2 previousHitObjectPosition = previousHitObject.IsNull ? Vector2() : Config::AimAssist::Algorithmv3AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position;
+	Vector2 currentHitObjectPosition = Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position;
+
+	float previousHitObjectDistance = previousHitObject.IsNull ? 0.f : previousHitObjectPosition.Distance(cursorPosition);
+	float currentHitObjectDistance = currentHitObjectPosition.Distance(cursorPosition);
 
 	const auto arScale = std::clamp(
 		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
@@ -296,26 +300,25 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	distanceScaled = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv3BaseFOV) * arScale, Config::AimAssist::Algorithmv3MinimumFOVTotal, Config::AimAssist::Algorithmv3MaximumFOVTotal);
 	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
 	{
-		if (hitObjectPosition.Distance(cursorPosition) <= distanceScaled)
+		if (currentHitObjectDistance <= distanceScaled || (!previousHitObject.IsNull && previousHitObjectDistance <= distanceScaled))
 		{
 			if (lastPos.Distance(cursorPosition) >= Config::AimAssist::Algorithmv3AccelerationFactor)
 			{
-				if (!previousHitObject.IsNull)
-				{
-					const float diffobj = std::min(preEmpt, currentHitObject.StartTime - (Config::AimAssist::Algorithmv3AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime));
-					const float fromobj = currentHitObject.StartTime - time;
-					const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
+				const float diffobj = previousHitObject.IsNull ? preEmpt : currentHitObject.StartTime - (Config::AimAssist::Algorithmv3AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime);
+				const float fromobj = currentHitObject.StartTime - time;
+				const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
 
-					offset = Algorithmv3((1.0f - t) * Config::AimAssist::Algorithmv3Strength, distanceScaled, hitObjectPosition, cursorPosition, offset);
-				}
+				const float previousInterpolant = (1.0f - (previousHitObjectDistance / distanceScaled)) * (t * Config::AimAssist::Algorithmv3Strength);
+				const float interpolant = (1.f - (currentHitObjectDistance / distanceScaled)) * ((1.f - t) * Config::AimAssist::Algorithmv3Strength);
+
+				Vector2 previousOffset = Vector2();
+				if (!previousHitObject.IsNull && previousHitObjectDistance <= distanceScaled)
+					previousOffset = (previousHitObjectPosition - cursorPosition) * previousInterpolant;
+
+				if (currentHitObjectDistance <= distanceScaled)
+					offset = offset + ((currentHitObjectPosition - cursorPosition) * interpolant + previousOffset - offset) * interpolant;
 				else
-				{
-					const float diffobj = 1000.f;
-					const float fromobj = currentHitObject.StartTime - time;
-					const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
-
-					offset = Algorithmv3((1.0f - t) * Config::AimAssist::Algorithmv3Strength, distanceScaled, hitObjectPosition, cursorPosition, offset);
-				}
+					offset = offset + (previousOffset - offset) * previousInterpolant;
 			}
 		}
 		else if (offset.Length() > std::numeric_limits<float>::epsilon())
@@ -384,14 +387,4 @@ Vector2 AimAssist::Algorithmv0(float strength, float distance, Vector2 hitObject
 	t = std::clamp(t, 0.f, 1.f);
 	return cursorPosition + ((hitObjectPosition - cursorPosition) * std::clamp(t, 0.f,
 		std::clamp(t * strengthMultiplier, 0.f, 1.f)));
-}
-
-Vector2 AimAssist::Algorithmv3(float strength, float distance, Vector2 hitObjectPosition, Vector2 cursorPosition, Vector2 offset)
-{
-	float dist = hitObjectPosition.Distance(cursorPosition);
-
-	float t = (1.0f - (dist / distance)) * strength;
-	t = std::clamp(t, 0.f, 1.f);
-
-	return offset + ((hitObjectPosition - cursorPosition) * t - offset) * t;
 }
