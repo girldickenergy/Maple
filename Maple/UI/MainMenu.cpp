@@ -146,9 +146,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l20012022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l03022022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l20012022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l03022022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -220,16 +220,16 @@ void MainMenu::Render()
                     else if (Config::AimAssist::Algorithm == 1)
                     {
                         Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::Checkbox("Assist on sliders###algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
+                        Widgets::Checkbox("Assist on sliders##algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
                     }
                     else
                     {
-                        Widgets::SliderFloat("Strength###algov3strength", &Config::AimAssist::Algorithmv3Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
-                        Widgets::Checkbox("Assist on sliders###algov3assistonsliders", &Config::AimAssist::Algorithmv3AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                        Widgets::SliderInt("Base FOV###algov3basefov", &Config::AimAssist::Algorithmv3BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                        Widgets::SliderFloat("Maximum FOV (Scaling)###algov3maxfovscale", &Config::AimAssist::Algorithmv3MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Minimum FOV (Total)###algov3minfovtotal", &Config::AimAssist::Algorithmv3MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Maximum FOV (Total)###algov3maxfovtotal", &Config::AimAssist::Algorithmv3MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Strength##algov3strength", &Config::AimAssist::Algorithmv3Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                        Widgets::Checkbox("Assist on sliders##algov3assistonsliders", &Config::AimAssist::Algorithmv3AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
+                        Widgets::SliderInt("Base FOV##algov3basefov", &Config::AimAssist::Algorithmv3BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                        Widgets::SliderFloat("Maximum FOV (Scaling)##algov3maxfovscale", &Config::AimAssist::Algorithmv3MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Minimum FOV (Total)##algov3minfovtotal", &Config::AimAssist::Algorithmv3MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Maximum FOV (Total)##algov3maxfovtotal", &Config::AimAssist::Algorithmv3MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
                         Widgets::SliderFloat("Acceleration factor", &Config::AimAssist::Algorithmv3AccelerationFactor, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
                     }
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
