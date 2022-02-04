@@ -65,6 +65,13 @@ public:
 		static inline bool DrawDebugOverlay;
 		static inline float Algorithmv2Power;
 		static inline bool Algorithmv2AssistOnSliders;
+		static inline float Algorithmv3Strength;
+		static inline bool Algorithmv3AssistOnSliders;
+		static inline int Algorithmv3BaseFOV;
+		static inline float Algorithmv3MaximumFOVScale;
+		static inline float Algorithmv3MinimumFOVTotal;
+		static inline float Algorithmv3MaximumFOVTotal;
+		static inline float Algorithmv3AccelerationFactor;
 	};
 
 	struct Timewarp

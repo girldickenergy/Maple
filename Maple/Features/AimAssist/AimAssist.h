@@ -41,6 +41,8 @@ class AimAssist
 	static inline Vector2 offset = Vector2();
 
 	static Vector2 doAssistv2(Vector2 realPosition);
+	
+	static Vector2 doAssistv3(Vector2 realPosition);
 public:
 	static void DrawDebugOverlay();
 	static void Reset();
