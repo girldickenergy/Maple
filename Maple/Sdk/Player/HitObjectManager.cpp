@@ -48,12 +48,6 @@ void HitObjectManager::Initialize()
 
 	RawHitObjectManager["GetObject"].Method.Compile();
 	getObject = static_cast<fnGetObject>(RawHitObjectManager["GetObject"].Method.GetNativeStart());
-
-	RawHitObjectManager["SetBeatmap"].Method.Compile();
-	setBeatmap = static_cast<fnSetBeatmap>(RawHitObjectManager["SetBeatmap"].Method.GetNativeStart());
-
-	RawHitObjectManager["Load"].Method.Compile();
-	load = static_cast<fnLoad>(RawHitObjectManager["Load"].Method.GetNativeStart());
 }
 
 void* HitObjectManager::Instance()
@@ -178,77 +172,90 @@ int HitObjectManager::GetHitObjectsCount()
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
-	void* hitObjectInstance = getObject(Instance(), index);
-
-	const HitObjectType type   = *reinterpret_cast<HitObjectType*>(hitObjectTypeField.GetAddress(hitObjectInstance));
-	const int startTime		   = *reinterpret_cast<int*>(hitObjectStartTimeField.GetAddress(hitObjectInstance));
-	const int endTime		   = *reinterpret_cast<int*>(hitObjectEndTimeField.GetAddress(hitObjectInstance));
-	const Vector2 position	   = *reinterpret_cast<Vector2*>(hitObjectPositionField.GetAddress(hitObjectInstance));
-	const int segmentCount	   = *reinterpret_cast<int*>(hitObjectSegmentCountField.GetAddress(hitObjectInstance));
-	const double spatialLength = *reinterpret_cast<double*>(hitObjectSpatialLengthField.GetAddress(hitObjectInstance));
-
-	if ((type & HitObjectType::Slider) > HitObjectType::None)
-	{
-		const Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectEndPositionField.GetAddress(hitObjectInstance));
-
-		std::vector<Vector2> sliderCurvePoints;
-		std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines;
-		std::vector<double> cumulativeLengths;
-
-		const uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurvePointsField.GetAddress(hitObjectInstance));
-		const uintptr_t sliderCurvePointsItems   = *reinterpret_cast<uintptr_t*>(sliderCurvePointsPointer + 0x04);
-		const int sliderCurvePointsCount		 = *reinterpret_cast<int*>(sliderCurvePointsPointer + 0x0C);
-
-		for (int i = 0; i < sliderCurvePointsCount; i++)
-		{
-			Vector2 point = *reinterpret_cast<Vector2*>(sliderCurvePointsItems + 0x08 + 0x08 * i);
-
-			sliderCurvePoints.emplace_back(point);
-		}
-
-		const uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
-		const uintptr_t sliderCurveSmoothLinesItems   = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
-		const int sliderCurveSmoothLinesCount		  = *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
-
-		for (int i = 0; i < sliderCurveSmoothLinesCount; i++)
-		{
-			const uintptr_t item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * i);
-			
-			Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
-			Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
-
-			sliderCurveSmoothLines.emplace_back(point1, point2);
-		}
-
-		const uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
-		const uintptr_t cumulativeLengthsItems   = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
-		const int cumulativeLengthsCount		 = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
-
-		for (int i = 0; i < cumulativeLengthsCount; i++)
-			cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * i));
-
-		return HitObject(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
-	}
-
-	return HitObject(type, startTime, endTime, position, position, segmentCount, spatialLength);
+	return hitObjects[index];
 }
 
-std::vector<HitObject> HitObjectManager::GetAllHitObjects()
+void HitObjectManager::CacheAllHitObjects()
 {
-	std::vector<HitObject> toReturn;
+	hitObjects.clear();
+
 	for (int i = 0; i < GetHitObjectsCount(); i++)
-		toReturn.push_back(GetHitObject(i));
-	return toReturn;
-}
+	{
+	start:
+		void* hitObjectInstance = getObject(Instance(), i);
 
-void HitObjectManager::SetBeatmap(void* beatmap)
-{
-	setBeatmap(Instance(), beatmap, GetActiveMods());
-}
+		if (!hitObjectInstance || !*(int*)hitObjectInstance)
+			goto start;
 
-bool HitObjectManager::Load(bool processHeaders)
-{
-	return load(Instance(), processHeaders);
+		const HitObjectType type = *reinterpret_cast<HitObjectType*>(hitObjectTypeField.GetAddress(hitObjectInstance));
+		const int startTime = *reinterpret_cast<int*>(hitObjectStartTimeField.GetAddress(hitObjectInstance));
+		const int endTime = *reinterpret_cast<int*>(hitObjectEndTimeField.GetAddress(hitObjectInstance));
+		const Vector2 position = *reinterpret_cast<Vector2*>(hitObjectPositionField.GetAddress(hitObjectInstance));
+		const int segmentCount = *reinterpret_cast<int*>(hitObjectSegmentCountField.GetAddress(hitObjectInstance));
+		const double spatialLength = *reinterpret_cast<double*>(hitObjectSpatialLengthField.GetAddress(hitObjectInstance));
+
+		if ((type & HitObjectType::Slider) > HitObjectType::None)
+		{
+			const Vector2 endPosition = *reinterpret_cast<Vector2*>(hitObjectEndPositionField.GetAddress(hitObjectInstance));
+
+			std::vector<Vector2> sliderCurvePoints;
+			std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines;
+			std::vector<double> cumulativeLengths;
+
+			const uintptr_t sliderCurvePointsPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurvePointsField.GetAddress(hitObjectInstance));
+			if (!sliderCurvePointsPointer || !*(int*)sliderCurvePointsPointer)
+				goto start;
+
+			const uintptr_t sliderCurvePointsItems = *reinterpret_cast<uintptr_t*>(sliderCurvePointsPointer + 0x04);
+			if (!sliderCurvePointsItems || !*(int*)sliderCurvePointsItems)
+				goto start;
+
+			const int sliderCurvePointsCount = *reinterpret_cast<int*>(sliderCurvePointsPointer + 0x0C);
+
+			for (int j = 0; j < sliderCurvePointsCount; j++)
+			{
+				Vector2 point = *reinterpret_cast<Vector2*>(sliderCurvePointsItems + 0x08 + 0x08 * j);
+
+				sliderCurvePoints.emplace_back(point);
+			}
+
+			const uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
+			if (!sliderCurveSmoothLinesPointer || !*(int*)sliderCurveSmoothLinesPointer)
+				goto start;
+
+			const uintptr_t sliderCurveSmoothLinesItems = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
+			if (!sliderCurveSmoothLinesItems || !*(int*)sliderCurveSmoothLinesItems)
+				goto start;
+
+			const int sliderCurveSmoothLinesCount = *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
+
+			for (int j = 0; j < sliderCurveSmoothLinesCount; j++)
+			{
+				const uintptr_t item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * j);
+
+				Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
+				Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
+
+				sliderCurveSmoothLines.emplace_back(point1, point2);
+			}
+
+			const uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
+			if (!cumulativeLengthsPointer || !*(int*)cumulativeLengthsPointer)
+				goto start;
+
+			const uintptr_t cumulativeLengthsItems = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
+			if (!cumulativeLengthsItems || !*(int*)cumulativeLengthsItems)
+				goto start;
+
+			const int cumulativeLengthsCount = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
+
+			for (int j = 0; j < cumulativeLengthsCount; j++)
+				cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * j));
+
+			hitObjects.emplace_back(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
+		}
+		else hitObjects.emplace_back(type, startTime, endTime, position, position, segmentCount, spatialLength);
+	}
 }
 
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)

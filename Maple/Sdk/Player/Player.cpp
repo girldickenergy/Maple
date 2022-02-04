@@ -78,6 +78,8 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 {
 	if (success)
 	{
+		HitObjectManager::CacheAllHitObjects();
+
 		loadComplete = true;
 
 		Relax::Start();

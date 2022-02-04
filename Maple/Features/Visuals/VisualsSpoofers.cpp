@@ -75,17 +75,20 @@ void VisualsSpoofers::restorePreEmpt()
 
 void VisualsSpoofers::LoadPreemptiveDots()
 {
-	preemtiveDotRadius = HitObjectManager::GetSpriteDisplaySize() / 10.f;
+	preemtiveDotRadius = HitObjectManager::GetSpriteDisplaySize() / 15.f;
 	preemptiveDots.clear();
 
 	Vector2 viewportPosition = WindowManager::ViewportPosition();
 	ImVec2 positionOffset = ImVec2(viewportPosition.X, viewportPosition.Y);
 
-	std::vector<HitObject> hitObjects = HitObjectManager::GetAllHitObjects();
-	for (int i = 0; i < hitObjects.size(); i++)
+	for (int i = 0; i < HitObjectManager::GetHitObjectsCount(); i++)
 	{
-		Vector2 displayPos = GameField::FieldToDisplay(hitObjects[i].Position);
-		preemptiveDots.emplace_back(ImVec2(displayPos.X, displayPos.Y) + positionOffset, hitObjects[i].StartTime - originalPreEmpt);
+		HitObject previousHitObject = i == 0 ? HitObject() : HitObjectManager::GetHitObject(i - 1);
+		HitObject hitObject = HitObjectManager::GetHitObject(i);
+
+		Vector2 displayPos = GameField::FieldToDisplay(hitObject.Position);
+		if (previousHitObject.IsNull || hitObject.StartTime - previousHitObject.EndTime > originalPreEmpt)
+			preemptiveDots.emplace_back(ImVec2(displayPos.X, displayPos.Y) + positionOffset, hitObject.StartTime - originalPreEmpt);
 	}
 }
 

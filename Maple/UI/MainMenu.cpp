@@ -146,9 +146,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l03022022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l04022022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l03022022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l04022022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -210,13 +210,20 @@ void MainMenu::Render()
         	}
             if (currentTab == 1)
             {
-                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::Algorithm == 0 ? 4 : Config::AimAssist::Algorithm == 1 ? 5 : 10)));
+                Widgets::BeginPanel("Aim Assist", ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::AimAssist::Algorithm == 0 ? 4 : Config::AimAssist::Algorithm == 1 ? 5 : 10, Config::AimAssist::Algorithm == 0 ? 4 : 0)));
                 {
                     Widgets::Checkbox("Enabled", &Config::AimAssist::Enabled);
                     const char* algorithms[] = { "v1", "v2", "v3" };
                     Widgets::Combo("Algorithm", &Config::AimAssist::Algorithm, algorithms, IM_ARRAYSIZE(algorithms));
                     if (Config::AimAssist::Algorithm == 0)
+                    {
+                        ImGui::TextColored(StyleProvider::AccentColour, "This algorithm can lead to technical bugs and teleportations on certain settings.");
+                        ImGui::TextColored(StyleProvider::AccentColour, "certain settings.");
+                        ImGui::TextColored(StyleProvider::AccentColour, "Instead, we strongly advise you to use algorithm v3 which is just a");
+                        ImGui::TextColored(StyleProvider::AccentColour, "polished version of v1.");
+
                         Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
+                    }
                     else if (Config::AimAssist::Algorithm == 1)
                     {
                         Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);

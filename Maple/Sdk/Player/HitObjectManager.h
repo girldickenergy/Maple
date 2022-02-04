@@ -7,6 +7,8 @@
 
 class HitObjectManager
 {
+	static inline std::vector<HitObject> hitObjects;
+
 	static inline Field hitObjectManagerField;
 	static inline Field preEmptField;
 	static inline Field preEmptSliderCompleteField;
@@ -44,12 +46,6 @@ class HitObjectManager
 
 	typedef void*(__fastcall* fnGetObject)(void* instance, int index);
 	static inline fnGetObject getObject;
-
-	typedef void(__fastcall* fnSetBeatmap)(void* instance, void* beatmap, Mods mods);
-	static inline fnSetBeatmap setBeatmap;
-
-	typedef bool(__fastcall* fnLoad)(void* instance, bool processHeaders);
-	static inline fnLoad load;
 public:
 	static inline TypeExplorer RawHitObjectManager;
 	static inline TypeExplorer RawHitObject;
@@ -79,8 +75,6 @@ public:
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
 	static HitObject GetHitObject(int index);
-	static std::vector<HitObject> GetAllHitObjects();
-	static void SetBeatmap(void* beatmap);
-	static bool Load(bool processHeaders);
+	static void CacheAllHitObjects();
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 };
