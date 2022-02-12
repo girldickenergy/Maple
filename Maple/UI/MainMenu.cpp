@@ -217,7 +217,7 @@ void MainMenu::Render()
                     Widgets::Combo("Algorithm", &Config::AimAssist::Algorithm, algorithms, IM_ARRAYSIZE(algorithms));
                     if (Config::AimAssist::Algorithm == 0)
                     {
-                        ImGui::TextColored(StyleProvider::AccentColour, "This algorithm can lead to technical bugs and teleportations on certain settings.");
+                        ImGui::TextColored(StyleProvider::AccentColour, "This algorithm can lead to technical bugs and teleportations on");
                         ImGui::TextColored(StyleProvider::AccentColour, "certain settings.");
                         ImGui::TextColored(StyleProvider::AccentColour, "Instead, we strongly advise you to use algorithm v3 which is just a");
                         ImGui::TextColored(StyleProvider::AccentColour, "polished version of v1.");

@@ -19,7 +19,7 @@ void VisualsSpoofers::spoofVisuals()
 	
 	spoofPreEmpt();
 
-	if (Config::Visuals::CSChangerEnabled)
+	if (Config::Visuals::CSChangerEnabled && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
 	{
 		float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CS - 5.f) / 5.f));
 		float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
@@ -94,7 +94,7 @@ void VisualsSpoofers::LoadPreemptiveDots()
 
 void VisualsSpoofers::DrawPreemptiveDots()
 {
-	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode())
+	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode() && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
 	{
 		for (int i = 0; i < preemptiveDots.size(); i++)
 		{
