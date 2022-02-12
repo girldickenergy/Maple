@@ -182,10 +182,10 @@ void MainMenu::Render()
                     const char* keys[] = { "M1", "K1", "M2", "K2" };
                     Widgets::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
                     Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
-                    Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum BPM at which relax will singletap.");
-                    Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a spread for distribution function.\n\n100 is a full hit window 300.\n200 is a full hit window 100.\n300 is a full hit window50.");
+                    Widgets::SliderInt("Max singletap BPM", &Config::Relax::MaxSingletapBPM, 0, 500, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum BPM at which relax will singletap.");
+                    Widgets::SliderInt("Hit spread", &Config::Relax::HitSpread, 0, 300, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a spread for distribution function.\n\n100 is a full hit window 300.\n200 is a full hit window 100.\n300 is a full hit window50.");
                     Widgets::HitErrorBar(Config::Relax::HitSpread);
-                    Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Same as above, but for alternation.");
+                    Widgets::SliderInt("Alternation hit spread", &Config::Relax::AlternationHitSpread, 0, 300, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Same as above, but for alternation.");
                     Widgets::HitErrorBar(Config::Relax::AlternationHitSpread);
                     Widgets::Checkbox("Hold consecutive spinners", &Config::Relax::HoldConsecutiveSpinners); Widgets::Tooltip("Relax will keep holding the key if there's a spinner right after the last hit object.");
                     Widgets::Checkbox("Slider alternation override", &Config::Relax::SliderAlternationOverride); Widgets::Tooltip("Changes the way how alternation of sliders is handled.\nIt is recommended to enable this option on techno maps.");
@@ -196,8 +196,8 @@ void MainMenu::Render()
                 {
                     Widgets::Checkbox("Enabled", &Config::Relax::PredictionEnabled); Widgets::Tooltip("Predicts whether or not you're leaving the circle and clicks if you are.");
                     Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled); Widgets::Tooltip("Same as above, but for sliders.\n\nOften yields false positive results. Enable this only if you really have to.");
-                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
-                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0, 1, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
+                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
+                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
                 }
                 Widgets::EndPanel();
 
@@ -226,18 +226,18 @@ void MainMenu::Render()
                     }
                     else if (Config::AimAssist::Algorithm == 1)
                     {
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         Widgets::Checkbox("Assist on sliders##algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
                     }
                     else
                     {
-                        Widgets::SliderFloat("Strength##algov3strength", &Config::AimAssist::Algorithmv3Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                        Widgets::SliderFloat("Strength##algov3strength", &Config::AimAssist::Algorithmv3Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
                         Widgets::Checkbox("Assist on sliders##algov3assistonsliders", &Config::AimAssist::Algorithmv3AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                        Widgets::SliderInt("Base FOV##algov3basefov", &Config::AimAssist::Algorithmv3BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                        Widgets::SliderFloat("Maximum FOV (Scaling)##algov3maxfovscale", &Config::AimAssist::Algorithmv3MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Minimum FOV (Total)##algov3minfovtotal", &Config::AimAssist::Algorithmv3MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Maximum FOV (Total)##algov3maxfovtotal", &Config::AimAssist::Algorithmv3MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Acceleration factor", &Config::AimAssist::Algorithmv3AccelerationFactor, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                        Widgets::SliderInt("Base FOV##algov3basefov", &Config::AimAssist::Algorithmv3BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                        Widgets::SliderFloat("Maximum FOV (Scaling)##algov3maxfovscale", &Config::AimAssist::Algorithmv3MaximumFOVScale, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Minimum FOV (Total)##algov3minfovtotal", &Config::AimAssist::Algorithmv3MinimumFOVTotal, 0, 100, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Maximum FOV (Total)##algov3maxfovtotal", &Config::AimAssist::Algorithmv3MaximumFOVTotal, 0, 500, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Acceleration factor", &Config::AimAssist::Algorithmv3AccelerationFactor, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
                     }
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
                 }
@@ -249,7 +249,7 @@ void MainMenu::Render()
                     {
                         Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
                         {
-                            Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                            Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         }
                         Widgets::EndPanel();
                     }
@@ -257,18 +257,18 @@ void MainMenu::Render()
                     {
                         Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                         {
-                            Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
-                            Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                            Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                            Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0, 100, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                            Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0, 500, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                            Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                            Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0.f, 100.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0.f, 500.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
                             Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                            Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0, 25, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
+                            Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0.f, 25.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
                             Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
-                            Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0, 2, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
-                            Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0, 5, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
-                            Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0, 15, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
-                            Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0, 0.999f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
+                            Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
+                            Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                            Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0.f, 15.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
+                            Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0.f, 0.999f, 0.001f, 0.01f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
                         }
                         Widgets::EndPanel();
                     }
@@ -283,11 +283,11 @@ void MainMenu::Render()
                     Widgets::Combo("Type", &Config::Timewarp::Type, types, IM_ARRAYSIZE(types));
                     if (Config::Timewarp::Type == 0)
                     {
-                        Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, "%d", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
+                        Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
                     }
                     else
                     {
-                        Widgets::SliderFloat("Multiplier", &Config::Timewarp::Multiplier, 0.25f, 1.5f, "%.01f", ImGuiSliderFlags_AlwaysClamp);
+                        Widgets::SliderFloat("Multiplier", &Config::Timewarp::Multiplier, 0.25f, 1.5f, .01f, .1f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                     }
                 }
                 Widgets::EndPanel();
@@ -297,7 +297,7 @@ void MainMenu::Render()
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
-                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0, 12, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
+                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0.f, 12.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
                     Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods); Widgets::Tooltip("If this option is enabled, AR Changer will adjust the AR you have set to currently selected mods.\n\nFor example, if you selected Easy mod, AR will be slightly lower.");
                     Widgets::Checkbox("Adjust to rate", &Config::Visuals::ARChangerAdjustToRate);
                     Widgets::Checkbox("Draw preemptive dot", &Config::Visuals::ARChangerDrawPreemptiveDot);
@@ -309,7 +309,7 @@ void MainMenu::Render()
                 {
                     ImGui::TextColored(StyleProvider::AccentColour, "Don't use this on legit servers!");
                     Widgets::Checkbox("Enabled", &Config::Visuals::CSChangerEnabled);
-                    Widgets::SliderFloat("CS", &Config::Visuals::CS, 0, 10, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+                    Widgets::SliderFloat("CS", &Config::Visuals::CS, 0.f, 10.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
                 }
                 Widgets::EndPanel();
             	
