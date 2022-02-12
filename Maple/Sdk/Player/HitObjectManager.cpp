@@ -219,38 +219,41 @@ void HitObjectManager::CacheAllHitObjects()
 				sliderCurvePoints.emplace_back(point);
 			}
 
-			const uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
-			if (!sliderCurveSmoothLinesPointer || !*(int*)sliderCurveSmoothLinesPointer)
-				goto start;
-
-			const uintptr_t sliderCurveSmoothLinesItems = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
-			if (!sliderCurveSmoothLinesItems || !*(int*)sliderCurveSmoothLinesItems)
-				goto start;
-
-			const int sliderCurveSmoothLinesCount = *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
-
-			for (int j = 0; j < sliderCurveSmoothLinesCount; j++)
+			if (Player::PlayMode() != PlayModes::Taiko)
 			{
-				const uintptr_t item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * j);
+				const uintptr_t sliderCurveSmoothLinesPointer = *reinterpret_cast<uintptr_t*>(hitObjectSliderCurveSmoothLinesField.GetAddress(hitObjectInstance));
+				if (!sliderCurveSmoothLinesPointer || !*(int*)sliderCurveSmoothLinesPointer)
+					goto start;
 
-				Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
-				Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
+				const uintptr_t sliderCurveSmoothLinesItems = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesPointer + 0x04);
+				if (!sliderCurveSmoothLinesItems || !*(int*)sliderCurveSmoothLinesItems)
+					goto start;
 
-				sliderCurveSmoothLines.emplace_back(point1, point2);
+				const int sliderCurveSmoothLinesCount = *reinterpret_cast<int*>(sliderCurveSmoothLinesPointer + 0x0C);
+
+				for (int j = 0; j < sliderCurveSmoothLinesCount; j++)
+				{
+					const uintptr_t item = *reinterpret_cast<uintptr_t*>(sliderCurveSmoothLinesItems + 0x08 + 0x04 * j);
+
+					Vector2 point1 = *reinterpret_cast<Vector2*>(item + 0x08);
+					Vector2 point2 = *reinterpret_cast<Vector2*>(item + 0x10);
+
+					sliderCurveSmoothLines.emplace_back(point1, point2);
+				}
+
+				const uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
+				if (!cumulativeLengthsPointer || !*(int*)cumulativeLengthsPointer)
+					goto start;
+
+				const uintptr_t cumulativeLengthsItems = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
+				if (!cumulativeLengthsItems || !*(int*)cumulativeLengthsItems)
+					goto start;
+
+				const int cumulativeLengthsCount = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
+
+				for (int j = 0; j < cumulativeLengthsCount; j++)
+					cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * j));
 			}
-
-			const uintptr_t cumulativeLengthsPointer = *reinterpret_cast<uintptr_t*>(hitObjectCumulativeLengthsField.GetAddress(hitObjectInstance));
-			if (!cumulativeLengthsPointer || !*(int*)cumulativeLengthsPointer)
-				goto start;
-
-			const uintptr_t cumulativeLengthsItems = *reinterpret_cast<uintptr_t*>(cumulativeLengthsPointer + 0x4);
-			if (!cumulativeLengthsItems || !*(int*)cumulativeLengthsItems)
-				goto start;
-
-			const int cumulativeLengthsCount = *reinterpret_cast<int*>(cumulativeLengthsPointer + 0xC);
-
-			for (int j = 0; j < cumulativeLengthsCount; j++)
-				cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItems + 0x8 + 0x8 * j));
 
 			hitObjects.emplace_back(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
 		}
