@@ -78,12 +78,14 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 {
 	if (success)
 	{
-		loadComplete = true;
+		HitObjectManager::CacheAllHitObjects();
 
 		Relax::Start();
 		AimAssist::Reset();
 		Timewarp::UpdateCatcherSpeed();
 		VisualsSpoofers::LoadPreemptiveDots();
+
+		loadComplete = true;
 	}
 	
 	return oOnPlayerLoadComplete(instance, success);
