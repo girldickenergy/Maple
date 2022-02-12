@@ -124,6 +124,13 @@ void Config::Initialize()
 {
 	Refresh();
 
+	const auto it = std::find(Configs.begin(), Configs.end(), DirectoryHelper::DefaultConfig);
+
+	if (it != Configs.end())
+		CurrentConfig = std::distance(Configs.begin(), it);
+	else
+		CurrentConfig = 0;
+
 	Load();
 }
 
@@ -133,6 +140,9 @@ void Config::Load()
 	
 	DirectoryHelper::EnsureDirectoriesExist();
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
+
+	DirectoryHelper::DefaultConfig = Configs[CurrentConfig];
+	DirectoryHelper::SaveConfig();
 
 	if (CurrentConfig == 0)
 		return;

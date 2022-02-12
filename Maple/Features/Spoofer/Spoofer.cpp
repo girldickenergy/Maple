@@ -75,57 +75,6 @@ bool Spoofer::isValidName(const std::string& name)
 	return !name.empty() && !isSameName(name, "none");
 }
 
-void Spoofer::saveConfigFile()
-{
-	DirectoryHelper::EnsureDirectoriesExist();
-
-	std::ofstream ofs;
-	ofs.open(configFilepath, std::ofstream::out | std::ofstream::trunc);
-
-	ofs << "CurrentProfile=" << Profiles[SelectedProfile] << std::endl;
-	
-	ofs.close();
-}
-
-void Spoofer::loadConfigFile()
-{
-	DirectoryHelper::EnsureDirectoriesExist();
-
-	if (!std::filesystem::exists(configFilepath))
-	{
-		SelectedProfile = 0;
-
-		return;
-	}
-
-	std::ifstream file(configFilepath);
-	std::string line;
-
-	while (std::getline(file, line))
-	{
-		const int delimiterIndex = line.find('=');
-		std::string variable = line.substr(0, delimiterIndex);
-		std::string value = line.substr(delimiterIndex + 1, std::string::npos);
-
-		if (variable == "CurrentProfile")
-		{
-			if (isValidName(value))
-			{
-				const auto it = std::find(Profiles.begin(), Profiles.end(), value);
-
-				if (it != Profiles.end())
-					SelectedProfile = std::distance(Profiles.begin(), it);
-				else
-					SelectedProfile = 0;
-			}
-			else
-				SelectedProfile = 0;
-		}
-	}
-
-	file.close();
-}
-
 void Spoofer::refresh()
 {
 	DirectoryHelper::EnsureDirectoriesExist();
@@ -140,8 +89,6 @@ void Spoofer::refresh()
 
 void Spoofer::Initialize()
 {
-	configFilepath = DirectoryHelper::ProfilesDirectory + "\\" + Communication::CurrentUser->UsernameHashed + ".cfg";
-
 	realClientHash = GameBase::GetClientHash();
 	realUniqueID = GameBase::GetUniqueID();
 	realUniqueID2 = GameBase::GetUniqueID2();
@@ -156,7 +103,14 @@ void Spoofer::Initialize()
 	}
 
 	refresh();
-	loadConfigFile();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), DirectoryHelper::DefaultProfile);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+	else
+		SelectedProfile = 0;
+
 	Load();
 }
 
@@ -204,7 +158,8 @@ void Spoofer::Load()
 
 	LoadedProfile = SelectedProfile;
 
-	saveConfigFile();
+	DirectoryHelper::DefaultProfile = Profiles[LoadedProfile];
+	DirectoryHelper::SaveConfig();
 }
 
 void Spoofer::Delete()

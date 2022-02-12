@@ -25,12 +25,8 @@ class Spoofer
 	static std::string getRandomDiskID();
 	static std::string getRandomAdapters();
 
-	static inline std::string configFilepath;
-
 	static bool isSameName(const std::string& a, const std::string& b);
 	static bool isValidName(const std::string& name);
-	static void saveConfigFile();
-	static void loadConfigFile();
 	static void refresh();
 public:
 	static inline std::vector<std::string> Profiles;
