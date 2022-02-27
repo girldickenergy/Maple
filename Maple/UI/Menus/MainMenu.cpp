@@ -3,26 +3,28 @@
 #include <filesystem>
 #include <imgui.h>
 
-#include "StyleProvider.h"
-#include "Widgets.h"
-#include "../Communication/Communication.h"
-#include "../Config/Config.h"
-#include "3rd-party/FileDialog/imfilebrowser.h"
-#include "../Features/Spoofer/Spoofer.h"
-#include "../Utilities/Directories/DirectoryHelper.h"
-#include "../Sdk/Osu/WindowManager.h"
+#include <windows.h>
+
+#include "../Rendering/TextureLoader.h"
+#include "../Overlay.h"
+#include "../StyleProvider.h"
+#include "../Widgets/Widgets.h"
+#include "../../Features/Spoofer/Spoofer.h"
+#include "../../Storage/Storage.h"
+#include "../../Sdk/Osu/WindowManager.h"
+#include "../Widgets/3rd-party/FileDialog/imfilebrowser.h"
 
 bool fileDialogInitialized = false;
 ImGui::FileBrowser fileDialog;
 
 void MainMenu::updateBackground()
 {
-    if (Config::Visuals::MenuBackground[0] == '\0' || !std::filesystem::exists(Config::Visuals::MenuBackground))
+    if (Config::Visuals::UI::MenuBackground[0] == '\0' || !std::filesystem::exists(Config::Visuals::UI::MenuBackground))
     {
         if (backgroundTexture != nullptr)
         {
             if (Overlay::Renderer == Renderer::OGL3)
-                TextureHelper::FreeTextureOGL3(backgroundTexture);
+                TextureLoader::FreeTextureOGL3(backgroundTexture);
 
             backgroundTexture = nullptr;
         }
@@ -31,9 +33,9 @@ void MainMenu::updateBackground()
     }
 
     if (Overlay::Renderer == Renderer::OGL3)
-        backgroundTexture = TextureHelper::LoadTextureFromFileOGL3(Config::Visuals::MenuBackground);
+        backgroundTexture = TextureLoader::LoadTextureFromFileOGL3(Config::Visuals::UI::MenuBackground);
     else
-        backgroundTexture = TextureHelper::LoadTextureFromFileD3D9(Overlay::D3D9Device, Config::Visuals::MenuBackground);
+        backgroundTexture = TextureLoader::LoadTextureFromFileD3D9(Overlay::D3D9Device, Config::Visuals::UI::MenuBackground);
 }
 
 void MainMenu::Render()
@@ -194,17 +196,17 @@ void MainMenu::Render()
         		
                 Widgets::BeginPanel("Prediction", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Relax::PredictionEnabled); Widgets::Tooltip("Predicts whether or not you're leaving the circle and clicks if you are.");
-                    Widgets::Checkbox("Slider prediction", &Config::Relax::SliderPredictionEnabled); Widgets::Tooltip("Same as above, but for sliders.\n\nOften yields false positive results. Enable this only if you really have to.");
-                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::PredictionAngle, 0, 90, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
-                    Widgets::SliderFloat("Scale", &Config::Relax::PredictionScale, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
+                    Widgets::Checkbox("Enabled", &Config::Relax::Prediction::Enabled); Widgets::Tooltip("Predicts whether or not you're leaving the circle and clicks if you are.");
+                    Widgets::Checkbox("Slider prediction", &Config::Relax::Prediction::SliderPredictionEnabled); Widgets::Tooltip("Same as above, but for sliders.\n\nOften yields false positive results. Enable this only if you really have to.");
+                    Widgets::SliderInt("Direction angle tolerance", &Config::Relax::Prediction::Angle, 0, 90, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction.");
+                    Widgets::SliderFloat("Scale", &Config::Relax::Prediction::Scale, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle.");
                 }
                 Widgets::EndPanel();
 
                 Widgets::BeginPanel("Blatant", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1, 1)));
                 {
                     ImGui::TextColored(StyleProvider::AccentColour, "Don't use this on legit servers!");
-                    Widgets::Checkbox("Use lowest possible hold times", &Config::Relax::UseLowestPossibleHoldTimes);
+                    Widgets::Checkbox("Use lowest possible hold times", &Config::Relax::Blatant::UseLowestPossibleHoldTimes);
                 }
                 Widgets::EndPanel();
         	}
@@ -222,22 +224,22 @@ void MainMenu::Render()
                         ImGui::TextColored(StyleProvider::AccentColour, "Instead, we strongly advise you to use algorithm v3 which is just a");
                         ImGui::TextColored(StyleProvider::AccentColour, "polished version of v1.");
 
-                        Widgets::Checkbox("Easy Mode", &Config::AimAssist::EasyMode);
+                        Widgets::Checkbox("Easy Mode", &Config::AimAssist::Algorithmv1::EasyMode::Enabled);
                     }
                     else if (Config::AimAssist::Algorithm == 1)
                     {
-                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2Power, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-                        Widgets::Checkbox("Assist on sliders##algov2assistonsliders", &Config::AimAssist::Algorithmv2AssistOnSliders);
+                        Widgets::SliderFloat("Power", &Config::AimAssist::Algorithmv2::Power, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                        Widgets::Checkbox("Assist on sliders##algov2assistonsliders", &Config::AimAssist::Algorithmv2::AssistOnSliders);
                     }
                     else
                     {
-                        Widgets::SliderFloat("Strength##algov3strength", &Config::AimAssist::Algorithmv3Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
-                        Widgets::Checkbox("Assist on sliders##algov3assistonsliders", &Config::AimAssist::Algorithmv3AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                        Widgets::SliderInt("Base FOV##algov3basefov", &Config::AimAssist::Algorithmv3BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                        Widgets::SliderFloat("Maximum FOV (Scaling)##algov3maxfovscale", &Config::AimAssist::Algorithmv3MaximumFOVScale, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Minimum FOV (Total)##algov3minfovtotal", &Config::AimAssist::Algorithmv3MinimumFOVTotal, 0, 100, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Maximum FOV (Total)##algov3maxfovtotal", &Config::AimAssist::Algorithmv3MaximumFOVTotal, 0, 500, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
-                        Widgets::SliderFloat("Acceleration factor", &Config::AimAssist::Algorithmv3AccelerationFactor, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                        Widgets::SliderFloat("Strength##algov3strength", &Config::AimAssist::Algorithmv3::Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                        Widgets::Checkbox("Assist on sliders##algov3assistonsliders", &Config::AimAssist::Algorithmv3::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
+                        Widgets::SliderInt("Base FOV##algov3basefov", &Config::AimAssist::Algorithmv3::BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                        Widgets::SliderFloat("Maximum FOV (Scaling)##algov3maxfovscale", &Config::AimAssist::Algorithmv3::MaximumFOVScale, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Minimum FOV (Total)##algov3minfovtotal", &Config::AimAssist::Algorithmv3::MinimumFOVTotal, 0, 100, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Maximum FOV (Total)##algov3maxfovtotal", &Config::AimAssist::Algorithmv3::MaximumFOVTotal, 0, 500, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                        Widgets::SliderFloat("Acceleration factor", &Config::AimAssist::Algorithmv3::AccelerationFactor, 0, 5, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
                     }
                     Widgets::Checkbox("Show Debug Overlay", &Config::AimAssist::DrawDebugOverlay);
                 }
@@ -245,11 +247,11 @@ void MainMenu::Render()
 
                 if (Config::AimAssist::Algorithm == 0)
                 {
-                    if (Config::AimAssist::EasyMode)
+                    if (Config::AimAssist::Algorithmv1::EasyMode::Enabled)
                     {
                         Widgets::BeginPanel("Easy Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
                         {
-                            Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::EasyModeStrength, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
+                            Widgets::SliderFloat("Easy Mode Strength", &Config::AimAssist::Algorithmv1::EasyMode::Strength, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
                         }
                         Widgets::EndPanel();
                     }
@@ -257,18 +259,18 @@ void MainMenu::Render()
                     {
                         Widgets::BeginPanel("Advanced Mode", ImVec2(optionsWidth, Widgets::CalcPanelHeight(12)));
                         {
-                            Widgets::SliderFloat("Strength", &Config::AimAssist::Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
-                            Widgets::SliderInt("Base FOV", &Config::AimAssist::BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
-                            Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::MaximumFOVScale, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
-                            Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::MinimumFOVTotal, 0.f, 100.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
-                            Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::MaximumFOVTotal, 0.f, 500.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
-                            Widgets::Checkbox("Assist on sliders", &Config::AimAssist::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
-                            Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::SliderballDeadzone, 0.f, 25.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
-                            Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
-                            Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::StrengthMultiplier, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
-                            Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::AssistDeadzone, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
-                            Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::ResyncLeniency, 0.f, 15.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
-                            Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::ResyncLeniencyFactor, 0.f, 0.999f, 0.001f, 0.01f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
+                            Widgets::SliderFloat("Strength", &Config::AimAssist::Algorithmv1::AdvancedMode::Strength, 0.f, 1.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the Aim Assist strength, change this value according to how strong you want to be helped with.");
+                            Widgets::SliderInt("Base FOV", &Config::AimAssist::Algorithmv1::AdvancedMode::BaseFOV, 0, 100, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This basically acts as the Aim Assist's Field of View. If the next object distance is too far from the cursor, the aim assist will not assist.\nIf you're in range of the object, but still far away, setting Distance to a high value will trigger visible snaps.");
+                            Widgets::SliderFloat("Maximum FOV (Scaling)", &Config::AimAssist::Algorithmv1::AdvancedMode::MaximumFOVScale, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the maximum amount that the AR & Time will influence the FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Minimum FOV (Total)", &Config::AimAssist::Algorithmv1::AdvancedMode::MinimumFOVTotal, 0.f, 100.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total minimum FOV of the Aim Assist.");
+                            Widgets::SliderFloat("Maximum FOV (Total)", &Config::AimAssist::Algorithmv1::AdvancedMode::MaximumFOVTotal, 0.f, 500.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the total maximum FOV of the Aim Assist.");
+                            Widgets::Checkbox("Assist on sliders", &Config::AimAssist::Algorithmv1::AdvancedMode::AssistOnSliders); Widgets::Tooltip("Do you need help on sliders?\nYes?\nTurn this on then.");
+                            Widgets::SliderFloat("Sliderball Deadzone", &Config::AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone, 0.f, 25.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the deadzone of the slider Aim Assist.\nDepending on the 'Flip Sliderball Deadzone' checkbox this deadzone behaves differently.");
+                            Widgets::Checkbox("Flip Sliderball Deadzone", &Config::AimAssist::Algorithmv1::AdvancedMode::FlipSliderballDeadzone); Widgets::Tooltip("Flips the behavior of the Sliderball Deadzone.\nChecked = Aim Assist only assists when inside of the deadzone.\nUnchecked = Aim Assist only assists when outside of the deadzone.");
+                            Widgets::SliderFloat("Strength Multiplier", &Config::AimAssist::Algorithmv1::AdvancedMode::StrengthMultiplier, 0.f, 2.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("This value gets multiplied ontop of the internal calculated strength. Meaning if you think your cursor is too slow, you can try setting this value higher, and vice versa.\nWarning: Don't change this if you don't feel like something is wrong, using the wrong settings here can make your cursor visibly snap.");
+                            Widgets::SliderFloat("Assist Deadzone", &Config::AimAssist::Algorithmv1::AdvancedMode::AssistDeadzone, 0.f, 5.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Setting this to a high value will make the Aim Assist only assist you when you throw your cursor around the screen.\nUseful to negate a self concious Aim Assist and also useful to limit Aim Assist to cross-screen jumps.");
+                            Widgets::SliderFloat("Resync Leniency", &Config::AimAssist::Algorithmv1::AdvancedMode::ResyncLeniency, 0.f, 15.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the value where the Aim Assist would counteract teleporations and desyncs by easing back to original position through the factor defined below.");
+                            Widgets::SliderFloat("Resync Leniency Factor", &Config::AimAssist::Algorithmv1::AdvancedMode::ResyncLeniencyFactor, 0.f, 0.999f, 0.001f, 0.01f, "%.3f", ImGuiSliderFlags_ClampOnInput); Widgets::Tooltip("Sets the multiplication factor for easing-back on a cursor desync. This also acts like a smoothing filter, a higher value will make the cursor drag behind.\n1 = Slow synchronization (slow filter)\n0 = Ease back almost instantly");
                         }
                         Widgets::EndPanel();
                     }
@@ -296,34 +298,34 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Visuals::ARChangerEnabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
-                    Widgets::SliderFloat("AR", &Config::Visuals::AR, 0.f, 12.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
-                    Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChangerAdjustToMods); Widgets::Tooltip("If this option is enabled, AR Changer will adjust the AR you have set to currently selected mods.\n\nFor example, if you selected Easy mod, AR will be slightly lower.");
-                    Widgets::Checkbox("Adjust to rate", &Config::Visuals::ARChangerAdjustToRate);
-                    Widgets::Checkbox("Draw preemptive dot", &Config::Visuals::ARChangerDrawPreemptiveDot);
-                    ImGui::ColorEdit4("Preemptive dot colour", reinterpret_cast<float*>(&Config::Visuals::ARChangerPreemptiveDotColour), ImGuiColorEditFlags_NoInputs);
+                    Widgets::Checkbox("Enabled", &Config::Visuals::ARChanger::Enabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
+                    Widgets::SliderFloat("AR", &Config::Visuals::ARChanger::AR, 0.f, 12.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp); Widgets::Tooltip("Higher value = hit objects will be shown for a shorter period of time = less time to react.\n\nLower value = hit objects will be shown for a longer period of time = more time to react.");
+                    Widgets::Checkbox("Adjust to mods", &Config::Visuals::ARChanger::AdjustToMods); Widgets::Tooltip("If this option is enabled, AR Changer will adjust the AR you have set to currently selected mods.\n\nFor example, if you selected Easy mod, AR will be slightly lower.");
+                    Widgets::Checkbox("Adjust to rate", &Config::Visuals::ARChanger::AdjustToRate);
+                    Widgets::Checkbox("Draw preemptive dot", &Config::Visuals::ARChanger::DrawPreemptiveDot);
+                    ImGui::ColorEdit4("Preemptive dot colour", reinterpret_cast<float*>(&Config::Visuals::ARChanger::PreemptiveDotColour), ImGuiColorEditFlags_NoInputs);
                 }
                 Widgets::EndPanel();
 
                 Widgets::BeginPanel("CS Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2, 1)));
                 {
                     ImGui::TextColored(StyleProvider::AccentColour, "Don't use this on legit servers!");
-                    Widgets::Checkbox("Enabled", &Config::Visuals::CSChangerEnabled);
-                    Widgets::SliderFloat("CS", &Config::Visuals::CS, 0.f, 10.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+                    Widgets::Checkbox("Enabled", &Config::Visuals::CSChanger::Enabled);
+                    Widgets::SliderFloat("CS", &Config::Visuals::CSChanger::CS, 0.f, 10.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
                 }
                 Widgets::EndPanel();
             	
                 Widgets::BeginPanel("HD & FL Removers", ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
                 {
-                    Widgets::Checkbox("Disable Hidden", &Config::Visuals::HiddenDisabled); Widgets::Tooltip("Disables Hidden mod.");
-                    Widgets::Checkbox("Disable Flashlight", &Config::Visuals::FlashlightDisabled); Widgets::Tooltip("Disables Flashlight mod.");
+                    Widgets::Checkbox("Disable Hidden", &Config::Visuals::Removers::HiddenRemoverEnabled); Widgets::Tooltip("Disables Hidden mod.");
+                    Widgets::Checkbox("Disable Flashlight", &Config::Visuals::Removers::FlashlightRemoverEnabled); Widgets::Tooltip("Disables Flashlight mod.");
                 }
                 Widgets::EndPanel();
 
                 Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 7 : 6, 0, 2)));
                 {
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
-                    if (Widgets::Combo("Menu scale", &Config::Visuals::MenuScale, scales, IM_ARRAYSIZE(scales)))
+                    if (Widgets::Combo("Menu scale", &Config::Visuals::UI::MenuScale, scales, IM_ARRAYSIZE(scales)))
                         StyleProvider::UpdateScale();
 
                     ImGui::Spacing();
@@ -347,7 +349,7 @@ void MainMenu::Render()
 
                     if (fileDialog.HasSelected())
                     {
-                        strcpy_s(Config::Visuals::MenuBackground, fileDialog.GetSelected().string().c_str());
+                        strcpy_s(Config::Visuals::UI::MenuBackground, fileDialog.GetSelected().string().c_str());
                         fileDialog.ClearSelected();
 
                         updateBackground();
@@ -357,7 +359,7 @@ void MainMenu::Render()
                 	{
                         if (Widgets::Button("Remove background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                         {
-                            Config::Visuals::MenuBackground[0] = '\0';
+                            Config::Visuals::UI::MenuBackground[0] = '\0';
 
                             updateBackground();
                         }
@@ -366,10 +368,10 @@ void MainMenu::Render()
                     ImGui::Spacing();
 
                     bool coloursChanged = false;
-                    coloursChanged |= ImGui::ColorEdit4("Accent colour", reinterpret_cast<float*>(&Config::Visuals::AccentColour), ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Menu colour", reinterpret_cast<float*>(&Config::Visuals::MenuColour), ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Control colour", reinterpret_cast<float*>(&Config::Visuals::ControlColour), ImGuiColorEditFlags_NoInputs);
-                    coloursChanged |= ImGui::ColorEdit4("Text colour", reinterpret_cast<float*>(&Config::Visuals::TextColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Accent colour", reinterpret_cast<float*>(&Config::Visuals::UI::AccentColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Menu colour", reinterpret_cast<float*>(&Config::Visuals::UI::MenuColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Control colour", reinterpret_cast<float*>(&Config::Visuals::UI::ControlColour), ImGuiColorEditFlags_NoInputs);
+                    coloursChanged |= ImGui::ColorEdit4("Text colour", reinterpret_cast<float*>(&Config::Visuals::UI::TextColour), ImGuiColorEditFlags_NoInputs);
 
                     if (coloursChanged)
                         StyleProvider::UpdateColours();
@@ -446,7 +448,7 @@ void MainMenu::Render()
 
                     if (Widgets::Button("Open Maple folder", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {
-                        std::wstring wPath = std::wstring(DirectoryHelper::WorkingDirectory.begin(), DirectoryHelper::WorkingDirectory.end());
+                        std::wstring wPath = std::wstring(Storage::StorageDirectory.begin(), Storage::StorageDirectory.end());
                         LPCWSTR path = wPath.c_str();
 
                         ShellExecute(NULL, L"open", path, NULL, NULL, SW_RESTORE);
@@ -456,9 +458,9 @@ void MainMenu::Render()
 
                 Widgets::BeginPanel("Rich Presence Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    Widgets::Checkbox("Enabled", &Config::Misc::RichPresenceSpooferEnabled); Widgets::Tooltip("Spoofs Name and Rank fields of your Discord Activity (aka Discord Rich Presence)");
-                    ImGui::InputText("Name", Config::Misc::SpoofedName, 64);
-                    ImGui::InputText("Rank", Config::Misc::SpoofedRank, 64);
+                    Widgets::Checkbox("Enabled", &Config::Misc::RichPresenceSpoofer::Enabled); Widgets::Tooltip("Spoofs Name and Rank fields of your Discord Activity (aka Discord Rich Presence)");
+                    ImGui::InputText("Name", Config::Misc::RichPresenceSpoofer::Name, 64);
+                    ImGui::InputText("Rank", Config::Misc::RichPresenceSpoofer::Rank, 64);
                 }
                 Widgets::EndPanel();
             }

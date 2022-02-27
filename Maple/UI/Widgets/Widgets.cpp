@@ -5,7 +5,7 @@
 
 #include <map>
 
-#include "StyleProvider.h"
+#include "../StyleProvider.h"
 
 const char* Widgets::patchFormatStringFloatToInt(const char* fmt)
 {

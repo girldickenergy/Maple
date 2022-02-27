@@ -19,12 +19,12 @@
 #include "Sdk/Player/HitObjectManager.h"
 #include "Sdk/Player/Player.h"
 #include "Sdk/Player/Ruleset.h"
-#include "Utilities/Logging/Logger.h"
+#include "Logging/Logger.h"
 #include "Sdk/Osu/GameField.h"
 #include "Utilities/Security/Security.h"
 #include "Utilities/Strings/StringUtilities.h"
 #include "Features/Spoofer/Spoofer.h"
-#include "Utilities/Directories/DirectoryHelper.h"
+#include "Storage/Storage.h"
 
 #include <curl.h>
 #include "Sdk/Osu/WindowManager.h"
@@ -87,7 +87,7 @@ void InitializeMaple()
     if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
         Security::CorruptMemory();
 
-    DirectoryHelper::Initialize();
+    Storage::Initialize(Communication::CurrentUser->UsernameHashed);
 	
     Vanilla::Initialize();
 

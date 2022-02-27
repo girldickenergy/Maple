@@ -190,7 +190,7 @@ HitTimings Relax::calculateTimings(bool alternating)
 		}
 	}
 
-	if (Config::Relax::UseLowestPossibleHoldTimes)
+	if (Config::Relax::Blatant::UseLowestPossibleHoldTimes)
 		holdTime = (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
 
 	return HitTimings(static_cast<int>(offset), static_cast<int>(holdTime));
@@ -258,11 +258,11 @@ HitScanResult Relax::getNormalHitScanResult()
 		if (time >= currentHitObject.StartTime + hitTimings.Offset)
 			return HitScanResult::Hit;
 
-		if (Config::Relax::PredictionEnabled)
+		if (Config::Relax::Prediction::Enabled)
 		{
-			if (!lastCursorPosition.IsNull && currentIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * Config::Relax::PredictionScale)
+			if (!lastCursorPosition.IsNull && currentIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * Config::Relax::Prediction::Scale)
 			{
-				if (directionAngleNext <= Config::Relax::PredictionAngle)
+				if (directionAngleNext <= Config::Relax::Prediction::Angle)
 					return HitScanResult::Hit;
 			}
 		}
@@ -301,7 +301,7 @@ HitScanResult Relax::getSliderHitScanResult()
 		if (time >= currentHitObject.StartTime + hitTimings.Offset)
 			return HitScanResult::Hit;
 
-		if (Config::Relax::PredictionEnabled && Config::Relax::SliderPredictionEnabled)
+		if (Config::Relax::Prediction::Enabled && Config::Relax::Prediction::SliderPredictionEnabled)
 		{
 			const Vector2 sliderBodyPosition = currentHitObject.PositionAtTime(currentHitObject.StartTime + hitWindow50 + 10);
 
@@ -311,9 +311,9 @@ HitScanResult Relax::getSliderHitScanResult()
 
 			const double directionAngle = calculateDirectionAngle(lastCursorPosition, cursorPosition, sliderBodyPosition);
 
-			if (!lastCursorPosition.IsNull && distanceToSliderBody < lastDistanceToSliderBody && distanceToSliderBody < distanceFromObjectToSliderBody && distanceToObject > hitObjectRadius * Config::Relax::PredictionScale)
+			if (!lastCursorPosition.IsNull && distanceToSliderBody < lastDistanceToSliderBody && distanceToSliderBody < distanceFromObjectToSliderBody && distanceToObject > hitObjectRadius * Config::Relax::Prediction::Scale)
 			{
-				if (directionAngle <= Config::Relax::PredictionAngle)
+				if (directionAngle <= Config::Relax::Prediction::Angle)
 					return HitScanResult::Hit;
 			}
 		}

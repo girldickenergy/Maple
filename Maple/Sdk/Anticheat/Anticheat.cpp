@@ -3,7 +3,7 @@
 #include <ThemidaSDK.h>
 #include <Vanilla.h>
 
-#include "../../Utilities/Logging/Logger.h"
+#include "../../Logging/Logger.h"
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../Osu/GameBase.h"
 

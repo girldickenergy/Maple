@@ -6,7 +6,8 @@
 
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Utilities/Crypto/CryptoHelper.h"
-#include "../../Utilities/Directories/DirectoryHelper.h"
+#include "../../Storage/Storage.h"
+#include "../../Storage/StorageConfig.h"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -77,12 +78,12 @@ bool Spoofer::isValidName(const std::string& name)
 
 void Spoofer::refresh()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	Profiles.clear();
 	Profiles.emplace_back("none");
 
-	for (const auto& file : std::filesystem::directory_iterator(DirectoryHelper::ProfilesDirectory))
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
 		if (file.path().extension() == ".profile" && isValidName(file.path().filename().stem().string()))
 			Profiles.push_back(file.path().filename().stem().string());
 }
@@ -104,7 +105,7 @@ void Spoofer::Initialize()
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), DirectoryHelper::DefaultProfile);
+	const auto it = std::find(Profiles.begin(), Profiles.end(), StorageConfig::DefaultProfile);
 
 	if (it != Profiles.end())
 		SelectedProfile = std::distance(Profiles.begin(), it);
@@ -116,7 +117,7 @@ void Spoofer::Initialize()
 
 void Spoofer::Load()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
 	{
@@ -127,7 +128,7 @@ void Spoofer::Load()
 	}
 	else
 	{
-		std::ifstream file(DirectoryHelper::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
+		std::ifstream file(Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
 		std::string line;
 
 		std::wstring currentAdapters;
@@ -158,18 +159,18 @@ void Spoofer::Load()
 
 	LoadedProfile = SelectedProfile;
 
-	DirectoryHelper::DefaultProfile = Profiles[LoadedProfile];
-	DirectoryHelper::SaveConfig();
+	StorageConfig::DefaultProfile = Profiles[LoadedProfile];
+	Storage::SaveStorageConfig();
 }
 
 void Spoofer::Delete()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profilePath = DirectoryHelper::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
 
 	std::filesystem::remove(profilePath);
 
@@ -182,9 +183,9 @@ void Spoofer::Delete()
 
 void Spoofer::Create()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	const std::string profilePath = DirectoryHelper::ProfilesDirectory + "\\" + NewProfileName + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + "\\" + NewProfileName + ".profile";
 
 	if (!isValidName(NewProfileName) || std::filesystem::exists(profilePath))
 		return;

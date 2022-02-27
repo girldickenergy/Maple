@@ -14,7 +14,7 @@
 #include "../Sdk/ConfigManager/ConfigManager.h"
 #include "../Sdk/Player/Player.h"
 #include "../UI/Overlay.h"
-#include "../Utilities/Logging/Logger.h"
+#include "../Logging/Logger.h"
 #include "../Utilities/Security/Security.h"
 #include "../Features/Spoofer/Spoofer.h"
 #include "ErrorSubmission.h"

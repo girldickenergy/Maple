@@ -5,7 +5,7 @@
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Features/Timewarp/Timewarp.h"
-#include "../../UI/MainMenu.h"
+#include "../../UI/Menus/MainMenu.h"
 #include "../../Features/Visuals/VisualsSpoofers.h"
 
 void Player::Initialize()

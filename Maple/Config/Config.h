@@ -8,14 +8,12 @@
 
 class Config
 {
-	static bool isSameName(const std::string& a, const std::string& b);
-	static bool isValidName(std::string name);
 	static ImVec4 parseImVec4(std::string vec);
 	static void loadDefaults();
 public:
 	static inline std::vector<std::string> Configs;
 	static inline int CurrentConfig = 0;
-	static inline char NewConfigName[20] = { };
+	static inline char NewConfigName[24] = { };
 
 	static void Initialize();
 	static void Load();
@@ -35,43 +33,69 @@ public:
 		static inline int AlternationHitSpread;
 		static inline bool HoldConsecutiveSpinners;
 		static inline bool SliderAlternationOverride;
-		static inline bool PredictionEnabled;
-		static inline bool SliderPredictionEnabled;
-		static inline int PredictionAngle;
-		static inline float PredictionScale;
-		static inline bool UseLowestPossibleHoldTimes;
+
+		struct Prediction
+		{
+			static inline bool Enabled;
+			static inline bool SliderPredictionEnabled;
+			static inline int Angle;
+			static inline float Scale;
+		};
+
+		struct Blatant
+		{
+			static inline bool UseLowestPossibleHoldTimes;
+		};
 	};
 	
 	struct AimAssist
 	{
 		static inline bool Enabled;
 		static inline int Algorithm;
-		static inline bool EasyMode;
-		/* Easy mode arguments*/
-		static inline float EasyModeStrength;
-		/* Advanced mode arguments*/
-		static inline float Strength;
-		static inline int BaseFOV;
-		static inline float MaximumFOVScale;
-		static inline float MinimumFOVTotal;
-		static inline float MaximumFOVTotal;
-		static inline float SliderballDeadzone;
-		static inline bool FlipSliderballDeadzone;
-		static inline float AssistDeadzone;
-		static inline float StrengthMultiplier;
-		static inline float ResyncLeniency;
-		static inline float ResyncLeniencyFactor;
-		static inline bool AssistOnSliders;
+
+		struct Algorithmv1
+		{
+			struct EasyMode
+			{
+				static inline bool Enabled;
+				static inline float Strength;
+			};
+
+			struct AdvancedMode
+			{
+				static inline float Strength;
+				static inline int BaseFOV;
+				static inline float MaximumFOVScale;
+				static inline float MinimumFOVTotal;
+				static inline float MaximumFOVTotal;
+				static inline float SliderballDeadzone;
+				static inline bool FlipSliderballDeadzone;
+				static inline float AssistDeadzone;
+				static inline float StrengthMultiplier;
+				static inline float ResyncLeniency;
+				static inline float ResyncLeniencyFactor;
+				static inline bool AssistOnSliders;
+			};
+		};
+		
+		struct Algorithmv2
+		{
+			static inline float Power;
+			static inline bool AssistOnSliders;
+		};
+
+		struct Algorithmv3
+		{
+			static inline float Strength;
+			static inline bool AssistOnSliders;
+			static inline int BaseFOV;
+			static inline float MaximumFOVScale;
+			static inline float MinimumFOVTotal;
+			static inline float MaximumFOVTotal;
+			static inline float AccelerationFactor;
+		};
+
 		static inline bool DrawDebugOverlay;
-		static inline float Algorithmv2Power;
-		static inline bool Algorithmv2AssistOnSliders;
-		static inline float Algorithmv3Strength;
-		static inline bool Algorithmv3AssistOnSliders;
-		static inline int Algorithmv3BaseFOV;
-		static inline float Algorithmv3MaximumFOVScale;
-		static inline float Algorithmv3MinimumFOVTotal;
-		static inline float Algorithmv3MaximumFOVTotal;
-		static inline float Algorithmv3AccelerationFactor;
 	};
 
 	struct Timewarp
@@ -84,22 +108,37 @@ public:
 
 	struct Visuals
 	{
-		static inline bool ARChangerEnabled;
-		static inline float AR;
-		static inline bool ARChangerAdjustToMods;
-		static inline bool ARChangerAdjustToRate;
-		static inline bool ARChangerDrawPreemptiveDot;
-		static inline ImVec4 ARChangerPreemptiveDotColour;
-		static inline bool HiddenDisabled;
-		static inline bool FlashlightDisabled;
-		static inline bool CSChangerEnabled;
-		static inline float CS;
-		static inline int MenuScale;
-		static inline char MenuBackground[MAX_PATH];
-		static inline ImVec4 AccentColour;
-		static inline ImVec4 MenuColour;
-		static inline ImVec4 ControlColour;
-		static inline ImVec4 TextColour;
+		struct ARChanger
+		{
+			static inline bool Enabled;
+			static inline float AR;
+			static inline bool AdjustToMods;
+			static inline bool AdjustToRate;
+			static inline bool DrawPreemptiveDot;
+			static inline ImVec4 PreemptiveDotColour;
+		};
+
+		struct Removers
+		{
+			static inline bool HiddenRemoverEnabled;
+			static inline bool FlashlightRemoverEnabled;
+		};
+
+		struct CSChanger
+		{
+			static inline bool Enabled;
+			static inline float CS;
+		};
+
+		struct UI
+		{
+			static inline int MenuScale;
+			static inline char MenuBackground[MAX_PATH];
+			static inline ImVec4 AccentColour;
+			static inline ImVec4 MenuColour;
+			static inline ImVec4 ControlColour;
+			static inline ImVec4 TextColour;
+		};
 	};
 
 	struct Misc
@@ -107,8 +146,12 @@ public:
 		static inline bool DisableSpectators;
 		static inline bool PromptOnScoreSubmissionEnabled;
 		static inline bool DisableLogging;
-		static inline bool RichPresenceSpooferEnabled;
-		static inline char SpoofedName[64];
-		static inline char SpoofedRank[64];
+
+		struct RichPresenceSpoofer
+		{
+			static inline bool Enabled;
+			static inline char Name[64];
+			static inline char Rank[64];
+		};
 	};
 };

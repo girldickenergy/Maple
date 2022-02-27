@@ -6,22 +6,8 @@
 #include <ThemidaSDK.h>
 
 #include "../../Utilities/Security/xorstr.hpp"
-#include "../Utilities/Directories/DirectoryHelper.h"
-
-bool Config::isSameName(const std::string& a, const std::string& b)
-{
-	std::string aLowerCase = a;
-	std::string bLowerCase = b;
-	std::transform(aLowerCase.begin(), aLowerCase.end(), aLowerCase.begin(), tolower);
-	std::transform(bLowerCase.begin(), bLowerCase.end(), bLowerCase.begin(), tolower);
-
-	return aLowerCase == bLowerCase;
-}
-
-bool Config::isValidName(std::string name)
-{
-	return !name.empty() && !isSameName(name, xor ("default"));
-}
+#include "../Storage/Storage.h"
+#include "../Storage/StorageConfig.h"
 
 ImVec4 Config::parseImVec4(std::string vec)
 {
@@ -55,67 +41,67 @@ void Config::loadDefaults()
 	Relax::AlternationHitSpread = 90;
 	Relax::HoldConsecutiveSpinners = false;
 	Relax::SliderAlternationOverride = false;
-	Relax::PredictionEnabled = false;
-	Relax::SliderPredictionEnabled = false;
-	Relax::PredictionAngle = 45;
-	Relax::PredictionScale = 0.8f;
-	Relax::UseLowestPossibleHoldTimes = false;
+	Relax::Prediction::Enabled = false;
+	Relax::Prediction::SliderPredictionEnabled = false;
+	Relax::Prediction::Angle = 45;
+	Relax::Prediction::Scale = 0.8f;
+	Relax::Blatant::UseLowestPossibleHoldTimes = false;
 
 	AimAssist::Enabled = false;
 	AimAssist::Algorithm = 0;
-	AimAssist::EasyMode = true;
-	AimAssist::EasyModeStrength = 0.5f;
-	AimAssist::Strength = 0.6f;
-	AimAssist::BaseFOV = 45;
-	AimAssist::MaximumFOVScale = 2.5f;
-	AimAssist::MinimumFOVTotal = 0.f;
-	AimAssist::MaximumFOVTotal = 225.f;
-	AimAssist::SliderballDeadzone = 12.5f;
-	AimAssist::FlipSliderballDeadzone = true;
-	AimAssist::AssistOnSliders = true;
-	AimAssist::StrengthMultiplier = 1.f;
-	AimAssist::AssistDeadzone = 3.f;
-	AimAssist::ResyncLeniency = 3.5f;
-	AimAssist::ResyncLeniencyFactor = 0.698f;
 	AimAssist::DrawDebugOverlay = false;
-	AimAssist::Algorithmv2Power = 0.5f;
-	AimAssist::Algorithmv2AssistOnSliders = true;
-	AimAssist::Algorithmv3Strength = 0.6f;
-	AimAssist::Algorithmv3AssistOnSliders = true;
-	AimAssist::Algorithmv3BaseFOV = 45;
-	AimAssist::Algorithmv3MaximumFOVScale = 2.5f;
-	AimAssist::Algorithmv3MinimumFOVTotal = 0.f;
-	AimAssist::Algorithmv3MaximumFOVTotal = 225.f;
-	AimAssist::Algorithmv3AccelerationFactor = 1.f;
+	AimAssist::Algorithmv1::EasyMode::Enabled = true;
+	AimAssist::Algorithmv1::EasyMode::Strength = 0.5f;
+	AimAssist::Algorithmv1::AdvancedMode::Strength = 0.6f;
+	AimAssist::Algorithmv1::AdvancedMode::BaseFOV = 45;
+	AimAssist::Algorithmv1::AdvancedMode::MaximumFOVScale = 2.5f;
+	AimAssist::Algorithmv1::AdvancedMode::MinimumFOVTotal = 0.f;
+	AimAssist::Algorithmv1::AdvancedMode::MaximumFOVTotal = 225.f;
+	AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone = 12.5f;
+	AimAssist::Algorithmv1::AdvancedMode::FlipSliderballDeadzone = true;
+	AimAssist::Algorithmv1::AdvancedMode::AssistOnSliders = true;
+	AimAssist::Algorithmv1::AdvancedMode::StrengthMultiplier = 1.f;
+	AimAssist::Algorithmv1::AdvancedMode::AssistDeadzone = 3.f;
+	AimAssist::Algorithmv1::AdvancedMode::ResyncLeniency = 3.5f;
+	AimAssist::Algorithmv1::AdvancedMode::ResyncLeniencyFactor = 0.698f;
+	AimAssist::Algorithmv2::Power = 0.5f;
+	AimAssist::Algorithmv2::AssistOnSliders = true;
+	AimAssist::Algorithmv3::Strength = 0.6f;
+	AimAssist::Algorithmv3::AssistOnSliders = true;
+	AimAssist::Algorithmv3::BaseFOV = 45;
+	AimAssist::Algorithmv3::MaximumFOVScale = 2.5f;
+	AimAssist::Algorithmv3::MinimumFOVTotal = 0.f;
+	AimAssist::Algorithmv3::MaximumFOVTotal = 225.f;
+	AimAssist::Algorithmv3::AccelerationFactor = 1.f;
 
 	Timewarp::Enabled = false;
 	Timewarp::Type = 0;
 	Timewarp::Rate = 100;
 	Timewarp::Multiplier = 1.;
 
-	Visuals::ARChangerEnabled = false;
-	Visuals::AR = 9.2f;
-	Visuals::ARChangerAdjustToMods = false;
-	Visuals::ARChangerAdjustToRate = false;
-	Visuals::ARChangerDrawPreemptiveDot = false;
-	Visuals::ARChangerPreemptiveDotColour = ImColor(232, 93, 155, 255).Value;
-	Visuals::CSChangerEnabled = false;
-	Visuals::CS = 4.2f;
-	Visuals::HiddenDisabled = false;
-	Visuals::FlashlightDisabled = false;
-	Visuals::MenuScale = 2;
-	Visuals::MenuBackground[0] = '\0';
-	Visuals::AccentColour = ImColor(232, 93, 155, 255).Value;
-	Visuals::MenuColour = ImColor(65, 65, 65, 255).Value;
-	Visuals::ControlColour = ImColor(76, 76, 76, 255).Value;
-	Visuals::TextColour = ImVec4(ImColor(255, 255, 255, 255));
+	Visuals::ARChanger::Enabled = false;
+	Visuals::ARChanger::AR = 9.2f;
+	Visuals::ARChanger::AdjustToMods = false;
+	Visuals::ARChanger::AdjustToRate = false;
+	Visuals::ARChanger::DrawPreemptiveDot = false;
+	Visuals::ARChanger::PreemptiveDotColour = ImColor(232, 93, 155, 255).Value;
+	Visuals::CSChanger::Enabled = false;
+	Visuals::CSChanger::CS = 4.2f;
+	Visuals::Removers::HiddenRemoverEnabled = false;
+	Visuals::Removers::FlashlightRemoverEnabled = false;
+	Visuals::UI::MenuScale = 2;
+	Visuals::UI::MenuBackground[0] = '\0';
+	Visuals::UI::AccentColour = ImColor(232, 93, 155, 255).Value;
+	Visuals::UI::MenuColour = ImColor(65, 65, 65, 255).Value;
+	Visuals::UI::ControlColour = ImColor(76, 76, 76, 255).Value;
+	Visuals::UI::TextColour = ImVec4(ImColor(255, 255, 255, 255));
 
 	Misc::DisableSpectators = false;
 	Misc::PromptOnScoreSubmissionEnabled = false;
 	Misc::DisableLogging = false;
-	Misc::RichPresenceSpooferEnabled = false;
-	strcpy_s(Misc::SpoofedName, xor ("maple.software"));
-	strcpy_s(Misc::SpoofedRank, xor("rocking osu! since 2021"));
+	Misc::RichPresenceSpoofer::Enabled = false;
+	strcpy_s(Misc::RichPresenceSpoofer::Name, xor ("maple.software"));
+	strcpy_s(Misc::RichPresenceSpoofer::Rank, xor ("rocking osu! since 2021"));
 
 	STR_ENCRYPT_END
 }
@@ -124,7 +110,7 @@ void Config::Initialize()
 {
 	Refresh();
 
-	const auto it = std::find(Configs.begin(), Configs.end(), DirectoryHelper::DefaultConfig);
+	const auto it = std::find(Configs.begin(), Configs.end(), StorageConfig::DefaultConfig);
 
 	if (it != Configs.end())
 		CurrentConfig = std::distance(Configs.begin(), it);
@@ -138,16 +124,21 @@ void Config::Load()
 {
 	STR_ENCRYPT_START
 	
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
 
-	DirectoryHelper::DefaultConfig = Configs[CurrentConfig];
-	DirectoryHelper::SaveConfig();
+	StorageConfig::DefaultConfig = Configs[CurrentConfig];
+	Storage::SaveStorageConfig();
 
 	if (CurrentConfig == 0)
 		return;
 
-	std::ifstream file(DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg");
+	std::string configFilePath = Storage::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg";
+
+	if (!std::filesystem::exists(configFilePath))
+		return;
+
+	std::ifstream file(configFilePath);
 	std::string line;
 
 	while (std::getline(file, line))
@@ -156,144 +147,144 @@ void Config::Load()
 		std::string variable = line.substr(0, delimiterIndex);
 		std::string value = line.substr(delimiterIndex + 1, std::string::npos);
 
-		if (variable == "RelaxEnabled")
+		if (variable == "Relax_Enabled")
 			Relax::Enabled = value == "1";
-		if (variable == "RelaxDistribution")
+		if (variable == "Relax_Distribution")
 			Relax::Distribution = std::stoi(value);
-		if (variable == "RelaxPlaystyle")
+		if (variable == "Relax_Playstyle")
 			Relax::Playstyle = std::stoi(value);
-		if (variable == "RelaxPrimaryKey")
+		if (variable == "Relax_PrimaryKey")
 			Relax::PrimaryKey = std::stoi(value);
-		if (variable == "RelaxSecondaryKey")
+		if (variable == "Relax_SecondaryKey")
 			Relax::SecondaryKey = std::stoi(value);
-		if (variable == "RelaxMaxSingletapBPM")
+		if (variable == "Relax_MaxSingletapBPM")
 			Relax::MaxSingletapBPM = std::stoi(value);
-		if (variable == "RelaxHitSpread")
+		if (variable == "Relax_HitSpread")
 			Relax::HitSpread = std::stoi(value);
-		if (variable == "RelaxAlternationHitSpread")
+		if (variable == "Relax_AlternationHitSpread")
 			Relax::AlternationHitSpread = std::stoi(value);
-		if (variable == "RelaxHoldConsecutiveSpinners")
+		if (variable == "Relax_HoldConsecutiveSpinners")
 			Relax::HoldConsecutiveSpinners = value == "1";
-		if (variable == "RelaxSliderAlternationOverride")
+		if (variable == "Relax_SliderAlternationOverride")
 			Relax::SliderAlternationOverride = value == "1";
-		if (variable == "RelaxPredictionEnabled")
-			Relax::PredictionEnabled = value == "1";
-		if (variable == "RelaxSliderPredictionEnabled")
-			Relax::SliderPredictionEnabled = value == "1";
-		if (variable == "RelaxPredictionAngle")
-			Relax::PredictionAngle = std::stoi(value);
-		if (variable == "RelaxPredictionScale")
-			Relax::PredictionScale = std::stof(value);
-		if (variable == "RelaxUseLowestPossibleHoldTimes")
-			Relax::UseLowestPossibleHoldTimes = value == "1";
+		if (variable == "Relax_Prediction_Enabled")
+			Relax::Prediction::Enabled = value == "1";
+		if (variable == "Relax_Prediction_SliderPredictionEnabled")
+			Relax::Prediction::SliderPredictionEnabled = value == "1";
+		if (variable == "Relax_Prediction_Angle")
+			Relax::Prediction::Angle = std::stoi(value);
+		if (variable == "Relax_Prediction_Scale")
+			Relax::Prediction::Scale = std::stof(value);
+		if (variable == "Relax_Blatant_UseLowestPossibleHoldTimes")
+			Relax::Blatant::UseLowestPossibleHoldTimes = value == "1";
 
-		if (variable == "AimAssistEnabled")
+		if (variable == "AimAssist_Enabled")
 			AimAssist::Enabled = value == "1";
-		if (variable == "AimAssistAlgorithm")
+		if (variable == "AimAssist_Algorithm")
 			AimAssist::Algorithm = std::stoi(value);
-		if (variable == "AimAssistEasyMode")
-			AimAssist::EasyMode = value == "1";
-		if (variable == "AimAssistEasyModeStrength")
-			AimAssist::EasyModeStrength = std::stof(value);
-		if (variable == "AimAssistStrength")
-			AimAssist::Strength = std::stof(value);
-		if (variable == "AimAssistBaseFOV")
-			AimAssist::BaseFOV = std::stoi(value);
-		if (variable == "AimAssistMaximumFOVScale")
-			AimAssist::MaximumFOVScale = std::stof(value);
-		if (variable == "AimAssistMinimumFOVTotal")
-			AimAssist::MinimumFOVTotal = std::stof(value);
-		if (variable == "AimAssistMaximumFOVTotal")
-			AimAssist::MaximumFOVTotal = std::stof(value);
-		if (variable == "AimAssistAssistOnSliders")
-			AimAssist::AssistOnSliders = value == "1";
-		if (variable == "AimAssistStrengthMultiplier")
-			AimAssist::StrengthMultiplier = std::stof(value);
-		if (variable == "AimAssistAssistDeadzone")
-			AimAssist::AssistDeadzone = std::stof(value);
-		if (variable == "AimAssistResyncLeniency")
-			AimAssist::ResyncLeniency = std::stof(value);
-		if (variable == "AimAssistResyncLeniencyFactor")
-			AimAssist::ResyncLeniencyFactor = std::stof(value);
-		if (variable == "AimAssistDrawDebugOverlay")
+		if (variable == "AimAssist_DrawDebugOverlay")
 			AimAssist::DrawDebugOverlay = value == "1";
-		if (variable == "AimAssistFlipSliderballDeadzone")
-			AimAssist::FlipSliderballDeadzone = value == "1";
-		if (variable == "AimAssistSliderballDeadzone")
-			AimAssist::SliderballDeadzone = std::stof(value);
-		if (variable == "AimAssistAlgorithmv2Power")
-			AimAssist::Algorithmv2Power = std::stof(value);
-		if (variable == "AimAssistAlgorithmv2AssistOnSliders")
-			AimAssist::Algorithmv2AssistOnSliders = value == "1";
-		if (variable == "AimAssistAlgorithmv3Strength")
-			AimAssist::Algorithmv3Strength = std::stof(value);
-		if (variable == "AimAssistAlgorithmv3AssistOnSliders")
-			AimAssist::Algorithmv3AssistOnSliders = value == "1";
-		if (variable == "AimAssistAlgorithmv3BaseFOV")
-			AimAssist::Algorithmv3BaseFOV = std::stoi(value);
-		if (variable == "AimAssistAlgorithmv3MaximumFOVScale")
-			AimAssist::Algorithmv3MaximumFOVScale = std::stof(value);
-		if (variable == "AimAssistAlgorithmv3MinimumFOVTotal")
-			AimAssist::Algorithmv3MinimumFOVTotal = std::stof(value);
-		if (variable == "AimAssistAlgorithmv3MaximumFOVTotal")
-			AimAssist::Algorithmv3MaximumFOVTotal = std::stof(value);
-		if (variable == "AimAssistAlgorithmv3AccelerationFactor")
-			AimAssist::Algorithmv3AccelerationFactor = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_EasyMode_Enabled")
+			AimAssist::Algorithmv1::EasyMode::Enabled = value == "1";
+		if (variable == "AimAssist_Algorithmv1_EasyMode_Strength")
+			AimAssist::Algorithmv1::EasyMode::Strength = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_Strength")
+			AimAssist::Algorithmv1::AdvancedMode::Strength = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_BaseFOV")
+			AimAssist::Algorithmv1::AdvancedMode::BaseFOV = std::stoi(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_MaximumFOVScale")
+			AimAssist::Algorithmv1::AdvancedMode::MaximumFOVScale = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_MinimumFOVTotal")
+			AimAssist::Algorithmv1::AdvancedMode::MinimumFOVTotal = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_MaximumFOVTotal")
+			AimAssist::Algorithmv1::AdvancedMode::MaximumFOVTotal = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_AssistOnSliders")
+			AimAssist::Algorithmv1::AdvancedMode::AssistOnSliders = value == "1";
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_StrengthMultiplier")
+			AimAssist::Algorithmv1::AdvancedMode::StrengthMultiplier = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_AssistDeadzone")
+			AimAssist::Algorithmv1::AdvancedMode::AssistDeadzone = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_ResyncLeniency")
+			AimAssist::Algorithmv1::AdvancedMode::ResyncLeniency = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_ResyncLeniencyFactor")
+			AimAssist::Algorithmv1::AdvancedMode::ResyncLeniencyFactor = std::stof(value);
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_FlipSliderballDeadzone")
+			AimAssist::Algorithmv1::AdvancedMode::FlipSliderballDeadzone = value == "1";
+		if (variable == "AimAssist_Algorithmv1_AdvancedMode_SliderballDeadzone")
+			AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone = std::stof(value);
+		if (variable == "AimAssist_Algorithmv2_Power")
+			AimAssist::Algorithmv2::Power = std::stof(value);
+		if (variable == "AimAssist_Algorithmv2_AssistOnSliders")
+			AimAssist::Algorithmv2::AssistOnSliders = value == "1";
+		if (variable == "AimAssist_Algorithmv3_Strength")
+			AimAssist::Algorithmv3::Strength = std::stof(value);
+		if (variable == "AimAssist_Algorithmv3_AssistOnSliders")
+			AimAssist::Algorithmv3::AssistOnSliders = value == "1";
+		if (variable == "AimAssist_Algorithmv3_BaseFOV")
+			AimAssist::Algorithmv3::BaseFOV = std::stoi(value);
+		if (variable == "AimAssist_Algorithmv3_MaximumFOVScale")
+			AimAssist::Algorithmv3::MaximumFOVScale = std::stof(value);
+		if (variable == "AimAssist_Algorithmv3_MinimumFOVTotal")
+			AimAssist::Algorithmv3::MinimumFOVTotal = std::stof(value);
+		if (variable == "AimAssist_Algorithmv3_MaximumFOVTotal")
+			AimAssist::Algorithmv3::MaximumFOVTotal = std::stof(value);
+		if (variable == "AimAssist_Algorithmv3_AccelerationFactor")
+			AimAssist::Algorithmv3::AccelerationFactor = std::stof(value);
 
-		if (variable == "TimewarpEnabled")
+		if (variable == "Timewarp_Enabled")
 			Timewarp::Enabled = value == "1";
-		if (variable == "TimewarpType")
+		if (variable == "Timewarp_Type")
 			Timewarp::Type = std::stoi(value);
-		if (variable == "TimewarpRate")
+		if (variable == "Timewarp_Rate")
 			Timewarp::Rate = std::stoi(value);
-		if (variable == "TimewarpMultiplier")
+		if (variable == "Timewarp_Multiplier")
 			Timewarp::Multiplier = std::stof(value);
 
-		if (variable == "VisualsARChangerEnabled")
-			Visuals::ARChangerEnabled = value == "1";
-		if (variable == "VisualsARChangerAR")
-			Visuals::AR = std::stof(value);
-		if (variable == "VisualsAdjustToMods")
-			Visuals::ARChangerAdjustToMods = value == "1";
-		if (variable == "VisualsAdjustToRate")
-			Visuals::ARChangerAdjustToRate = value == "1";
-		if (variable == "VisualsDrawPreemptiveDot")
-			Visuals::ARChangerDrawPreemptiveDot = value == "1";
-		if (variable == "VisualsPreemptiveDotColour")
-			Visuals::ARChangerPreemptiveDotColour = parseImVec4(value);
-		if (variable == "VisualsCSChangerEnabled")
-			Visuals::CSChangerEnabled = value == "1";
-		if (variable == "VisualsCSChangerCS")
-			Visuals::CS = std::stof(value);
-		if (variable == "VisualsHiddenDisabled")
-			Visuals::HiddenDisabled = value == "1";
-		if (variable == "VisualsFlashlightDisabled")
-			Visuals::FlashlightDisabled = value == "1";
-		if (variable == "VisualsMenuScale")
-			Visuals::MenuScale = std::stoi(value);
-		if (variable == "VisualsMenuBackground")
-			strcpy_s(Visuals::MenuBackground, value.c_str());
-		if (variable == "VisualsAccentColour")
-			Visuals::AccentColour = parseImVec4(value);
-		if (variable == "VisualsMenuColour")
-			Visuals::MenuColour = parseImVec4(value);
-		if (variable == "VisualsControlColour")
-			Visuals::ControlColour = parseImVec4(value);
-		if (variable == "VisualsTextColour")
-			Visuals::TextColour = parseImVec4(value);
+		if (variable == "Visuals_ARChanger_Enabled")
+			Visuals::ARChanger::Enabled = value == "1";
+		if (variable == "Visuals_ARChanger_AR")
+			Visuals::ARChanger::AR = std::stof(value);
+		if (variable == "Visuals_ARChanger_AdjustToMods")
+			Visuals::ARChanger::AdjustToMods = value == "1";
+		if (variable == "Visuals_ARChanger_AdjustToRate")
+			Visuals::ARChanger::AdjustToRate = value == "1";
+		if (variable == "Visuals_ARChanger_DrawPreemptiveDot")
+			Visuals::ARChanger::DrawPreemptiveDot = value == "1";
+		if (variable == "Visuals_ARChanger_PreemptiveDotColour")
+			Visuals::ARChanger::PreemptiveDotColour = parseImVec4(value);
+		if (variable == "Visuals_CSChanger_Enabled")
+			Visuals::CSChanger::Enabled = value == "1";
+		if (variable == "Visuals_CSChanger_CS")
+			Visuals::CSChanger::CS = std::stof(value);
+		if (variable == "Visuals_Removers_HiddenRemoverEnabled")
+			Visuals::Removers::HiddenRemoverEnabled = value == "1";
+		if (variable == "Visuals_Removers_FlashlightRemoverEnabled")
+			Visuals::Removers::FlashlightRemoverEnabled = value == "1";
+		if (variable == "Visuals_UI_MenuScale")
+			Visuals::UI::MenuScale = std::stoi(value);
+		if (variable == "Visuals_UI_MenuBackground")
+			strcpy_s(Visuals::UI::MenuBackground, value.c_str());
+		if (variable == "Visuals_UI_AccentColour")
+			Visuals::UI::AccentColour = parseImVec4(value);
+		if (variable == "Visuals_UI_MenuColour")
+			Visuals::UI::MenuColour = parseImVec4(value);
+		if (variable == "Visuals_UI_ControlColour")
+			Visuals::UI::ControlColour = parseImVec4(value);
+		if (variable == "Visuals_UI_TextColour")
+			Visuals::UI::TextColour = parseImVec4(value);
 
-		if (variable == "MiscDisableSpectators")
+		if (variable == "Misc_DisableSpectators")
 			Misc::DisableSpectators = value == "1";
-		if (variable == "MiscPromptOnScoreSubmissionEnabled")
+		if (variable == "Misc_PromptOnScoreSubmissionEnabled")
 			Misc::PromptOnScoreSubmissionEnabled = value == "1";
-		if (variable == "MiscDisableLogging")
+		if (variable == "Misc_DisableLogging")
 			Misc::DisableLogging = value == "1";
-		if (variable == "MiscRichPresenceSpooferEnabled")
-			Misc::RichPresenceSpooferEnabled = value == "1";
-		if (variable == "MiscSpoofedName")
-			strcpy_s(Misc::SpoofedName, value.c_str());
-		if (variable == "MiscSpoofedRank")
-			strcpy_s(Misc::SpoofedRank, value.c_str());
+		if (variable == "Misc_RichPresenceSpoofer_Enabled")
+			Misc::RichPresenceSpoofer::Enabled = value == "1";
+		if (variable == "Misc_RichPresenceSpoofer_Name")
+			strcpy_s(Misc::RichPresenceSpoofer::Name, value.c_str());
+		if (variable == "Misc_RichPresenceSpoofer_Rank")
+			strcpy_s(Misc::RichPresenceSpoofer::Rank, value.c_str());
 	}
 
 	file.close();
@@ -308,84 +299,84 @@ void Config::Save()
 	if (CurrentConfig == 0)
 		return;
 
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg";
+	const std::string configFilePath = Storage::ConfigsDirectory + "\\" + Configs[CurrentConfig] + ".cfg";
 
 	std::ofstream ofs;
-	ofs.open(cfgPath, std::ofstream::out | std::ofstream::trunc);
+	ofs.open(configFilePath, std::ofstream::out | std::ofstream::trunc);
 
-	ofs << "RelaxEnabled=" << Relax::Enabled << std::endl;
-	ofs << "RelaxDistribution=" << Relax::Distribution << std::endl;
-	ofs << "RelaxPlaystyle=" << Relax::Playstyle << std::endl;
-	ofs << "RelaxPrimaryKey=" << Relax::PrimaryKey << std::endl;
-	ofs << "RelaxSecondaryKey=" << Relax::SecondaryKey << std::endl;
-	ofs << "RelaxMaxSingletapBPM=" << Relax::MaxSingletapBPM << std::endl;
-	ofs << "RelaxHitSpread=" << Relax::HitSpread << std::endl;
-	ofs << "RelaxAlternationHitSpread=" << Relax::AlternationHitSpread << std::endl;
-	ofs << "RelaxHoldConsecutiveSpinners=" << Relax::HoldConsecutiveSpinners << std::endl;
-	ofs << "RelaxSliderAlternationOverride=" << Relax::SliderAlternationOverride << std::endl;
-	ofs << "RelaxPredictionEnabled=" << Relax::PredictionEnabled << std::endl;
-	ofs << "RelaxSliderPredictionEnabled=" << Relax::SliderPredictionEnabled << std::endl;
-	ofs << "RelaxPredictionAngle=" << Relax::PredictionAngle << std::endl;
-	ofs << "RelaxPredictionScale=" << Relax::PredictionScale << std::endl;
-	ofs << "RelaxUseLowestPossibleHoldTimes=" << Relax::UseLowestPossibleHoldTimes << std::endl;
+	ofs << "Relax_Enabled=" << Relax::Enabled << std::endl;
+	ofs << "Relax_Distribution=" << Relax::Distribution << std::endl;
+	ofs << "Relax_Playstyle=" << Relax::Playstyle << std::endl;
+	ofs << "Relax_PrimaryKey=" << Relax::PrimaryKey << std::endl;
+	ofs << "Relax_SecondaryKey=" << Relax::SecondaryKey << std::endl;
+	ofs << "Relax_MaxSingletapBPM=" << Relax::MaxSingletapBPM << std::endl;
+	ofs << "Relax_HitSpread=" << Relax::HitSpread << std::endl;
+	ofs << "Relax_AlternationHitSpread=" << Relax::AlternationHitSpread << std::endl;
+	ofs << "Relax_HoldConsecutiveSpinners=" << Relax::HoldConsecutiveSpinners << std::endl;
+	ofs << "Relax_SliderAlternationOverride=" << Relax::SliderAlternationOverride << std::endl;
+	ofs << "Relax_Prediction_Enabled=" << Relax::Prediction::Enabled << std::endl;
+	ofs << "Relax_Prediction_SliderPredictionEnabled=" << Relax::Prediction::SliderPredictionEnabled << std::endl;
+	ofs << "Relax_Prediction_Angle=" << Relax::Prediction::Angle << std::endl;
+	ofs << "Relax_Prediction_Scale=" << Relax::Prediction::Scale << std::endl;
+	ofs << "Relax_Blatant_UseLowestPossibleHoldTimes=" << Relax::Blatant::UseLowestPossibleHoldTimes << std::endl;
 
-	ofs << "AimAssistEnabled=" << AimAssist::Enabled << std::endl;
-	ofs << "AimAssistAlgorithm=" << AimAssist::Algorithm << std::endl;
-	ofs << "AimAssistEasyMode=" << AimAssist::EasyMode << std::endl;
-	ofs << "AimAssistEasyModeStrength=" << AimAssist::EasyModeStrength << std::endl;
-	ofs << "AimAssistStrength=" << AimAssist::Strength << std::endl;
-	ofs << "AimAssistBaseFOV=" << AimAssist::BaseFOV << std::endl;
-	ofs << "AimAssistMaximumFOVScale=" << AimAssist::MaximumFOVScale << std::endl;
-	ofs << "AimAssistMinimumFOVTotal=" << AimAssist::MinimumFOVTotal << std::endl;
-	ofs << "AimAssistMaximumFOVTotal=" << AimAssist::MaximumFOVTotal << std::endl;
-	ofs << "AimAssistAssistOnSliders=" << AimAssist::AssistOnSliders << std::endl;
-	ofs << "AimAssistStrengthMultiplier=" << AimAssist::StrengthMultiplier << std::endl;
-	ofs << "AimAssistAssistDeadzone=" << AimAssist::AssistDeadzone << std::endl;
-	ofs << "AimAssistResyncLeniency=" << AimAssist::ResyncLeniency << std::endl;
-	ofs << "AimAssistResyncLeniencyFactor=" << AimAssist::ResyncLeniencyFactor << std::endl;
-	ofs << "AimAssistDrawDebugOverlay=" << AimAssist::DrawDebugOverlay << std::endl;
-	ofs << "AimAssistFlipSliderballDeadzone=" << AimAssist::FlipSliderballDeadzone << std::endl;
-	ofs << "AimAssistSliderballDeadzone=" << AimAssist::SliderballDeadzone << std::endl;
-	ofs << "AimAssistAlgorithmv2Power=" << AimAssist::Algorithmv2Power << std::endl;
-	ofs << "AimAssistAlgorithmv2AssistOnSliders=" << AimAssist::Algorithmv2AssistOnSliders << std::endl;
-	ofs << "AimAssistAlgorithmv3Strength=" << AimAssist::Algorithmv3Strength << std::endl;
-	ofs << "AimAssistAlgorithmv3AssistOnSliders=" << AimAssist::Algorithmv3AssistOnSliders << std::endl;
-	ofs << "AimAssistAlgorithmv3BaseFOV=" << AimAssist::Algorithmv3BaseFOV << std::endl;
-	ofs << "AimAssistAlgorithmv3MaximumFOVScale=" << AimAssist::Algorithmv3MaximumFOVScale << std::endl;
-	ofs << "AimAssistAlgorithmv3MinimumFOVTotal=" << AimAssist::Algorithmv3MinimumFOVTotal << std::endl;
-	ofs << "AimAssistAlgorithmv3MaximumFOVTotal=" << AimAssist::Algorithmv3MaximumFOVTotal << std::endl;
-	ofs << "AimAssistAlgorithmv3AccelerationFactor=" << AimAssist::Algorithmv3AccelerationFactor << std::endl;
+	ofs << "AimAssist_Enabled=" << AimAssist::Enabled << std::endl;
+	ofs << "AimAssist_Algorithm=" << AimAssist::Algorithm << std::endl;
+	ofs << "AimAssist_DrawDebugOverlay=" << AimAssist::DrawDebugOverlay << std::endl;
+	ofs << "AimAssist_Algorithmv1_EasyMode_Enabled=" << AimAssist::Algorithmv1::EasyMode::Enabled << std::endl;
+	ofs << "AimAssist_Algorithmv1_EasyMode_Strength=" << AimAssist::Algorithmv1::EasyMode::Strength << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_Strength=" << AimAssist::Algorithmv1::AdvancedMode::Strength << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_BaseFOV=" << AimAssist::Algorithmv1::AdvancedMode::BaseFOV << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_MaximumFOVScale=" << AimAssist::Algorithmv1::AdvancedMode::MaximumFOVScale << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_MinimumFOVTotal=" << AimAssist::Algorithmv1::AdvancedMode::MinimumFOVTotal << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_MaximumFOVTotal=" << AimAssist::Algorithmv1::AdvancedMode::MaximumFOVTotal << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_AssistOnSliders=" << AimAssist::Algorithmv1::AdvancedMode::AssistOnSliders << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_StrengthMultiplier=" << AimAssist::Algorithmv1::AdvancedMode::StrengthMultiplier << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_AssistDeadzone=" << AimAssist::Algorithmv1::AdvancedMode::AssistDeadzone << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_ResyncLeniency=" << AimAssist::Algorithmv1::AdvancedMode::ResyncLeniency << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_ResyncLeniencyFactor=" << AimAssist::Algorithmv1::AdvancedMode::ResyncLeniencyFactor << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_FlipSliderballDeadzone=" << AimAssist::Algorithmv1::AdvancedMode::FlipSliderballDeadzone << std::endl;
+	ofs << "AimAssist_Algorithmv1_AdvancedMode_SliderballDeadzone=" << AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone << std::endl;
+	ofs << "AimAssist_Algorithmv2_Power=" << AimAssist::Algorithmv2::Power << std::endl;
+	ofs << "AimAssist_Algorithmv2_AssistOnSliders=" << AimAssist::Algorithmv2::AssistOnSliders << std::endl;
+	ofs << "AimAssist_Algorithmv3_Strength=" << AimAssist::Algorithmv3::Strength << std::endl;
+	ofs << "AimAssist_Algorithmv3_AssistOnSliders=" << AimAssist::Algorithmv3::AssistOnSliders << std::endl;
+	ofs << "AimAssist_Algorithmv3_BaseFOV=" << AimAssist::Algorithmv3::BaseFOV << std::endl;
+	ofs << "AimAssist_Algorithmv3_MaximumFOVScale=" << AimAssist::Algorithmv3::MaximumFOVScale << std::endl;
+	ofs << "AimAssist_Algorithmv3_MinimumFOVTotal=" << AimAssist::Algorithmv3::MinimumFOVTotal << std::endl;
+	ofs << "AimAssist_Algorithmv3_MaximumFOVTotal=" << AimAssist::Algorithmv3::MaximumFOVTotal << std::endl;
+	ofs << "AimAssist_Algorithmv3_AccelerationFactor=" << AimAssist::Algorithmv3::AccelerationFactor << std::endl;
 
-	ofs << "TimewarpEnabled=" << Timewarp::Enabled << std::endl;
-	ofs << "TimewarpType=" << Timewarp::Type << std::endl;
-	ofs << "TimewarpRate=" << Timewarp::Rate << std::endl;
-	ofs << "TimewarpMultiplier=" << Timewarp::Multiplier << std::endl;
+	ofs << "Timewarp_Enabled=" << Timewarp::Enabled << std::endl;
+	ofs << "Timewarp_Type=" << Timewarp::Type << std::endl;
+	ofs << "Timewarp_Rate=" << Timewarp::Rate << std::endl;
+	ofs << "Timewarp_Multiplier=" << Timewarp::Multiplier << std::endl;
 
-	ofs << "VisualsARChangerEnabled=" << Visuals::ARChangerEnabled << std::endl;
-	ofs << "VisualsARChangerAR=" << Visuals::AR << std::endl;
-	ofs << "VisualsAdjustToMods=" << Visuals::ARChangerAdjustToMods << std::endl;
-	ofs << "VisualsAdjustToRate=" << Visuals::ARChangerAdjustToRate << std::endl;
-	ofs << "VisualsDrawPreemptiveDot=" << Visuals::ARChangerDrawPreemptiveDot << std::endl;
-	ofs << "VisualsPreemptiveDotColour=" << Visuals::ARChangerPreemptiveDotColour.x << "," << Visuals::ARChangerPreemptiveDotColour.y << "," << Visuals::ARChangerPreemptiveDotColour.z << "," << Visuals::ARChangerPreemptiveDotColour.w << std::endl;
-	ofs << "VisualsCSChangerEnabled=" << Visuals::CSChangerEnabled << std::endl;
-	ofs << "VisualsCSChangerCS=" << Visuals::CS << std::endl;
-	ofs << "VisualsHiddenDisabled=" << Visuals::HiddenDisabled << std::endl;
-	ofs << "VisualsFlashlightDisabled=" << Visuals::FlashlightDisabled << std::endl;
-	ofs << "VisualsMenuScale=" << Visuals::MenuScale << std::endl;
-	ofs << "VisualsMenuBackground=" << Visuals::MenuBackground << std::endl;
-	ofs << "VisualsAccentColour=" << Visuals::AccentColour.x << "," << Visuals::AccentColour.y << "," << Visuals::AccentColour.z << "," << Visuals::AccentColour.w << std::endl;
-	ofs << "VisualsMenuColour=" << Visuals::MenuColour.x << "," << Visuals::MenuColour.y << "," << Visuals::MenuColour.z << "," << Visuals::MenuColour.w << std::endl;
-	ofs << "VisualsControlColour=" << Visuals::ControlColour.x << "," << Visuals::ControlColour.y << "," << Visuals::ControlColour.z << "," << Visuals::ControlColour.w << std::endl;
-	ofs << "VisualsTextColour=" << Visuals::TextColour.x << "," << Visuals::TextColour.y << "," << Visuals::TextColour.z << "," << Visuals::TextColour.w << std::endl;
+	ofs << "Visuals_ARChanger_Enabled=" << Visuals::ARChanger::Enabled << std::endl;
+	ofs << "Visuals_ARChanger_AR=" << Visuals::ARChanger::AR << std::endl;
+	ofs << "Visuals_ARChanger_AdjustToMods=" << Visuals::ARChanger::AdjustToMods << std::endl;
+	ofs << "Visuals_ARChanger_AdjustToRate=" << Visuals::ARChanger::AdjustToRate << std::endl;
+	ofs << "Visuals_ARChanger_DrawPreemptiveDot=" << Visuals::ARChanger::DrawPreemptiveDot << std::endl;
+	ofs << "Visuals_ARChanger_PreemptiveDotColour=" << Visuals::ARChanger::PreemptiveDotColour.x << "," << Visuals::ARChanger::PreemptiveDotColour.y << "," << Visuals::ARChanger::PreemptiveDotColour.z << "," << Visuals::ARChanger::PreemptiveDotColour.w << std::endl;
+	ofs << "Visuals_CSChanger_Enabled=" << Visuals::CSChanger::Enabled << std::endl;
+	ofs << "Visuals_CSChanger_CS=" << Visuals::CSChanger::CS << std::endl;
+	ofs << "Visuals_Removers_HiddenRemoverEnabled=" << Visuals::Removers::HiddenRemoverEnabled << std::endl;
+	ofs << "Visuals_Removers_FlashlightRemoverEnabled=" << Visuals::Removers::FlashlightRemoverEnabled << std::endl;
+	ofs << "Visuals_UI_MenuScale=" << Visuals::UI::MenuScale << std::endl;
+	ofs << "Visuals_UI_MenuBackground=" << Visuals::UI::MenuBackground << std::endl;
+	ofs << "Visuals_UI_AccentColour=" << Visuals::UI::AccentColour.x << "," << Visuals::UI::AccentColour.y << "," << Visuals::UI::AccentColour.z << "," << Visuals::UI::AccentColour.w << std::endl;
+	ofs << "Visuals_UI_MenuColour=" << Visuals::UI::MenuColour.x << "," << Visuals::UI::MenuColour.y << "," << Visuals::UI::MenuColour.z << "," << Visuals::UI::MenuColour.w << std::endl;
+	ofs << "Visuals_UI_ControlColour=" << Visuals::UI::ControlColour.x << "," << Visuals::UI::ControlColour.y << "," << Visuals::UI::ControlColour.z << "," << Visuals::UI::ControlColour.w << std::endl;
+	ofs << "Visuals_UI_TextColour=" << Visuals::UI::TextColour.x << "," << Visuals::UI::TextColour.y << "," << Visuals::UI::TextColour.z << "," << Visuals::UI::TextColour.w << std::endl;
 
-	ofs << "MiscDisableSpectators=" << Misc::DisableSpectators << std::endl;
-	ofs << "MiscPromptOnScoreSubmissionEnabled=" << Misc::PromptOnScoreSubmissionEnabled << std::endl;
-	ofs << "MiscDisableLogging=" << Misc::DisableLogging << std::endl;
-	ofs << "MiscRichPresenceSpooferEnabled=" << Misc::RichPresenceSpooferEnabled << std::endl;
-	ofs << "MiscSpoofedName=" << Misc::SpoofedName << std::endl;
-	ofs << "MiscSpoofedRank=" << Misc::SpoofedRank << std::endl;
+	ofs << "Misc_DisableSpectators=" << Misc::DisableSpectators << std::endl;
+	ofs << "Misc_PromptOnScoreSubmissionEnabled=" << Misc::PromptOnScoreSubmissionEnabled << std::endl;
+	ofs << "Misc_DisableLogging=" << Misc::DisableLogging << std::endl;
+	ofs << "Misc_RichPresenceSpoofer_Enabled=" << Misc::RichPresenceSpoofer::Enabled << std::endl;
+	ofs << "Misc_RichPresenceSpoofer_Name=" << Misc::RichPresenceSpoofer::Name << std::endl;
+	ofs << "Misc_RichPresenceSpoofer_Rank=" << Misc::RichPresenceSpoofer::Rank << std::endl;
 
 	ofs.close();
 
@@ -394,14 +385,14 @@ void Config::Save()
 
 void Config::Create()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	const std::string cfgPath = DirectoryHelper::ConfigsDirectory + "\\" + NewConfigName + ".cfg";
+	const std::string configFilePath = Storage::ConfigsDirectory + "\\" + NewConfigName + ".cfg";
 
-	if (!isValidName(NewConfigName) || std::filesystem::exists(cfgPath))
+	if (!Storage::IsValidFileName(NewConfigName) || std::filesystem::exists(configFilePath))
 		return;
 
-	std::ofstream ofs(cfgPath);
+	std::ofstream ofs(configFilePath);
 	ofs.close();
 
 	Refresh();
@@ -416,12 +407,12 @@ void Config::Create()
 
 void Config::Refresh()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	Configs.clear();
 	Configs.emplace_back("default");
 
-	for (const auto& file : std::filesystem::directory_iterator(DirectoryHelper::ConfigsDirectory))
-		if (file.path().extension() == ".cfg" && isValidName(file.path().filename().stem().string()))
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ConfigsDirectory))
+		if (file.path().extension() == ".cfg" && Storage::IsValidFileName(file.path().filename().stem().string()))
 			Configs.push_back(file.path().filename().stem().string());
 }
