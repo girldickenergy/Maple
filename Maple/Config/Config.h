@@ -134,6 +134,7 @@ public:
 		{
 			static inline int MenuScale;
 			static inline char MenuBackground[MAX_PATH];
+			static inline bool Snow;
 			static inline ImVec4 AccentColour;
 			static inline ImVec4 MenuColour;
 			static inline ImVec4 ControlColour;

@@ -91,6 +91,7 @@ void Config::loadDefaults()
 	Visuals::Removers::FlashlightRemoverEnabled = false;
 	Visuals::UI::MenuScale = 2;
 	Visuals::UI::MenuBackground[0] = '\0';
+	Visuals::UI::Snow = false;
 	Visuals::UI::AccentColour = ImColor(232, 93, 155, 255).Value;
 	Visuals::UI::MenuColour = ImColor(65, 65, 65, 255).Value;
 	Visuals::UI::ControlColour = ImColor(76, 76, 76, 255).Value;
@@ -264,6 +265,8 @@ void Config::Load()
 			Visuals::UI::MenuScale = std::stoi(value);
 		if (variable == "Visuals_UI_MenuBackground")
 			strcpy_s(Visuals::UI::MenuBackground, value.c_str());
+		if (variable == "Visuals_UI_Snow")
+			Visuals::UI::Snow = value == "1";
 		if (variable == "Visuals_UI_AccentColour")
 			Visuals::UI::AccentColour = parseImVec4(value);
 		if (variable == "Visuals_UI_MenuColour")
@@ -366,6 +369,7 @@ void Config::Save()
 	ofs << "Visuals_Removers_FlashlightRemoverEnabled=" << Visuals::Removers::FlashlightRemoverEnabled << std::endl;
 	ofs << "Visuals_UI_MenuScale=" << Visuals::UI::MenuScale << std::endl;
 	ofs << "Visuals_UI_MenuBackground=" << Visuals::UI::MenuBackground << std::endl;
+	ofs << "Visuals_UI_Snow=" << Visuals::UI::Snow << std::endl;
 	ofs << "Visuals_UI_AccentColour=" << Visuals::UI::AccentColour.x << "," << Visuals::UI::AccentColour.y << "," << Visuals::UI::AccentColour.z << "," << Visuals::UI::AccentColour.w << std::endl;
 	ofs << "Visuals_UI_MenuColour=" << Visuals::UI::MenuColour.x << "," << Visuals::UI::MenuColour.y << "," << Visuals::UI::MenuColour.z << "," << Visuals::UI::MenuColour.w << std::endl;
 	ofs << "Visuals_UI_ControlColour=" << Visuals::UI::ControlColour.x << "," << Visuals::UI::ControlColour.y << "," << Visuals::UI::ControlColour.z << "," << Visuals::UI::ControlColour.w << std::endl;

@@ -344,7 +344,7 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	return assistedPosition;
 }
 
-void AimAssist::Reset()
+void AimAssist::Initialize()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
 	preEmpt = HitObjectManager::GetPreEmpt();
@@ -363,11 +363,11 @@ void AimAssist::Reset()
 	offset = Vector2();
 }
 
-void __stdcall AimAssist::UpdateCursorPosition(float x, float y)
+void __stdcall AimAssist::SetMousePositionHook(float x, float y)
 {
 	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : Config::AimAssist::Algorithm == 1 ? doAssistv2(Vector2(x, y)) : doAssistv3(Vector2(x, y));
 
-	oUpdateCursorPosition(assistedPosition.X, assistedPosition.Y);
+	oSetMousePosition(assistedPosition.X, assistedPosition.Y);
 }
 
 bool AimAssist::InCircle(Vector2 circle, float radius, Vector2 point)

@@ -133,17 +133,17 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook get_Item");
 
-	if (installManagedHook("Initialize", Vanilla::Explorer["osu.GameModes.Play.Player"]["Initialize"].Method, Player::PlayerInitialize, reinterpret_cast<LPVOID*>(&Player::oPlayerInitialize)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked Initialize");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook Initialize");
-
 	if (installManagedHook("OnLoadComplete", Vanilla::Explorer["osu.GameModes.Play.Player"]["OnLoadComplete"].Method, Player::OnPlayerLoadCompleteHook, reinterpret_cast<LPVOID*>(&Player::oOnPlayerLoadComplete)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked OnLoadComplete");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook OnLoadComplete");
 
-	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
+	if (installManagedHook("PlayerDispose", Vanilla::Explorer["osu.GameModes.Play.Player"]["Dispose"].Method, Player::DisposeHook, reinterpret_cast<LPVOID*>(&Player::oDispose)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked PlayerDispose");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook PlayerDispose");
+
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::SetMousePositionHook, reinterpret_cast<LPVOID*>(&AimAssist::oSetMousePosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");

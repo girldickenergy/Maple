@@ -191,7 +191,11 @@ HitTimings Relax::calculateTimings(bool alternating)
 	}
 
 	if (Config::Relax::Blatant::UseLowestPossibleHoldTimes)
-		holdTime = (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
+	{
+		holdTime = nextHitObject.IsNull ? 25 : (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
+		if (holdTime > 25)
+			holdTime = 25;
+	}
 
 	return HitTimings(static_cast<int>(offset), static_cast<int>(holdTime));
 }
@@ -352,24 +356,19 @@ double Relax::calculateDirectionAngle(Vector2 lastPosition, Vector2 currentPosit
 	return angle * (360.0 / (M_PI * 2.0));
 }
 
-void Relax::Start()
+void Relax::Initialize()
 {
 	if (!Config::Relax::Enabled || Player::IsReplayMode() || Player::PlayMode() != PlayModes::Osu)
 		return;
 
-	Stop();
-
-	CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(relaxThread), nullptr, 0, nullptr);
-}
-
-void Relax::Stop()
-{
 	if (isWorking)
 	{
 		shouldStop = true;
 		while (isWorking)
 			Sleep(1);
 	}
+
+	CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(relaxThread), nullptr, 0, nullptr);
 }
 
 int __fastcall Relax::UpdateKeyboardInput(uintptr_t instance, int key)

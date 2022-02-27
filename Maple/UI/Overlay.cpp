@@ -116,7 +116,7 @@ void Overlay::Render()
 	else
 		io.MouseDrawCursor = false;
 
-	if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
+	if (Config::Visuals::UI::Snow && (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen))
 		SnowVisualisation::Draw();
 
 	if (MainMenu::IsOpen)

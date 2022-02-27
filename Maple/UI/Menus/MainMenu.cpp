@@ -148,9 +148,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l12022022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l27022022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l12022022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l27022022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -322,8 +322,10 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 7 : 6, 0, 2)));
+                Widgets::BeginPanel("User Interface", ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 8 : 7, 0, 2)));
                 {
+                    Widgets::Checkbox("Snow", &Config::Visuals::UI::Snow);
+
                     const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
                     if (Widgets::Combo("Menu scale", &Config::Visuals::UI::MenuScale, scales, IM_ARRAYSIZE(scales)))
                         StyleProvider::UpdateScale();

@@ -45,9 +45,9 @@ class AimAssist
 	static Vector2 doAssistv3(Vector2 realPosition);
 public:
 	static void DrawDebugOverlay();
-	static void Reset();
+	static void Initialize();
 	
-	typedef void(__stdcall* fnUpdateCursorPosition)(float x, float y);
-	static inline fnUpdateCursorPosition oUpdateCursorPosition;
-	static void __stdcall UpdateCursorPosition(float x, float y);
+	typedef void(__stdcall* fnSetMousePosition)(float x, float y);
+	static inline fnSetMousePosition oSetMousePosition;
+	static void __stdcall SetMousePositionHook(float x, float y);
 };

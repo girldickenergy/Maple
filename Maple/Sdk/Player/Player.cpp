@@ -29,10 +29,8 @@ void* Player::Instance()
 bool Player::IsLoaded()
 {
 	void* instance = Instance();
-	if (!instance)
-		loadComplete = false;
-	
-	return instance && (*static_cast<bool*>(asyncLoadCompleteField.GetAddress(instance)) || loadComplete);
+
+	return instance && (*static_cast<bool*>(asyncLoadCompleteField.GetAddress(instance)) || isLoaded);
 }
 
 bool Player::IsReplayMode()
@@ -65,27 +63,28 @@ bool Player::IsPaused()
 	return *static_cast<bool*>(pausedAddress);
 }
 
-void __fastcall Player::PlayerInitialize(uintptr_t instance)
+void __fastcall Player::DisposeHook(void* instance, BOOL disposing)
 {
-	MainMenu::IsOpen = false;
-	
-	Relax::Stop();
+	isLoaded = false;
 
-	oPlayerInitialize(instance);
+	oDispose(instance, disposing);
 }
 
 BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 {
 	if (success)
 	{
+		MainMenu::IsOpen = false;
+
 		HitObjectManager::CacheAllHitObjects();
 
-		Relax::Start();
-		AimAssist::Reset();
+		Relax::Initialize();
+		AimAssist::Initialize();
+
 		Timewarp::UpdateCatcherSpeed();
 		VisualsSpoofers::LoadPreemptiveDots();
 
-		loadComplete = true;
+		isLoaded = true;
 	}
 	
 	return oOnPlayerLoadComplete(instance, success);
