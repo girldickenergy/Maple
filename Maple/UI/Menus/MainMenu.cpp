@@ -105,11 +105,11 @@ void MainMenu::Render()
 
                 ImGui::GetWindowDrawList()->AddRectFilled(tabsPos, tabsPos + tabsSize, ImColor(StyleProvider::MenuColourVeryDark), style.WindowRounding);
 
-                const float tabsHeight = (45 * StyleProvider::Scale) * 7; //scaled tab height * tab count
+                const float tabsHeight = (40 * StyleProvider::Scale) * 8; //scaled tab height * tab count
                 ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, tabsSize.y / 2 - tabsHeight / 2));
                 ImGui::BeginChild("Tabs##001", ImVec2(tabsSize.x - (StyleProvider::Padding.x * 2), tabsHeight), false, ImGuiWindowFlags_NoBackground);
                 {
-                    const ImVec2 tabSize = ImVec2(ImGui::GetCurrentWindow()->Size.x, 45 * StyleProvider::Scale);
+                    const ImVec2 tabSize = ImVec2(ImGui::GetCurrentWindow()->Size.x, 40 * StyleProvider::Scale);
 
                     ImGui::PushFont(StyleProvider::FontDefaultBold);
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
@@ -119,14 +119,16 @@ void MainMenu::Render()
                         currentTab = currentTab == 1 ? -1 : 1;
                     if (Widgets::Tab("Timewarp", StyleProvider::TimewarpIconTexture, currentTab == 2, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 2 ? -1 : 2;
-                    if (Widgets::Tab("Visuals", StyleProvider::VisualsIconTexture, currentTab == 3, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Replays", StyleProvider::ReplaysIconTexture, currentTab == 3, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 3 ? -1 : 3;
-                    if (Widgets::Tab("Spoofer", StyleProvider::SpooferIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Visuals", StyleProvider::VisualsIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 4 ? -1 : 4;
-                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Spoofer", StyleProvider::SpooferIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 5 ? -1 : 5;
-                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 6, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab("Misc", StyleProvider::MiscIconTexture, currentTab == 6, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 6 ? -1 : 6;
+                    if (Widgets::Tab("Config", StyleProvider::ConfigIconTexture, currentTab == 7, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                        currentTab = currentTab == 7 ? -1 : 7;
                     ImGui::PopStyleVar();
                     ImGui::PopFont();
                 }
@@ -296,6 +298,20 @@ void MainMenu::Render()
         	}
             if (currentTab == 3)
             {
+                Widgets::BeginPanel("Replay Bot", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                {
+                    ImGui::Text("soon");
+                }
+                Widgets::EndPanel();
+
+                Widgets::BeginPanel("Replay Editor", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                {
+                    ImGui::Text("soon");
+                }
+                Widgets::EndPanel();
+            }
+            if (currentTab == 4)
+            {
                 Widgets::BeginPanel("AR Changer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
                 {
                     Widgets::Checkbox("Enabled", &Config::Visuals::ARChanger::Enabled); Widgets::Tooltip("AR is short for Approach Rate and defines when hit objects start to fade in relative to when they should be hit or collected.");
@@ -380,7 +396,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
             }
-            if (currentTab == 4)
+            if (currentTab == 5)
             {
                 Widgets::BeginPanel("Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1, 1)));
                 {
@@ -440,7 +456,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
             }
-            if (currentTab == 5)
+            if (currentTab == 6)
             {
                 Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
@@ -466,7 +482,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
             }
-            if (currentTab == 6)
+            if (currentTab == 7)
             {
                 Widgets::BeginPanel("Config", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 0, 1)));
                 {

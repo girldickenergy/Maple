@@ -56,6 +56,7 @@ public:
 	static inline void* RelaxIconTexture;
 	static inline void* AimAssistIconTexture;
 	static inline void* TimewarpIconTexture;
+	static inline void* ReplaysIconTexture;
 	static inline void* VisualsIconTexture;
 	static inline void* SpooferIconTexture;
 	static inline void* MiscIconTexture;
@@ -101,6 +102,7 @@ public:
 		RelaxIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::RelaxIcon, Textures::RelaxIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::RelaxIcon, Textures::RelaxIconSize);
 		AimAssistIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::AimAssistIcon, Textures::AimAssistIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::AimAssistIcon, Textures::AimAssistIconSize);
 		TimewarpIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::TimewarpIcon, Textures::TimewarpIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::TimewarpIcon, Textures::TimewarpIconSize);
+		ReplaysIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ReplaysIcon, Textures::ReplaysIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::ReplaysIcon, Textures::ReplaysIconSize);
 		VisualsIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::VisualsIcon, Textures::VisualsIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::VisualsIcon, Textures::VisualsIconSize);
 		SpooferIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::SpooferIcon, Textures::SpooferIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::SpooferIcon, Textures::SpooferIconSize);
 		MiscIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MiscIcon, Textures::MiscIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::MiscIcon, Textures::MiscIconSize);
