@@ -20,6 +20,7 @@
 #include "ErrorSubmission.h"
 #include "AddParameter.h"
 #include "Rendering.h"
+#include "../Sdk/Input/InputManager.h"
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
@@ -143,10 +144,15 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook PlayerDispose");
 
-	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::SetMousePositionHook, reinterpret_cast<LPVOID*>(&AimAssist::oSetMousePosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, InputManager::SetMousePositionHook, reinterpret_cast<LPVOID*>(&InputManager::oSetMousePosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");
+
+	if (installManagedHook("MouseViaKeyboardControls", Vanilla::Explorer["osu.Input.InputManager"]["MouseViaKeyboardControls"].Method, InputManager::MouseViaKeyboardControlsHook, reinterpret_cast<LPVOID*>(&InputManager::oMouseViaKeyboardControls)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked MouseViaKeyboardControls");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook MouseViaKeyboardControls");
 
 	TypeExplorer obfuscatedStringType = Vanilla::Explorer["osu.GameBase"]["UniqueId"].Field.GetTypeUnsafe();
 	if (installManagedHook("ObfuscatedStringGetValue", obfuscatedStringType["get_Value"].Method, Spoofer::ObfuscatedStringGetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringGetValue)) == CinnamonResult::Success)

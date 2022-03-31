@@ -725,6 +725,18 @@
     <ClCompile Include="UI\Rendering\TextureLoader.cpp">
       <Filter>UI\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayBot\ReplayBot.cpp">
+      <Filter>Features\ReplayBot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
@@ -900,6 +912,36 @@
     </Filter>
     <Filter Include="UI\Widgets\3rd-party\FileDialog">
       <UniqueIdentifier>{086fdea8-9755-425f-b58f-62e49707e70d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes">
+      <UniqueIdentifier>{3aa3360c-a81b-4df9-9f05-ba4cd705e280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Enums">
+      <UniqueIdentifier>{6999ff5d-9ba7-4ec6-994f-dc66f464526b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Enums\Gameplay">
+      <UniqueIdentifier>{f5d59633-754e-40ef-89fb-7c08815b82ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo">
+      <UniqueIdentifier>{71a2a5c9-681a-4f59-81c3-e19f5072e6a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Decoders">
+      <UniqueIdentifier>{15b02dbf-d154-47fe-b634-9a5d1bafde54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\LZMA">
+      <UniqueIdentifier>{95cf9d1d-55a6-48a1-8d81-19dd3ed1bc93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Replays">
+      <UniqueIdentifier>{6ad2eb98-bde1-42ed-a11b-d825d53fc275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Serialization">
+      <UniqueIdentifier>{30ffd671-e238-40bd-941e-4fa4a6fdc8ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Utilities">
+      <UniqueIdentifier>{10fb5b7c-801d-4453-81b7-48e5c90cdf03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayBot">
+      <UniqueIdentifier>{1f096ef3-4a1b-4e0a-b2c8-5ccb8dc89cd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1862,6 +1904,48 @@
     </ClInclude>
     <ClInclude Include="UI\Rendering\TextureLoader.h">
       <Filter>UI\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Mods.h">
+      <Filter>Dependencies\OsuDataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\PlayModes.h">
+      <Filter>Dependencies\OsuDataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuManiaKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\TaikoKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\CatchTheBeatKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\Replay.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Utilities\StringUtilities.h">
+      <Filter>Dependencies\Chiyo\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayBot\ReplayBot.h">
+      <Filter>Features\ReplayBot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

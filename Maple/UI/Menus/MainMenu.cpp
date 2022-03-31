@@ -13,9 +13,13 @@
 #include "../../Storage/Storage.h"
 #include "../../Sdk/Osu/WindowManager.h"
 #include "../Widgets/3rd-party/FileDialog/imfilebrowser.h"
+#include "../../Features/ReplayBot/ReplayBot.h"
 
-bool fileDialogInitialized = false;
-ImGui::FileBrowser fileDialog;
+bool backgroundImageDialogInitialized = false;
+ImGui::FileBrowser backgroundImageDialog;
+
+bool replayDialogInitialized = false;
+ImGui::FileBrowser replayDialog;
 
 void MainMenu::updateBackground()
 {
@@ -150,9 +154,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l27022022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l22032022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l27022022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l22032022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -298,15 +302,47 @@ void MainMenu::Render()
         	}
             if (currentTab == 3)
             {
-                Widgets::BeginPanel("Replay Bot", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
+                Widgets::BeginPanel("Replay Bot", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1)));
                 {
-                    ImGui::Text("soon");
-                }
-                Widgets::EndPanel();
+                    Widgets::Checkbox("Enabled", &ReplayBot::Enabled);
 
-                Widgets::BeginPanel("Replay Editor", ImVec2(optionsWidth, Widgets::CalcPanelHeight(0, 1)));
-                {
-                    ImGui::Text("soon");
+                    if (Widgets::Checkbox("Disable aiming", &ReplayBot::DisableAiming))
+                    {
+                        if (ReplayBot::DisableAiming && ReplayBot::DisableTapping)
+                            ReplayBot::DisableTapping = false;
+                    }
+
+                    if (Widgets::Checkbox("Disable tapping", &ReplayBot::DisableTapping))
+                    {
+                        if (ReplayBot::DisableAiming && ReplayBot::DisableTapping)
+                            ReplayBot::DisableAiming = false;
+                    }
+
+                    if (Widgets::Button("Select replay"))
+                    {
+                        if (!replayDialogInitialized)
+                        {
+                            replayDialog.SetTitle("Select replay");
+                            replayDialog.SetTypeFilters({ ".osr" });
+
+                            replayDialogInitialized = true;
+                        }
+
+                        replayDialog.Open();
+                    }
+
+                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
+                    replayDialog.Display();
+                    ImGui::PopStyleVar();
+
+                    if (replayDialog.HasSelected())
+                    {
+                        ReplayBot::LoadReplay(replayDialog.GetSelected().string().c_str());
+                        replayDialog.ClearSelected();
+                    }
+
+                    std::string selectedReplayText = "Selected replay: " + ReplayBot::GetReplayString();
+                    ImGui::Text(selectedReplayText.c_str());
                 }
                 Widgets::EndPanel();
             }
@@ -350,25 +386,25 @@ void MainMenu::Render()
 
                     if (Widgets::Button("Load background image", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {
-                    	if (!fileDialogInitialized)
+                    	if (!backgroundImageDialogInitialized)
                     	{
-                            fileDialog.SetTitle("Select background image");
-                            fileDialog.SetTypeFilters({ ".png", ".jpg", ".jpeg", ".bmp", ".tga" });
+                            backgroundImageDialog.SetTitle("Select background image");
+                            backgroundImageDialog.SetTypeFilters({ ".png", ".jpg", ".jpeg", ".bmp", ".tga" });
 
-                            fileDialogInitialized = true;
+                            backgroundImageDialogInitialized = true;
                     	}
 
-                        fileDialog.Open();
+                        backgroundImageDialog.Open();
                     }
 
                     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
-                    fileDialog.Display();
+                    backgroundImageDialog.Display();
                     ImGui::PopStyleVar();
 
-                    if (fileDialog.HasSelected())
+                    if (backgroundImageDialog.HasSelected())
                     {
-                        strcpy_s(Config::Visuals::UI::MenuBackground, fileDialog.GetSelected().string().c_str());
-                        fileDialog.ClearSelected();
+                        strcpy_s(Config::Visuals::UI::MenuBackground, backgroundImageDialog.GetSelected().string().c_str());
+                        backgroundImageDialog.ClearSelected();
 
                         updateBackground();
                     }

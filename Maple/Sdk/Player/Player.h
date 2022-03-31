@@ -1,14 +1,7 @@
 #pragma once
 
 #include <Explorer/TypeExplorer.h>
-
-enum class PlayModes : int
-{
-	Osu = 0,
-	Taiko = 1,
-	Catch = 2,
-	Mania = 3
-};
+#include <Enums/PlayModes.h>
 
 class Player
 {
@@ -24,7 +17,7 @@ class Player
 	static inline void* pausedAddress = nullptr;
 public:
 	static inline TypeExplorer RawPlayer;
-	
+
 	static void Initialize();
 	static void* Instance();
 	static bool IsLoaded();

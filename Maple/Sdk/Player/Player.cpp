@@ -7,6 +7,8 @@
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../UI/Menus/MainMenu.h"
 #include "../../Features/Visuals/VisualsSpoofers.h"
+#include "../../Dependencies/Chiyo/Decoders/ReplayDecoder.h"
+#include "../../Features/ReplayBot/ReplayBot.h"
 
 void Player::Initialize()
 {
@@ -78,8 +80,13 @@ BOOL __fastcall Player::OnPlayerLoadCompleteHook(void* instance, BOOL success)
 
 		HitObjectManager::CacheAllHitObjects();
 
-		Relax::Initialize();
-		AimAssist::Initialize();
+		ReplayBot::Initialize();
+
+		if (!ReplayBot::Ready || ReplayBot::DisableTapping)
+			Relax::Initialize();
+
+		if (!ReplayBot::Ready || ReplayBot::DisableAiming)
+			AimAssist::Initialize();
 
 		Timewarp::UpdateCatcherSpeed();
 		VisualsSpoofers::LoadPreemptiveDots();

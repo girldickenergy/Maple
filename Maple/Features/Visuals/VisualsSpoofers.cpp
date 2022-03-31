@@ -19,7 +19,7 @@ void VisualsSpoofers::spoofVisuals()
 	
 	spoofPreEmpt();
 
-	if (Config::Visuals::CSChanger::Enabled && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
+	if (Config::Visuals::CSChanger::Enabled && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::CatchTheBeat))
 	{
 		float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CSChanger::CS - 5.f) / 5.f));
 		float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
@@ -45,7 +45,7 @@ void VisualsSpoofers::spoofVisuals()
 
 void VisualsSpoofers::spoofPreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::CatchTheBeat) || Player::IsReplayMode())
 		return;
 
 	originalPreEmpt = HitObjectManager::GetPreEmpt();
@@ -63,7 +63,7 @@ void VisualsSpoofers::spoofPreEmpt()
 
 void VisualsSpoofers::restorePreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::CatchTheBeat) || Player::IsReplayMode())
 		return;
 
 	if (Config::Visuals::ARChanger::Enabled)
@@ -94,7 +94,7 @@ void VisualsSpoofers::LoadPreemptiveDots()
 
 void VisualsSpoofers::DrawPreemptiveDots()
 {
-	if (Config::Visuals::ARChanger::Enabled && Config::Visuals::ARChanger::DrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode() && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
+	if (Config::Visuals::ARChanger::Enabled && Config::Visuals::ARChanger::DrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode() && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::CatchTheBeat))
 	{
 		for (int i = 0; i < preemptiveDots.size(); i++)
 		{

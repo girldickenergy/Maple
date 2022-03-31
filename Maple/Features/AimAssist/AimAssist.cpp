@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include "../../Sdk/Osu/WindowManager.h"
+#include "../../Sdk/Input/InputManager.h"
 
 void AimAssist::DrawDebugOverlay()
 {
@@ -50,7 +51,7 @@ void AimAssist::DrawDebugOverlay()
 	}
 }
 
-Vector2 AimAssist::doAssist(Vector2 realPosition)
+Vector2 AimAssist::DoAssist(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
@@ -203,7 +204,7 @@ static auto __forceinline calc_interpolant(const Vector2& window_size, float dis
 		.m128_f32[0];
 }
 
-Vector2 AimAssist::doAssistv2(Vector2 realPosition)
+Vector2 AimAssist::DoAssistv2(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
@@ -264,7 +265,7 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 }
 
-Vector2 AimAssist::doAssistv3(Vector2 realPosition)
+Vector2 AimAssist::DoAssistv3(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
@@ -361,13 +362,6 @@ void AimAssist::Initialize()
 
 	windowSize = Vector2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 	offset = Vector2();
-}
-
-void __stdcall AimAssist::SetMousePositionHook(float x, float y)
-{
-	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : Config::AimAssist::Algorithm == 1 ? doAssistv2(Vector2(x, y)) : doAssistv3(Vector2(x, y));
-
-	oSetMousePosition(assistedPosition.X, assistedPosition.Y);
 }
 
 bool AimAssist::InCircle(Vector2 circle, float radius, Vector2 point)
