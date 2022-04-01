@@ -13,7 +13,7 @@ void ReplayBot::Initialize()
 {
 	currentFrameIndex = 0;
 	flipReplay = ModManager::IsModEnabled(Mods::HardRock) != ((currentReplay.Mods & Mods::HardRock) > Mods::None);
-	Ready = Enabled && replayLoaded && currentReplay.PlayMode == PlayModes::Osu;
+	Ready = Enabled && replayLoaded && currentReplay.ReplayFrames.size() > 0 && currentReplay.PlayMode == PlayModes::Osu;
 }
 
 void ReplayBot::LoadReplay(std::string replayPath)
