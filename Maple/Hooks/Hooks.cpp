@@ -45,11 +45,6 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked SubmitError");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook SubmitError");
-
-	if (installManagedHook("sendCurrentTrack", Vanilla::Explorer["osu.Helpers.Scrobbler"]["sendCurrentTrack"].Method, Anticheat::SendCurrentTrackHook, reinterpret_cast<LPVOID*>(&Anticheat::oSendCurrentTrack)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked sendCurrentTrack");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook sendCurrentTrack");
 	
 	//TODO: causing weird access violations only in debug
 	#ifndef _DEBUG

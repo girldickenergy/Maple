@@ -19,16 +19,10 @@ class Anticheat
 	static inline void* playerHaxCheckPassAddress = nullptr;
 	
 	static inline void* acFlagAddress = nullptr;
-	static inline void* scrobblerFlagAddress = nullptr;
 public:
 	static void Initialize();
 	static void DisableAnticheat();
 	static void EnableAnticheat();
 	static int GetFlag();
 	static void ResetFlag();
-	static int GetScrobblerFlag();
-	static void ResetScrobblerFlag();
-
-	static inline fnSendCurrentTrack oSendCurrentTrack;
-	static void __fastcall SendCurrentTrackHook(BOOL scrobble);
 };
