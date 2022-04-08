@@ -3,13 +3,13 @@
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_win32.h"
-#include "MainMenu.h"
-#include "ScoreSubmissionDialogue.h"
+#include "Menus/MainMenu.h"
+#include "Menus/ScoreSubmissionDialogue.h"
 #include "StyleProvider.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Sdk/Osu/GameBase.h"
 #include "GL/gl3w.h"
-#include "SnowVisualisation.h"
+#include "Menus/SnowVisualisation.h"
 #include "../Features/Visuals/VisualsSpoofers.h"
 
 void Overlay::enableRaw()
@@ -116,7 +116,7 @@ void Overlay::Render()
 	else
 		io.MouseDrawCursor = false;
 
-	if (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen)
+	if (Config::Visuals::UI::Snow && (MainMenu::IsOpen || ScoreSubmissionDialogue::IsOpen))
 		SnowVisualisation::Draw();
 
 	if (MainMenu::IsOpen)

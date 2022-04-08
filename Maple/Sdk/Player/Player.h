@@ -1,18 +1,11 @@
 #pragma once
 
 #include <Explorer/TypeExplorer.h>
-
-enum class PlayModes : int
-{
-	Osu = 0,
-	Taiko = 1,
-	Catch = 2,
-	Mania = 3
-};
+#include <Enums/PlayModes.h>
 
 class Player
 {
-	static inline bool loadComplete = false;
+	static inline bool isLoaded = false;
 	
 	static inline Field asyncLoadCompleteField;
 	static inline Field replayModeStableField;
@@ -24,7 +17,7 @@ class Player
 	static inline void* pausedAddress = nullptr;
 public:
 	static inline TypeExplorer RawPlayer;
-	
+
 	static void Initialize();
 	static void* Instance();
 	static bool IsLoaded();
@@ -34,9 +27,9 @@ public:
 	static PlayModes PlayMode();
 	static bool IsPaused();
 
-	typedef void(__fastcall* fnPlayerInitialize)(uintptr_t instance);
-	static inline fnPlayerInitialize oPlayerInitialize;
-	static void __fastcall PlayerInitialize(uintptr_t instance);
+	typedef void(__fastcall* fnDispose)(void* instance, BOOL disposing);
+	static inline fnDispose oDispose;
+	static void __fastcall DisposeHook(void* instance, BOOL disposing);
 
 	typedef BOOL(__fastcall* fnOnPlayerLoadComplete)(void* instance, BOOL success);
 	static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete;

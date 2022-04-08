@@ -19,9 +19,9 @@ void VisualsSpoofers::spoofVisuals()
 	
 	spoofPreEmpt();
 
-	if (Config::Visuals::CSChangerEnabled && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
+	if (Config::Visuals::CSChanger::Enabled && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::CatchTheBeat))
 	{
-		float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CS - 5.f) / 5.f));
+		float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CSChanger::CS - 5.f) / 5.f));
 		float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
 		float spriteRatio = spriteDisplaySize / 128.f;
 
@@ -32,7 +32,7 @@ void VisualsSpoofers::spoofVisuals()
 		HitObjectManager::SetStackOffset(hitObjectRadius / 10.f);
 	}
 	
-	if (Config::Visuals::HiddenDisabled)
+	if (Config::Visuals::Removers::HiddenRemoverEnabled)
 	{
 		Mods mods = HitObjectManager::GetActiveMods();
 
@@ -45,16 +45,16 @@ void VisualsSpoofers::spoofVisuals()
 
 void VisualsSpoofers::spoofPreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::CatchTheBeat) || Player::IsReplayMode())
 		return;
 
 	originalPreEmpt = HitObjectManager::GetPreEmpt();
 	originalPreEmptSliderComplete = HitObjectManager::GetPreEmptSliderComplete();
 
-	if (Config::Visuals::ARChangerEnabled)
+	if (Config::Visuals::ARChanger::Enabled)
 	{
-		const double rateMultiplier = Config::Visuals::ARChangerAdjustToRate ? ((Config::Timewarp::Enabled ? Timewarp::GetRate() : ModManager::ModPlaybackRate()) / 100.) : 1.;
-		const int preEmpt = static_cast<int>(HitObjectManager::MapDifficultyRange(static_cast<double>(Config::Visuals::AR), 1800., 1200., 450., Config::Visuals::ARChangerAdjustToMods) * rateMultiplier);
+		const double rateMultiplier = Config::Visuals::ARChanger::AdjustToRate ? ((Config::Timewarp::Enabled ? Timewarp::GetRate() : ModManager::ModPlaybackRate()) / 100.) : 1.;
+		const int preEmpt = static_cast<int>(HitObjectManager::MapDifficultyRange(static_cast<double>(Config::Visuals::ARChanger::AR), 1800., 1200., 450., Config::Visuals::ARChanger::AdjustToMods) * rateMultiplier);
 
 		HitObjectManager::SetPreEmpt(preEmpt);
 		HitObjectManager::SetPreEmptSliderComplete(preEmpt * 2 / 3);
@@ -63,10 +63,10 @@ void VisualsSpoofers::spoofPreEmpt()
 
 void VisualsSpoofers::restorePreEmpt()
 {
-	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::Catch) || Player::IsReplayMode())
+	if (GameBase::Mode() != OsuModes::Play || (Player::PlayMode() != PlayModes::Osu && Player::PlayMode() != PlayModes::CatchTheBeat) || Player::IsReplayMode())
 		return;
 
-	if (Config::Visuals::ARChangerEnabled)
+	if (Config::Visuals::ARChanger::Enabled)
 	{
 		HitObjectManager::SetPreEmpt(originalPreEmpt);
 		HitObjectManager::SetPreEmptSliderComplete(originalPreEmptSliderComplete);
@@ -94,13 +94,13 @@ void VisualsSpoofers::LoadPreemptiveDots()
 
 void VisualsSpoofers::DrawPreemptiveDots()
 {
-	if (Config::Visuals::ARChangerEnabled && Config::Visuals::ARChangerDrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode() && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::Catch))
+	if (Config::Visuals::ARChanger::Enabled && Config::Visuals::ARChanger::DrawPreemptiveDot && Player::IsLoaded() && !Player::IsReplayMode() && (Player::PlayMode() == PlayModes::Osu || Player::PlayMode() == PlayModes::CatchTheBeat))
 	{
 		for (int i = 0; i < preemptiveDots.size(); i++)
 		{
 			int time = std::get<1>(preemptiveDots[i]);
 			if (AudioEngine::Time() >= time && AudioEngine::Time() < time + originalPreEmpt)
-				ImGui::GetBackgroundDrawList()->AddCircleFilled(std::get<0>(preemptiveDots[i]), preemtiveDotRadius, ImColor(Config::Visuals::ARChangerPreemptiveDotColour), 32);
+				ImGui::GetBackgroundDrawList()->AddCircleFilled(std::get<0>(preemptiveDots[i]), preemtiveDotRadius, ImColor(Config::Visuals::ARChanger::PreemptiveDotColour), 32);
 		}
 	}
 }
@@ -161,7 +161,7 @@ __declspec(naked) void VisualsSpoofers::AddFollowPointsHook(void* instance, int 
 
 void __fastcall VisualsSpoofers::LoadFlashlightHook(void* instance)
 {
-	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+	if (Config::Visuals::Removers::FlashlightRemoverEnabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
 		return;
 
 	oLoadFlashlight(instance);
@@ -169,7 +169,7 @@ void __fastcall VisualsSpoofers::LoadFlashlightHook(void* instance)
 
 void __fastcall VisualsSpoofers::LoadFlashlightManiaHook(void* instance)
 {
-	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+	if (Config::Visuals::Removers::FlashlightRemoverEnabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
 		return;
 
 	oLoadFlashlightMania(instance);
@@ -177,7 +177,7 @@ void __fastcall VisualsSpoofers::LoadFlashlightManiaHook(void* instance)
 
 void __fastcall VisualsSpoofers::UpdateFlashlightHook(void* instance)
 {
-	if (Config::Visuals::FlashlightDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+	if (Config::Visuals::Removers::FlashlightRemoverEnabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
 		return;
 
 	oUpdateFlashlight(instance);
@@ -185,7 +185,7 @@ void __fastcall VisualsSpoofers::UpdateFlashlightHook(void* instance)
 
 BOOL __fastcall VisualsSpoofers::HasHiddenSpritesHook(void* instance)
 {
-	if (Config::Visuals::HiddenDisabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
+	if (Config::Visuals::Removers::HiddenRemoverEnabled && GameBase::Mode() == OsuModes::Play && !Player::IsReplayMode())
 		return FALSE;
 
 	return oHasHiddenSprites(instance);

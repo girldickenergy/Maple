@@ -14,12 +14,13 @@
 #include "../Sdk/ConfigManager/ConfigManager.h"
 #include "../Sdk/Player/Player.h"
 #include "../UI/Overlay.h"
-#include "../Utilities/Logging/Logger.h"
+#include "../Logging/Logger.h"
 #include "../Utilities/Security/Security.h"
 #include "../Features/Spoofer/Spoofer.h"
 #include "ErrorSubmission.h"
 #include "AddParameter.h"
 #include "Rendering.h"
+#include "../Sdk/Input/InputManager.h"
 
 CinnamonResult Hooks::installManagedHook(std::string name, Method method, LPVOID pDetour, LPVOID* ppOriginal, HookType hookType)
 {
@@ -44,11 +45,6 @@ void Hooks::InstallAllHooks()
 		Logger::Log(LogSeverity::Info, "Hooked SubmitError");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook SubmitError");
-
-	if (installManagedHook("sendCurrentTrack", Vanilla::Explorer["osu.Helpers.Scrobbler"]["sendCurrentTrack"].Method, Anticheat::SendCurrentTrackHook, reinterpret_cast<LPVOID*>(&Anticheat::oSendCurrentTrack)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked sendCurrentTrack");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook sendCurrentTrack");
 	
 	//TODO: causing weird access violations only in debug
 	#ifndef _DEBUG
@@ -133,20 +129,25 @@ void Hooks::InstallAllHooks()
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook get_Item");
 
-	if (installManagedHook("Initialize", Vanilla::Explorer["osu.GameModes.Play.Player"]["Initialize"].Method, Player::PlayerInitialize, reinterpret_cast<LPVOID*>(&Player::oPlayerInitialize)) == CinnamonResult::Success)
-		Logger::Log(LogSeverity::Info, "Hooked Initialize");
-	else
-		Logger::Log(LogSeverity::Error, "Failed to hook Initialize");
-
 	if (installManagedHook("OnLoadComplete", Vanilla::Explorer["osu.GameModes.Play.Player"]["OnLoadComplete"].Method, Player::OnPlayerLoadCompleteHook, reinterpret_cast<LPVOID*>(&Player::oOnPlayerLoadComplete)) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked OnLoadComplete");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook OnLoadComplete");
 
-	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, AimAssist::UpdateCursorPosition, reinterpret_cast<LPVOID*>(&AimAssist::oUpdateCursorPosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
+	if (installManagedHook("PlayerDispose", Vanilla::Explorer["osu.GameModes.Play.Player"]["Dispose"].Method, Player::DisposeHook, reinterpret_cast<LPVOID*>(&Player::oDispose)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked PlayerDispose");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook PlayerDispose");
+
+	if (installManagedHook("set_MousePosition", Vanilla::Explorer["osu.Input.Handlers.MouseManager"]["set_MousePosition"].Method, InputManager::SetMousePositionHook, reinterpret_cast<LPVOID*>(&InputManager::oSetMousePosition), HookType::UndetectedByteCodePatch) == CinnamonResult::Success)
 		Logger::Log(LogSeverity::Info, "Hooked set_MousePosition");
 	else
 		Logger::Log(LogSeverity::Error, "Failed to hook set_MousePosition");
+
+	if (installManagedHook("MouseViaKeyboardControls", Vanilla::Explorer["osu.Input.InputManager"]["MouseViaKeyboardControls"].Method, InputManager::MouseViaKeyboardControlsHook, reinterpret_cast<LPVOID*>(&InputManager::oMouseViaKeyboardControls)) == CinnamonResult::Success)
+		Logger::Log(LogSeverity::Info, "Hooked MouseViaKeyboardControls");
+	else
+		Logger::Log(LogSeverity::Error, "Failed to hook MouseViaKeyboardControls");
 
 	TypeExplorer obfuscatedStringType = Vanilla::Explorer["osu.GameBase"]["UniqueId"].Field.GetTypeUnsafe();
 	if (installManagedHook("ObfuscatedStringGetValue", obfuscatedStringType["get_Value"].Method, Spoofer::ObfuscatedStringGetValueHook, reinterpret_cast<LPVOID*>(&Spoofer::oObfuscatedStringGetValue)) == CinnamonResult::Success)

@@ -6,7 +6,8 @@
 
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Utilities/Crypto/CryptoHelper.h"
-#include "../../Utilities/Directories/DirectoryHelper.h"
+#include "../../Storage/Storage.h"
+#include "../../Storage/StorageConfig.h"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -75,73 +76,20 @@ bool Spoofer::isValidName(const std::string& name)
 	return !name.empty() && !isSameName(name, "none");
 }
 
-void Spoofer::saveConfigFile()
-{
-	DirectoryHelper::EnsureDirectoriesExist();
-
-	std::ofstream ofs;
-	ofs.open(configFilepath, std::ofstream::out | std::ofstream::trunc);
-
-	ofs << "CurrentProfile=" << Profiles[SelectedProfile] << std::endl;
-	
-	ofs.close();
-}
-
-void Spoofer::loadConfigFile()
-{
-	DirectoryHelper::EnsureDirectoriesExist();
-
-	if (!std::filesystem::exists(configFilepath))
-	{
-		SelectedProfile = 0;
-
-		return;
-	}
-
-	std::ifstream file(configFilepath);
-	std::string line;
-
-	while (std::getline(file, line))
-	{
-		const int delimiterIndex = line.find('=');
-		std::string variable = line.substr(0, delimiterIndex);
-		std::string value = line.substr(delimiterIndex + 1, std::string::npos);
-
-		if (variable == "CurrentProfile")
-		{
-			if (isValidName(value))
-			{
-				const auto it = std::find(Profiles.begin(), Profiles.end(), value);
-
-				if (it != Profiles.end())
-					SelectedProfile = std::distance(Profiles.begin(), it);
-				else
-					SelectedProfile = 0;
-			}
-			else
-				SelectedProfile = 0;
-		}
-	}
-
-	file.close();
-}
-
 void Spoofer::refresh()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	Profiles.clear();
 	Profiles.emplace_back("none");
 
-	for (const auto& file : std::filesystem::directory_iterator(DirectoryHelper::ProfilesDirectory))
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
 		if (file.path().extension() == ".profile" && isValidName(file.path().filename().stem().string()))
 			Profiles.push_back(file.path().filename().stem().string());
 }
 
 void Spoofer::Initialize()
 {
-	configFilepath = DirectoryHelper::ProfilesDirectory + "\\" + Communication::CurrentUser->UsernameHashed + ".cfg";
-
 	realClientHash = GameBase::GetClientHash();
 	realUniqueID = GameBase::GetUniqueID();
 	realUniqueID2 = GameBase::GetUniqueID2();
@@ -156,13 +104,20 @@ void Spoofer::Initialize()
 	}
 
 	refresh();
-	loadConfigFile();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), StorageConfig::DefaultProfile);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+	else
+		SelectedProfile = 0;
+
 	Load();
 }
 
 void Spoofer::Load()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
 	{
@@ -173,7 +128,7 @@ void Spoofer::Load()
 	}
 	else
 	{
-		std::ifstream file(DirectoryHelper::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
+		std::ifstream file(Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
 		std::string line;
 
 		std::wstring currentAdapters;
@@ -204,17 +159,18 @@ void Spoofer::Load()
 
 	LoadedProfile = SelectedProfile;
 
-	saveConfigFile();
+	StorageConfig::DefaultProfile = Profiles[LoadedProfile];
+	Storage::SaveStorageConfig();
 }
 
 void Spoofer::Delete()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profilePath = DirectoryHelper::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
 
 	std::filesystem::remove(profilePath);
 
@@ -227,9 +183,9 @@ void Spoofer::Delete()
 
 void Spoofer::Create()
 {
-	DirectoryHelper::EnsureDirectoriesExist();
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	const std::string profilePath = DirectoryHelper::ProfilesDirectory + "\\" + NewProfileName + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + "\\" + NewProfileName + ".profile";
 
 	if (!isValidName(NewProfileName) || std::filesystem::exists(profilePath))
 		return;

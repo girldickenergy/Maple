@@ -37,7 +37,7 @@ void Timewarp::Initialize()
 
 void Timewarp::UpdateCatcherSpeed() 
 {
-    if (Player::PlayMode() == PlayModes::Catch)
+    if (Player::PlayMode() == PlayModes::CatchTheBeat)
         Ruleset::SetCatcherSpeed(static_cast<float>(Config::Timewarp::Enabled ? GetRate() : ModManager::ModPlaybackRate()) / 100.f);
 }
 

@@ -6,7 +6,7 @@
 #include "../../Sdk/Anticheat/Anticheat.h"
 #include "../../Sdk/Player/Player.h"
 #include "../../UI/Overlay.h"
-#include "../../Utilities/Logging/Logger.h"
+#include "../../Logging/Logger.h"
 #include "../../Utilities/Security/xorstr.hpp"
 
 void __fastcall ScoreSubmission::SubmitHook(void* instance)

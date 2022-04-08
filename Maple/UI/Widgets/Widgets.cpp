@@ -5,7 +5,7 @@
 
 #include <map>
 
-#include "StyleProvider.h"
+#include "../StyleProvider.h"
 
 const char* Widgets::patchFormatStringFloatToInt(const char* fmt)
 {
@@ -976,7 +976,7 @@ bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_d
     return value_changed;
 }
 
-bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags)
+bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, int step, int stepFast, const char* format, ImGuiSliderFlags flags)
 {
     const float totalWidth = ImGui::GetWindowWidth() * 0.5f - ImGui::GetStyle().ItemInnerSpacing.x;
     const float sliderWidth = totalWidth * 0.6f;
@@ -987,7 +987,7 @@ bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const c
 
 	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
     ImGui::PushItemWidth(inputWidth);
-	const bool inputValueChanged = InputScalar(label, ImGuiDataType_S32, v, &stepInt, &stepFastInt, format);
+	const bool inputValueChanged = InputScalar(label, ImGuiDataType_S32, v, &step, &stepFast, format);
 
     if ((flags & ImGuiSliderFlags_AlwaysClamp) != 0)
         *v = ImClamp(*v, v_min, v_max);
@@ -995,7 +995,7 @@ bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, const c
     return sliderValueChanged || inputValueChanged;
 }
 
-bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max, float step, float stepFast, const char* format, ImGuiSliderFlags flags)
 {
     const float totalWidth = ImGui::GetWindowWidth() * 0.5f - ImGui::GetStyle().ItemInnerSpacing.x;
     const float sliderWidth = totalWidth * 0.6f;
@@ -1006,7 +1006,7 @@ bool Widgets::SliderFloat(const char* label, float* v, float v_min, float v_max,
 
     ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
     ImGui::PushItemWidth(inputWidth);
-    const bool inputValueChanged = InputScalar(label, ImGuiDataType_Float, v, &stepFloat, &stepFastFloat, format);
+    const bool inputValueChanged = InputScalar(label, ImGuiDataType_Float, v, &step, &stepFast, format);
 
     if ((flags & ImGuiSliderFlags_AlwaysClamp) != 0)
         *v = ImClamp(*v, v_min, v_max);
