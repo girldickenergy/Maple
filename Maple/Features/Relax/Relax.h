@@ -71,7 +71,7 @@ class Relax
 	static double calculateDirectionAngle(Vector2 lastPosition, Vector2 currentPosition, Vector2 hitObjectPosition);
 #pragma endregion
 public:
-	static void Start();
+	static void Initialize();
 	static void Stop();
 
 	typedef int(__fastcall* fnUpdateKeyboardInput)(uintptr_t instance, int key);

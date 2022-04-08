@@ -30,8 +30,6 @@ class AimAssist
 
 	static inline float distanceScaled;
 
-	static Vector2 doAssist(Vector2 realPosition);
-
 	static __forceinline bool InCircle(Vector2 circle, float radius, Vector2 point);
 
 	// This is the first version of the algorithm, it's pretty bad but it works!
@@ -39,15 +37,11 @@ class AimAssist
 
 	//kat's algo
 	static inline Vector2 offset = Vector2();
-
-	static Vector2 doAssistv2(Vector2 realPosition);
-	
-	static Vector2 doAssistv3(Vector2 realPosition);
 public:
 	static void DrawDebugOverlay();
-	static void Reset();
-	
-	typedef void(__stdcall* fnUpdateCursorPosition)(float x, float y);
-	static inline fnUpdateCursorPosition oUpdateCursorPosition;
-	static void __stdcall UpdateCursorPosition(float x, float y);
+	static void Initialize();
+
+	static Vector2 DoAssist(Vector2 realPosition);
+	static Vector2 DoAssistv2(Vector2 realPosition);
+	static Vector2 DoAssistv3(Vector2 realPosition);
 };

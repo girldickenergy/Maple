@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Utilities\Logging\Logger.cpp">
-      <Filter>Utilities\Logging</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\Vanilla\NameCache.cpp">
       <Filter>Dependencies\Vanilla</Filter>
     </ClCompile>
@@ -54,15 +51,6 @@
       <Filter>Dependencies\gl3w\GL</Filter>
     </ClCompile>
     <ClCompile Include="UI\Overlay.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\MainMenu.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Utilities\Textures\TextureHelper.cpp">
-      <Filter>Utilities\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Widgets.cpp">
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="Sdk\ConfigManager\ConfigManager.cpp">
@@ -115,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="Features\Misc\RichPresence.cpp">
       <Filter>Features\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\ScoreSubmissionDialogue.cpp">
-      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp">
       <Filter>Features\Misc</Filter>
@@ -707,9 +692,6 @@
     <ClCompile Include="Hooks\ErrorSubmission.cpp">
       <Filter>Hooks</Filter>
     </ClCompile>
-    <ClCompile Include="UI\SnowVisualisation.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="Features\Spoofer\Spoofer.cpp">
       <Filter>Features\Spoofer</Filter>
     </ClCompile>
@@ -722,13 +704,43 @@
     <ClCompile Include="Hooks\Rendering.cpp">
       <Filter>Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="Storage\Storage.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging\Logger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Widgets\Widgets.cpp">
+      <Filter>UI\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Menus\MainMenu.cpp">
+      <Filter>UI\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Menus\ScoreSubmissionDialogue.cpp">
+      <Filter>UI\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Menus\SnowVisualisation.cpp">
+      <Filter>UI\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Rendering\TextureLoader.cpp">
+      <Filter>UI\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayBot\ReplayBot.cpp">
+      <Filter>Features\ReplayBot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utilities">
       <UniqueIdentifier>{57f46a93-252c-4a7d-b35a-a2b1638d606a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utilities\Logging">
-      <UniqueIdentifier>{57b325d8-4dff-40b8-a942-3a486c2b88d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Dependencies">
       <UniqueIdentifier>{bb4854db-e234-449e-9539-a4e28a6cc54e}</UniqueIdentifier>
@@ -771,9 +783,6 @@
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{238092e0-902b-47b4-b863-f386b1b4b241}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utilities\Textures">
-      <UniqueIdentifier>{06892572-ac19-479a-82ba-c8a203245f4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sdk">
       <UniqueIdentifier>{29edb8e7-beb1-488c-9f91-b503d994b1b5}</UniqueIdentifier>
@@ -841,12 +850,6 @@
     <Filter Include="Sdk\Input">
       <UniqueIdentifier>{93144979-b9de-4a6a-b0fb-05da91c4c8d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\3rd-party">
-      <UniqueIdentifier>{0675af4b-1ad2-4b9d-a30a-e3a2a8c3beeb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\3rd-party\FileDialog">
-      <UniqueIdentifier>{0a9f1d5a-01db-48c5-9146-35ea23afbf8e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dependencies\cryptopp">
       <UniqueIdentifier>{00e9f981-3ff1-4410-a009-e071907ccda6}</UniqueIdentifier>
     </Filter>
@@ -886,17 +889,62 @@
     <Filter Include="Features\Spoofer">
       <UniqueIdentifier>{33c699d8-e0c4-44b0-b502-749c4cb46549}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utilities\Directories">
-      <UniqueIdentifier>{4a7b8ff9-6dd8-462b-a25f-4dc3438eec09}</UniqueIdentifier>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{136cdcc0-2f6c-4e31-bb21-35bb03eb39b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{89d8fd33-de39-487c-bf13-f7ae664160eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Menus">
+      <UniqueIdentifier>{7175f625-6ac8-4d1f-98f2-0743d82ddb3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Assets">
+      <UniqueIdentifier>{d7635e3a-1a99-4d53-a6d1-a6294f348981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Rendering">
+      <UniqueIdentifier>{72a64b42-9fb3-4341-a833-9327c3a4a8f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Widgets">
+      <UniqueIdentifier>{eff04bab-cca1-4fd5-8d11-afb4a22fd9fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Widgets\3rd-party">
+      <UniqueIdentifier>{3c84a811-ebbd-47d6-a355-3e0d9629286f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Widgets\3rd-party\FileDialog">
+      <UniqueIdentifier>{086fdea8-9755-425f-b58f-62e49707e70d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes">
+      <UniqueIdentifier>{3aa3360c-a81b-4df9-9f05-ba4cd705e280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Enums">
+      <UniqueIdentifier>{6999ff5d-9ba7-4ec6-994f-dc66f464526b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Enums\Gameplay">
+      <UniqueIdentifier>{f5d59633-754e-40ef-89fb-7c08815b82ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo">
+      <UniqueIdentifier>{71a2a5c9-681a-4f59-81c3-e19f5072e6a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Decoders">
+      <UniqueIdentifier>{15b02dbf-d154-47fe-b634-9a5d1bafde54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\LZMA">
+      <UniqueIdentifier>{95cf9d1d-55a6-48a1-8d81-19dd3ed1bc93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Replays">
+      <UniqueIdentifier>{6ad2eb98-bde1-42ed-a11b-d825d53fc275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Serialization">
+      <UniqueIdentifier>{30ffd671-e238-40bd-941e-4fa4a6fdc8ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Utilities">
+      <UniqueIdentifier>{10fb5b7c-801d-4453-81b7-48e5c90cdf03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayBot">
+      <UniqueIdentifier>{1f096ef3-4a1b-4e0a-b2c8-5ccb8dc89cd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Utilities\Logging\Logger.h">
-      <Filter>Utilities\Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\Logging\LogSeverity.h">
-      <Filter>Utilities\Logging</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h">
       <Filter>Dependencies\Vanilla</Filter>
     </ClInclude>
@@ -1014,22 +1062,7 @@
     <ClInclude Include="UI\Overlay.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="UI\MainMenu.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\Textures\TextureHelper.h">
-      <Filter>Utilities\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Fonts.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="UI\StyleProvider.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Textures.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Widgets.h">
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Sdk\ConfigManager\ConfigManager.h">
@@ -1092,9 +1125,6 @@
     <ClInclude Include="Features\Misc\RichPresence.h">
       <Filter>Features\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="UI\ScoreSubmissionDialogue.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="Features\Misc\ScoreSubmission.h">
       <Filter>Features\Misc</Filter>
     </ClInclude>
@@ -1142,9 +1172,6 @@
     </ClInclude>
     <ClInclude Include="Sdk\Input\InputManager.h">
       <Filter>Sdk\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\3rd-party\FileDialog\imfilebrowser.h">
-      <Filter>UI\3rd-party\FileDialog</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\cryptopp\Wrapper\AES.h">
       <Filter>Dependencies\cryptopp\Wrapper</Filter>
@@ -1824,17 +1851,11 @@
     <ClInclude Include="Dependencies\Vanilla\COM\Helpers\GCHelpers.h">
       <Filter>Dependencies\Vanilla\COM\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="UI\SnowVisualisation.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\Crypto\CryptoHelper.h">
       <Filter>Utilities\Crypto</Filter>
     </ClInclude>
     <ClInclude Include="Features\Spoofer\Spoofer.h">
       <Filter>Features\Spoofer</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\Directories\DirectoryHelper.h">
-      <Filter>Utilities\Directories</Filter>
     </ClInclude>
     <ClInclude Include="Sdk\Osu\WindowManager.h">
       <Filter>Sdk\Osu</Filter>
@@ -1847,6 +1868,84 @@
     </ClInclude>
     <ClInclude Include="Hooks\AddParameter.h">
       <Filter>Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\Storage.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\StorageConfig.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\Logger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\LogSeverity.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widgets\Widgets.h">
+      <Filter>UI\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widgets\3rd-party\FileDialog\imfilebrowser.h">
+      <Filter>UI\Widgets\3rd-party\FileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Assets\Fonts.h">
+      <Filter>UI\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Assets\Textures.h">
+      <Filter>UI\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Menus\MainMenu.h">
+      <Filter>UI\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Menus\ScoreSubmissionDialogue.h">
+      <Filter>UI\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Menus\SnowVisualisation.h">
+      <Filter>UI\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Rendering\TextureLoader.h">
+      <Filter>UI\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Mods.h">
+      <Filter>Dependencies\OsuDataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\PlayModes.h">
+      <Filter>Dependencies\OsuDataTypes\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuManiaKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\TaikoKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\CatchTheBeatKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Enums\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\Replay.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Utilities\StringUtilities.h">
+      <Filter>Dependencies\Chiyo\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayBot\ReplayBot.h">
+      <Filter>Features\ReplayBot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

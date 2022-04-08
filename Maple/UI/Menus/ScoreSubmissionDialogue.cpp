@@ -3,11 +3,10 @@
 #include <imgui.h>
 #include <ThemidaSDK.h>
 
-#include "StyleProvider.h"
-#include "Widgets.h"
-#include "../Features/Misc/ScoreSubmission.h"
-#include "../Sdk/Osu/GameBase.h"
-#include "../Sdk/Osu/WindowManager.h"
+#include "../StyleProvider.h"
+#include "../Widgets/Widgets.h"
+#include "../../Sdk/Osu/WindowManager.h"
+#include "../../Features/Misc/ScoreSubmission.h"
 
 void ScoreSubmissionDialogue::Render()
 {

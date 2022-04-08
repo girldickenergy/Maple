@@ -190,8 +190,12 @@ HitTimings Relax::calculateTimings(bool alternating)
 		}
 	}
 
-	if (Config::Relax::UseLowestPossibleHoldTimes)
-		holdTime = (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
+	if (Config::Relax::Blatant::UseLowestPossibleHoldTimes)
+	{
+		holdTime = nextHitObject.IsNull ? 25 : (nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f;
+		if (holdTime > 25)
+			holdTime = 25;
+	}
 
 	return HitTimings(static_cast<int>(offset), static_cast<int>(holdTime));
 }
@@ -258,11 +262,11 @@ HitScanResult Relax::getNormalHitScanResult()
 		if (time >= currentHitObject.StartTime + hitTimings.Offset)
 			return HitScanResult::Hit;
 
-		if (Config::Relax::PredictionEnabled)
+		if (Config::Relax::Prediction::Enabled)
 		{
-			if (!lastCursorPosition.IsNull && currentIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * Config::Relax::PredictionScale)
+			if (!lastCursorPosition.IsNull && currentIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * Config::Relax::Prediction::Scale)
 			{
-				if (directionAngleNext <= Config::Relax::PredictionAngle)
+				if (directionAngleNext <= Config::Relax::Prediction::Angle)
 					return HitScanResult::Hit;
 			}
 		}
@@ -301,7 +305,7 @@ HitScanResult Relax::getSliderHitScanResult()
 		if (time >= currentHitObject.StartTime + hitTimings.Offset)
 			return HitScanResult::Hit;
 
-		if (Config::Relax::PredictionEnabled && Config::Relax::SliderPredictionEnabled)
+		if (Config::Relax::Prediction::Enabled && Config::Relax::Prediction::SliderPredictionEnabled)
 		{
 			const Vector2 sliderBodyPosition = currentHitObject.PositionAtTime(currentHitObject.StartTime + hitWindow50 + 10);
 
@@ -311,9 +315,9 @@ HitScanResult Relax::getSliderHitScanResult()
 
 			const double directionAngle = calculateDirectionAngle(lastCursorPosition, cursorPosition, sliderBodyPosition);
 
-			if (!lastCursorPosition.IsNull && distanceToSliderBody < lastDistanceToSliderBody && distanceToSliderBody < distanceFromObjectToSliderBody && distanceToObject > hitObjectRadius * Config::Relax::PredictionScale)
+			if (!lastCursorPosition.IsNull && distanceToSliderBody < lastDistanceToSliderBody && distanceToSliderBody < distanceFromObjectToSliderBody && distanceToObject > hitObjectRadius * Config::Relax::Prediction::Scale)
 			{
-				if (directionAngle <= Config::Relax::PredictionAngle)
+				if (directionAngle <= Config::Relax::Prediction::Angle)
 					return HitScanResult::Hit;
 			}
 		}
@@ -352,24 +356,19 @@ double Relax::calculateDirectionAngle(Vector2 lastPosition, Vector2 currentPosit
 	return angle * (360.0 / (M_PI * 2.0));
 }
 
-void Relax::Start()
+void Relax::Initialize()
 {
 	if (!Config::Relax::Enabled || Player::IsReplayMode() || Player::PlayMode() != PlayModes::Osu)
 		return;
 
-	Stop();
-
-	CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(relaxThread), nullptr, 0, nullptr);
-}
-
-void Relax::Stop()
-{
 	if (isWorking)
 	{
 		shouldStop = true;
 		while (isWorking)
 			Sleep(1);
 	}
+
+	CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(relaxThread), nullptr, 0, nullptr);
 }
 
 int __fastcall Relax::UpdateKeyboardInput(uintptr_t instance, int key)

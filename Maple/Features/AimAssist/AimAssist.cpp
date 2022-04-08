@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include "../../Sdk/Osu/WindowManager.h"
+#include "../../Sdk/Input/InputManager.h"
 
 void AimAssist::DrawDebugOverlay()
 {
@@ -34,8 +35,10 @@ void AimAssist::DrawDebugOverlay()
 			// Draw Sliderball position
 			if (Config::AimAssist::Algorithm == 0)
 			{
+				const float sliderballDeadzone = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength * 12.2f + 2.1f : Config::AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone;
+
 				Vector2 screen2 = GameField::FieldToDisplay(sliderBallPos);
-				drawList->AddCircleFilled(positionOffset + ImVec2(screen2.X, screen2.Y), Config::AimAssist::SliderballDeadzone * 2.f, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
+				drawList->AddCircleFilled(positionOffset + ImVec2(screen2.X, screen2.Y), sliderballDeadzone * 2.f, decided ? ImGui::ColorConvertFloat4ToU32(ImVec4(0.f, 255.f, 0.f, 0.5f)) : ImGui::ColorConvertFloat4ToU32(ImVec4(255.f, 0.f, 0.f, 0.5f)));
 			}
 
 			// Draw small debug box uwu
@@ -48,23 +51,23 @@ void AimAssist::DrawDebugOverlay()
 	}
 }
 
-Vector2 AimAssist::doAssist(Vector2 realPosition)
+Vector2 AimAssist::DoAssist(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
 
-	const float strength = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength / 2.f < 0.7f ? Config::AimAssist::EasyModeStrength / 2.f : (Config::AimAssist::EasyModeStrength / 2.f) - 0.214f : Config::AimAssist::Strength;
-	const int baseFOV = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 50.f : Config::AimAssist::BaseFOV;
-	const float maximumFOVScale = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 2.f + .25f : Config::AimAssist::MaximumFOVScale;
-	const float minimumFOVTotal = Config::AimAssist::EasyMode ? 0 : Config::AimAssist::MinimumFOVTotal;
-	const float maximumFOVTotal = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 220 : Config::AimAssist::MaximumFOVTotal;
-	const bool assistOnSliders = Config::AimAssist::EasyMode ? true : Config::AimAssist::AssistOnSliders;
-	const bool flipSliderballDeadzone = Config::AimAssist::EasyMode ? false : Config::AimAssist::FlipSliderballDeadzone;
-	const float sliderballDeadzone = Config::AimAssist::EasyMode ? Config::AimAssist::EasyModeStrength * 12.2f + 2.1f : Config::AimAssist::SliderballDeadzone;
-	const float strengthMultiplier = Config::AimAssist::EasyMode ? 1.f : Config::AimAssist::StrengthMultiplier;
-	const float assistDeadzone = Config::AimAssist::EasyMode ? 3.f : Config::AimAssist::AssistDeadzone;
-	const float resyncLeniency = Config::AimAssist::EasyMode ? 3.5f : Config::AimAssist::ResyncLeniency;
-	const float resyncLeniencyFactor = Config::AimAssist::EasyMode ? 0.693f : Config::AimAssist::ResyncLeniencyFactor;
+	const float strength = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength / 2.f < 0.7f ? Config::AimAssist::Algorithmv1::EasyMode::Strength / 2.f : (Config::AimAssist::Algorithmv1::EasyMode::Strength / 2.f) - 0.214f : Config::AimAssist::Algorithmv1::AdvancedMode::Strength;
+	const int baseFOV = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength * 50.f : Config::AimAssist::Algorithmv1::AdvancedMode::BaseFOV;
+	const float maximumFOVScale = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength * 2.f + .25f : Config::AimAssist::Algorithmv1::AdvancedMode::MaximumFOVScale;
+	const float minimumFOVTotal = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? 0 : Config::AimAssist::Algorithmv1::AdvancedMode::MinimumFOVTotal;
+	const float maximumFOVTotal = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength * 220 : Config::AimAssist::Algorithmv1::AdvancedMode::MaximumFOVTotal;
+	const bool assistOnSliders = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? true : Config::AimAssist::Algorithmv1::AdvancedMode::AssistOnSliders;
+	const bool flipSliderballDeadzone = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? false : Config::AimAssist::Algorithmv1::AdvancedMode::FlipSliderballDeadzone;
+	const float sliderballDeadzone = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? Config::AimAssist::Algorithmv1::EasyMode::Strength * 12.2f + 2.1f : Config::AimAssist::Algorithmv1::AdvancedMode::SliderballDeadzone;
+	const float strengthMultiplier = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? 1.f : Config::AimAssist::Algorithmv1::AdvancedMode::StrengthMultiplier;
+	const float assistDeadzone = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? 3.f : Config::AimAssist::Algorithmv1::AdvancedMode::AssistDeadzone;
+	const float resyncLeniency = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? 3.5f : Config::AimAssist::Algorithmv1::AdvancedMode::ResyncLeniency;
+	const float resyncLeniencyFactor = Config::AimAssist::Algorithmv1::EasyMode::Enabled ? 0.693f : Config::AimAssist::Algorithmv1::AdvancedMode::ResyncLeniencyFactor;
 
 	const int time = AudioEngine::Time();
 	if (time > (currentHitObject.IsType(HitObjectType::Slider) && assistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))
@@ -201,7 +204,7 @@ static auto __forceinline calc_interpolant(const Vector2& window_size, float dis
 		.m128_f32[0];
 }
 
-Vector2 AimAssist::doAssistv2(Vector2 realPosition)
+Vector2 AimAssist::DoAssistv2(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
@@ -224,21 +227,21 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 	rawPosition = realPosition;
 
-	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
+	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
 	Vector2 distance = hitObjectPosition - realPosition;
-	auto fov = (40.f * Config::AimAssist::Algorithmv2Power);
-	const auto clamp_range = Config::AimAssist::Algorithmv2Power * 16.f; // * 8.f
+	auto fov = (40.f * Config::AimAssist::Algorithmv2::Power);
+	const auto clamp_range = Config::AimAssist::Algorithmv2::Power * 16.f; // * 8.f
 
 	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
 	{
 		if (point_in_radius(realPosition, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
-			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2Power && !previousHitObject.IsNull) {
-				const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2Power);
+			if (!point_in_radius(realPosition, lastPos, 1.75f) && Config::AimAssist::Algorithmv2::Power && !previousHitObject.IsNull) {
+				const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2::Power);
 
 				if (interpolant > std::numeric_limits<float>::epsilon()) {
-					offset.X = std::clamp(std::lerp(offset.X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
-					offset.Y = std::clamp(std::lerp(offset.Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2Power * 16.f), Config::AimAssist::Algorithmv2Power * 16.f);
+					offset.X = std::clamp(std::lerp(offset.X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2::Power * 16.f), Config::AimAssist::Algorithmv2::Power * 16.f);
+					offset.Y = std::clamp(std::lerp(offset.Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2::Power * 16.f), Config::AimAssist::Algorithmv2::Power * 16.f);
 				}
 			}
 		}
@@ -262,13 +265,13 @@ Vector2 AimAssist::doAssistv2(Vector2 realPosition)
 
 }
 
-Vector2 AimAssist::doAssistv3(Vector2 realPosition)
+Vector2 AimAssist::DoAssistv3(Vector2 realPosition)
 {
 	if (!Config::AimAssist::Enabled || !Player::IsLoaded() || !canAssist)
 		return realPosition;
 
 	const int time = AudioEngine::Time();
-	if (time > (currentHitObject.IsType(HitObjectType::Slider) && Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))
+	if (time > (currentHitObject.IsType(HitObjectType::Slider) && Config::AimAssist::Algorithmv3::AssistOnSliders ? currentHitObject.EndTime : currentHitObject.StartTime))
 	{
 		currentIndex++;
 
@@ -286,8 +289,8 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	rawPosition = realPosition;
 
 	Vector2 cursorPosition = GameField::DisplayToField(realPosition);
-	Vector2 previousHitObjectPosition = previousHitObject.IsNull ? Vector2() : Config::AimAssist::Algorithmv3AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position;
-	Vector2 currentHitObjectPosition = Config::AimAssist::Algorithmv3AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position;
+	Vector2 previousHitObjectPosition = previousHitObject.IsNull ? Vector2() : Config::AimAssist::Algorithmv3::AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position;
+	Vector2 currentHitObjectPosition = Config::AimAssist::Algorithmv3::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position;
 
 	float previousHitObjectDistance = previousHitObject.IsNull ? 0.f : previousHitObjectPosition.Distance(cursorPosition);
 	float currentHitObjectDistance = currentHitObjectPosition.Distance(cursorPosition);
@@ -295,21 +298,21 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	const auto arScale = std::clamp(
 		std::max(0.f, ((AudioEngine::Time() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
 		0.f,
-		Config::AimAssist::Algorithmv3MaximumFOVScale);
+		Config::AimAssist::Algorithmv3::MaximumFOVScale);
 
-	distanceScaled = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv3BaseFOV) * arScale, Config::AimAssist::Algorithmv3MinimumFOVTotal, Config::AimAssist::Algorithmv3MaximumFOVTotal);
+	distanceScaled = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv3::BaseFOV) * arScale, Config::AimAssist::Algorithmv3::MinimumFOVTotal, Config::AimAssist::Algorithmv3::MaximumFOVTotal);
 	if (!currentHitObject.IsType(HitObjectType::Spinner) && !Player::IsPaused())
 	{
 		if (currentHitObjectDistance <= distanceScaled || (!previousHitObject.IsNull && previousHitObjectDistance <= distanceScaled))
 		{
-			if (lastPos.Distance(cursorPosition) >= Config::AimAssist::Algorithmv3AccelerationFactor)
+			if (lastPos.Distance(cursorPosition) >= Config::AimAssist::Algorithmv3::AccelerationFactor)
 			{
-				const float diffobj = previousHitObject.IsNull ? preEmpt : currentHitObject.StartTime - (Config::AimAssist::Algorithmv3AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime);
+				const float diffobj = previousHitObject.IsNull ? preEmpt : currentHitObject.StartTime - (Config::AimAssist::Algorithmv3::AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime);
 				const float fromobj = currentHitObject.StartTime - time;
 				const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
 
-				const float previousInterpolant = (1.0f - (previousHitObjectDistance / distanceScaled)) * (t * Config::AimAssist::Algorithmv3Strength);
-				const float interpolant = (1.f - (currentHitObjectDistance / distanceScaled)) * ((1.f - t) * Config::AimAssist::Algorithmv3Strength);
+				const float previousInterpolant = (1.0f - (previousHitObjectDistance / distanceScaled)) * (t * Config::AimAssist::Algorithmv3::Strength);
+				const float interpolant = (1.f - (currentHitObjectDistance / distanceScaled)) * ((1.f - t) * Config::AimAssist::Algorithmv3::Strength);
 
 				Vector2 previousOffset = Vector2();
 				if (!previousHitObject.IsNull && previousHitObjectDistance <= distanceScaled)
@@ -328,7 +331,7 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 			{
 				if (auto change = (delta / offset) * dt; std::isfinite(change.Length()))
 				{
-					auto dpi = delta * (offset.Length() / (Config::AimAssist::Algorithmv3Strength * 8.f)) * .15f;
+					auto dpi = delta * (offset.Length() / (Config::AimAssist::Algorithmv3::Strength * 8.f)) * .15f;
 
 					offset.X = change.X < 0.f ? offset.X + dpi.X : offset.X - dpi.X;
 					offset.Y = change.Y < 0.f ? offset.Y + dpi.Y : offset.Y - dpi.Y;
@@ -342,7 +345,7 @@ Vector2 AimAssist::doAssistv3(Vector2 realPosition)
 	return assistedPosition;
 }
 
-void AimAssist::Reset()
+void AimAssist::Initialize()
 {
 	hitWindow50 = HitObjectManager::GetHitWindow50();
 	preEmpt = HitObjectManager::GetPreEmpt();
@@ -359,13 +362,6 @@ void AimAssist::Reset()
 
 	windowSize = Vector2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 	offset = Vector2();
-}
-
-void __stdcall AimAssist::UpdateCursorPosition(float x, float y)
-{
-	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? doAssist(Vector2(x, y)) : Config::AimAssist::Algorithm == 1 ? doAssistv2(Vector2(x, y)) : doAssistv3(Vector2(x, y));
-
-	oUpdateCursorPosition(assistedPosition.X, assistedPosition.Y);
 }
 
 bool AimAssist::InCircle(Vector2 circle, float radius, Vector2 point)

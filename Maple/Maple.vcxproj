@@ -72,12 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\cryptopp;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\cryptopp;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\cryptopp;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\Cinnamon;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\cryptopp;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -171,6 +171,9 @@
     <ClCompile Include="Communication\TCP\Client.cpp" />
     <ClCompile Include="Communication\TCP\TCP_Client.cpp" />
     <ClCompile Include="Config\Config.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp" />
     <ClCompile Include="Dependencies\Cinnamon\Cinnamon.cpp" />
     <ClCompile Include="Dependencies\cryptopp\3way.cpp" />
     <ClCompile Include="Dependencies\cryptopp\adler32.cpp" />
@@ -374,6 +377,7 @@
     <ClCompile Include="Features\Misc\ScoreSubmission.cpp" />
     <ClCompile Include="Features\Misc\SpectateHandler.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
+    <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Features\Visuals\VisualsSpoofers.cpp" />
@@ -381,6 +385,7 @@
     <ClCompile Include="Hooks\ErrorSubmission.cpp" />
     <ClCompile Include="Hooks\Hooks.cpp" />
     <ClCompile Include="Hooks\Rendering.cpp" />
+    <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="Sdk\Anticheat\Anticheat.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Bindings\BindingManager.cpp" />
@@ -394,14 +399,14 @@
     <ClCompile Include="Sdk\Player\HitObjectManager.cpp" />
     <ClCompile Include="Sdk\Player\Player.cpp" />
     <ClCompile Include="Sdk\Player\Ruleset.cpp" />
-    <ClCompile Include="UI\MainMenu.cpp" />
+    <ClCompile Include="Storage\Storage.cpp" />
+    <ClCompile Include="UI\Menus\MainMenu.cpp" />
+    <ClCompile Include="UI\Menus\ScoreSubmissionDialogue.cpp" />
+    <ClCompile Include="UI\Menus\SnowVisualisation.cpp" />
     <ClCompile Include="UI\Overlay.cpp" />
-    <ClCompile Include="UI\ScoreSubmissionDialogue.cpp" />
-    <ClCompile Include="UI\SnowVisualisation.cpp" />
-    <ClCompile Include="UI\Widgets.cpp" />
-    <ClCompile Include="Utilities\Logging\Logger.cpp" />
+    <ClCompile Include="UI\Rendering\TextureLoader.cpp" />
+    <ClCompile Include="UI\Widgets\Widgets.cpp" />
     <ClCompile Include="Utilities\Strings\StringUtilities.h" />
-    <ClCompile Include="Utilities\Textures\TextureHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Communication\Communication.h" />
@@ -420,6 +425,13 @@
     <ClInclude Include="Communication\TCP\TCP_Client.h" />
     <ClInclude Include="Communication\User.h" />
     <ClInclude Include="Config\Config.h" />
+    <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h" />
+    <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\Replay.h" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h" />
+    <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h" />
+    <ClInclude Include="Dependencies\Chiyo\Utilities\StringUtilities.h" />
     <ClInclude Include="Dependencies\Cinnamon\Cinnamon.h" />
     <ClInclude Include="Dependencies\Cinnamon\CinnamonResult.h" />
     <ClInclude Include="Dependencies\Cinnamon\Hook.h" />
@@ -649,6 +661,12 @@
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\InputSimulator\InputSimulator.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\CatchTheBeatKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\OsuManiaKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Gameplay\TaikoKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\Mods.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Enums\PlayModes.h" />
     <ClInclude Include="Dependencies\stb\stb.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h" />
@@ -681,6 +699,7 @@
     <ClInclude Include="Features\Relax\HitScanResult.h" />
     <ClInclude Include="Features\Relax\HitTimings.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
+    <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Features\Visuals\VisualsSpoofers.h" />
@@ -688,6 +707,8 @@
     <ClInclude Include="Hooks\ErrorSubmission.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Hooks\Rendering.h" />
+    <ClInclude Include="Logging\Logger.h" />
+    <ClInclude Include="Logging\LogSeverity.h" />
     <ClInclude Include="Sdk\Anticheat\Anticheat.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\Bindings\BindingManager.h" />
@@ -706,22 +727,21 @@
     <ClInclude Include="Sdk\Player\HitObjectManager.h" />
     <ClInclude Include="Sdk\Player\Player.h" />
     <ClInclude Include="Sdk\Player\Ruleset.h" />
-    <ClInclude Include="UI\3rd-party\FileDialog\imfilebrowser.h" />
-    <ClInclude Include="UI\Fonts.h" />
-    <ClInclude Include="UI\MainMenu.h" />
+    <ClInclude Include="Storage\Storage.h" />
+    <ClInclude Include="Storage\StorageConfig.h" />
+    <ClInclude Include="UI\Assets\Fonts.h" />
+    <ClInclude Include="UI\Assets\Textures.h" />
+    <ClInclude Include="UI\Menus\MainMenu.h" />
+    <ClInclude Include="UI\Menus\ScoreSubmissionDialogue.h" />
+    <ClInclude Include="UI\Menus\SnowVisualisation.h" />
     <ClInclude Include="UI\Overlay.h" />
-    <ClInclude Include="UI\ScoreSubmissionDialogue.h" />
-    <ClInclude Include="UI\SnowVisualisation.h" />
+    <ClInclude Include="UI\Rendering\TextureLoader.h" />
     <ClInclude Include="UI\StyleProvider.h" />
-    <ClInclude Include="UI\Textures.h" />
-    <ClInclude Include="UI\Widgets.h" />
+    <ClInclude Include="UI\Widgets\3rd-party\FileDialog\imfilebrowser.h" />
+    <ClInclude Include="UI\Widgets\Widgets.h" />
     <ClInclude Include="Utilities\Crypto\CryptoHelper.h" />
-    <ClInclude Include="Utilities\Directories\DirectoryHelper.h" />
-    <ClInclude Include="Utilities\Logging\Logger.h" />
-    <ClInclude Include="Utilities\Logging\LogSeverity.h" />
     <ClInclude Include="Utilities\Security\Security.h" />
     <ClInclude Include="Utilities\Security\xorstr.hpp" />
-    <ClInclude Include="Utilities\Textures\TextureHelper.h" />
     <ClInclude Include="Utilities\Timing\WaitableTimer.h" />
   </ItemGroup>
   <ItemGroup>
