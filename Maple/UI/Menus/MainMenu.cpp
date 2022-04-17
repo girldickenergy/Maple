@@ -154,9 +154,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize("l10042022");
+                const ImVec2 buildStringSize = ImGui::CalcTextSize("l17042022");
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, "l10042022");
+                ImGui::TextColored(StyleProvider::MottoColour, "l17042022");
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -585,4 +585,40 @@ void MainMenu::Render()
     }
 
     ImGui::End();
+
+    if (Config::Misc::DisableSubmission)
+    {
+        ImGui::PushFont(StyleProvider::FontDefaultBold);
+        const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize("Attention!");
+        const float panelHeaderHeight = panelHeaderLabelSize.y + StyleProvider::Padding.y * 2;
+        ImGui::PopFont();
+
+        ImGui::PushFont(StyleProvider::FontDefault);
+
+        const float panelContentHeight = Widgets::CalcPanelHeight(1, 3);
+        const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.").x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
+
+        ImGui::SetNextWindowSize(windowSize);
+        ImGui::SetNextWindowPos(ImVec2(WindowManager::ViewportPosition().X + WindowManager::Width() / 2 - windowSize.x / 2, WindowManager::ViewportPosition().Y + WindowManager::Height() - windowSize.y - StyleProvider::Padding.y));
+        ImGui::Begin("AuthNotice", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+        {
+            Widgets::BeginPanel("Attention!", ImVec2(windowSize.x, panelContentHeight));
+            {
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.").x / 2);
+                ImGui::Text("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.");
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("Score submission has been disabled to prevent your account from being flagged or banned.").x / 2);
+                ImGui::Text("Score submission has been disabled to prevent your account from being flagged or banned.");
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("If you want to re-enable score submission, click the button below.").x / 2);
+                ImGui::Text("If you want to re-enable score submission, click the button below.");
+                if (Widgets::Button("I understand the risks, enable score submission", ImVec2(ImGui::GetWindowWidth(), ImGui::GetFrameHeight())))
+                {
+                    Config::Misc::DisableSubmission = false;
+                }
+            }
+            Widgets::EndPanel();
+        }
+        ImGui::End();
+
+        ImGui::PopFont();
+    }
 }
