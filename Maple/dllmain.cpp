@@ -82,6 +82,24 @@ DWORD WINAPI Initialize(LPVOID data_addr)
     return 0;
 }
 
+std::string GetAuthPath()
+{
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+
+    return std::string(buffer).substr(0, pos) + "\\osu!auth.dll";
+}
+
+std::string GetAuthHash()
+{
+    std::string hash;
+    CryptoPP::SHA256 algo;
+    CryptoPP::FileSource fs(GetAuthPath().c_str(), true, new CryptoPP::HashFilter(algo, new CryptoPP::HexEncoder(new CryptoPP::StringSink(hash))));
+
+    return hash;
+}
+
 void InitializeMaple()
 {
     if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
@@ -96,6 +114,12 @@ void InitializeMaple()
     InitializeSdk();
 
     Config::Initialize();
+
+    if (std::filesystem::exists(GetAuthPath()))
+    {
+        if (GetAuthHash() != "FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC")
+            Config::Misc::DisableSubmission = true;
+    }
 
     Hooks::InstallAllHooks();
 

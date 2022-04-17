@@ -147,6 +147,7 @@ public:
 		static inline bool DisableSpectators;
 		static inline bool PromptOnScoreSubmissionEnabled;
 		static inline bool DisableLogging;
+		static inline bool DisableSubmission = false;
 
 		struct RichPresenceSpoofer
 		{

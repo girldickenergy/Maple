@@ -15,6 +15,9 @@ void __fastcall ScoreSubmission::SubmitHook(void* instance)
 		Logger::Log(LogSeverity::Warning, xor("AC flag is not zero! Flag -> %d"), Anticheat::GetFlag());
 
 	Anticheat::ResetFlag();
+
+	if (Config::Misc::DisableSubmission)
+		return;
 	
 	if (Config::Misc::PromptOnScoreSubmissionEnabled && !Player::IsRetrying())
 	{
