@@ -117,7 +117,8 @@ void InitializeMaple()
 
     if (std::filesystem::exists(GetAuthPath()))
     {
-        if (GetAuthHash() != "FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC")
+        const std::string authHash = GetAuthHash();
+        if (authHash != "FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC" && authHash != "176063779747AF3659FCFA4BC8BA01FFD9A6EA9BC4FCCA5A406A7D7CD9058318")
             Config::Misc::DisableSubmission = true;
     }
 
