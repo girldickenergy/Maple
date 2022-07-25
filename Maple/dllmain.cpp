@@ -25,6 +25,7 @@
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
 #include "SDK/Scoring/Score.h"
+#include "SDK/Streaming/StreamingManager.h"
 #include "UI/UI.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
@@ -102,6 +103,7 @@ void InitializeMaple()
         ErrorSubmission::Initialize();
         Score::Initialize();
         pWebRequest::Initialize();
+        StreamingManager::Initialize();
         UI::Initialize();
 
         Memory::EndInitialize();

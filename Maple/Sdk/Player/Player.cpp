@@ -16,6 +16,7 @@ bool __fastcall Player::onLoadCompleteHook(void* instance, bool success)
 void Player::Initialize()
 {
 	Memory::AddObject("Player::Instance", "FF 50 0C 8B D8 8B 15", 0x7, 1);
+	Memory::AddObject("Player::Retrying", "8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00", 0xA, 1);
 	Memory::AddObject("Player::Flag", "E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9", 0x9, 1);
 
 	Memory::AddObject("Player::GetAllowSubmissionVariableConditions", "55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86");
@@ -73,7 +74,9 @@ PlayModes Player::GetPlayMode()
 
 bool Player::GetIsRetrying()
 {
-	return false;
+	const uintptr_t retryingAddress = Memory::Objects["Player::Retrying"];
+
+	return retryingAddress ? *reinterpret_cast<bool*>(retryingAddress) : false;
 }
 
 int Player::GetAnticheatFlag()

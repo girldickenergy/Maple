@@ -119,6 +119,9 @@
     <ClCompile Include="UI\Windows\ScoreSubmissionDialog.cpp">
       <Filter>UI\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Streaming\StreamingManager.cpp">
+      <Filter>SDK\Streaming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -261,6 +264,9 @@
     </Filter>
     <Filter Include="UI\Visualisations\SnowVisualisation">
       <UniqueIdentifier>{28f115fb-d31a-4761-987e-be2cc52a44e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Streaming">
+      <UniqueIdentifier>{184a478e-da5a-4b7e-949a-a3bd886afa01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -548,6 +554,9 @@
     </ClInclude>
     <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h">
       <Filter>UI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Streaming\StreamingManager.h">
+      <Filter>SDK\Streaming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
