@@ -86,8 +86,8 @@ void Config::loadDefaults()
 	Visuals::UI::ControlColour = ImColor(76, 76, 76, 255).Value;
 	Visuals::UI::TextColour = ImVec4(ImColor(255, 255, 255, 255));
 
+	Misc::ScoreSubmissionType = 0;
 	Misc::DisableSpectators = false;
-	Misc::DisableScoreSubmission = false;
 	Misc::DisableLogging = false;
 	Misc::DiscordRichPresenceSpoofer::Enabled = false;
 	Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled = false;
@@ -259,10 +259,10 @@ void Config::Load()
 		if (variable == xor ("Visuals_UI_TextColour"))
 			Visuals::UI::TextColour = parseImVec4(value);
 
+		if (variable == xor ("Misc_ScoreSubmissionType"))
+			Misc::ScoreSubmissionType = std::stoi(value);
 		if (variable == xor ("Misc_DisableSpectators"))
 			Misc::DisableSpectators = value == xor ("1");
-		if (variable == xor ("Misc_DisableScoreSubmission"))
-			Misc::DisableScoreSubmission = value == xor ("1");
 		if (variable == xor ("Misc_DisableLogging"))
 			Misc::DisableLogging = value == xor ("1");
 		if (variable == xor("Misc_DiscordRichPresenceSpoofer_Enabled"))
@@ -364,9 +364,9 @@ void Config::Save()
 	ofs << xor ("Visuals_UI_MenuColour=") << Visuals::UI::MenuColour.x << "," << Visuals::UI::MenuColour.y << "," << Visuals::UI::MenuColour.z << "," << Visuals::UI::MenuColour.w << std::endl;
 	ofs << xor ("Visuals_UI_ControlColour=") << Visuals::UI::ControlColour.x << "," << Visuals::UI::ControlColour.y << "," << Visuals::UI::ControlColour.z << "," << Visuals::UI::ControlColour.w << std::endl;
 	ofs << xor ("Visuals_UI_TextColour=") << Visuals::UI::TextColour.x << "," << Visuals::UI::TextColour.y << "," << Visuals::UI::TextColour.z << "," << Visuals::UI::TextColour.w << std::endl;
-
+	
+	ofs << xor ("Misc_ScoreSubmissionType=") << Misc::ScoreSubmissionType << std::endl;
 	ofs << xor ("Misc_DisableSpectators=") << Misc::DisableSpectators << std::endl;
-	ofs << xor ("Misc_DisableScoreSubmission=") << Misc::DisableScoreSubmission << std::endl;
 	ofs << xor ("Misc_DisableLogging=") << Misc::DisableLogging << std::endl;
 	ofs << xor ("Misc_DiscordRichPresenceSpoofer_Enabled=") << Misc::DiscordRichPresenceSpoofer::Enabled << std::endl;
 	ofs << xor ("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled << std::endl;

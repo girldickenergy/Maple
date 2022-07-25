@@ -130,10 +130,10 @@ public:
 
 	struct Misc
 	{
+		static inline int ScoreSubmissionType;
+		static inline bool ForceDisableScoreSubmission = false;
 		static inline bool DisableSpectators;
-		static inline bool DisableScoreSubmission;
 		static inline bool DisableLogging;
-		static inline bool ForceDisableSubmission = false;
 
 		struct DiscordRichPresenceSpoofer
 		{

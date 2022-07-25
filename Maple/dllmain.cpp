@@ -106,7 +106,7 @@ void InitializeMaple()
 
         Memory::EndInitialize();
 
-        Logger::Log(LogSeverity::Info, "Uses angle: %i", GLControl::GetUsesAngle());
+        Logger::Log(LogSeverity::Debug, "Uses angle: %i", GLControl::GetUsesAngle());
 
         //todo: functions
     }

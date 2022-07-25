@@ -192,8 +192,11 @@
     <ClCompile Include="SDK\Scoring\Score.cpp" />
     <ClCompile Include="Storage\Storage.cpp" />
     <ClCompile Include="UI\UI.cpp" />
+    <ClCompile Include="UI\Visualisations\SnowVisualisation\Snowflake.cpp" />
+    <ClCompile Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.cpp" />
     <ClCompile Include="UI\Widgets\Widgets.cpp" />
     <ClCompile Include="UI\Windows\MainMenu.cpp" />
+    <ClCompile Include="UI\Windows\ScoreSubmissionDialog.cpp" />
     <ClCompile Include="Utilities\Strings\StringUtilities.cpp" />
     <ClCompile Include="Utilities\Textures\TextureLoader.cpp" />
   </ItemGroup>
@@ -283,9 +286,12 @@
     <ClInclude Include="UI\Renderer.h" />
     <ClInclude Include="UI\StyleProvider.h" />
     <ClInclude Include="UI\UI.h" />
+    <ClInclude Include="UI\Visualisations\SnowVisualisation\Snowflake.h" />
+    <ClInclude Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.h" />
     <ClInclude Include="UI\Widgets\3rd-party\FileDialog\imfilebrowser.h" />
     <ClInclude Include="UI\Widgets\Widgets.h" />
     <ClInclude Include="UI\Windows\MainMenu.h" />
+    <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h" />
     <ClInclude Include="Utilities\Security\Security.h" />
     <ClInclude Include="Utilities\Security\xorstr.hpp" />
     <ClInclude Include="Utilities\Strings\StringUtilities.h" />

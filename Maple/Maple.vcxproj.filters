@@ -110,6 +110,15 @@
     <ClCompile Include="SDK\Helpers\pWebRequest.cpp">
       <Filter>SDK\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.cpp">
+      <Filter>UI\Visualisations\SnowVisualisation</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Visualisations\SnowVisualisation\Snowflake.cpp">
+      <Filter>UI\Visualisations\SnowVisualisation</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Windows\ScoreSubmissionDialog.cpp">
+      <Filter>UI\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -246,6 +255,12 @@
     </Filter>
     <Filter Include="SDK\Helpers">
       <UniqueIdentifier>{2db91a0c-1647-49b4-be5e-c21e18d3888d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Visualisations">
+      <UniqueIdentifier>{0352738c-3c21-400c-8747-c9fa653e9b3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Visualisations\SnowVisualisation">
+      <UniqueIdentifier>{28f115fb-d31a-4761-987e-be2cc52a44e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -524,6 +539,15 @@
     </ClInclude>
     <ClInclude Include="SDK\Helpers\pWebRequest.h">
       <Filter>SDK\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.h">
+      <Filter>UI\Visualisations\SnowVisualisation</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Visualisations\SnowVisualisation\Snowflake.h">
+      <Filter>UI\Visualisations\SnowVisualisation</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h">
+      <Filter>UI\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

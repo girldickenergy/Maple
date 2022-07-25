@@ -71,6 +71,11 @@ PlayModes Player::GetPlayMode()
 	return instance ? *reinterpret_cast<PlayModes*>(instance + PLAY_MODE_OFFSET) : PlayModes::Osu;
 }
 
+bool Player::GetIsRetrying()
+{
+	return false;
+}
+
 int Player::GetAnticheatFlag()
 {
 	const uintptr_t flagAddress = Memory::Objects["Player::Flag"];

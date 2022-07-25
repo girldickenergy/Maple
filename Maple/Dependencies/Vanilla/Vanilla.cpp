@@ -19,6 +19,27 @@ int __stdcall Vanilla::compileMethodHook(uintptr_t thisvar, uintptr_t compHnd, u
 	return ret;
 }
 
+void __stdcall Vanilla::relocateAddressHook(uint8_t** block)
+{
+	if (*block != nullptr)
+	{
+		std::unique_lock lock(mutex);
+
+		for (auto& relocation : relocations)
+		{
+			if (relocation == reinterpret_cast<uintptr_t>(*block))
+			{
+				oRelocateAddress(block);
+
+				relocation.get() = reinterpret_cast<uintptr_t>(*block);
+				return;
+			}
+		}
+	}
+
+	oRelocateAddress(block);
+}
+
 VanillaResult Vanilla::Initialize(bool useCLR)
 {
 	usingCLR = useCLR;
@@ -31,6 +52,13 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 		
 		if (VanillaHooking::InstallHook("JITHook", reinterpret_cast<uintptr_t>(compileMethodAddress), reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod)) != VanillaResult::Success)
 			return VanillaResult::JITFailure;
+
+		void* relocateAddressAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 57 8B 7D 08 8B 0F 3B 0D", "clr.dll"));
+		if (!relocateAddressAddress)
+			return VanillaResult::RelocateFailure;
+
+		if (VanillaHooking::InstallHook("RelocateAddressHook", reinterpret_cast<uintptr_t>(relocateAddressAddress), reinterpret_cast<uintptr_t>(relocateAddressHook), reinterpret_cast<uintptr_t*>(&oRelocateAddress)) != VanillaResult::Success)
+			return VanillaResult::RelocateFailure;
 
 		void* allocateCLRStringAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("53 8B D9 56 57 85 DB 0F", "clr.dll"));
 		if (!allocateCLRStringAddress)
@@ -61,6 +89,28 @@ void Vanilla::RemoveJITCallback()
 {
 	if (usingCLR)
 		jitCallback = nullptr;
+}
+
+void Vanilla::AddRelocation(std::reference_wrapper<std::uintptr_t> relocation)
+{
+	if (usingCLR)
+		relocations.push_back(relocation);
+}
+
+void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation)
+{
+	if (!usingCLR)
+		return;
+	
+	for (auto it = relocations.begin(); it != relocations.end(); ++it)
+	{
+		if (it->get() == relocation.get())
+		{
+			relocations.erase(it);
+
+			return;
+		}
+	}
 }
 
 CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)

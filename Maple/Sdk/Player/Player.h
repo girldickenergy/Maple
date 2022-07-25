@@ -20,6 +20,7 @@ public:
 	static bool GetIsLoaded();
 	static bool GetIsReplayMode();
 	static PlayModes GetPlayMode();
+	static bool GetIsRetrying();
 	static int GetAnticheatFlag();
 	static void ResetAnticheatFlag();
 };

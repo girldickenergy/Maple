@@ -85,7 +85,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Warning, xor ("Failed to resolve %s. Adding it to the queue for dynamic resolution."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xor ("Failed to resolve %s. Adding it to the queue for dynamic resolution."), name.c_str());
 
 		pendingObjects[name] = MaplePattern(pattern, offset, readCount);
 	}
@@ -102,7 +102,7 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Warning, xor ("Failed to patch %s. Adding it to the queue for dynamic patching."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xor ("Failed to patch %s. Adding it to the queue for dynamic patching."), name.c_str());
 
 		pendingPatches[objectName] = MaplePatch(name, pattern, scanSize, offset, patch);
 	}
@@ -119,7 +119,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Warning, xor ("Failed to hook %s. Adding it to the queue for dynamic hooking."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xor ("Failed to hook %s. Adding it to the queue for dynamic hooking."), name.c_str());
 
 		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, type);
 	}

@@ -39,6 +39,9 @@ void MainMenu::updateBackground()
 
 void MainMenu::Render()
 {
+    if (!isVisible)
+        return;
+	
 	const ImGuiIO& io = ImGui::GetIO();
 	const ImGuiStyle& style = ImGui::GetStyle();
 
@@ -400,8 +403,9 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("Misc", ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
                 {
+                    const char* scoreSubmissionTypes[] = { "Allow", "Disallow", "Prompt" };
+                    Widgets::Combo("Score submission", &Config::Misc::ScoreSubmissionType, scoreSubmissionTypes, IM_ARRAYSIZE(scoreSubmissionTypes)); ImGui::SameLine(); Widgets::Tooltip("Specifies score submission behavior.\n\nAllow: all scores will be sent to osu! servers.\nDisallow: your scores won't be sent to osu! servers.\nPrompt: before submitting a score Maple will ask you whether or not you really want to submit it.");
                     Widgets::Checkbox("Disable spectators", &Config::Misc::DisableSpectators); ImGui::SameLine(); Widgets::Tooltip("Spectators will keep buffering infinitely.");
-                    Widgets::Checkbox("Disable score submission", &Config::Misc::DisableScoreSubmission); ImGui::SameLine(); Widgets::Tooltip("Your scores won't be sent to osu! servers.");
                     Widgets::Checkbox("Disable logging", &Config::Misc::DisableLogging); ImGui::SameLine(); Widgets::Tooltip("Disables Maple's log output to both console and runtime.log file.");
 
                     bool storageConfigEdited = false;
@@ -514,4 +518,24 @@ void MainMenu::Render()
     }
 
     ImGui::End();
+}
+
+void MainMenu::Show()
+{
+    isVisible = true;
+}
+
+void MainMenu::Hide()
+{
+    isVisible = false;
+}
+
+void MainMenu::ToggleVisibility()
+{
+    isVisible = !isVisible;
+}
+
+bool MainMenu::GetIsVisible()
+{
+    return isVisible;
 }

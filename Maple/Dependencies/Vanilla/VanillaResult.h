@@ -4,7 +4,8 @@ enum class VanillaResult : unsigned int
 {
 	Success = 0x0,
 	JITFailure = 0x1,
-	CLRStringFailure = 0x2,
+	RelocateFailure = 0x2,
+	CLRStringFailure = 0x3,
 
 	HookAlreadyInstalled = 0x1000,
 	UnknownHookType = 0x1001,

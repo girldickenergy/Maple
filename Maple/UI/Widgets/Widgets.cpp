@@ -1293,7 +1293,7 @@ void Widgets::Tooltip(const char* text)
         ImGui::BeginTooltip();
         ImGui::PopStyleVar();
         ImGui::PopStyleColor();
-        ImGui::PushTextWrapPos((StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x) * 0.5f);
+        ImGui::PushTextWrapPos((std::min)(ImGui::CalcTextSize(text).x, (StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x) * 0.75f));
         ImGui::TextUnformatted(text);
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();

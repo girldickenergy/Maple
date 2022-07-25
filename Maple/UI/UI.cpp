@@ -12,7 +12,9 @@
 #include "../Logging/Logger.h"
 #include "../SDK/GL/GLControl.h"
 #include "../Storage/StorageConfig.h"
+#include "Visualisations/SnowVisualisation/SnowVisualisation.h"
 #include "Windows/MainMenu.h"
+#include "Windows/ScoreSubmissionDialog.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -29,20 +31,20 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 		//	Relax::IsRunning = !Relax::IsRunning;
 
 		if (pMsg->message == WM_KEYUP && pMsg->wParam == StorageConfig::MenuKey)
-			mainMenuOpened = !mainMenuOpened;
+			MainMenu::ToggleVisibility();
 
-		if (mainMenuOpened && pMsg->message == WM_KEYUP && pMsg->wParam == VK_ESCAPE)
+		if (MainMenu::GetIsVisible() && pMsg->message == WM_KEYUP && pMsg->wParam == VK_ESCAPE)
 		{
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 
 			pMsg->message = WM_NULL;
-			mainMenuOpened = false;
+			MainMenu::Hide();
 		}
-		else if (mainMenuOpened)
+		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
-	if (mainMenuOpened)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 	{
 		if (pMsg->message == WM_CHAR)
 			pMsg->message = WM_NULL;
@@ -58,7 +60,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 {
-	if (mainMenuOpened)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 		return false;
 	
 	return oGetKeyboardState(arr);
@@ -197,16 +199,17 @@ void UI::initialize(HWND window, IDirect3DDevice9* d3d9Device)
 	
 	oWndProc = SetWindowsHookEx(WH_GETMESSAGE, wndProcHook, NULL, GetCurrentThreadId());
 
-	mainMenuOpened = StorageConfig::ShowMenuAfterInjection;
+	if (StorageConfig::ShowMenuAfterInjection)
+		MainMenu::Show();
 	
 	initialized = true;
 }
 
 void UI::render()
 {
-	if (mainMenuOpened && !rawInputDisabled)
+	if ((MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()) && !rawInputDisabled)
 		disableRaw();
-	else if (!mainMenuOpened && rawInputDisabled)
+	else if (!MainMenu::GetIsVisible() && !ScoreSubmissionDialog::GetIsVisible() && rawInputDisabled)
 		enableRaw();
 
 	if (Renderer == Renderer::OGL3)
@@ -218,16 +221,16 @@ void UI::render()
 	ImGui::NewFrame();
 
 	ImGuiIO& io = ImGui::GetIO();
-	if (mainMenuOpened)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 		io.MouseDrawCursor = true;
 	else
 		io.MouseDrawCursor = false;
 
-	//if (Config::Visuals::UI::Snow && mainMenuOpened)
-	//	SnowVisualisation::Draw();
-
-	if (mainMenuOpened)
-		MainMenu::Render();
+	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()))
+		SnowVisualisation::Render();
+	
+	MainMenu::Render();
+	ScoreSubmissionDialog::Render();
 
 	//AimAssist::DrawDebugOverlay();
 	//VisualsSpoofers::DrawPreemptiveDots();
