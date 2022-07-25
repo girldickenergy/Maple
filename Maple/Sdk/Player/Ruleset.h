@@ -1,18 +1,15 @@
 #pragma once
 
-#include <Explorer/TypeExplorer.h>
+#include <cstdint>
 
 class Ruleset
 {
-	static inline Field rulesetField;
-	static inline Field baseMovementSpeedField;
+	static inline constexpr int INSTANCE_OFFSET = 0x60;
+	static inline constexpr int BASEMOVEMENTSPEED_OFFSET = 0xB8;
 public:
-	static inline TypeExplorer RawRuleset;
-	static inline TypeExplorer RawRulesetFruits;
-	
 	static void Initialize();
-	static void* Instance();
-	static bool IsLoaded();
+
+	static uintptr_t GetInstance();
 	static float GetCatcherSpeed();
-	static void SetCatcherSpeed(float speed);
+	static void SetCatcherSpeed(float value);
 };

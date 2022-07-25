@@ -1,222 +1,81 @@
 #include "Vanilla.h"
 
-#include <metahost.h>
-#include <string>
+#include "Hooking/VanillaHooking.h"
+#include "Patching/VanillaPatcher.h"
+#include "PatternScanning/VanillaPatternScanner.h"
+#include "Utilities/MemoryUtilities.h"
 
-#include "COM/SafeVector.h"
-#include "NameCache.h"
-
-void Vanilla::cacheMemoryRegions()
+int __stdcall Vanilla::compileMethodHook(uintptr_t thisvar, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
 {
-	memoryRegions.clear();
+	uintptr_t nativeCodeAddress = 0u;
 
-	MEMORY_BASIC_INFORMATION32 mbi;
-	LPCVOID address = nullptr;
+	const int ret = oCompileMethod(thisvar, compHnd, methodInfo, flags, &nativeCodeAddress, nativeSizeOfCode);
 
-	while (VirtualQueryEx(GetCurrentProcess(), address, reinterpret_cast<PMEMORY_BASIC_INFORMATION>(&mbi), sizeof mbi) != 0)
+	if (jitCallback)
+		jitCallback(nativeCodeAddress, *nativeSizeOfCode);
+
+	*entryAddress = nativeCodeAddress;
+
+	return ret;
+}
+
+VanillaResult Vanilla::Initialize(bool useCLR)
+{
+	usingCLR = useCLR;
+	
+	if (usingCLR)
 	{
-		if (mbi.State == MEM_COMMIT && mbi.Protect >= 0x10 && mbi.Protect <= 0x80)
-			memoryRegions.emplace_back(mbi);
+		void* compileMethodAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 83 E4 F8 83 EC 1C 53 8B 5D 10", "clrjit.dll"));
+		if (!compileMethodAddress)
+			return VanillaResult::JITFailure;
+		
+		if (VanillaHooking::InstallHook("JITHook", reinterpret_cast<uintptr_t>(compileMethodAddress), reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod)) != VanillaResult::Success)
+			return VanillaResult::JITFailure;
 
-		address = reinterpret_cast<LPCVOID>(mbi.BaseAddress + mbi.RegionSize);
-	}
-}
+		void* allocateCLRStringAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("53 8B D9 56 57 85 DB 0F", "clr.dll"));
+		if (!allocateCLRStringAddress)
+			return VanillaResult::CLRStringFailure;
 
-void Vanilla::initializeCOM()
-{
-	ICLRMetaHost* metaHost = nullptr;
-
-	ICLRRuntimeInfo* runtimeInfo = nullptr;
-	ICLRRuntimeHost* runtimeHost = nullptr;
-	ICorRuntimeHost* corHost = nullptr;
-
-	IUnknownPtr appDomain = NULL;
-
-	CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&metaHost);
-
-	metaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&runtimeInfo);
-
-	runtimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&runtimeHost);
-	runtimeHost->Start();
-
-	runtimeInfo->GetInterface(CLSID_CorRuntimeHost, IID_PPV_ARGS(&corHost));
-
-	corHost->GetDefaultDomain(&appDomain);
-
-	appDomain->QueryInterface(&DefaultDomain);
-}
-
-void Vanilla::populateAssemblies()
-{
-	const std::wstring osuPattern(L"osu!, Version");
-	const std::wstring osuStubPattern1(L"w, Version");
-	const std::wstring osuStubPattern2(L"AlphaZero, Version"); //todo: regex maybe?
-	const std::wstring osuStubPattern3(L"9ade2f99-9f30-423b-ae0b-a1cd9d846d61, Version");
-	const std::wstring osuStubPattern4(L"e63a9542-eb0c-49a3-86f5-3d83a0fdad3f, Version");
-	const std::wstring osuStubPattern5(L"de4109b7-cb83-41ad-88b0-4a8fab05840d, Version");
-	const std::wstring osuStubPattern6(L"3ebed5f0-15b5-457e-b342-0dd5361341e6, Version");
-	const std::wstring mscorlibPattern(L"mscorlib, Version");
-
-	bool found_osu = false, found_auth = false, found_mscorlib = false;
-	while (!found_osu || !found_auth || !found_mscorlib)
-	{
-		SAFEARRAY* assArray;
-
-		DefaultDomain->GetAssemblies(&assArray);
-
-		auto assemblies = SafeVector(assArray);
-
-		const auto asmCount = assemblies.count();
-
-		for (int i = 0; i < static_cast<int>(asmCount); i++)
-		{
-			IUnknownPtr unk = NULL;
-
-			assemblies.getElement(i, &unk);
-			mscorlib::_AssemblyPtr assembly = mscorlib::_AssemblyPtr(unk);
-
-			BSTR bsAsmName;
-
-			assembly->get_FullName(&bsAsmName);
-
-			std::wstring asmName(bsAsmName, SysStringLen(bsAsmName));
-
-			if (!found_osu && asmName.find(osuPattern) != std::wstring::npos)
-			{
-				OsuAssembly = Assembly(assembly);
-				found_osu = true;
-			}
-
-			if (!found_auth && (asmName.find(osuStubPattern1) != std::wstring::npos ||
-				asmName.find(osuStubPattern2) != std::wstring::npos || asmName.find(osuStubPattern3) != std::wstring::npos
-				|| asmName.find(osuStubPattern4) != std::wstring::npos || asmName.find(osuStubPattern5) != std::wstring::npos
-				|| asmName.find(osuStubPattern6) != std::wstring::npos))
-			{
-				OsuStubAssembly = Assembly(assembly);
-				found_auth = true;
-			}
-
-			if (!found_mscorlib && asmName.find(mscorlibPattern) != std::wstring::npos)
-			{
-				MscorlibAssembly = Assembly(assembly);
-				found_mscorlib = true;
-			}
-		}
-	}
-}
-
-void Vanilla::Initialize()
-{
-	initializeCOM();
-	populateAssemblies();
-
-	NameCache::Initialize(OsuAssembly, OsuStubAssembly);
-	Explorer = ::Explorer(OsuAssembly);
-}
-
-uintptr_t Vanilla::FindSignature(const char* pattern, const char* mask)
-{
-	if (memoryRegions.empty())
-		cacheMemoryRegions();
-
-	for (const auto& region : memoryRegions)
-		FindSignature(pattern, mask, region.BaseAddress, region.RegionSize);
-
-	return NULL;
-}
-
-uintptr_t Vanilla::FindSignature(const char* signature, const char* mask, uintptr_t entryPoint, int size)
-{
-	const size_t signatureLength = strlen(mask);
-
-	for (uintptr_t i = 0; i < size - signatureLength; i++)
-	{
-		bool found = true;
-		for (uintptr_t j = 0; j < signatureLength; j++)
-		{
-			if (mask[j] != '?' && signature[j] != *reinterpret_cast<char*>(entryPoint + i + j))
-			{
-				found = false;
-				break;
-			}
-		}
-
-		if (found)
-			return entryPoint + i;
+		allocateCLRString = static_cast<fnAllocateCLRString>(allocateCLRStringAddress);
 	}
 
-	return NULL;
+	return VanillaResult::Success;
 }
 
-DWORD Vanilla::GetModuleSize(const char* moduleName)
+void Vanilla::Shutdown()
 {
-	const HMODULE module = GetModuleHandleA(moduleName);
-	if (module == nullptr)
-		return 0;
+	VanillaPatcher::UninstallAllPatches();
+	VanillaHooking::UninstallAllHooks();
 
-	IMAGE_DOS_HEADER* pDOSHeader = reinterpret_cast<IMAGE_DOS_HEADER*>(module);
-	IMAGE_NT_HEADERS* pNTHeaders = reinterpret_cast<IMAGE_NT_HEADERS*>(reinterpret_cast<BYTE*>(pDOSHeader) + pDOSHeader->e_lfanew);
-
-	return pNTHeaders->OptionalHeader.SizeOfImage;
+	if (usingCLR)
+		jitCallback = nullptr;
 }
 
-bool Vanilla::InstallPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, const char* patch)
+void Vanilla::SetJITCallback(void* callback)
 {
-	if (patches.count(name) > 0)
-		return false;
-
-	const uintptr_t address = FindSignature(signature, mask, entryPoint, size);
-	if (address == NULL)
-		return false;
-
-	std::vector<char> originalBytes;
-	const int patchSize = strlen(patch);
-	for (int i = 0; i < patchSize; i++)
-	{
-		originalBytes.push_back(*reinterpret_cast<char*>(address + offset + i));
-		*reinterpret_cast<char*>(address + offset + i) = patch[i];
-	}
-
-	patches[name] = Patch(address, originalBytes);
-
-	return true;
+	if (usingCLR)
+		jitCallback = static_cast<fnJITCallback>(callback);
 }
 
-bool Vanilla::InstallNOPPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, int nopSize)
+void Vanilla::RemoveJITCallback()
 {
-	if (patches.count(name) > 0)
-		return false;
-
-	const uintptr_t address = FindSignature(signature, mask, entryPoint, size);
-	if (address == NULL)
-		return false;
-
-	std::vector<char> originalBytes;
-	for (int i = 0; i < nopSize; i++)
-	{
-		originalBytes.push_back(*reinterpret_cast<char*>(address + offset + i));
-		*reinterpret_cast<char*>(address + offset + i) = 0x90;
-	}
-
-	patches[name] = ::Patch(address, originalBytes);
-
-	return true;
+	if (usingCLR)
+		jitCallback = nullptr;
 }
 
-void Vanilla::RemovePatch(const std::string& name)
+CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
 {
-	if (patches.count(name) == 0)
-		return;
+	if (usingCLR)
+		return allocateCLRString(pwsz);
 
-	auto patch = patches[name];
-	for (unsigned int i = 0; i < patch.OriginalBytes.size(); i++)
-		*reinterpret_cast<char*>(patch.Location + i) = patch.OriginalBytes.at(i);
-
-	patches.erase(name);
+	return nullptr;
 }
 
-void Vanilla::RemoveAllPatches()
+bool Vanilla::CheckAddressInModule(uintptr_t address, const std::string& moduleName)
 {
-	while (!patches.empty())
-		RemovePatch(patches.begin()->first);
+	const HMODULE module = GetModuleHandleA(moduleName.c_str());
+	const uintptr_t moduleBase = reinterpret_cast<uintptr_t>(module);
+	const unsigned long moduleSize = MemoryUtilities::GetModuleSize(module);
+
+	return address >= moduleBase && address < moduleBase + moduleSize;
 }

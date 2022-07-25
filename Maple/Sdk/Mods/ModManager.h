@@ -1,16 +1,13 @@
 #pragma once
 
-#include <Explorer/TypeExplorer.h>
-#include <Enums/Mods.h>
+#include "Osu/Mods.h"
 
 class ModManager
 {
-	static inline void* modStatusAddress = nullptr;
 public:
-	static inline TypeExplorer RawModManager;
-	
 	static void Initialize();
-	static Mods CurrentMods();
-	static bool IsModEnabled(Mods mod);
-	static double ModPlaybackRate();
+
+	static Mods GetActiveMods();
+	static bool CheckActive(Mods mods);
+	static double GetModPlaybackRate();
 };

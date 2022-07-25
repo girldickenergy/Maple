@@ -1,79 +1,56 @@
 #include "InputManager.h"
 
-#include <Vanilla.h>
-#include <Enums/Gameplay/OsuKeys.h>
+#include "../Memory.h"
 
-#include "../Osu/GameField.h"
-#include "../../Features/ReplayBot/ReplayBot.h"
-#include "../Player/Player.h"
-#include "../../Config/Config.h"
-#include "../../Features/AimAssist/AimAssist.h"
+void __fastcall InputManager::setMousePositionHook(Vector2 pos)
+{
+	cursorPosition = pos;
+	
+	oSetMousePosition(pos);
+}
+
+void __fastcall InputManager::mouseViaKeyboardControlsHook()
+{
+	oMouseViaKeyboardControls();
+}
 
 void InputManager::Initialize()
 {
-	RawInputManager = Vanilla::Explorer["osu.Input.InputManager"];
-	RawMouseManager = Vanilla::Explorer["osu.Input.Handlers.MouseManager"];
-	
-	RawMouseManager["get_MousePosition"].Method.Compile();
-	getMousePosition = static_cast<fnGetMousePosition>(RawMouseManager["get_MousePosition"].Method.GetNativeStart());
+	Memory::AddObject("MouseManager::SetMousePosition", "55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04");
+	Memory::AddObject("InputManager::MouseViaKeyboardControls", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02");
 
-	leftButton1Address = RawInputManager["leftButton1"].Field.GetAddress();
-	leftButton1iAddress = RawInputManager["leftButton1i"].Field.GetAddress();
-	leftButton2Address = RawInputManager["leftButton2"].Field.GetAddress();
-	leftButton2iAddress = RawInputManager["leftButton2i"].Field.GetAddress();
-	rightButton1Address = RawInputManager["rightButton1"].Field.GetAddress();
-	rightButton1iAddress = RawInputManager["rightButton1i"].Field.GetAddress();
-	rightButton2Address = RawInputManager["rightButton2"].Field.GetAddress();
-	rightButton2iAddress = RawInputManager["rightButton2i"].Field.GetAddress();
+	Memory::AddObject("InputManager::leftButton1", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", LEFTBUTTON1_OFFSET, 1);
+	Memory::AddObject("InputManager::leftButton1i", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", LEFTBUTTON1I_OFFSET, 1);
+	Memory::AddObject("InputManager::leftButton2", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", LEFTBUTTON2_OFFSET, 1);
+	Memory::AddObject("InputManager::leftButton2i", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", LEFTBUTTON2I_OFFSET, 1);
+	Memory::AddObject("InputManager::rightButton1", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", RIGHTBUTTON1_OFFSET, 1);
+	Memory::AddObject("InputManager::rightButton1i", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", RIGHTBUTTON1I_OFFSET, 1);
+	Memory::AddObject("InputManager::rightButton2", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", RIGHTBUTTON2_OFFSET, 1);
+	Memory::AddObject("InputManager::rightButton2i", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", RIGHTBUTTON2I_OFFSET, 1);
+	Memory::AddObject("InputManager::leftButton", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", LEFTBUTTON_OFFSET, 1);
+	Memory::AddObject("InputManager::rightButton", "55 8B EC 57 56 83 3D ?? ?? ?? ?? 02", RIGHTBUTTON_OFFSET, 1);
+
+	Memory::AddHook("MouseManager::SetMousePosition", "MouseManager::SetMousePosition", reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition), VanillaHookType::UndetectedInline);
+	Memory::AddHook("InputManager::MouseViaKeyboardControls", "InputManager::MouseViaKeyboardControls", reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 }
 
-Vector2 InputManager::CursorPosition()
+Vector2 InputManager::GetCursorPosition()
 {
-	const Vector2 pos = getMousePosition();
-	
-	return GameField::DisplayToField(pos);
+	return cursorPosition;
 }
 
-void __stdcall InputManager::SetMousePositionHook(float x, float y)
+Vector2 InputManager::Resync(Vector2 displacement, Vector2 offset, float resyncFactor)
 {
-	const Vector2 assistedPosition = Config::AimAssist::Algorithm == 0 ? AimAssist::DoAssist(Vector2(x, y)) : Config::AimAssist::Algorithm == 1 ? AimAssist::DoAssistv2(Vector2(x, y)) : AimAssist::DoAssistv3(Vector2(x, y));
+	if (offset.Length() <= std::numeric_limits<float>::epsilon())
+		return offset;
 
-	if (Player::IsLoaded() && !Player::IsPaused() && ReplayBot::Ready)
-	{
-		const Vector2 pos = ReplayBot::Update();
+	const auto dpi = displacement * resyncFactor;
 
-		if (ReplayBot::DisableAiming)
-			oSetMousePosition(assistedPosition.X, assistedPosition.Y);
-		else
-			oSetMousePosition(pos.X, pos.Y);
-	}
-	else
-		oSetMousePosition(assistedPosition.X, assistedPosition.Y);
-}
+	offset.X = offset.X > 0.f ? std::max(0.f, dpi.X >= 0.f ? offset.X - dpi.X : offset.X + dpi.X)
+		: std::min(0.f, dpi.X <= 0.f ? offset.X - dpi.X : offset.X + dpi.X);
 
-void __fastcall InputManager::MouseViaKeyboardControlsHook()
-{
-	if (Player::IsLoaded() && !Player::IsPaused() && ReplayBot::Ready && !ReplayBot::DisableTapping)
-	{
-		OsuKeys keys = ReplayBot::GetCurrentKeys();
+	offset.Y = offset.Y > 0.f ? std::max(0.f, dpi.Y >= 0.f ? offset.Y - dpi.Y : offset.Y + dpi.Y)
+		: std::min(0.f, dpi.Y <= 0.f ? offset.Y - dpi.Y : offset.Y + dpi.Y);
 
-		bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
-		bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;
-		bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
-		bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
-
-		*(bool*)leftButton1iAddress = (!*(bool*)leftButton1Address && (m1Pressed || k1Pressed));
-		*(bool*)leftButton1Address = m1Pressed || k1Pressed;
-
-		*(bool*)leftButton2iAddress = (!*(bool*)leftButton2Address && k1Pressed);
-		*(bool*)leftButton2Address = k1Pressed;
-
-		*(bool*)rightButton1iAddress = (!*(bool*)rightButton1Address && (m2Pressed || k2Pressed));
-		*(bool*)rightButton1Address = m2Pressed || k2Pressed;
-
-		*(bool*)rightButton2iAddress = (!*(bool*)rightButton2Address && k2Pressed);
-		*(bool*)rightButton2Address = k2Pressed;
-	}
-
-	oMouseViaKeyboardControls();
+	return offset;
 }

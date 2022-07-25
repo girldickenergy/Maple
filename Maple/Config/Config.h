@@ -21,70 +21,44 @@ public:
 	static void Create();
 	static void Refresh();
 
+	//Version 0.0 - first version
+	//Version 1.0 - breaks aim assist config compatibility (removed aav1, added aav3 (aqn))
+	static inline constexpr float VERSION = 1.f;
+
 	struct Relax
 	{
 		static inline bool Enabled;
-		static inline int Distribution;
-		static inline int Playstyle;
+		static inline int ToggleKey;
 		static inline int PrimaryKey;
 		static inline int SecondaryKey;
-		static inline int MaxSingletapBPM;
-		static inline int HitSpread;
-		static inline int AlternationHitSpread;
-		static inline bool HoldConsecutiveSpinners;
+		static inline int AlternateBPM;
 		static inline bool SliderAlternationOverride;
 
-		struct Prediction
+		struct Timing
 		{
-			static inline bool Enabled;
-			static inline bool SliderPredictionEnabled;
-			static inline int Angle;
-			static inline float Scale;
+			static inline int Offset;
+			static inline int TargetUnstableRate;
+			static inline int AverageHoldTime;
+			static inline int AverageHoldTimeError;
+			static inline int AverageSliderHoldTime;
+			static inline int AverageSliderHoldTimeError;
 		};
 
-		struct Blatant
+		struct HitScan
 		{
-			static inline bool UseLowestPossibleHoldTimes;
+			static inline bool WaitLateEnabled;
+			static inline bool DirectionPredictionEnabled;
+			static inline int DirectionPredictionAngle;
+			static inline float DirectionPredictionScale;
 		};
 	};
-	
+
 	struct AimAssist
 	{
 		static inline bool Enabled;
 		static inline int Algorithm;
 
 		struct Algorithmv1
-		{
-			struct EasyMode
-			{
-				static inline bool Enabled;
-				static inline float Strength;
-			};
-
-			struct AdvancedMode
-			{
-				static inline float Strength;
-				static inline int BaseFOV;
-				static inline float MaximumFOVScale;
-				static inline float MinimumFOVTotal;
-				static inline float MaximumFOVTotal;
-				static inline float SliderballDeadzone;
-				static inline bool FlipSliderballDeadzone;
-				static inline float AssistDeadzone;
-				static inline float StrengthMultiplier;
-				static inline float ResyncLeniency;
-				static inline float ResyncLeniencyFactor;
-				static inline bool AssistOnSliders;
-			};
-		};
-		
-		struct Algorithmv2
-		{
-			static inline float Power;
-			static inline bool AssistOnSliders;
-		};
-
-		struct Algorithmv3
 		{
 			static inline float Strength;
 			static inline bool AssistOnSliders;
@@ -93,6 +67,18 @@ public:
 			static inline float MinimumFOVTotal;
 			static inline float MaximumFOVTotal;
 			static inline float AccelerationFactor;
+		};
+
+		struct Algorithmv2
+		{
+			static inline float Power;
+			static inline bool AssistOnSliders;
+		};
+
+		struct Algorithmv3
+		{
+			static inline float Power;
+			static inline float SliderAssistPower;
 		};
 
 		static inline bool DrawDebugOverlay;
@@ -145,15 +131,23 @@ public:
 	struct Misc
 	{
 		static inline bool DisableSpectators;
-		static inline bool PromptOnScoreSubmissionEnabled;
+		static inline bool DisableScoreSubmission;
 		static inline bool DisableLogging;
-		static inline bool DisableSubmission = false;
+		static inline bool ForceDisableSubmission = false;
 
-		struct RichPresenceSpoofer
+		struct DiscordRichPresenceSpoofer
 		{
 			static inline bool Enabled;
-			static inline char Name[64];
-			static inline char Rank[64];
+			static inline bool CustomLargeImageTextEnabled;
+			static inline char CustomLargeImageText[128];
+			static inline bool CustomPlayModeEnabled;
+			static inline int CustomPlayMode;
+			static inline bool CustomStateEnabled;
+			static inline char CustomState[128];
+			static inline bool CustomDetailsEnabled;
+			static inline char CustomDetails[128];
+			static inline bool HideSpectateButton;
+			static inline bool HideMatchButton;
 		};
 	};
 };

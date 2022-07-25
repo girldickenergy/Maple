@@ -1,11 +1,13 @@
 #include "Storage.h"
 
-#include "../Utilities/Security/xorstr.hpp"
-#include "StorageConfig.h"
-#include <ThemidaSDK.h>
-
+#include <windows.h>
 #include <filesystem>
 #include <fstream>
+
+#include "ThemidaSDK.h"
+
+#include "../Utilities/Security/xorstr.hpp"
+#include "StorageConfig.h"
 
 bool Storage::isSameName(const std::string& a, const std::string& b)
 {
@@ -20,8 +22,12 @@ bool Storage::isSameName(const std::string& a, const std::string& b)
 
 void Storage::loadStorageConfig()
 {
-    StorageConfig::DefaultConfig = "default";
-    StorageConfig::DefaultProfile = "none";
+    STR_ENCRYPT_START
+		
+    StorageConfig::DefaultConfig = xor ("default");
+    StorageConfig::DefaultProfile = xor ("none");
+    StorageConfig::ShowMenuAfterInjection = true;
+    StorageConfig::MenuKey = VK_DELETE;
 
     EnsureDirectoryExists(StorageDirectory);
 
@@ -39,19 +45,24 @@ void Storage::loadStorageConfig()
 
         if (!value.empty())
         {
-            if (variable == "DefaultConfig")
+            if (variable == xor ("DefaultConfig"))
                 StorageConfig::DefaultConfig = value;
-            else if (variable == "DefaultProfile")
+            else if (variable == xor ("DefaultProfile"))
                 StorageConfig::DefaultProfile = value;
+            else if (variable == xor ("ShowMenuAfterInjection"))
+                StorageConfig::ShowMenuAfterInjection = value == "1";
+            else if (variable == xor ("MenuKey"))
+                StorageConfig::MenuKey = std::stoi(value);
         }
     }
 
     configFile.close();
+
+    STR_ENCRYPT_END
 }
 
 void Storage::Initialize(const std::string& uniqueName)
 {
-    VM_FISH_RED_START
     STR_ENCRYPT_START
 
     char* val;
@@ -60,22 +71,21 @@ void Storage::Initialize(const std::string& uniqueName)
 
     std::string appdata(val);
 
-    StorageDirectory = appdata += "\\" + uniqueName;
-    ConfigsDirectory = StorageDirectory + "\\configs";
-    ProfilesDirectory = StorageDirectory + "\\profiles";
-    LogsDirectory = StorageDirectory + "\\logs";
+    StorageDirectory = appdata += xor ("\\") + uniqueName;
+    ConfigsDirectory = StorageDirectory + xor ("\\configs");
+    ProfilesDirectory = StorageDirectory + xor ("\\profiles");
+    LogsDirectory = StorageDirectory + xor ("\\logs");
 
-    storageConfigFilepath = StorageDirectory + "\\" + uniqueName + ".cfg";
+    storageConfigFilepath = StorageDirectory + xor ("\\") + uniqueName + xor (".cfg");
 
     loadStorageConfig();
 
-    VM_FISH_RED_END
     STR_ENCRYPT_END
 }
 
 bool Storage::IsValidFileName(const std::string& filename)
 {
-    return !filename.empty() && !isSameName(filename, "default") && !isSameName(filename, "none");
+    return !filename.empty() && !isSameName(filename, xor ("default")) && !isSameName(filename, xor ("none"));
 }
 
 void Storage::EnsureDirectoryExists(const std::string& directory)
@@ -86,13 +96,19 @@ void Storage::EnsureDirectoryExists(const std::string& directory)
 
 void Storage::SaveStorageConfig()
 {
+    STR_ENCRYPT_START
+		
     EnsureDirectoryExists(StorageDirectory);
 
     std::ofstream ofs;
     ofs.open(storageConfigFilepath, std::ofstream::out | std::ofstream::trunc);
 
-    ofs << "DefaultConfig=" << StorageConfig::DefaultConfig << std::endl;
-    ofs << "DefaultProfile=" << StorageConfig::DefaultProfile << std::endl;
+    ofs << xor ("DefaultConfig=") << StorageConfig::DefaultConfig << std::endl;
+    ofs << xor ("DefaultProfile=") << StorageConfig::DefaultProfile << std::endl;
+    ofs << xor ("ShowMenuAfterInjection=") << StorageConfig::ShowMenuAfterInjection << std::endl;
+    ofs << xor ("MenuKey=") << StorageConfig::MenuKey << std::endl;
 
     ofs.close();
+
+    STR_ENCRYPT_END
 }

@@ -1,30 +1,30 @@
 #include "ModManager.h"
 
-#include <Vanilla.h>
+#include "../Memory.h"
 
 void ModManager::Initialize()
 {
-	RawModManager = Vanilla::Explorer["osu.GameplayElements.Scoring.ModManager"];
-
-	modStatusAddress = RawModManager["ModStatus"].Field.GetAddress();
+	Memory::AddObject("ModManager::ModStatus", "53 8B F1 A1", 0x4, 1);
 }
 
-Mods ModManager::CurrentMods()
+Mods ModManager::GetActiveMods()
 {
-	return *static_cast<Mods*>(modStatusAddress);
+	const uintptr_t modStatusAddress = Memory::Objects["ModManager::ModStatus"];
+
+	return modStatusAddress ? *reinterpret_cast<Mods*>(modStatusAddress) : Mods::None;
 }
 
-bool ModManager::IsModEnabled(Mods mod)
+bool ModManager::CheckActive(Mods mods)
 {
-	return (CurrentMods() & mod) > Mods::None;
+	return (GetActiveMods() & mods) > Mods::None;
 }
 
-double ModManager::ModPlaybackRate()
+double ModManager::GetModPlaybackRate()
 {
-	if (IsModEnabled(Mods::HalfTime))
+	if (CheckActive(Mods::HalfTime))
 		return 75.;
 
-	if (IsModEnabled(Mods::DoubleTime) || IsModEnabled(Mods::Nightcore))
+	if (CheckActive(Mods::DoubleTime) || CheckActive(Mods::Nightcore))
 		return 150.;
 
 	return 100.;

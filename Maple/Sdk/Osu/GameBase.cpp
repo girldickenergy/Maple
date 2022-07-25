@@ -1,106 +1,27 @@
 #include "GameBase.h"
 
-#include <Vanilla.h>
+#include "../Memory.h"
+#include "Utilities/MemoryUtilities.h"
 
 void GameBase::Initialize()
 {
-	RawGameBase = Vanilla::Explorer["osu.GameBase"];
+	Memory::AddObject("GameBase::Mode", "C3 FF 15 ?? ?? ?? ?? 83 3D", 0x9, 1);
+	Memory::AddObject("GameBase::UpdateTiming", "55 8B EC 83 E4 F8 57 56 83 EC 18 8B F9 8B 0D");
 
-	instanceAddress = RawGameBase["Instance"].Field.GetAddress();
-	modeAddress = RawGameBase["Mode"].Field.GetAddress();
-
-	RawGameBase["get_Window"].Method.Compile();
-	getWindow = (fnGetWindow)RawGameBase["get_Window"].Method.GetNativeStart();
-
-	Vanilla::Explorer["osu.Framework.WindowsGameWindow"]["get_Handle"].Method.Compile();
-	getHandle = (fnGetHandle)Vanilla::Explorer["osu.Framework.WindowsGameWindow"]["get_Handle"].Method.GetNativeStart();
-
-	clientHashAddress = RawGameBase["ClientHash"].Field.GetAddress();
-	uniqueIDAddress = RawGameBase["UniqueId"].Field.GetAddress();
-	uniqueID2Address = RawGameBase["UniqueId2"].Field.GetAddress();
-	uniqueCheckAddress = RawGameBase["UniqueCheck"].Field.GetAddress();
-
-	TypeExplorer obfuscatedStringType = RawGameBase["UniqueId"].Field.GetTypeUnsafe();
-
-	obfuscatedRandomValueField = obfuscatedStringType["Randomvalue"].Field;
-	obfuscatedValueField = obfuscatedStringType["_Value"].Field;
+	Memory::AddPatch("GameBase::UpdateTiming_TickratePatch_1", "GameBase::UpdateTiming", "DD 05 ?? ?? ?? ?? DC 25 ?? ?? ?? ?? D9 C0 DD 05", 0x28E, 0x10, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
+	Memory::AddPatch("GameBase::UpdateTiming_TickratePatch_2", "GameBase::UpdateTiming", "1D ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 25", 0x28E, 0xD, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
+	Memory::AddPatch("GameBase::UpdateTiming_TickratePatch_3", "GameBase::UpdateTiming", "DD 05 ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 25", 0x28E, 0xE, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
+	Memory::AddPatch("GameBase::UpdateTiming_TickratePatch_4", "GameBase::UpdateTiming", "DD 1D ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 35", 0x28E, 0xE, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
 }
 
-void* GameBase::Instance()
+OsuModes GameBase::GetMode()
 {
-	return *static_cast<void**>(instanceAddress);
+	const uintptr_t modeAddress = Memory::Objects["GameBase::Mode"];
+
+	return modeAddress ? *reinterpret_cast<OsuModes*>(modeAddress) : OsuModes::Menu;
 }
 
-OsuModes GameBase::Mode()
+void GameBase::SetTickrate(double value)
 {
-	return *static_cast<OsuModes*>(modeAddress);
-}
-
-HWND GameBase::GetWindowHandle()
-{
-	void* windowInstance = getWindow(Instance());
-
-	return getHandle(windowInstance);
-}
-
-void* GameBase::GetUniqueIDInstance()
-{
-	return *static_cast<void**>(uniqueIDAddress);
-}
-
-void* GameBase::GetUniqueID2Instance()
-{
-	return *static_cast<void**>(uniqueID2Address);
-}
-
-void* GameBase::GetUniqueCheckInstance()
-{
-	return *static_cast<void**>(uniqueCheckAddress);
-}
-
-std::wstring GameBase::GetClientHash()
-{
-	return (*(COMString**)clientHashAddress)->Data().data();
-}
-
-std::wstring GameBase::GetUniqueID()
-{
-	void* uniqueIDInstance = GetUniqueIDInstance();
-
-	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueIDInstance);
-	std::wstring obfuscatedUniqueID = (*(COMString**)obfuscatedValueField.GetAddress(uniqueIDInstance))->Data().data();
-	std::wstring deobfuscatedUniqueID = {};
-
-	for (int i = 0; i < obfuscatedUniqueID.length(); i++)
-		deobfuscatedUniqueID += obfuscatedUniqueID[i] ^ salt;
-
-	return deobfuscatedUniqueID;
-}
-
-std::wstring GameBase::GetUniqueID2()
-{
-	void* uniqueID2Instance = GetUniqueID2Instance();
-
-	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueID2Instance);
-	std::wstring obfuscatedUniqueID2 = (*(COMString**)obfuscatedValueField.GetAddress(uniqueID2Instance))->Data().data();
-	std::wstring deobfuscatedUniqueID2 = {};
-
-	for (int i = 0; i < obfuscatedUniqueID2.length(); i++)
-		deobfuscatedUniqueID2 += obfuscatedUniqueID2[i] ^ salt;
-
-	return deobfuscatedUniqueID2;
-}
-
-std::wstring GameBase::GetUniqueCheck()
-{
-	void* uniqueCheckInstance = GetUniqueCheckInstance();
-
-	int salt = *(int*)obfuscatedRandomValueField.GetAddress(uniqueCheckInstance);
-	std::wstring obfuscatedUniqueCheck = (*(COMString**)obfuscatedValueField.GetAddress(uniqueCheckInstance))->Data().data();
-	std::wstring deobfuscatedUniqueCheck = {};
-
-	for (int i = 0; i < obfuscatedUniqueCheck.length(); i++)
-		deobfuscatedUniqueCheck += obfuscatedUniqueCheck[i] ^ salt;
-
-	return deobfuscatedUniqueCheck;
+	tickrate = value;
 }

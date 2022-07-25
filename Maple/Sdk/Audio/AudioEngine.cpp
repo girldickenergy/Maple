@@ -1,122 +1,65 @@
 #include "AudioEngine.h"
 
-#include <Vanilla.h>
+#include "Vanilla.h"
+
+#include "../Memory.h"
+#include "../Mods/ModManager.h"
+#include "../../Config/Config.h"
+#include "../Player/Player.h"
+#include "../../Features/Timewarp/Timewarp.h"
+#include "../Osu/GameBase.h"
+
+double __declspec(naked) AudioEngine::getCurrentPlaybackRateHook()
+{
+	__asm
+	{
+		mov[getCurrentPlaybackRateReturnAddress], esp
+		jmp getCurrentPlaybackRateStub
+	}
+}
+
+void __fastcall AudioEngine::setCurrentPlaybackRateHook(double rate)
+{
+	if (Config::Timewarp::Enabled && GameBase::GetMode() == OsuModes::Play && Player::GetInstance() && !Player::GetIsReplayMode())
+	{
+		rate = Timewarp::GetRate();
+
+		GameBase::SetTickrate(1000.0 / 60.0 * (1.0 / Timewarp::GetRateMultiplier()));
+	}
+	else GameBase::SetTickrate(1000.0 / 60.0);
+
+	oSetCurrentPlaybackRate(rate);
+}
+
+double __fastcall AudioEngine::getCurrentPlaybackRateStub()
+{
+	if (Vanilla::CheckAddressInModule(*static_cast<uintptr_t*>(getCurrentPlaybackRateReturnAddress), "clr.dll"))
+		return ModManager::GetModPlaybackRate();
+
+	return oGetCurrentPlaybackRate();
+}
 
 void AudioEngine::Initialize()
 {
-    RawAudioEngine = Vanilla::Explorer["osu.Audio.AudioEngine"];
-    RawAudioTrack = Vanilla::Explorer["osu.Audio.AudioTrack"];
-    RawAudioTrackBass = Vanilla::Explorer["osu.Audio.AudioTrackBass"];
-    RawAudioTrackVirtual = Vanilla::Explorer["osu.Audio.AudioTrackVirtual"];
+	Memory::AddObject("AudioEngine::Time", "7E 55 8B 76 10 DB 05", 0x7, 1);
 
-    trackBassPlaybackRate = RawAudioTrackBass["playbackRate"].Field;
-    trackVirtualPlaybackRate = RawAudioTrackVirtual["playbackRate"].Field;
-    audioStreamField = RawAudioTrack["<audioStream>k__BackingField"].Field;
-    frequencyLockField = RawAudioTrack["<FrequencyLock>k__BackingField"].Field;
-    trackVirtualPositionField = RawAudioTrackVirtual["position"].Field;
+	Memory::AddObject("AudioEngine::GetCurrentPlaybackRate", "55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 75 08");
+	Memory::AddHook("AudioEngine::GetCurrentPlaybackRate", "AudioEngine::GetCurrentPlaybackRate", reinterpret_cast<uintptr_t>(getCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oGetCurrentPlaybackRate), VanillaHookType::UndetectedInline);
 
-    currentTrackInstanceAddress = RawAudioEngine["AudioTrack"].Field.GetAddress();
-    initialFrequencyAddress = RawAudioEngine["InitialFrequency"].Field.GetAddress();
-    nightcoreAddress = RawAudioEngine["Nightcore"].Field.GetAddress();
-    lastAudioTimeAccurateSetAddress = RawAudioEngine["lastAudioTimeAccurateSet"].Field.GetAddress();
-    offsetAddress = RawAudioEngine["Offset"].Field.GetAddress();
-    extendedTimeAddress = RawAudioEngine["ExtendedTime"].Field.GetAddress();
-    timeAddress = RawAudioEngine["Time"].Field.GetAddress();
+	Memory::AddObject("AudioEngine::SetCurrentPlaybackRate", "55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15");
+	Memory::AddHook("AudioEngine::SetCurrentPlaybackRate", "AudioEngine::SetCurrentPlaybackRate", reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate), VanillaHookType::UndetectedInline);
 }
 
-void* AudioEngine::CurrentTrackInstance()
+int AudioEngine::GetTime()
 {
-    return *static_cast<void**>(currentTrackInstanceAddress);
+	const uintptr_t timeAddress = Memory::Objects["AudioEngine::Time"];
+
+	return timeAddress ? *reinterpret_cast<int*>(timeAddress) : 0;
 }
 
-int AudioEngine::TrackHandle()
+bool AudioEngine::GetIsPaused()
 {
-    return *static_cast<int*>(audioStreamField.GetAddress(CurrentTrackInstance()));
-}
+	const uintptr_t timeAddress = Memory::Objects["AudioEngine::Time"];
 
-float AudioEngine::InitialFrequency()
-{
-    return *static_cast<float*>(initialFrequencyAddress);
-}
-
-bool AudioEngine::Nightcore()
-{
-    return *static_cast<bool*>(nightcoreAddress);
-}
-
-double AudioEngine::GetPlaybackRate()
-{
-    void* trackInstance = CurrentTrackInstance();
-    if (!trackInstance)
-        return 100.;
-
-    if (TrackHandle() == 0)
-        return *static_cast<double*>(trackVirtualPlaybackRate.GetAddress(trackInstance));
-
-	return *static_cast<double*>(trackBassPlaybackRate.GetAddress(trackInstance));
-}
-
-void AudioEngine::SetPlaybackRate(double rate)
-{
-    void* trackInstance = CurrentTrackInstance();
-    if (!trackInstance)
-        return;
-	
-    *static_cast<int*>(lastAudioTimeAccurateSetAddress) = 0;
-    *static_cast<bool*>(frequencyLockField.GetAddress(trackInstance)) = !Nightcore();
-    if (round(GetPlaybackRate()) != round(rate))
-    {
-        if (TrackHandle() == 0)
-        {
-            *static_cast<double*>(trackVirtualPlaybackRate.GetAddress(trackInstance)) = rate;
-        }
-        else
-        {
-            *static_cast<double*>(trackBassPlaybackRate.GetAddress(trackInstance)) = rate;
-        	if (Nightcore())
-        	{
-                channelSetAttribute(TrackHandle(), 1, static_cast<float>(static_cast<double>(InitialFrequency()) * rate / 100.0));
-                channelSetAttribute(TrackHandle(), 65536, 0);
-        	}
-            else
-            {
-                channelSetAttribute(TrackHandle(), 1, InitialFrequency());
-                channelSetAttribute(TrackHandle(), 65536, static_cast<float>(rate - 100.0));
-            }
-        }
-    }
-}
-
-int AudioEngine::Offset()
-{
-    return *static_cast<int*>(offsetAddress);
-}
-
-bool AudioEngine::ExtendedTime()
-{
-    return *static_cast<bool*>(extendedTimeAddress);
-}
-
-int AudioEngine::Time()
-{
-    return *static_cast<int*>(timeAddress);
-}
-
-int AudioEngine::TimeAccurate()
-{
-    void* trackInstance = CurrentTrackInstance();
-    if (!trackInstance || ExtendedTime())
-        return Time();
-
-    const int trackHandle = TrackHandle();
-
-    int time;
-    if (trackHandle == 0)
-        time = static_cast<int>(round(*static_cast<double*>(trackVirtualPositionField.GetAddress(trackInstance))));
-    else
-        time = static_cast<int>(round(channelBytes2Seconds(trackHandle, channelGetPosition(trackHandle, 0)) * 1000.));
-
-    time -= Offset();
-
-    return time;
+	return timeAddress ? *reinterpret_cast<int*>(timeAddress + AUDIO_STATE_OFFSET) == 0 : false;
 }

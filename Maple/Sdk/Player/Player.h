@@ -1,37 +1,25 @@
 #pragma once
 
-#include <Explorer/TypeExplorer.h>
-#include <Enums/PlayModes.h>
+#include <cstdint>
+
+#include "Osu/PlayModes.h"
 
 class Player
 {
-	static inline bool isLoaded = false;
-	
-	static inline Field asyncLoadCompleteField;
-	static inline Field replayModeStableField;
-	
-	static inline void* instanceAddress = nullptr;
-	static inline void* isRetryingAddress = nullptr;
-	static inline void* playingAddress = nullptr;
-	static inline void* modeAddress = nullptr;
-	static inline void* pausedAddress = nullptr;
+	static inline constexpr int ASYNC_LOAD_COMPLETE_OFFSET = 0x182;
+	static inline constexpr int PLAY_MODE_OFFSET = 0x114;
+	static inline constexpr int REPLAY_MODE_OFFSET = 0x17A;
+
+	typedef bool(__fastcall* fnOnLoadComplete)(void* instance, bool success);
+	static inline fnOnLoadComplete oOnLoadComplete;
+	static bool __fastcall onLoadCompleteHook(void* instance, bool success);
 public:
-	static inline TypeExplorer RawPlayer;
-
 	static void Initialize();
-	static void* Instance();
-	static bool IsLoaded();
-	static bool IsReplayMode();
-	static bool IsRetrying();
-	static bool IsPlaying();
-	static PlayModes PlayMode();
-	static bool IsPaused();
 
-	typedef void(__fastcall* fnDispose)(void* instance, BOOL disposing);
-	static inline fnDispose oDispose;
-	static void __fastcall DisposeHook(void* instance, BOOL disposing);
-
-	typedef BOOL(__fastcall* fnOnPlayerLoadComplete)(void* instance, BOOL success);
-	static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete;
-	static BOOL __fastcall OnPlayerLoadCompleteHook(void* instance, BOOL success);
+	static uintptr_t GetInstance();
+	static bool GetIsLoaded();
+	static bool GetIsReplayMode();
+	static PlayModes GetPlayMode();
+	static int GetAnticheatFlag();
+	static void ResetAnticheatFlag();
 };
