@@ -611,6 +611,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\Vector2.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitObjectType.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Keys\CatchTheBeatKeys.h" />

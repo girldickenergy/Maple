@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CLR/CLRString.h"
+#include "Math/Vector2.h"
 #include "Osu/OsuModes.h"
 
 class GameBase
@@ -11,6 +12,9 @@ public:
 
 	static OsuModes GetMode();
 	static void SetTickrate(double value);
+	static bool GetIsFullscreen();
+	static Vector2 GetClientSize();
+	static Vector2 GetClientPosition();
 	static std::wstring GetClientHash();
 	static uintptr_t GetUniqueIDInstance();
 	static std::wstring GetUniqueID();

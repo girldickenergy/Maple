@@ -1704,6 +1704,9 @@
     <ClInclude Include="SDK\Helpers\ObfuscatedString.h">
       <Filter>SDK\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h">
+      <Filter>Dependencies\OsuDataTypes\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\DirectX\d3dx9math.inl">

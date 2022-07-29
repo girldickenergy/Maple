@@ -10,6 +10,7 @@
 #include "../Widgets/3rd-party/FileDialog/imfilebrowser.h"
 #include "../../Storage/StorageConfig.h"
 #include "../../Features/Spoofer/Spoofer.h"
+#include "../../SDK/Osu/GameBase.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -49,9 +50,12 @@ void MainMenu::Render()
     if (backgroundTexture != nullptr)
         ImGui::GetBackgroundDrawList()->AddImage(backgroundTexture, ImVec2(0, 0), ImVec2(io.DisplaySize.x, io.DisplaySize.y));
 
+    const Vector2 clientPos = GameBase::GetClientPosition();
+    const Vector2 clientSize = GameBase::GetClientSize();
+
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
-    ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_Once);
+    ImGui::SetNextWindowPos(ImVec2(clientSize.X / 2, clientSize.Y / 2), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     {
         const ImVec2 menuSize = ImGui::GetCurrentWindow()->Size;
@@ -567,7 +571,7 @@ void MainMenu::Render()
         }
         ImGui::EndChild();
 
-        //ImGui::SetWindowPos(ImVec2(std::clamp(menuPos.x, WindowManager::ViewportPosition().X, WindowManager::ViewportPosition().X + WindowManager::Width() - menuSize.x), std::clamp(menuPos.y, WindowManager::ViewportPosition().Y, WindowManager::ViewportPosition().Y + WindowManager::Height() - menuSize.y)));
+        ImGui::SetWindowPos(ImVec2(std::clamp(menuPos.x, clientPos.X, clientPos.X + clientSize.X - menuSize.x), std::clamp(menuPos.y, clientPos.Y, clientPos.Y + clientSize.Y - menuSize.y)));
     }
 
     ImGui::End();
