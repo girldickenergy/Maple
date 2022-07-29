@@ -1,4 +1,5 @@
 ﻿#include <clocale>
+#include <iostream>
 #include <WinSock2.h>
 
 #include "curl.h"
@@ -18,9 +19,11 @@
 #include "SDK/Discord/DiscordRPC.h"
 #include "SDK/GL/GLControl.h"
 #include "SDK/Helpers/ErrorSubmission.h"
+#include "SDK/Helpers/ObfuscatedString.h"
 #include "SDK/Helpers/pWebRequest.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
+#include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
@@ -90,27 +93,29 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xor ("Initialized Vanilla!"));
 		
+        //initializing SDK
         Memory::StartInitialize();
 
+        GameBase::Initialize();
+        BanchoClient::Initialize();
+        pWebRequest::Initialize();
+        ErrorSubmission::Initialize();
         AudioEngine::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();
+        ObfuscatedString::Initialize();
         Player::Initialize();
         Ruleset::Initialize();
+        Score::Initialize();
+        StreamingManager::Initialize();
         DiscordRPC::Initialize();
         GLControl::Initialize();
-        GameBase::Initialize();
-        ErrorSubmission::Initialize();
-        Score::Initialize();
-        pWebRequest::Initialize();
-        StreamingManager::Initialize();
-        UI::Initialize();
 
         Memory::EndInitialize();
 
-        Logger::Log(LogSeverity::Debug, "Uses angle: %i", GLControl::GetUsesAngle());
-
-        //todo: functions
+        //initializing UI and Spoofer
+        //TODO: maybe we can move spoofer initialization outside of ui hooks?
+        UI::Initialize();
     }
     else
     {

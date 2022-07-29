@@ -15,6 +15,7 @@
 #include "Visualisations/SnowVisualisation/SnowVisualisation.h"
 #include "Windows/MainMenu.h"
 #include "Windows/ScoreSubmissionDialog.h"
+#include "../Features/Spoofer/Spoofer.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -70,6 +71,9 @@ BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
 {
 	if (!initialized)
 		initialize(WindowFromDC(hdc));
+
+	if (!Spoofer::Initialized)
+		Spoofer::Initialize();
 	
 	render();
 
@@ -88,6 +92,9 @@ int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSour
 
 		initialize(d3dPresentParameters.hDeviceWindow, d3dDevice);
 	}
+
+	if (!Spoofer::Initialized)
+		Spoofer::Initialize();
 
 	render();
 

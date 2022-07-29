@@ -9,6 +9,7 @@
 #include "../../Storage/Storage.h"
 #include "../Widgets/3rd-party/FileDialog/imfilebrowser.h"
 #include "../../Storage/StorageConfig.h"
+#include "../../Features/Spoofer/Spoofer.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -395,7 +396,59 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("Spoofer", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1, 1)));
                 {
-                    
+                    const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
+                    const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
+
+                    const float buttonWidth = (ImGui::GetWindowWidth() * 0.5f - style.ItemSpacing.x) / 2;
+
+                    Widgets::Combo("Profiles", &Spoofer::SelectedProfile, [](void* vec, int idx, const char** out_text)
+                        {
+                            auto& vector = *static_cast<std::vector<std::string>*>(vec);
+                            if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+                            *out_text = vector.at(idx).c_str();
+                            return true;
+                        }, reinterpret_cast<void*>(&Spoofer::Profiles), Spoofer::Profiles.size());
+
+                    ImGui::Text("Current profile: %s", Spoofer::Profiles[Spoofer::LoadedProfile].c_str());
+
+                    if (sameProfile)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button("Load", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+                        Spoofer::Load();
+
+                    if (sameProfile)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::SameLine();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button("Delete", ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+                        Spoofer::Delete();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::Spacing();
+
+                    ImGui::InputText("Profile name", Spoofer::NewProfileName, IM_ARRAYSIZE(Spoofer::NewProfileName));
+
+                    if (Widgets::Button("Create new profile", ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Spoofer::Create();
                 }
                 Widgets::EndPanel();
             }

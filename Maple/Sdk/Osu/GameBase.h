@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CLR/CLRString.h"
 #include "Osu/OsuModes.h"
 
 class GameBase
@@ -10,4 +11,11 @@ public:
 
 	static OsuModes GetMode();
 	static void SetTickrate(double value);
+	static std::wstring GetClientHash();
+	static uintptr_t GetUniqueIDInstance();
+	static std::wstring GetUniqueID();
+	static uintptr_t GetUniqueID2Instance();
+	static std::wstring GetUniqueID2();
+	static uintptr_t GetUniqueCheckInstance();
+	static std::wstring GetUniqueCheck();
 };
