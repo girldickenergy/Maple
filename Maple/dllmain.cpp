@@ -25,6 +25,7 @@
 #include "SDK/Mods/ModManager.h"
 #include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
+#include "SDK/Osu/GameField.h"
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
 #include "SDK/Scoring/Score.h"
@@ -104,6 +105,7 @@ void InitializeMaple()
         InputManager::Initialize();
         ModManager::Initialize();
         ObfuscatedString::Initialize();
+        GameField::Initialize();
         Player::Initialize();
         Ruleset::Initialize();
         Score::Initialize();

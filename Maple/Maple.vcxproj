@@ -370,6 +370,7 @@
     <ClCompile Include="SDK\Mods\ModManager.cpp" />
     <ClCompile Include="SDK\Online\BanchoClient.cpp" />
     <ClCompile Include="SDK\Osu\GameBase.cpp" />
+    <ClCompile Include="SDK\Osu\GameField.cpp" />
     <ClCompile Include="SDK\Player\Player.cpp" />
     <ClCompile Include="SDK\Player\Ruleset.cpp" />
     <ClCompile Include="SDK\Scoring\Score.cpp" />
@@ -655,6 +656,7 @@
     <ClInclude Include="SDK\Mods\ModManager.h" />
     <ClInclude Include="SDK\Online\BanchoClient.h" />
     <ClInclude Include="SDK\Osu\GameBase.h" />
+    <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Player\Player.h" />
     <ClInclude Include="SDK\Player\Ruleset.h" />
     <ClInclude Include="SDK\Scoring\Score.h" />

@@ -1,0 +1,51 @@
+#include "GameField.h"
+
+#include "../Memory.h"
+
+void GameField::Initialize()
+{
+	Memory::AddObject("GameField::Instance", "8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D", 0xB, 1);
+}
+
+uintptr_t GameField::GetInstance()
+{
+	const uintptr_t instanceAddress = Memory::Objects["GameField::Instance"];
+
+	return instanceAddress ? *reinterpret_cast<uintptr_t*>(instanceAddress) : 0u;
+}
+
+float GameField::GetWidth()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<float*>(instance + WIDTH_OFFSET) : 0.0f;
+}
+
+float GameField::GetHeight()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<float*>(instance + HEIGHT_OFFSET) : 0.0f;
+}
+
+float GameField::GetRatio()
+{
+	return GetHeight() / 384.f;
+}
+
+Vector2 GameField::GetOffset()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<Vector2*>(instance + OFFSETVECTOR_OFFSET) : Vector2(0, 0);
+}
+
+Vector2 GameField::DisplayToField(Vector2 display)
+{
+	return (display - GetOffset()) / GetRatio(); //todo: possible division by zero
+}
+
+Vector2 GameField::FieldToDisplay(Vector2 field)
+{
+	return field * GetRatio() + GetOffset();
+}

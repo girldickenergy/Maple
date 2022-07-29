@@ -674,6 +674,9 @@
     <ClCompile Include="SDK\Helpers\ObfuscatedString.cpp">
       <Filter>SDK\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Osu\GameField.cpp">
+      <Filter>SDK\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1706,6 +1709,9 @@
     </ClInclude>
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h">
       <Filter>Dependencies\OsuDataTypes\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Osu\GameField.h">
+      <Filter>SDK\Osu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
