@@ -671,9 +671,6 @@
     <ClCompile Include="SDK\Online\BanchoClient.cpp">
       <Filter>SDK\Online</Filter>
     </ClCompile>
-    <ClCompile Include="SDK\Helpers\ObfuscatedString.cpp">
-      <Filter>SDK\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Osu\GameField.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
@@ -688,6 +685,15 @@
     </ClCompile>
     <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp">
       <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Player\HitObject.cpp">
+      <Filter>SDK\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Player\HitObjectManager.cpp">
+      <Filter>SDK\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Helpers\Obfuscated.cpp">
+      <Filter>SDK\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1737,9 +1743,6 @@
     <ClInclude Include="SDK\Online\BanchoClient.h">
       <Filter>SDK\Online</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Helpers\ObfuscatedString.h">
-      <Filter>SDK\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h">
       <Filter>Dependencies\OsuDataTypes\Math</Filter>
     </ClInclude>
@@ -1769,6 +1772,15 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Chiyo\Utilities\ChiyoStringUtilities.h">
       <Filter>Dependencies\Chiyo\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Player\HitObject.h">
+      <Filter>SDK\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Player\HitObjectManager.h">
+      <Filter>SDK\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Helpers\Obfuscated.h">
+      <Filter>SDK\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

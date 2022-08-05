@@ -19,13 +19,14 @@
 #include "SDK/Discord/DiscordRPC.h"
 #include "SDK/GL/GLControl.h"
 #include "SDK/Helpers/ErrorSubmission.h"
-#include "SDK/Helpers/ObfuscatedString.h"
+#include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Helpers/pWebRequest.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
 #include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
+#include "SDK/Player/HitObjectManager.h"
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
 #include "SDK/Scoring/Score.h"
@@ -81,7 +82,7 @@ void InitializeMaple()
     Storage::Initialize("MapleTest"); //TODO: username hashed
     Config::Initialize();
 
-	#ifdef _DEBUG
+	#ifndef _DEBUG
 	    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
 	#else
 	    Logger::Initialize(LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
@@ -104,10 +105,11 @@ void InitializeMaple()
         AudioEngine::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();
-        ObfuscatedString::Initialize();
+        Obfuscated::Initialize();
         GameField::Initialize();
         Player::Initialize();
         Ruleset::Initialize();
+        HitObjectManager::Initialize();
         Score::Initialize();
         StreamingManager::Initialize();
         DiscordRPC::Initialize();
