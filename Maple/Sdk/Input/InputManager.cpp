@@ -42,30 +42,44 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 {
 	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused()/* && !Player::IsFailed()*/ && (Config::Relax::Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
 	{
-		OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : OsuKeys::None;//Relax::Update();
+		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : OsuKeys::None;//Relax::Update();
 
-		bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
-		bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;
-		bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
-		bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
+		const bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
+		const bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;
+		const bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
+		const bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
 
-		*(bool*)Memory::Objects["InputManager::leftButton1i"] = (!*(bool*)Memory::Objects["InputManager::leftButton1"] && (m1Pressed || k1Pressed));
-		*(bool*)Memory::Objects["InputManager::leftButton1"] = m1Pressed || k1Pressed;
+		const uintptr_t leftButton1Address = Memory::Objects["InputManager::leftButton1"];
+		const uintptr_t leftButton1iAddress = Memory::Objects["InputManager::leftButton1i"];
+		const uintptr_t leftButton2Address = Memory::Objects["InputManager::leftButton2"];
+		const uintptr_t leftButton2iAddress = Memory::Objects["InputManager::leftButton2i"];
+		const uintptr_t rightButton1Address = Memory::Objects["InputManager::rightButton1"];
+		const uintptr_t rightButton1iAddress = Memory::Objects["InputManager::rightButton1i"];
+		const uintptr_t rightButton2Address = Memory::Objects["InputManager::rightButton2"];
+		const uintptr_t rightButton2iAddress = Memory::Objects["InputManager::rightButton2i"];
+		const uintptr_t leftButtonAddress = Memory::Objects["InputManager::leftButton"];
+		const uintptr_t rightButtonAddress = Memory::Objects["InputManager::rightButton"];
 
-		*(bool*)Memory::Objects["InputManager::leftButton2i"] = (!*(bool*)Memory::Objects["InputManager::leftButton2"] && k1Pressed);
-		*(bool*)Memory::Objects["InputManager::leftButton2"] = k1Pressed;
+		if (leftButton1Address && leftButton1iAddress && leftButton2Address && leftButton2iAddress && rightButton1Address && rightButton1iAddress && rightButton2Address && rightButton2iAddress && leftButtonAddress && rightButtonAddress)
+		{
+			*reinterpret_cast<bool*>(leftButton1iAddress) = (!*reinterpret_cast<bool*>(leftButton1Address) && (m1Pressed || k1Pressed));
+			*reinterpret_cast<bool*>(leftButton1Address) = m1Pressed || k1Pressed;
 
-		*(bool*)Memory::Objects["InputManager::rightButton1i"] = (!*(bool*)Memory::Objects["InputManager::rightButton1"] && (m2Pressed || k2Pressed));
-		*(bool*)Memory::Objects["InputManager::rightButton1"] = m2Pressed || k2Pressed;
+			*reinterpret_cast<bool*>(leftButton2iAddress) = (!*reinterpret_cast<bool*>(leftButton2Address) && k1Pressed);
+			*reinterpret_cast<bool*>(leftButton2Address) = k1Pressed;
 
-		*(bool*)Memory::Objects["InputManager::rightButton2i"] = (!*(bool*)Memory::Objects["InputManager::rightButton2"] && k2Pressed);
-		*(bool*)Memory::Objects["InputManager::rightButton2"] = k2Pressed;
+			*reinterpret_cast<bool*>(rightButton1iAddress) = (!*reinterpret_cast<bool*>(rightButton1Address) && (m2Pressed || k2Pressed));
+			*reinterpret_cast<bool*>(rightButton1Address) = m2Pressed || k2Pressed;
 
-		if (*(bool*)Memory::Objects["InputManager::leftButton2i"] || *(bool*)Memory::Objects["InputManager::leftButton1i"])
-			*(int*)Memory::Objects["InputManager::leftButton"] = 1;
+			*reinterpret_cast<bool*>(rightButton2iAddress) = (!*reinterpret_cast<bool*>(rightButton2Address) && k2Pressed);
+			*reinterpret_cast<bool*>(rightButton2Address) = k2Pressed;
 
-		if (*(bool*)Memory::Objects["InputManager::rightButton2i"] || *(bool*)Memory::Objects["InputManager::rightButton1i"])
-			*(int*)Memory::Objects["InputManager::rightButton"] = 1;
+			if (*reinterpret_cast<bool*>(leftButton2iAddress) || *reinterpret_cast<bool*>(leftButton1iAddress))
+				*reinterpret_cast<int*>(leftButtonAddress) = 1;
+
+			if (*reinterpret_cast<bool*>(rightButton2iAddress) || *reinterpret_cast<bool*>(rightButton1iAddress))
+				*reinterpret_cast<int*>(rightButtonAddress) = 1;
+		}
 	}
 
 	oMouseViaKeyboardControls();
