@@ -11,6 +11,7 @@
 #include "../../Storage/StorageConfig.h"
 #include "../../Features/Spoofer/Spoofer.h"
 #include "../../SDK/Osu/GameBase.h"
+#include "../../Features/ReplayBot/ReplayBot.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -55,7 +56,7 @@ void MainMenu::Render()
 
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
-    ImGui::SetNextWindowPos(ImVec2(clientSize.X / 2, clientSize.Y / 2), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowPos(ImVec2(clientSize.X / 2 - StyleProvider::MainMenuSize.x / 2, clientSize.Y / 2 - StyleProvider::MainMenuSize.y / 2), ImGuiCond_Once);
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     {
         const ImVec2 menuSize = ImGui::GetCurrentWindow()->Size;
@@ -293,7 +294,7 @@ void MainMenu::Render()
                     Widgets::Combo("Type", &Config::Timewarp::Type, types, IM_ARRAYSIZE(types));
                     if (Config::Timewarp::Type == 0)
                     {
-                        Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 150, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp); ImGui::SameLine(); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
+                        Widgets::SliderInt("Rate", &Config::Timewarp::Rate, 25, 300, 1, 10, "%d", ImGuiSliderFlags_AlwaysClamp); ImGui::SameLine(); Widgets::Tooltip("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime.");
                     }
                     else
                     {
@@ -306,7 +307,45 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel("Replay Bot", ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1)));
                 {
+                    Widgets::Checkbox("Enabled", &ReplayBot::Enabled);
 
+                    if (Widgets::Checkbox("Disable aiming", &ReplayBot::DisableAiming))
+                    {
+                        if (ReplayBot::DisableAiming && ReplayBot::DisableTapping)
+                            ReplayBot::DisableTapping = false;
+                    }
+
+                    if (Widgets::Checkbox("Disable tapping", &ReplayBot::DisableTapping))
+                    {
+                        if (ReplayBot::DisableAiming && ReplayBot::DisableTapping)
+                            ReplayBot::DisableAiming = false;
+                    }
+
+                    if (Widgets::Button("Select replay"))
+                    {
+                        if (!replayDialogInitialized)
+                        {
+                            replayDialog.SetTitle("Select replay");
+                            replayDialog.SetTypeFilters({ ".osr" });
+
+                            replayDialogInitialized = true;
+                        }
+
+                        replayDialog.Open();
+                    }
+
+                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
+                    replayDialog.Display();
+                    ImGui::PopStyleVar();
+
+                    if (replayDialog.HasSelected())
+                    {
+                        ReplayBot::LoadReplay(replayDialog.GetSelected().string().c_str());
+                        replayDialog.ClearSelected();
+                    }
+
+                    std::string selectedReplayText = "Selected replay: " + ReplayBot::GetReplayString();
+                    ImGui::Text(selectedReplayText.c_str());
                 }
                 Widgets::EndPanel();
             }

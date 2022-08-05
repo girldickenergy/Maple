@@ -2,15 +2,28 @@
 
 #include "../Memory.h"
 #include "../../Features/Timewarp/Timewarp.h"
+#include "../../Features/ReplayBot/ReplayBot.h"
 
-bool __fastcall Player::onLoadCompleteHook(void* instance, bool success)
+void Player::initializeFeatures()
 {
-	if (success)
-	{
-		Timewarp::Initialize();
-	}
+	ReplayBot::Initialize();
+	Timewarp::Initialize();
+}
 
-	return oOnLoadComplete(instance, success);
+int __declspec(naked) Player::onLoadCompleteHook(uintptr_t instance, bool success)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		cmp edx, 0
+		je orig
+		call initializeFeatures
+		orig:
+		popfd
+		popad
+		jmp oOnLoadComplete
+	}
 }
 
 void Player::Initialize()

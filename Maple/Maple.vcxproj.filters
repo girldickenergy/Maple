@@ -677,6 +677,18 @@
     <ClCompile Include="SDK\Osu\GameField.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayBot\ReplayBot.cpp">
+      <Filter>Features\ReplayBot</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -834,6 +846,27 @@
     </Filter>
     <Filter Include="SDK\Online">
       <UniqueIdentifier>{bf7214fc-76d1-4255-8aa2-58863613439b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayBot">
+      <UniqueIdentifier>{b76f0c25-a7fd-4bd1-9fda-f7afc839ff20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo">
+      <UniqueIdentifier>{ba300f21-f977-4350-bb22-1dca94becd91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Decoders">
+      <UniqueIdentifier>{23f93e41-348d-45a2-8f1b-640e6b97df26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\LZMA">
+      <UniqueIdentifier>{5d0b0f0f-39a8-4b68-afe6-471d8b3477b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Replays">
+      <UniqueIdentifier>{c2ee2a2a-11fd-4b21-be20-be31bbe41ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Serialization">
+      <UniqueIdentifier>{2cd63bb4-039c-4b41-ac30-ac6b5aaf2a3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Chiyo\Utilities">
+      <UniqueIdentifier>{2f0c59ca-72af-432d-b868-500b8876a1d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1712,6 +1745,30 @@
     </ClInclude>
     <ClInclude Include="SDK\Osu\GameField.h">
       <Filter>SDK\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayBot\ReplayBot.h">
+      <Filter>Features\ReplayBot</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h">
+      <Filter>Dependencies\Chiyo\Decoders</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp">
+      <Filter>Dependencies\Chiyo\LZMA</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\Replay.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h">
+      <Filter>Dependencies\Chiyo\Replays</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h">
+      <Filter>Dependencies\Chiyo\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Chiyo\Utilities\ChiyoStringUtilities.h">
+      <Filter>Dependencies\Chiyo\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

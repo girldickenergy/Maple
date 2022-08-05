@@ -72,12 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,6 +160,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config\Config.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
+    <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\3way.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\adler32.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\algebra.cpp" />
@@ -356,6 +359,7 @@
     <ClCompile Include="Dependencies\Vanilla\Utilities\MemoryUtilities.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
@@ -388,6 +392,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\Config.h" />
+    <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h" />
+    <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\Replay.h" />
+    <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h" />
+    <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h" />
+    <ClInclude Include="Dependencies\Chiyo\Utilities\ChiyoStringUtilities.h" />
     <ClInclude Include="Dependencies\CryptoPP\3way.h" />
     <ClInclude Include="Dependencies\CryptoPP\adler32.h" />
     <ClInclude Include="Dependencies\CryptoPP\adv_simd.h" />
@@ -641,6 +652,7 @@
     <ClInclude Include="Dependencies\Vanilla\Utilities\MemoryUtilities.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
+    <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Logging\Logger.h" />

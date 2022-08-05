@@ -3,22 +3,40 @@
 #include "../Memory.h"
 #include "../../Config/Config.h"
 
-void __fastcall StreamingManager::pushNewFrameHook(uintptr_t frame)
+void __declspec(naked) StreamingManager::pushNewFrameHook(uintptr_t frame)
 {
-	if (!Config::Misc::DisableSpectators)
-		oPushNewFrame(frame);
+	__asm
+	{
+		pushad
+		pushfd
+		cmp [Config::Misc::DisableSpectators], 0x1
+		jne orig
+		popfd
+		popad
+		ret
+		orig:
+		popfd
+		popad
+		jmp oPushNewFrame
+	}
 }
 
 void __declspec(naked) StreamingManager::purgeFramesHook(int action, uintptr_t extra)
 {
 	__asm
 	{
-		cmp[Config::Misc::DisableSpectators], 0x1
+		pushad
+		pushfd
+		cmp [Config::Misc::DisableSpectators], 0x1
 		jne orig
 		cmp ecx, 0x6
 		jne orig
+		popfd
+		popad
 		ret
-		orig :
+		orig:
+		popfd
+		popad
 		jmp oPurgeFrames
 	}
 }

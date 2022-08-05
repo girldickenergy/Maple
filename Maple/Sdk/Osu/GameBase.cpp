@@ -59,6 +59,9 @@ Vector2 GameBase::GetClientSize()
 
 Vector2 GameBase::GetClientPosition()
 {
+	if (!GetIsFullscreen())
+		return { 0.f, 0.f };
+
 	if (const uintptr_t clientBoundsAddress = Memory::Objects["GameBase::ClientBounds"])
 	{
 		const sRectangle* clientBounds = *reinterpret_cast<sRectangle**>(clientBoundsAddress);

@@ -9,3 +9,13 @@ enum class OsuKeys : int
     K2 = (1 << 3) + M2,
     Smoke = 1 << 4,
 };
+
+inline OsuKeys operator&(OsuKeys a, OsuKeys b)
+{
+    return static_cast<OsuKeys>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+inline OsuKeys operator|(OsuKeys a, OsuKeys b)
+{
+    return static_cast<OsuKeys>(static_cast<int>(a) | static_cast<int>(b));
+}

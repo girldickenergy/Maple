@@ -10,7 +10,7 @@
 #include "GL/gl3w.h"
 #include "curl.h"
 
-#include "../../Utilities/Strings/StringUtilities.h"
+#include "../Strings/StringUtilities.h"
 
 void* TextureLoader::loadTextureInternalOGL3(unsigned char* data, int width, int height)
 {

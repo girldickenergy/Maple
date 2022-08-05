@@ -8,10 +8,10 @@
 
 class Vanilla
 {
-	typedef int(__stdcall* fnCompileMethod)(uintptr_t thisvar, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
+	typedef int(__stdcall* fnCompileMethod)(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
 	typedef void(__cdecl* fnJITCallback)(uintptr_t functionAddress, unsigned int functionSize);
 	static inline fnCompileMethod oCompileMethod;
-	static int __stdcall compileMethodHook(uintptr_t thisvar, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
+	static int __stdcall compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
 
 	static inline std::mutex mutex;
 	static inline std::vector<std::reference_wrapper<std::uintptr_t>> relocations;

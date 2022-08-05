@@ -7,7 +7,7 @@ class InputManager
 	static inline constexpr int LEFTBUTTON1_OFFSET = 0x27;
 	static inline constexpr int LEFTBUTTON1I_OFFSET = 0x5E;
 	static inline constexpr int LEFTBUTTON2_OFFSET = 0xCE;
-	static inline constexpr int LEFTBUTTON2I_OFFSET = 0x10F;
+	static inline constexpr int LEFTBUTTON2I_OFFSET = 0x105;
 	static inline constexpr int RIGHTBUTTON1_OFFSET = 0x175;
 	static inline constexpr int RIGHTBUTTON1I_OFFSET = 0x1AC;
 	static inline constexpr int RIGHTBUTTON2_OFFSET = 0x229;
@@ -25,6 +25,9 @@ class InputManager
 	static inline fnMouseViaKeyboardControls oMouseViaKeyboardControls;
 	static void __fastcall mouseViaKeyboardControlsHook();
 public:
+	static inline Vector2 AccumulatedOffset = Vector2(0, 0);
+	static inline Vector2 LastPosition = Vector2();
+
 	static void Initialize();
 
 	static Vector2 GetCursorPosition();

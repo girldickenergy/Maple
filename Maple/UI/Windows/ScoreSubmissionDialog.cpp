@@ -6,6 +6,7 @@
 #include "../StyleProvider.h"
 #include "../Widgets/Widgets.h"
 #include "../../SDK/Scoring/Score.h"
+#include "../../SDK/Osu/GameBase.h"
 
 void ScoreSubmissionDialog::Render()
 {
@@ -23,17 +24,18 @@ void ScoreSubmissionDialog::Render()
 	const float panelContentHeight = Widgets::CalcPanelHeight(2, 1);
 	const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize("Do you really want to submit this score?").x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
 
-	/*if (resetPosition)
+	if (resetPosition)
 	{
-		Vector2 viewportPosition = WindowManager::ViewportPosition();
+		const Vector2 clientSize = GameBase::GetClientSize();
+		const Vector2 clientPosition = GameBase::GetClientPosition();
 
-		ImGui::SetNextWindowPos(ImVec2(viewportPosition.X, viewportPosition.Y) + ImVec2(WindowManager::Width() / 2 - windowSize.x / 2, WindowManager::Height() / 2 - windowSize.y / 2));
+		ImGui::SetNextWindowPos(ImVec2(clientPosition.X, clientPosition.Y) + ImVec2(clientSize.X / 2 - windowSize.x / 2, clientSize.Y / 2 - windowSize.y / 2));
 
 		resetPosition = false;
-	}*/
+	}
 
 	ImGui::SetNextWindowSize(windowSize);
-	ImGui::Begin("Score Submission Dialogue", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin("Score Submission Dialog", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 	{
 		Widgets::BeginPanel("Score Submission", ImVec2(windowSize.x, panelContentHeight));
 		{

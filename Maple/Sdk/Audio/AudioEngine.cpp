@@ -1,5 +1,7 @@
 #include "AudioEngine.h"
 
+#include <intrin.h>
+
 #include "Vanilla.h"
 
 #include "../Memory.h"
@@ -9,17 +11,19 @@
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../Osu/GameBase.h"
 
-double __declspec(naked) AudioEngine::getCurrentPlaybackRateHook()
+double __fastcall AudioEngine::getCurrentPlaybackRateHook(uintptr_t ecx, uintptr_t edx)
 {
-	__asm
-	{
-		mov[getCurrentPlaybackRateReturnAddress], esp
-		jmp getCurrentPlaybackRateStub
-	}
+	const uintptr_t returnAddress = reinterpret_cast<uintptr_t>(_ReturnAddress());
+	if (Vanilla::CheckAddressInModule(returnAddress, "clr.dll"))
+		return ModManager::GetModPlaybackRate();
+
+	return oGetCurrentPlaybackRate(ecx, edx);
 }
 
-void __fastcall AudioEngine::setCurrentPlaybackRateHook(double rate)
+void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 {
+	std::unique_lock lock(mutex);
+
 	if (Config::Timewarp::Enabled && GameBase::GetMode() == OsuModes::Play && Player::GetInstance() && !Player::GetIsReplayMode())
 	{
 		rate = Timewarp::GetRate();
@@ -29,14 +33,6 @@ void __fastcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 	else GameBase::SetTickrate(1000.0 / 60.0);
 
 	oSetCurrentPlaybackRate(rate);
-}
-
-double __fastcall AudioEngine::getCurrentPlaybackRateStub()
-{
-	if (Vanilla::CheckAddressInModule(*static_cast<uintptr_t*>(getCurrentPlaybackRateReturnAddress), "clr.dll"))
-		return ModManager::GetModPlaybackRate();
-
-	return oGetCurrentPlaybackRate();
 }
 
 void AudioEngine::Initialize()

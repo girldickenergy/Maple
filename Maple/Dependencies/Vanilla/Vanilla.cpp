@@ -5,16 +5,12 @@
 #include "PatternScanning/VanillaPatternScanner.h"
 #include "Utilities/MemoryUtilities.h"
 
-int __stdcall Vanilla::compileMethodHook(uintptr_t thisvar, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
+int __stdcall Vanilla::compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
 {
-	uintptr_t nativeCodeAddress = 0u;
+	const int ret = oCompileMethod(instance, compHnd, methodInfo, flags, entryAddress, nativeSizeOfCode);
 
-	const int ret = oCompileMethod(thisvar, compHnd, methodInfo, flags, &nativeCodeAddress, nativeSizeOfCode);
-
-	if (jitCallback)
-		jitCallback(nativeCodeAddress, *nativeSizeOfCode);
-
-	*entryAddress = nativeCodeAddress;
+	if (ret == 0 && jitCallback)
+		jitCallback(*entryAddress, *nativeSizeOfCode);
 
 	return ret;
 }

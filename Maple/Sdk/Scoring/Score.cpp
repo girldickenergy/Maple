@@ -9,24 +9,54 @@
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/xorstr.hpp"
 
-void __fastcall Score::submitHook(uintptr_t instance)
+void Score::checkFlags()
 {
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xor ("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
 	Player::ResetAnticheatFlag();
+}
 
-	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
-		return;
+void Score::handleScoreSubmissionPrompt()
+{
+	Vanilla::AddRelocation(std::ref(scoreInstance));
 
-	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
+	ScoreSubmissionDialog::Show();
+}
+
+void __declspec(naked) Score::submitHook(uintptr_t instance)
+{
+	__asm
 	{
-		scoreInstance = instance;
-		Vanilla::AddRelocation(std::ref(scoreInstance));
+		mov [scoreInstance], ecx
 
-		ScoreSubmissionDialog::Show();
+		pushad
+		pushfd
+		call checkFlags
+		popfd
+		popad
+
+		pushad
+		pushfd
+		cmp [Config::Misc::ScoreSubmissionType], 0x1
+		je end
+		cmp [Config::Misc::ForceDisableScoreSubmission], 0x1
+		je end
+		cmp [Config::Misc::ScoreSubmissionType], 0x2
+		jne orig
+		call Player::GetIsRetrying
+		cmp eax, 0x0
+		jne orig
+		call handleScoreSubmissionPrompt
+		end:
+		popfd
+		popad
+		ret
+		orig:
+		popfd
+		popad
+		jmp oSubmit
 	}
-	else oSubmit(instance);
 }
 
 void Score::Initialize()
