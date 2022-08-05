@@ -12,7 +12,7 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 {
 	Vector2 newPosition = pos;
 
-	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused()/*&& !Player::GetIsFailed()*/)
+	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused() && !Player::GetIsFailed())
 	{
 		if (ReplayBot::Ready)
 			ReplayBot::Update();
@@ -40,7 +40,7 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 
 void __fastcall InputManager::mouseViaKeyboardControlsHook()
 {
-	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused()/* && !Player::IsFailed()*/ && (Config::Relax::Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
+	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused() && !Player::GetIsFailed() && (Config::Relax::Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
 	{
 		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : OsuKeys::None;//Relax::Update();
 

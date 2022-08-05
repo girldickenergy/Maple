@@ -23,6 +23,7 @@ public:
 	static bool GetIsReplayMode();
 	static PlayModes GetPlayMode();
 	static bool GetIsRetrying();
+	static bool GetIsFailed();
 	static int GetAnticheatFlag();
 	static void ResetAnticheatFlag();
 };
