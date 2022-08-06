@@ -9,19 +9,26 @@
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/xorstr.hpp"
 
-void Score::checkFlags()
+bool Score::handleScoreSubmission()
 {
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xor ("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
 	Player::ResetAnticheatFlag();
-}
 
-void Score::handleScoreSubmissionPrompt()
-{
-	Vanilla::AddRelocation(std::ref(scoreInstance));
+	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
+		return false;
 
-	ScoreSubmissionDialog::Show();
+	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
+	{
+		Vanilla::AddRelocation(std::ref(scoreInstance));
+
+		ScoreSubmissionDialog::Show();
+
+		return false;
+	}
+
+	return true;
 }
 
 void __declspec(naked) Score::submitHook(uintptr_t instance)
@@ -32,23 +39,9 @@ void __declspec(naked) Score::submitHook(uintptr_t instance)
 
 		pushad
 		pushfd
-		call checkFlags
-		popfd
-		popad
-
-		pushad
-		pushfd
-		cmp [Config::Misc::ScoreSubmissionType], 0x1
-		je end
-		cmp [Config::Misc::ForceDisableScoreSubmission], 0x1
-		je end
-		cmp [Config::Misc::ScoreSubmissionType], 0x2
-		jne orig
-		call Player::GetIsRetrying
-		cmp eax, 0x0
-		jne orig
-		call handleScoreSubmissionPrompt
-		end:
+		call handleScoreSubmission
+		cmp eax, 0x1
+		je orig
 		popfd
 		popad
 		ret

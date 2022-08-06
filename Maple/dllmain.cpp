@@ -109,7 +109,6 @@ void InitializeMaple()
         GameField::Initialize();
         Player::Initialize();
         Ruleset::Initialize();
-        HitObjectManager::Initialize();
         Score::Initialize();
         StreamingManager::Initialize();
         DiscordRPC::Initialize();

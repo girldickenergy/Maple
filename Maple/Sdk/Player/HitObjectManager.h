@@ -2,10 +2,13 @@
 
 #include <cstdint>
 
+#include "HitObject.h"
 #include "Osu/Mods.h"
 
 class HitObjectManager
 {
+	static inline std::vector<HitObject> hitObjects;
+
 	static inline constexpr int HITOBJECTMANAGER_INSTANCE_OFFSET = 0x40;
 
 	static inline constexpr int HITOBJECTMANAGER_PREEMPT_OFFSET = 0x1C;
@@ -21,8 +24,22 @@ class HitObjectManager
 	static inline constexpr int HITOBJECTMANAGER_STACKOFFSET_OFFSET = 0x2C;
 	static inline constexpr int HITOBJECTMANAGER_CURRENTHITOBJECTINDEX_OFFSET = 0x8C;
 	static inline constexpr int HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET = 0x90;
+	static inline constexpr int HITOBJECTMANAGER_HITOBJECTS_OFFSET = 0x48;
+
+	static inline constexpr int HITOBJECT_TYPE_OFFSET = 0x18;
+	static inline constexpr int HITOBJECT_STARTTIME_OFFSET = 0x10;
+	static inline constexpr int HITOBJECT_ENDTIME_OFFSET = 0x14;
+	static inline constexpr int HITOBJECT_POSITION_OFFSET = 0x38;
+	static inline constexpr int HITOBJECT_SEGMENTCOUNT_OFFSET = 0x20;
+	static inline constexpr int HITOBJECT_SPATIALLENGTH_OFFSET = 0x8;
+
+	static inline constexpr int SLIDEROSU_ENDPOSITION_OFFSET = 0x11C;
+	static inline constexpr int SLIDEROSU_SLIDERCURVEPOINTS_OFFSET = 0xC0;
+	static inline constexpr int SLIDEROSU_SLIDERCURVESMOOTHLINES_OFFSET = 0xC4;
+	static inline constexpr int SLIDEROSU_CUMULATIVELENGTHS_OFFSET = 0xC8;
 public:
-	static void Initialize();
+	static void CacheHitObjects();
+	static HitObject GetHitObject(int index);
 
 	static uintptr_t GetInstance();
 	static int GetPreEmpt();

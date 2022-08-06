@@ -359,6 +359,8 @@
     <ClCompile Include="Dependencies\Vanilla\Utilities\MemoryUtilities.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Features\AimAssist\AimAssist.cpp" />
+    <ClCompile Include="Features\Enlighten\Enlighten.cpp" />
     <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
@@ -366,6 +368,7 @@
     <ClCompile Include="SDK\Audio\AudioEngine.cpp" />
     <ClCompile Include="SDK\Discord\DiscordRPC.cpp" />
     <ClCompile Include="SDK\GL\GLControl.cpp" />
+    <ClCompile Include="SDK\Graphics\SpriteManager.cpp" />
     <ClCompile Include="SDK\Helpers\ErrorSubmission.cpp" />
     <ClCompile Include="SDK\Helpers\Obfuscated.cpp" />
     <ClCompile Include="SDK\Helpers\pWebRequest.cpp" />
@@ -654,6 +657,8 @@
     <ClInclude Include="Dependencies\Vanilla\Utilities\MemoryUtilities.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
+    <ClInclude Include="Features\AimAssist\AimAssist.h" />
+    <ClInclude Include="Features\Enlighten\Enlighten.h" />
     <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
@@ -662,6 +667,7 @@
     <ClInclude Include="SDK\Audio\AudioEngine.h" />
     <ClInclude Include="SDK\Discord\DiscordRPC.h" />
     <ClInclude Include="SDK\GL\GLControl.h" />
+    <ClInclude Include="SDK\Graphics\SpriteManager.h" />
     <ClInclude Include="SDK\Helpers\ErrorSubmission.h" />
     <ClInclude Include="SDK\Helpers\Obfuscated.h" />
     <ClInclude Include="SDK\Helpers\pWebRequest.h" />

@@ -16,6 +16,8 @@
 #include "Windows/MainMenu.h"
 #include "Windows/ScoreSubmissionDialog.h"
 #include "../Features/Spoofer/Spoofer.h"
+#include "../Features/Enlighten/Enlighten.h"
+#include "../Features/AimAssist/AimAssist.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -239,8 +241,8 @@ void UI::render()
 	MainMenu::Render();
 	ScoreSubmissionDialog::Render();
 
-	//AimAssist::DrawDebugOverlay();
-	//VisualsSpoofers::DrawPreemptiveDots();
+	Enlighten::Render();
+	AimAssist::Render();
 
 	ImGui::Render();
 

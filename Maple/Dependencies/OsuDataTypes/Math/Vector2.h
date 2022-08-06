@@ -22,7 +22,7 @@ struct Vector2
 
 	bool IsNull()
 	{
-		const float epsilon = std::numeric_limits<float>::epsilon();
+		constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
 		return std::abs(X - static_cast<float>(0xdeadbeef)) < epsilon && std::abs(Y - static_cast<float>(0xdeadbeef)) < epsilon;
 	}

@@ -695,6 +695,15 @@
     <ClCompile Include="SDK\Helpers\Obfuscated.cpp">
       <Filter>SDK\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Graphics\SpriteManager.cpp">
+      <Filter>SDK\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Enlighten\Enlighten.cpp">
+      <Filter>Features\Enlighten</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\AimAssist\AimAssist.cpp">
+      <Filter>Features\AimAssist</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -873,6 +882,15 @@
     </Filter>
     <Filter Include="Dependencies\Chiyo\Utilities">
       <UniqueIdentifier>{2f0c59ca-72af-432d-b868-500b8876a1d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Graphics">
+      <UniqueIdentifier>{fda772e4-a848-4d71-9202-1db01fdd54ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Enlighten">
+      <UniqueIdentifier>{b850d222-5b8c-4ff2-b433-91fa07132e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\AimAssist">
+      <UniqueIdentifier>{a0a13d77-532b-41f2-a703-7a1f032a3f2c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1781,6 +1799,15 @@
     </ClInclude>
     <ClInclude Include="SDK\Helpers\Obfuscated.h">
       <Filter>SDK\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Graphics\SpriteManager.h">
+      <Filter>SDK\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Enlighten\Enlighten.h">
+      <Filter>Features\Enlighten</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\AimAssist\AimAssist.h">
+      <Filter>Features\AimAssist</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

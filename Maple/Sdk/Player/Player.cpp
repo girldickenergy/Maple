@@ -1,13 +1,23 @@
 #include "Player.h"
 
+#include "HitObjectManager.h"
 #include "../Memory.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
+#include "../../Features/Enlighten/Enlighten.h"
+#include "../../UI/Windows/MainMenu.h"
+#include "../../Features/AimAssist/AimAssist.h"
 
 void Player::initializeFeatures()
 {
-	ReplayBot::Initialize();
+	MainMenu::Hide();
+	
+	HitObjectManager::CacheHitObjects();
+
+	Enlighten::Initialize();
 	Timewarp::Initialize();
+	AimAssist::Initialize();
+	ReplayBot::Initialize();
 }
 
 int __declspec(naked) Player::onLoadCompleteHook(uintptr_t instance, bool success)

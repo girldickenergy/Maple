@@ -14,8 +14,10 @@ class InputManager
 	static inline constexpr int RIGHTBUTTON2I_OFFSET = 0x260;
 	static inline constexpr int LEFTBUTTON_OFFSET = 0x2ED;
 	static inline constexpr int RIGHTBUTTON_OFFSET = 0x324;
-
+	
 	static inline Vector2 cursorPosition = Vector2();
+	static inline Vector2 lastCursorPosition = Vector2();
+	static inline Vector2 accumulatedOffset = Vector2(0, 0);
 
 	typedef void(__fastcall* fnSetMousePosition)(Vector2 pos);
 	static inline fnSetMousePosition oSetMousePosition;
@@ -25,11 +27,11 @@ class InputManager
 	static inline fnMouseViaKeyboardControls oMouseViaKeyboardControls;
 	static void __fastcall mouseViaKeyboardControlsHook();
 public:
-	static inline Vector2 AccumulatedOffset = Vector2(0, 0);
-	static inline Vector2 LastPosition = Vector2();
-
 	static void Initialize();
-
+	
 	static Vector2 GetCursorPosition();
+	static Vector2 GetLastCursorPosition();
+	static Vector2 GetAccumulatedOffset();
+	static void SetAccumulatedOffset(Vector2 value);
 	static Vector2 Resync(Vector2 displacement, Vector2 offset, float resyncFactor);
 };

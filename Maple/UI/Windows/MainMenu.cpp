@@ -618,7 +618,8 @@ void MainMenu::Render()
 
 void MainMenu::Show()
 {
-    isVisible = true;
+    if (GameBase::GetMode() != OsuModes::Play)
+		isVisible = true;
 }
 
 void MainMenu::Hide()
@@ -628,7 +629,8 @@ void MainMenu::Hide()
 
 void MainMenu::ToggleVisibility()
 {
-    isVisible = !isVisible;
+    if (GameBase::GetMode() != OsuModes::Play || isVisible)
+		isVisible = !isVisible;
 }
 
 bool MainMenu::GetIsVisible()

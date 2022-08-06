@@ -7,6 +7,7 @@
 #include "../Audio/AudioEngine.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Config/Config.h"
+#include "../../Features/AimAssist/AimAssist.h"
 
 void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 {
@@ -21,19 +22,21 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 		{
 			newPosition = ReplayBot::GetCursorPosition();
 
-			AccumulatedOffset = newPosition - pos;
+			accumulatedOffset = newPosition - pos;
 		}
+		else if (Config::AimAssist::Enabled)
+			newPosition = AimAssist::GetCursorPosition(pos);
 	}
 	else
 	{
-		if (!LastPosition.IsNull())
-			AccumulatedOffset = Resync(LastPosition - pos, AccumulatedOffset, .5f);
+		if (!lastCursorPosition.IsNull())
+			accumulatedOffset = Resync(lastCursorPosition - pos, accumulatedOffset, .5f);
 
-		newPosition = pos + AccumulatedOffset;
+		newPosition = pos + accumulatedOffset;
 	}
 
 	cursorPosition = newPosition;
-	LastPosition = pos;
+	lastCursorPosition = pos;
 	
 	oSetMousePosition(newPosition);
 }
@@ -108,6 +111,21 @@ void InputManager::Initialize()
 Vector2 InputManager::GetCursorPosition()
 {
 	return cursorPosition;
+}
+
+Vector2 InputManager::GetLastCursorPosition()
+{
+	return lastCursorPosition;
+}
+
+Vector2 InputManager::GetAccumulatedOffset()
+{
+	return accumulatedOffset;
+}
+
+void InputManager::SetAccumulatedOffset(Vector2 value)
+{
+	accumulatedOffset = value;
 }
 
 Vector2 InputManager::Resync(Vector2 displacement, Vector2 offset, float resyncFactor)
