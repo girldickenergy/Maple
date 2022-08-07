@@ -18,7 +18,7 @@ void Enlighten::initializePreemptiveDots()
 	const Vector2 clientPosition = GameBase::GetClientPosition();
 	const ImVec2 positionOffset = ImVec2(clientPosition.X, clientPosition.Y);
 	
-	preEmpt = HitObjectManager::GetPreEmpt();
+	preEmpt = HitObjectManager::GetPreEmpt(true);
 
 	for (int i = 0; i < HitObjectManager::GetHitObjectsCount(); i++)
 	{

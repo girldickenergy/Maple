@@ -15,6 +15,10 @@ class Player
 	typedef int(__fastcall* fnOnLoadComplete)(uintptr_t instance, bool success);
 	static inline fnOnLoadComplete oOnLoadComplete;
 	static int __fastcall onLoadCompleteHook(uintptr_t instance, bool success);
+
+	typedef void(__fastcall* fnUpdateFlashlight)(uintptr_t instance);
+	static inline fnUpdateFlashlight oUpdateFlashlight;
+	static void __fastcall updateFlashlightHook(uintptr_t instance);
 public:
 	static void Initialize();
 

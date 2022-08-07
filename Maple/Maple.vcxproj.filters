@@ -704,6 +704,9 @@
     <ClCompile Include="Features\AimAssist\AimAssist.cpp">
       <Filter>Features\AimAssist</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Relax\Relax.cpp">
+      <Filter>Features\Relax</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -891,6 +894,9 @@
     </Filter>
     <Filter Include="Features\AimAssist">
       <UniqueIdentifier>{a0a13d77-532b-41f2-a703-7a1f032a3f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Relax">
+      <UniqueIdentifier>{b853f56d-e63d-4707-8e94-c6717779c2bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1808,6 +1814,9 @@
     </ClInclude>
     <ClInclude Include="Features\AimAssist\AimAssist.h">
       <Filter>Features\AimAssist</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Relax\Relax.h">
+      <Filter>Features\Relax</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,9 @@
 #include "../../Features/Enlighten/Enlighten.h"
 #include "../../UI/Windows/MainMenu.h"
 #include "../../Features/AimAssist/AimAssist.h"
+#include "../../Features/Relax/Relax.h"
+#include "../../Config/Config.h"
+#include "../Osu/GameBase.h"
 
 void Player::initializeFeatures()
 {
@@ -16,6 +19,7 @@ void Player::initializeFeatures()
 
 	Enlighten::Initialize();
 	Timewarp::Initialize();
+	Relax::Initialize();
 	AimAssist::Initialize();
 	ReplayBot::Initialize();
 }
@@ -33,6 +37,30 @@ int __declspec(naked) Player::onLoadCompleteHook(uintptr_t instance, bool succes
 		popfd
 		popad
 		jmp oOnLoadComplete
+	}
+}
+
+void __declspec(naked) Player::updateFlashlightHook(uintptr_t instance)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		cmp [Config::Visuals::Removers::FlashlightRemoverEnabled], 0x0
+		je orig
+		call GameBase::GetMode
+		cmp eax, 0x2
+		jne orig
+		call GetIsReplayMode
+		cmp al, 0x0
+		jne orig
+		popfd
+		popad
+		ret
+		orig:
+		popfd
+		popad
+		jmp oUpdateFlashlight
 	}
 }
 
@@ -66,6 +94,9 @@ void Player::Initialize()
 
 	Memory::AddObject("Player::OnLoadComplete", "55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC");
 	Memory::AddHook("Player::OnLoadComplete", "Player::OnLoadComplete", reinterpret_cast<uintptr_t>(onLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnLoadComplete));
+
+	Memory::AddObject("Player::UpdateFlashlight", "55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 60 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C");
+	Memory::AddHook("Player::UpdateFlashlight", "Player::UpdateFlashlight", reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
 }
 
 uintptr_t Player::GetInstance()

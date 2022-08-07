@@ -82,10 +82,10 @@ void InitializeMaple()
     Storage::Initialize("MapleTest"); //TODO: username hashed
     Config::Initialize();
 
-	#ifndef _DEBUG
+	#ifdef _DEBUG
 	    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
 	#else
-	    Logger::Initialize(LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
+	    Logger::Initialize(LogSeverity::Error | LogSeverity::Assert | LogSeverity::Warning);
 	#endif
 
 	Logger::Log(LogSeverity::Info, xor ("Initialization started."));
@@ -109,6 +109,7 @@ void InitializeMaple()
         GameField::Initialize();
         Player::Initialize();
         Ruleset::Initialize();
+        HitObjectManager::Initialize();
         Score::Initialize();
         StreamingManager::Initialize();
         DiscordRPC::Initialize();

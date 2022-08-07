@@ -8,6 +8,7 @@
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Config/Config.h"
 #include "../../Features/AimAssist/AimAssist.h"
+#include "../../Features/Relax/Relax.h"
 
 void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 {
@@ -45,7 +46,7 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 {
 	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused() && !Player::GetIsFailed() && (Config::Relax::Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
 	{
-		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : OsuKeys::None;//Relax::Update();
+		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : Relax::Update();
 
 		const bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
 		const bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;

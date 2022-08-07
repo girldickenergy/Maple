@@ -37,12 +37,36 @@ class HitObjectManager
 	static inline constexpr int SLIDEROSU_SLIDERCURVEPOINTS_OFFSET = 0xC0;
 	static inline constexpr int SLIDEROSU_SLIDERCURVESMOOTHLINES_OFFSET = 0xC4;
 	static inline constexpr int SLIDEROSU_CUMULATIVELENGTHS_OFFSET = 0xC8;
+
+	static inline int originalPreEmpt;
+	static inline int originalPreEmptSliderComplete;
+	static void spoofVisuals();
+	static void spoofPreEmpt();
+	static void restorePreEmpt();
+	
+	typedef void(__fastcall* fnParse)(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits);
+	static inline fnParse oParse;
+	static void __fastcall parseHook(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits);
+
+	typedef void(__fastcall* fnUpdateStacking)(uintptr_t instance, int startIndex, int endIndex);
+	static inline fnUpdateStacking oUpdateStacking;
+	static void __fastcall updateStackingHook(uintptr_t instance, int startIndex, int endIndex);
+
+	typedef void(__fastcall* fnApplyOldStacking)(uintptr_t instance);
+	static inline fnApplyOldStacking oApplyOldStacking;
+	static void __fastcall applyOldStackingHook(uintptr_t instance);
+
+	typedef void(__fastcall* fnAddFollowPoints)(uintptr_t instance, int startIndex, int endIndex);
+	static inline fnAddFollowPoints oAddFollowPoints;
+	static void __fastcall addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex);
 public:
+	static void Initialize();
+
 	static void CacheHitObjects();
 	static HitObject GetHitObject(int index);
 
 	static uintptr_t GetInstance();
-	static int GetPreEmpt();
+	static int GetPreEmpt(bool original = false);
 	static void SetPreEmpt(int value);
 	static int GetPreEmptSliderComplete();
 	static void SetPreEmptSliderComplete(int value);
@@ -56,7 +80,7 @@ public:
 	static float GetHitObjectRadius();
 	static void SetHitObjectRadius(float value);
 	static float GetSpriteRatio();
-	static void GetSpriteRatio(float value);
+	static void SetSpriteRatio(float value);
 	static uintptr_t GetSpriteManagerInstance();
 	static float GetGamefieldSpriteRatio();
 	static void SetGamefieldSpriteRatio(float value);
@@ -64,4 +88,5 @@ public:
 	static void SetStackOffset(float value);
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
+	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 };

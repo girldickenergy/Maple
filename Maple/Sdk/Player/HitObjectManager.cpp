@@ -1,10 +1,146 @@
 #include "HitObjectManager.h"
 
+#define NOMINMAX
+
 #include "Player.h"
 #include "../Helpers/Obfuscated.h"
 #include "Math/Vector2.h"
 #include "Osu/HitObjects/HitObjectType.h"
 #include "../Graphics/SpriteManager.h"
+#include "../Memory.h"
+#include "../Osu/GameBase.h"
+#include "../../Config/Config.h"
+#include "../Osu/GameField.h"
+#include "../Mods/ModManager.h"
+#include "../../Features/Timewarp/Timewarp.h"
+
+void HitObjectManager::spoofVisuals()
+{
+	if (GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+		return;
+
+	spoofPreEmpt();
+	
+	if (Config::Visuals::CSChanger::Enabled && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::CatchTheBeat))
+	{
+		const float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CSChanger::CS - 5.f) / 5.f));
+		const float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
+		const float spriteRatio = spriteDisplaySize / 128.f;
+
+		SetSpriteDisplaySize(spriteDisplaySize);
+		SetHitObjectRadius(hitObjectRadius);
+		SetSpriteRatio(spriteRatio);
+		SetGamefieldSpriteRatio(spriteRatio);
+		SetStackOffset(hitObjectRadius / 10.f);
+	}
+
+	if (Config::Visuals::Removers::HiddenRemoverEnabled)
+	{
+		Mods mods = GetActiveMods();
+
+		if (ModManager::CheckActive(Mods::Hidden))
+			mods = (mods & ~Mods::Hidden);
+
+		SetActiveMods(mods);
+	}
+}
+
+void HitObjectManager::spoofPreEmpt()
+{
+	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
+		return;
+
+	originalPreEmpt = GetPreEmpt();
+	originalPreEmptSliderComplete = GetPreEmptSliderComplete();
+
+	if (Config::Visuals::ARChanger::Enabled)
+	{
+		const double rateMultiplier = Config::Visuals::ARChanger::AdjustToRate ? ((Config::Timewarp::Enabled ? Timewarp::GetRate() : ModManager::GetModPlaybackRate()) / 100.) : 1.;
+		const int preEmpt = static_cast<int>(MapDifficultyRange(static_cast<double>(Config::Visuals::ARChanger::AR), 1800., 1200., 450., Config::Visuals::ARChanger::AdjustToMods) * rateMultiplier);
+
+		SetPreEmpt(preEmpt);
+		SetPreEmptSliderComplete(preEmpt * 2 / 3);
+	}
+}
+
+void HitObjectManager::restorePreEmpt()
+{
+	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
+		return;
+
+	if (Config::Visuals::ARChanger::Enabled)
+	{
+		SetPreEmpt(originalPreEmpt);
+		SetPreEmptSliderComplete(originalPreEmptSliderComplete);
+	}
+}
+
+void __declspec(naked) HitObjectManager::parseHook(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call spoofVisuals
+		popfd
+		popad
+		jmp oParse
+	}
+}
+
+void __declspec(naked) HitObjectManager::updateStackingHook(uintptr_t instance, int startIndex, int endIndex)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call restorePreEmpt
+		popfd
+		popad
+		jmp oUpdateStacking
+	}
+}
+
+void __declspec(naked) HitObjectManager::applyOldStackingHook(uintptr_t instance)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call restorePreEmpt
+		popfd
+		popad
+		jmp oApplyOldStacking
+	}
+}
+
+void __declspec(naked) HitObjectManager::addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex)
+{
+	__asm
+	{
+		pushad
+		pushfd
+		call spoofPreEmpt
+		popfd
+		popad
+		jmp oAddFollowPoints
+	}
+}
+
+void HitObjectManager::Initialize()
+{
+	Memory::AddObject("HitObjectManager::Parse", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 DC 33 D2 89 55 B0 0F B6 45 0C");
+	Memory::AddHook("HitObjectManager::Parse", "HitObjectManager::Parse", reinterpret_cast<uintptr_t>(parseHook), reinterpret_cast<uintptr_t*>(&oParse));
+
+	Memory::AddObject("HitObjectManager::UpdateStacking", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 33 C0 89 45 C4 89 45 C8");
+	Memory::AddHook("HitObjectManager::UpdateStacking", "HitObjectManager::UpdateStacking", reinterpret_cast<uintptr_t>(updateStackingHook), reinterpret_cast<uintptr_t*>(&oUpdateStacking));
+
+	Memory::AddObject("HitObjectManager::ApplyOldStacking", "55 8B EC 57 56 83 EC 74 33 C0 89 45 B4 89 45 B8 89 4D 98 8B 45 98 D9 40 2C");
+	Memory::AddHook("HitObjectManager::ApplyOldStacking", "HitObjectManager::ApplyOldStacking", reinterpret_cast<uintptr_t>(applyOldStackingHook), reinterpret_cast<uintptr_t*>(&oApplyOldStacking));
+
+	Memory::AddObject("HitObjectManager::AddFollowPoints", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10");
+	Memory::AddHook("HitObjectManager::AddFollowPoints", "HitObjectManager::AddFollowPoints", reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
+}
 
 void HitObjectManager::CacheHitObjects()
 {
@@ -151,8 +287,11 @@ uintptr_t HitObjectManager::GetInstance()
 	return playerInstance ? *reinterpret_cast<uintptr_t*>(playerInstance + HITOBJECTMANAGER_INSTANCE_OFFSET) : 0u;
 }
 
-int HitObjectManager::GetPreEmpt()
+int HitObjectManager::GetPreEmpt(bool original)
 {
+	if (original)
+		return originalPreEmpt;
+	
 	const uintptr_t hitObjectManagerInstance = GetInstance();
 
 	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_PREEMPT_OFFSET) : 0;
@@ -244,7 +383,7 @@ float HitObjectManager::GetSpriteRatio()
 	return hitObjectManagerInstance ? *reinterpret_cast<float*>(hitObjectManagerInstance + HITOBJECTMANAGER_SPRITERATIO_OFFSET) : 0.f;
 }
 
-void HitObjectManager::GetSpriteRatio(float value)
+void HitObjectManager::SetSpriteRatio(float value)
 {
 	if (const uintptr_t hitObjectManagerInstance = GetInstance())
 		*reinterpret_cast<float*>(hitObjectManagerInstance + HITOBJECTMANAGER_SPRITERATIO_OFFSET) = value;
@@ -295,4 +434,17 @@ int HitObjectManager::GetHitObjectsCount()
 	const uintptr_t hitObjectManagerInstance = GetInstance();
 
 	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET) : 0.f;
+}
+
+double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)
+{
+	if (adjustToMods)
+		difficulty = ModManager::CheckActive(Mods::Easy) ? std::max(0.0, difficulty / 2.0) : ModManager::CheckActive(Mods::HardRock) ? std::min(10.0, difficulty * 1.4) : difficulty;
+
+	if (difficulty > 5.)
+		return mid + (max - mid) * (difficulty - 5.) / 5.;
+	if (difficulty < 5.)
+		return mid - (mid - min) * (5. - difficulty) / 5.;
+
+	return mid;
 }

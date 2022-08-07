@@ -18,6 +18,7 @@
 #include "../Features/Spoofer/Spoofer.h"
 #include "../Features/Enlighten/Enlighten.h"
 #include "../Features/AimAssist/AimAssist.h"
+#include "../Features/Relax/Relax.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -30,8 +31,8 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 	if (wParam == PM_REMOVE)
 	{
-		//if (pMsg->message == WM_KEYUP && pMsg->wParam == Config::Relax::ToggleKey)
-		//	Relax::IsRunning = !Relax::IsRunning;
+		if (pMsg->message == WM_KEYUP && pMsg->wParam == Config::Relax::ToggleKey)
+			Relax::IsRunning = !Relax::IsRunning;
 
 		if (pMsg->message == WM_KEYUP && pMsg->wParam == StorageConfig::MenuKey)
 			MainMenu::ToggleVisibility();
