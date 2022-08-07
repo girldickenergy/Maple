@@ -1,8 +1,11 @@
 #include "Obfuscated.h"
 
+#include "ThemidaSDK.h"
+
 #include "../Memory.h"
 #include "../Osu/GameBase.h"
 #include "../../Features/Spoofer/Spoofer.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 CLRString* __fastcall Obfuscated::getStringValueHook(uintptr_t instance)
 {
@@ -32,11 +35,15 @@ void __fastcall Obfuscated::setStringValueHook(uintptr_t instance, CLRString* va
 
 void Obfuscated::Initialize()
 {
-	Memory::AddObject("ObfuscatedString::GetValue", "55 8B EC 57 56 53 83 EC 08 8B F1 8B 7E 08 8B 5E 04");
-	Memory::AddObject("ObfuscatedString::SetValue", "55 8B EC 57 56 53 83 EC 08 89 55 EC 8B F1 8B 0E");
+	STR_ENCRYPT_START
 
-	Memory::AddHook("ObfuscatedString::GetValue", "ObfuscatedString::GetValue", reinterpret_cast<uintptr_t>(getStringValueHook), reinterpret_cast<uintptr_t*>(&oGetStringValue));
-	Memory::AddHook("ObfuscatedString::SetValue", "ObfuscatedString::SetValue", reinterpret_cast<uintptr_t>(setStringValueHook), reinterpret_cast<uintptr_t*>(&oSetStringValue));
+	Memory::AddObject(xor ("ObfuscatedString::GetValue"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 8B 7E 08 8B 5E 04"));
+	Memory::AddObject(xor ("ObfuscatedString::SetValue"), xor ("55 8B EC 57 56 53 83 EC 08 89 55 EC 8B F1 8B 0E"));
+
+	Memory::AddHook(xor ("ObfuscatedString::GetValue"), xor ("ObfuscatedString::GetValue"), reinterpret_cast<uintptr_t>(getStringValueHook), reinterpret_cast<uintptr_t*>(&oGetStringValue));
+	Memory::AddHook(xor ("ObfuscatedString::SetValue"), xor ("ObfuscatedString::SetValue"), reinterpret_cast<uintptr_t>(setStringValueHook), reinterpret_cast<uintptr_t*>(&oSetStringValue));
+
+	STR_ENCRYPT_END
 }
 
 CLRString* Obfuscated::GetString(uintptr_t instance)

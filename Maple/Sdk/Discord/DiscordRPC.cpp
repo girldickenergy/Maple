@@ -1,9 +1,11 @@
 #include "DiscordRPC.h"
 
+#include "ThemidaSDK.h"
 #include "Vanilla.h"
 
 #include "../Memory.h"
 #include "../../Config/Config.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void __fastcall DiscordRPC::updateStatusHook(void* instance, int mode, int status, CLRString* beatmapDetails)
 {
@@ -58,21 +60,25 @@ void __fastcall DiscordRPC::setSpectateSecretHook(void* instance, CLRString* str
 
 void DiscordRPC::Initialize()
 {
-	Memory::AddObject("DiscordRPC::UpdateStatus", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 55 DC 8B F1");
-	Memory::AddHook("DiscordRPC::UpdateStatus", "DiscordRPC::UpdateStatus", reinterpret_cast<uintptr_t>(updateStatusHook), reinterpret_cast<uintptr_t*>(&oUpdateStatus));
+	STR_ENCRYPT_START
 
-	Memory::AddObject("DiscordRPC::UpdateMatch", "55 8B EC 57 56 53 83 EC 6C 8B F1 8D 7D 9C");
-	Memory::AddHook("DiscordRPC::UpdateMatch", "DiscordRPC::UpdateMatch", reinterpret_cast<uintptr_t>(updateMatchHook), reinterpret_cast<uintptr_t*>(&oUpdateMatch));
+	Memory::AddObject(xor ("DiscordRPC::UpdateStatus"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 55 DC 8B F1"));
+	Memory::AddHook(xor ("DiscordRPC::UpdateStatus"), xor ("DiscordRPC::UpdateStatus"), reinterpret_cast<uintptr_t>(updateStatusHook), reinterpret_cast<uintptr_t*>(&oUpdateStatus));
 
-	Memory::AddObject("DiscordRPC::SetLargeImageText", "8B 55 C0 E8 ?? ?? ?? ?? 8B D0 8B CB 39 09 FF 15", 0x10, 2);
-	Memory::AddHook("DiscordRPC::SetLargeImageText", "DiscordRPC::SetLargeImageText", reinterpret_cast<uintptr_t>(setLargeImageTextHook), reinterpret_cast<uintptr_t*>(&oSetLargeImageText));
+	Memory::AddObject(xor ("DiscordRPC::UpdateMatch"), xor ("55 8B EC 57 56 53 83 EC 6C 8B F1 8D 7D 9C"));
+	Memory::AddHook(xor ("DiscordRPC::UpdateMatch"), xor ("DiscordRPC::UpdateMatch"), reinterpret_cast<uintptr_t>(updateMatchHook), reinterpret_cast<uintptr_t*>(&oUpdateMatch));
 
-	Memory::AddObject("DiscordRPC::SetState", "8B D0 8B CF 39 09 FF 15 ?? ?? ?? ?? E9 ?? ?? ?? ?? 8B 7E 08", 0x8, 2);
-	Memory::AddHook("DiscordRPC::SetState", "DiscordRPC::SetState", reinterpret_cast<uintptr_t>(setStateHook), reinterpret_cast<uintptr_t*>(&oSetState));
+	Memory::AddObject(xor ("DiscordRPC::SetLargeImageText"), xor ("8B 55 C0 E8 ?? ?? ?? ?? 8B D0 8B CB 39 09 FF 15"), 0x10, 2);
+	Memory::AddHook(xor ("DiscordRPC::SetLargeImageText"), xor ("DiscordRPC::SetLargeImageText"), reinterpret_cast<uintptr_t>(setLargeImageTextHook), reinterpret_cast<uintptr_t*>(&oSetLargeImageText));
 
-	Memory::AddObject("DiscordRPC::SetDetails", "8B CE 89 55 DC 8B F1 8B 4E 08 8B 15 ?? ?? ?? ?? 39 09 FF 15", 0x14, 2);
-	Memory::AddHook("DiscordRPC::SetDetails", "DiscordRPC::SetDetails", reinterpret_cast<uintptr_t>(setDetailsHook), reinterpret_cast<uintptr_t*>(&oSetDetails));
+	Memory::AddObject(xor ("DiscordRPC::SetState"), xor ("8B D0 8B CF 39 09 FF 15 ?? ?? ?? ?? E9 ?? ?? ?? ?? 8B 7E 08"), 0x8, 2);
+	Memory::AddHook(xor ("DiscordRPC::SetState"), xor ("DiscordRPC::SetState"), reinterpret_cast<uintptr_t>(setStateHook), reinterpret_cast<uintptr_t*>(&oSetState));
 
-	Memory::AddObject("DiscordRPC::SetSpectateSecret", "39 09 FF 15 ?? ?? ?? ?? 8B C8 33 D2 39 09 FF 15", 0x10, 2);
-	Memory::AddHook("DiscordRPC::SetSpectateSecret", "DiscordRPC::SetSpectateSecret", reinterpret_cast<uintptr_t>(setSpectateSecretHook), reinterpret_cast<uintptr_t*>(&oSetSpectateSecret));
+	Memory::AddObject(xor ("DiscordRPC::SetDetails"), xor ("8B CE 89 55 DC 8B F1 8B 4E 08 8B 15 ?? ?? ?? ?? 39 09 FF 15"), 0x14, 2);
+	Memory::AddHook(xor ("DiscordRPC::SetDetails"), xor ("DiscordRPC::SetDetails"), reinterpret_cast<uintptr_t>(setDetailsHook), reinterpret_cast<uintptr_t*>(&oSetDetails));
+
+	Memory::AddObject(xor ("DiscordRPC::SetSpectateSecret"), xor ("39 09 FF 15 ?? ?? ?? ?? 8B C8 33 D2 39 09 FF 15"), 0x10, 2);
+	Memory::AddHook(xor ("DiscordRPC::SetSpectateSecret"), xor ("DiscordRPC::SetSpectateSecret"), reinterpret_cast<uintptr_t>(setSpectateSecretHook), reinterpret_cast<uintptr_t*>(&oSetSpectateSecret));
+
+	STR_ENCRYPT_END
 }

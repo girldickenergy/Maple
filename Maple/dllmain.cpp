@@ -125,8 +125,6 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Error, xor ("Vanilla failed to initialize with code %i"), (int)vanillaResult);
 
-        std::string message = xor ("Maple failed to initialize with code ") + (int)vanillaResult;
-        MessageBoxA(NULL, message.c_str(), xor ("Fatal error occurred"), MB_ICONERROR | MB_OK);
         Security::CorruptMemory();
     }
 

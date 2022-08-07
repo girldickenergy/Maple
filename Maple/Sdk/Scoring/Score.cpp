@@ -1,5 +1,6 @@
 #include "Score.h"
 
+#include "ThemidaSDK.h"
 #include "Vanilla.h"
 
 #include "../Memory.h"
@@ -54,8 +55,12 @@ void __declspec(naked) Score::submitHook(uintptr_t instance)
 
 void Score::Initialize()
 {
-	Memory::AddObject("Score::Submit", "55 8B EC 57 56 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F");
-	Memory::AddHook("Score::Submit", "Score::Submit", reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit));
+	STR_ENCRYPT_START
+
+	Memory::AddObject(xor ("Score::Submit"), xor ("55 8B EC 57 56 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"));
+	Memory::AddHook(xor ("Score::Submit"), xor ("Score::Submit"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit));
+
+	STR_ENCRYPT_END
 }
 
 void Score::Submit()

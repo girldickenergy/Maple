@@ -2,6 +2,8 @@
 
 #define NOMINMAX
 
+#include "ThemidaSDK.h"
+
 #include "Player.h"
 #include "../Helpers/Obfuscated.h"
 #include "Math/Vector2.h"
@@ -13,6 +15,7 @@
 #include "../Osu/GameField.h"
 #include "../Mods/ModManager.h"
 #include "../../Features/Timewarp/Timewarp.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void HitObjectManager::spoofVisuals()
 {
@@ -129,17 +132,21 @@ void __declspec(naked) HitObjectManager::addFollowPointsHook(uintptr_t instance,
 
 void HitObjectManager::Initialize()
 {
-	Memory::AddObject("HitObjectManager::Parse", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 DC 33 D2 89 55 B0 0F B6 45 0C");
-	Memory::AddHook("HitObjectManager::Parse", "HitObjectManager::Parse", reinterpret_cast<uintptr_t>(parseHook), reinterpret_cast<uintptr_t*>(&oParse));
+	STR_ENCRYPT_START
+	
+	Memory::AddObject(xor ("HitObjectManager::Parse"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 DC 33 D2 89 55 B0 0F B6 45 0C"));
+	Memory::AddHook(xor ("HitObjectManager::Parse"), xor ("HitObjectManager::Parse"), reinterpret_cast<uintptr_t>(parseHook), reinterpret_cast<uintptr_t*>(&oParse));
 
-	Memory::AddObject("HitObjectManager::UpdateStacking", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 33 C0 89 45 C4 89 45 C8");
-	Memory::AddHook("HitObjectManager::UpdateStacking", "HitObjectManager::UpdateStacking", reinterpret_cast<uintptr_t>(updateStackingHook), reinterpret_cast<uintptr_t*>(&oUpdateStacking));
+	Memory::AddObject(xor ("HitObjectManager::UpdateStacking"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 33 C0 89 45 C4 89 45 C8"));
+	Memory::AddHook(xor ("HitObjectManager::UpdateStacking"), xor ("HitObjectManager::UpdateStacking"), reinterpret_cast<uintptr_t>(updateStackingHook), reinterpret_cast<uintptr_t*>(&oUpdateStacking));
 
-	Memory::AddObject("HitObjectManager::ApplyOldStacking", "55 8B EC 57 56 83 EC 74 33 C0 89 45 B4 89 45 B8 89 4D 98 8B 45 98 D9 40 2C");
-	Memory::AddHook("HitObjectManager::ApplyOldStacking", "HitObjectManager::ApplyOldStacking", reinterpret_cast<uintptr_t>(applyOldStackingHook), reinterpret_cast<uintptr_t*>(&oApplyOldStacking));
+	Memory::AddObject(xor ("HitObjectManager::ApplyOldStacking"), xor ("55 8B EC 57 56 83 EC 74 33 C0 89 45 B4 89 45 B8 89 4D 98 8B 45 98 D9 40 2C"));
+	Memory::AddHook(xor ("HitObjectManager::ApplyOldStacking"), xor ("HitObjectManager::ApplyOldStacking"), reinterpret_cast<uintptr_t>(applyOldStackingHook), reinterpret_cast<uintptr_t*>(&oApplyOldStacking));
 
-	Memory::AddObject("HitObjectManager::AddFollowPoints", "55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10");
-	Memory::AddHook("HitObjectManager::AddFollowPoints", "HitObjectManager::AddFollowPoints", reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
+	Memory::AddObject(xor ("HitObjectManager::AddFollowPoints"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10"));
+	Memory::AddHook(xor ("HitObjectManager::AddFollowPoints"), xor ("HitObjectManager::AddFollowPoints"), reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
+
+	STR_ENCRYPT_END
 }
 
 void HitObjectManager::CacheHitObjects()

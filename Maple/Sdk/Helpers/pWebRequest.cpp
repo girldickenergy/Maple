@@ -1,10 +1,12 @@
 #include "pWebRequest.h"
 
+#include "ThemidaSDK.h"
 #include "Vanilla.h"
 
 #include "../Memory.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../Config/Config.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void __fastcall pWebRequest::addParameterHook(uintptr_t instance, CLRString* name, CLRString* value)
 {
@@ -22,6 +24,10 @@ void __fastcall pWebRequest::addParameterHook(uintptr_t instance, CLRString* nam
 
 void pWebRequest::Initialize()
 {
-	Memory::AddObject("pWebRequest::AddParameter", "8B 49 24 38 01 FF 74 24 04 6A 01");
-	Memory::AddHook("pWebRequest::AddParameter", "pWebRequest::AddParameter", reinterpret_cast<uintptr_t>(addParameterHook), reinterpret_cast<uintptr_t*>(&oAddParameter));
+    STR_ENCRYPT_START
+
+	Memory::AddObject(xor ("pWebRequest::AddParameter"), xor ("8B 49 24 38 01 FF 74 24 04 6A 01"));
+	Memory::AddHook(xor ("pWebRequest::AddParameter"), xor ("pWebRequest::AddParameter"), reinterpret_cast<uintptr_t>(addParameterHook), reinterpret_cast<uintptr_t*>(&oAddParameter));
+
+    STR_ENCRYPT_END
 }

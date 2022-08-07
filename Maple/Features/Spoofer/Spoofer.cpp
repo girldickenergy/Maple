@@ -6,11 +6,13 @@
 #include <fstream>
 
 #include "Vanilla.h"
+
 #include "../../Storage/Storage.h"
 #include "../../Storage/StorageConfig.h"
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Utilities/Crypto/CryptoUtilities.h"
 #include "../../SDK/Online/BanchoClient.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -19,7 +21,7 @@ std::string Spoofer::getRandomUninstallID()
 
 	char uninstallID[39];
 	snprintf(uninstallID, sizeof(uninstallID),
-		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		xor ("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"),
 		uninstallIDGUID.Data1, uninstallIDGUID.Data2, uninstallIDGUID.Data3,
 		uninstallIDGUID.Data4[0], uninstallIDGUID.Data4[1], uninstallIDGUID.Data4[2], uninstallIDGUID.Data4[3],
 		uninstallIDGUID.Data4[4], uninstallIDGUID.Data4[5], uninstallIDGUID.Data4[6], uninstallIDGUID.Data4[7]);
@@ -76,7 +78,7 @@ bool Spoofer::isSameName(const std::string& a, const std::string& b)
 
 bool Spoofer::isValidName(const std::string& name)
 {
-	return !name.empty() && !isSameName(name, "none");
+	return !name.empty() && !isSameName(name, xor ("none"));
 }
 
 void Spoofer::refresh()
@@ -84,10 +86,10 @@ void Spoofer::refresh()
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	Profiles.clear();
-	Profiles.emplace_back("none");
+	Profiles.emplace_back(xor ("none"));
 
 	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
-		if (file.path().extension() == ".profile" && isValidName(file.path().filename().stem().string()))
+		if (file.path().extension() == xor (".profile") && isValidName(file.path().filename().stem().string()))
 			Profiles.push_back(file.path().filename().stem().string());
 }
 
@@ -133,7 +135,7 @@ void Spoofer::Load()
 	}
 	else
 	{
-		std::ifstream file(Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
+		std::ifstream file(Storage::ProfilesDirectory + xor ("\\") + Profiles[SelectedProfile] + xor (".profile"));
 		std::string line;
 
 		std::wstring currentAdapters;
@@ -144,13 +146,13 @@ void Spoofer::Load()
 			std::string variable = line.substr(0, delimiterIndex);
 			std::string value = line.substr(delimiterIndex + 1, std::string::npos);
 
-			if (variable == "UninstallID")
+			if (variable == xor ("UninstallID"))
 				currentUniqueID = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
 
-			if (variable == "DiskID")
+			if (variable == xor ("DiskID"))
 				currentUniqueID2 = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
 
-			if (variable == "Adapters")
+			if (variable == xor ("Adapters"))
 				currentAdapters = std::wstring(value.begin(), value.end());
 		}
 
@@ -175,7 +177,7 @@ void Spoofer::Delete()
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profilePath = Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + xor ("\\") + Profiles[SelectedProfile] + xor (".profile");
 
 	std::filesystem::remove(profilePath);
 
@@ -190,7 +192,7 @@ void Spoofer::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	const std::string profilePath = Storage::ProfilesDirectory + "\\" + NewProfileName + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + xor ("\\") + NewProfileName + xor (".profile");
 
 	if (!isValidName(NewProfileName) || std::filesystem::exists(profilePath))
 		return;
@@ -198,9 +200,9 @@ void Spoofer::Create()
 	std::ofstream ofs;
 	ofs.open(profilePath, std::ofstream::out | std::ofstream::trunc);
 
-	ofs << "UninstallID=" << getRandomUninstallID() << std::endl;
-	ofs << "DiskID=" << getRandomDiskID() << std::endl;
-	ofs << "Adapters=" << getRandomAdapters() << std::endl;
+	ofs << xor ("UninstallID=") << getRandomUninstallID() << std::endl;
+	ofs << xor ("DiskID=") << getRandomDiskID() << std::endl;
+	ofs << xor ("Adapters=") << getRandomAdapters() << std::endl;
 
 	ofs.close();
 

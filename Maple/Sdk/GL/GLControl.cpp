@@ -1,10 +1,17 @@
 #include "GLControl.h"
 
+#include "ThemidaSDK.h"
+
 #include "../Memory.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void GLControl::Initialize()
 {
-	Memory::AddObject("GLControl::UsesAngle", "89 4D DC FF 15 ?? ?? ?? ?? 80 3D", 0xB, 1);
+	STR_ENCRYPT_START
+
+	Memory::AddObject(xor ("GLControl::UsesAngle"), xor ("89 4D DC FF 15 ?? ?? ?? ?? 80 3D"), 0xB, 1);
+
+	STR_ENCRYPT_END
 }
 
 bool GLControl::GetUsesAngle()

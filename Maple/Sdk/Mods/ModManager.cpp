@@ -1,15 +1,22 @@
 #include "ModManager.h"
 
+#include "ThemidaSDK.h"
+
 #include "../Memory.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void ModManager::Initialize()
 {
-	Memory::AddObject("ModManager::ModStatus", "53 8B F1 A1", 0x4, 1);
+	STR_ENCRYPT_START
+
+	Memory::AddObject(xor ("ModManager::ModStatus"), xor ("53 8B F1 A1"), 0x4, 1);
+
+	STR_ENCRYPT_END
 }
 
 Mods ModManager::GetActiveMods()
 {
-	const uintptr_t modStatusAddress = Memory::Objects["ModManager::ModStatus"];
+	const uintptr_t modStatusAddress = Memory::Objects[xor ("ModManager::ModStatus")];
 
 	return modStatusAddress ? *reinterpret_cast<Mods*>(modStatusAddress) : Mods::None;
 }

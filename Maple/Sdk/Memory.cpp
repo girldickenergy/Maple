@@ -1,5 +1,6 @@
 #include "Memory.h"
 
+#include "ThemidaSDK.h"
 #include "Vanilla.h"
 #include "Hooking/VanillaHooking.h"
 #include "Patching/VanillaPatcher.h"
@@ -77,6 +78,8 @@ void Memory::EndInitialize()
 
 void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount)
 {
+	STR_ENCRYPT_START
+	
 	if (const uintptr_t scanResult = VanillaPatternScanner::FindPattern(pattern, offset, readCount))
 	{
 		Logger::Log(LogSeverity::Info, xor ("%s has been resolved!"), name.c_str());
@@ -89,10 +92,14 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 
 		pendingObjects[name] = MaplePattern(pattern, offset, readCount);
 	}
+
+	STR_ENCRYPT_END
 }
 
 void Memory::AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
+	STR_ENCRYPT_START
+
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
 		if (VanillaPatcher::InstallPatch(name, pattern, objectAddress, scanSize, offset, patch) == VanillaResult::Success)
@@ -106,10 +113,14 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 
 		pendingPatches[objectName] = MaplePatch(name, pattern, scanSize, offset, patch);
 	}
+
+	STR_ENCRYPT_END
 }
 
 void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, VanillaHookType type)
 {
+	STR_ENCRYPT_START
+
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
 		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, type) == VanillaResult::Success)
@@ -123,4 +134,6 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 
 		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, type);
 	}
+
+	STR_ENCRYPT_END
 }

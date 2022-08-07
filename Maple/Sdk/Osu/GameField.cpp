@@ -1,15 +1,22 @@
 #include "GameField.h"
 
+#include "ThemidaSDK.h"
+
 #include "../Memory.h"
+#include "../../Utilities/Security/xorstr.hpp"
 
 void GameField::Initialize()
 {
-	Memory::AddObject("GameField::Instance", "8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D", 0xB, 1);
+	STR_ENCRYPT_START
+
+	Memory::AddObject(xor ("GameField::Instance"), xor ("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D"), 0xB, 1);
+
+	STR_ENCRYPT_END
 }
 
 uintptr_t GameField::GetInstance()
 {
-	const uintptr_t instanceAddress = Memory::Objects["GameField::Instance"];
+	const uintptr_t instanceAddress = Memory::Objects[xor ("GameField::Instance")];
 
 	return instanceAddress ? *reinterpret_cast<uintptr_t*>(instanceAddress) : 0u;
 }
