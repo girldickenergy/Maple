@@ -41,7 +41,7 @@ void AudioEngine::Initialize()
 {
 	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("AudioEngine::Time"), xor ("7E 55 8B 76 10 DB 05", 0x7, 1));
+	Memory::AddObject(xor ("AudioEngine::Time"), xor ("7E 55 8B 76 10 DB 05"), 0x7, 1);
 
 	Memory::AddObject(xor ("AudioEngine::GetCurrentPlaybackRate"), xor ("55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 75 08"));
 	Memory::AddHook(xor ("AudioEngine::GetCurrentPlaybackRate"), xor ("AudioEngine::GetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(getCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oGetCurrentPlaybackRate), VanillaHookType::UndetectedInline);
