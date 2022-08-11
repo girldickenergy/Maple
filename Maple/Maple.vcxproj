@@ -159,6 +159,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Communication\Communication.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\Request.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\Response.cpp" />
+    <ClCompile Include="Communication\TCP\Client.cpp" />
+    <ClCompile Include="Communication\TCP\TCP_Client.cpp" />
     <ClCompile Include="Config\Config.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
     <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
@@ -336,6 +345,8 @@
     <ClCompile Include="Dependencies\CryptoPP\vmac.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\wake.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\whrlpool.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\Wrapper\AES.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xed25519.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xtr.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xtrcrypt.cpp" />
@@ -397,6 +408,21 @@
     <ClCompile Include="Utilities\Textures\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Communication\Communication.h" />
+    <ClInclude Include="Communication\MatchedClient.h" />
+    <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\Request.h" />
+    <ClInclude Include="Communication\Packets\Requests\RequestType.h" />
+    <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\Response.h" />
+    <ClInclude Include="Communication\Packets\Responses\ResponseType.h" />
+    <ClInclude Include="Communication\TCP\Client.h" />
+    <ClInclude Include="Communication\TCP\Client_Observer.h" />
+    <ClInclude Include="Communication\TCP\Pipe_Ret_T.h" />
+    <ClInclude Include="Communication\TCP\TCP_Client.h" />
+    <ClInclude Include="Communication\User.h" />
     <ClInclude Include="Config\Config.h" />
     <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h" />
     <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp" />
@@ -588,6 +614,8 @@
     <ClInclude Include="Dependencies\CryptoPP\wake.h" />
     <ClInclude Include="Dependencies\CryptoPP\whrlpool.h" />
     <ClInclude Include="Dependencies\CryptoPP\words.h" />
+    <ClInclude Include="Dependencies\CryptoPP\Wrapper\AES.h" />
+    <ClInclude Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.h" />
     <ClInclude Include="Dependencies\CryptoPP\xed25519.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtr.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtrcrypt.h" />

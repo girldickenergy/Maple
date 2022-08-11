@@ -9,6 +9,7 @@
 #include "../Config/Config.h"
 #include "UI.h"
 #include "../Utilities/Textures/TextureLoader.h"
+#include "../Communication/Communication.h"
 
 class StyleProvider
 {
@@ -85,16 +86,16 @@ public:
 
 	static void LoadTextures()
 	{
-		//if (Communication::CurrentUser->DiscordID != "-1" && Communication::CurrentUser->AvatarHash != "-1")
-		//{
-		//	std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::CurrentUser->DiscordID + "/" + Communication::CurrentUser->AvatarHash + ".png?size=64";
-//
-		//	AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromURLOGL3(avatarURL) : TextureLoader::LoadTextureFromURLD3D9(UI::D3D9Device, avatarURL);
-		//}
-		//else
-		//	AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+		if (Communication::CurrentUser->DiscordID != "-1" && Communication::CurrentUser->AvatarHash != "-1")
+		{
+			const std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::CurrentUser->DiscordID + "/" + Communication::CurrentUser->AvatarHash + ".png?size=64";
 
-		//if (!AvatarTexture)
+			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromURLOGL3(avatarURL) : TextureLoader::LoadTextureFromURLD3D9(UI::D3D9Device, avatarURL);
+		}
+		else
+			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+
+		if (!AvatarTexture)
 			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
 
 		MapleLogoTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MapleLogo, Textures::MapleLogoSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::MapleLogo, Textures::MapleLogoSize);

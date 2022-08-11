@@ -5,6 +5,7 @@
 #include "curl.h"
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
+#include "Communication/Communication.h"
 #include "Hooking/VanillaHooking.h"
 
 #include "Logging/Logger.h"
@@ -32,6 +33,7 @@
 #include "SDK/Scoring/Score.h"
 #include "SDK/Streaming/StreamingManager.h"
 #include "UI/UI.h"
+#include "Utilities/Strings/StringUtilities.h"
 
 DWORD WINAPI Initialize(LPVOID data_addr);
 void InitializeMaple();
@@ -62,9 +64,20 @@ DWORD WINAPI Initialize(LPVOID data_addr)
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
 
-    //TODO: comms
+    auto pArgs = (CustomArgs*)data_addr;
+
+    std::string data(pArgs->user_data, 255);
+
+    std::vector<std::string> split = StringUtilities::Split(data);
+
+    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
+
+    Communication::ConnectToServer();
 
     curl_global_init(CURL_GLOBAL_ALL);
+
+    while (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+        Sleep(500);
 
     InitializeMaple();
 
@@ -79,7 +92,10 @@ void InitializeMaple()
     VM_FISH_RED_START
     STR_ENCRYPT_START
 
-    Storage::Initialize("MapleTest"); //TODO: username hashed
+    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+        Security::CorruptMemory();
+
+    Storage::Initialize(Communication::CurrentUser->UsernameHashed);
     Config::Initialize();
 
 	#ifdef _DEBUG

@@ -707,6 +707,39 @@
     <ClCompile Include="Features\Relax\Relax.cpp">
       <Filter>Features\Relax</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Communication.cpp">
+      <Filter>Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\TCP\Client.cpp">
+      <Filter>Communication\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\TCP\TCP_Client.cpp">
+      <Filter>Communication\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\Response.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\Request.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.cpp">
+      <Filter>Dependencies\CryptoPP\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\CryptoPP\Wrapper\AES.cpp">
+      <Filter>Dependencies\CryptoPP\Wrapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -897,6 +930,24 @@
     </Filter>
     <Filter Include="Features\Relax">
       <UniqueIdentifier>{b853f56d-e63d-4707-8e94-c6717779c2bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication">
+      <UniqueIdentifier>{d7342e43-51e9-469d-881e-c2fa042a7462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\TCP">
+      <UniqueIdentifier>{9af149c8-18d3-4966-ad3f-25af3194cd21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets">
+      <UniqueIdentifier>{b6e566ef-500c-4674-8c85-94c187de8d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets\Requests">
+      <UniqueIdentifier>{812d0ff9-1b1c-489e-bf3e-e45a44ab3764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication\Packets\Responses">
+      <UniqueIdentifier>{cc7c2b48-37bf-4f91-af01-99f6e4d375ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\CryptoPP\Wrapper">
+      <UniqueIdentifier>{35fd7d1f-6bf6-462f-9953-f2e3b2ea9844}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1817,6 +1868,57 @@
     </ClInclude>
     <ClInclude Include="Features\Relax\Relax.h">
       <Filter>Features\Relax</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\User.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\MatchedClient.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Communication.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Client.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Client_Observer.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\Pipe_Ret_T.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\TCP\TCP_Client.h">
+      <Filter>Communication\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\Response.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\ResponseType.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\Request.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\RequestType.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\CryptoPP\Wrapper\AES.h">
+      <Filter>Dependencies\CryptoPP\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.h">
+      <Filter>Dependencies\CryptoPP\Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

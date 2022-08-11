@@ -102,7 +102,7 @@ void MainMenu::Render()
 
                 ImGui::PushFont(StyleProvider::FontDefault);
                 ImGui::SetCursorPos(ImVec2(userInfoSize.y / 4 + userInfoSize.y / 2 + style.ItemSpacing.x, userInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::AccentColour, "dev");//Communication::CurrentUser->Username.c_str());
+                ImGui::TextColored(StyleProvider::AccentColour, Communication::CurrentUser->Username.c_str());
                 ImGui::PopFont();
             }
             ImGui::EndChild();
