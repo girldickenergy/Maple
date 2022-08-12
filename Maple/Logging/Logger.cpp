@@ -25,7 +25,6 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
-	VM_FISH_RED_START
 	STR_ENCRYPT_START
 		
 	if (Config::Misc::DisableLogging)
@@ -88,7 +87,6 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	logFile << entry.str() << std::endl;
 	logFile.close();
 	
-	VM_FISH_RED_END
 	STR_ENCRYPT_END
 }
 
@@ -131,7 +129,6 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 
 void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 {
-	VM_FISH_RED_START
 	STR_ENCRYPT_START
 
 	if (!result)
@@ -148,7 +145,6 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 		if (throwIfFalse)
 			throw std::runtime_error(std::string(xor("Assertion failed: ")) + buffer);
 	}
-
-	VM_FISH_RED_END
+	
 	STR_ENCRYPT_END
 }
