@@ -63,7 +63,7 @@ void DiscordRPC::Initialize()
 	STR_ENCRYPT_START
 
 	Memory::AddObject(xor ("DiscordRPC::UpdateStatus"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 55 DC 8B F1"));
-	Memory::AddHook(xor ("DiscordRPC::UpdateStatus"), xor ("DiscordRPC::UpdateStatus"), reinterpret_cast<uintptr_t>(updateStatusHook), reinterpret_cast<uintptr_t*>(&oUpdateStatus));
+	Memory::AddHook(xor ("DiscordRPC::UpdateStatus"), xor ("DiscordRPC::UpdateStatus"), reinterpret_cast<uintptr_t>(updateStatusHook), reinterpret_cast<uintptr_t*>(&oUpdateStatus), VanillaHookType::UndetectedInline);
 
 	Memory::AddObject(xor ("DiscordRPC::UpdateMatch"), xor ("55 8B EC 57 56 53 83 EC 6C 8B F1 8D 7D 9C"));
 	Memory::AddHook(xor ("DiscordRPC::UpdateMatch"), xor ("DiscordRPC::UpdateMatch"), reinterpret_cast<uintptr_t>(updateMatchHook), reinterpret_cast<uintptr_t*>(&oUpdateMatch));

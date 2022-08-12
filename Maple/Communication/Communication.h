@@ -22,10 +22,10 @@ public:
 	static inline MatchedClient* MatchedClient = nullptr;
 
 	static inline User* CurrentUser;
-	static inline bool EstablishedConnection = true;
+	static inline bool EstablishedConnection = false;
 
-	static inline bool HandshakeSucceeded = true;
-	static inline bool HeartbeatThreadLaunched = true;
+	static inline bool HandshakeSucceeded = false;
+	static inline bool HeartbeatThreadLaunched = false;
 
 	static inline HANDLE ThreadCheckerHandle;
 	
