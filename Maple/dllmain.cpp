@@ -49,6 +49,25 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     return TRUE;
 }
 
+//move this somewhere else
+std::string GetAuthPath()
+{
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of(xor ("\\/"));
+
+    return std::string(buffer).substr(0, pos) + xor ("\\osu!auth.dll");
+}
+
+std::string GetAuthHash()
+{
+    std::string hash;
+    CryptoPP::SHA256 algo;
+    CryptoPP::FileSource fs(GetAuthPath().c_str(), true, new CryptoPP::HashFilter(algo, new CryptoPP::HexEncoder(new CryptoPP::StringSink(hash))));
+
+    return hash;
+}
+
 struct ArgsBase
 {
     long long size;
@@ -62,15 +81,15 @@ struct CustomArgs : ArgsBase
 DWORD WINAPI Initialize(LPVOID data_addr)
 {
     VM_SHARK_BLACK_START
-    STR_ENCRYPT_START
+	STR_ENCRYPT_START
 
-    auto pArgs = (CustomArgs*)data_addr;
+	auto pArgs = (CustomArgs*)data_addr;
 
-    std::string data(pArgs->user_data, 255);
+	std::string data(pArgs->user_data, 255);
 
-    std::vector<std::string> split = StringUtilities::Split(data);
+	std::vector<std::string> split = StringUtilities::Split(data);
 
-    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
+	Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
 
     Communication::ConnectToServer();
 
@@ -97,6 +116,13 @@ void InitializeMaple()
 
     Storage::Initialize(Communication::CurrentUser->UsernameHashed);
     Config::Initialize();
+
+    if (std::filesystem::exists(GetAuthPath()))
+    {
+        const std::string authHash = GetAuthHash();
+        if (authHash != xor ("FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC") && authHash != xor ("176063779747AF3659FCFA4BC8BA01FFD9A6EA9BC4FCCA5A406A7D7CD9058318") && authHash != xor ("EA61F14A2FB494395887B83DACD80EF9BA7CCBF342EDD030387ADBE5807BA5A6") && authHash != xor ("C8862DA8AE15362FA7943BC96C35C04D4D2CF2C13D74EA1B475E6E391FAF1EF1"))
+            Config::Misc::ForceDisableScoreSubmission = true;
+	}
 
 	#ifdef _DEBUG
 	    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
