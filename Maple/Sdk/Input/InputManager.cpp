@@ -96,8 +96,8 @@ void InputManager::Initialize()
 {
 	STR_ENCRYPT_START
 	
-	Memory::AddObject(xor ("MouseManager::SetMousePosition"), xor ("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04"));
-	Memory::AddObject(xor ("InputManager::MouseViaKeyboardControls"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"));
+	Memory::AddObject(xor ("MouseManager::SetMousePosition"), xor ("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"));
+	Memory::AddObject(xor ("InputManager::MouseViaKeyboardControls"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"));
 
 	Memory::AddObject(xor ("InputManager::leftButton1"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1_OFFSET, 1);
 	Memory::AddObject(xor ("InputManager::leftButton1i"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1I_OFFSET, 1);

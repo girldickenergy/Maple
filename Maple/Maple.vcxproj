@@ -383,7 +383,6 @@
     <ClCompile Include="SDK\Graphics\SpriteManager.cpp" />
     <ClCompile Include="SDK\Helpers\ErrorSubmission.cpp" />
     <ClCompile Include="SDK\Helpers\Obfuscated.cpp" />
-    <ClCompile Include="SDK\Helpers\pWebRequest.cpp" />
     <ClCompile Include="SDK\Input\InputManager.cpp" />
     <ClCompile Include="SDK\Memory.cpp" />
     <ClCompile Include="SDK\Mods\ModManager.cpp" />
@@ -700,7 +699,6 @@
     <ClInclude Include="SDK\Graphics\SpriteManager.h" />
     <ClInclude Include="SDK\Helpers\ErrorSubmission.h" />
     <ClInclude Include="SDK\Helpers\Obfuscated.h" />
-    <ClInclude Include="SDK\Helpers\pWebRequest.h" />
     <ClInclude Include="SDK\Input\InputManager.h" />
     <ClInclude Include="SDK\Memory.h" />
     <ClInclude Include="SDK\Mods\ModManager.h" />

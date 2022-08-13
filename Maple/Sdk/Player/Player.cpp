@@ -77,7 +77,7 @@ void Player::Initialize()
 	Memory::AddObject(xor ("Player::GetAllowSubmissionVariableConditions"), xor ("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
 	Memory::AddPatch(xor ("Player::GetAllowSubmissionVariableConditions_HackCheck"), xor ("Player::GetAllowSubmissionVariableConditions"), xor ("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
 
-	Memory::AddObject(xor ("Player::HandleScoreSubmission"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 80 BE"));
+	Memory::AddObject(xor ("Player::HandleScoreSubmission"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 80 BE ?? ?? ?? ?? 00 75 26 B9"));
 	Memory::AddPatch(xor ("Player::HandleScoreSubmission_HackCheck"), xor ("Player::HandleScoreSubmission"), xor ("80 78 7C 00 0F 84"), 0x40F, 0x5, { 0x8D });
 
 	Memory::AddObject(xor ("Player::Update"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 85 C0 74 05"));
@@ -92,10 +92,10 @@ void Player::Initialize()
 	Memory::AddObject(xor ("Player::CheckAimAssist"), xor ("55 8B EC 57 56 83 EC 24 8B F1 8D 86"));
 	Memory::AddPatch(xor ("Player::CheckAimAssist_AACheck"), xor ("Player::CheckAimAssist"), xor ("80 38 00 74 0B"), 0x212, 0x3, { 0x7D });
 
-	Memory::AddObject(xor ("Player::HaxCheckPass"), xor ("55 8B EC 57 56 53 83 EC 2C 8B F1 8D 7D C8"));
+	Memory::AddObject(xor ("Player::HaxCheckPass"), xor ("55 8B EC 57 56 53 83 EC 2C 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 83 3D ?? ?? ?? ?? 00 75 0A B8"));
 	Memory::AddPatch(xor ("Player::HaxCheckPass_UniqueIDCheck"), xor ("Player::HaxCheckPass"), xor ("EB 02 33 C0 85 C0 75 13"), 0x400, 0x8, { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
 
-	Memory::AddObject(xor ("Player::OnLoadComplete"), xor ("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC"));
+	Memory::AddObject(xor ("Player::OnLoadComplete"), xor ("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"));
 	Memory::AddHook(xor ("Player::OnLoadComplete"), xor ("Player::OnLoadComplete"), reinterpret_cast<uintptr_t>(onLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnLoadComplete));
 
 	Memory::AddObject(xor ("Player::UpdateFlashlight"), xor ("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 60 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));

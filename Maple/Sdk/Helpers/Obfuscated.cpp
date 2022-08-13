@@ -37,8 +37,8 @@ void Obfuscated::Initialize()
 {
 	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("ObfuscatedString::GetValue"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 8B 7E 08 8B 5E 04"));
-	Memory::AddObject(xor ("ObfuscatedString::SetValue"), xor ("55 8B EC 57 56 53 83 EC 08 89 55 EC 8B F1 8B 0E"));
+	Memory::AddObject(xor ("ObfuscatedString::GetValue"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 8B 7E 08 8B 5E 04 8B 46 0C 89 45 F0 8B 0E 8B 41 20 8B 00 8B 40 0C 85 C0 75 0A"));
+	Memory::AddObject(xor ("ObfuscatedString::SetValue"), xor ("55 8B EC 57 56 53 83 EC 08 89 55 EC 8B F1 8B 0E E8 ?? ?? ?? ?? 8B 08 39 09 FF 15 ?? ?? ?? ?? 89 46 0C 8B 7E 08 8B 46 0C 89 45 F0 8B 0E"));
 
 	Memory::AddHook(xor ("ObfuscatedString::GetValue"), xor ("ObfuscatedString::GetValue"), reinterpret_cast<uintptr_t>(getStringValueHook), reinterpret_cast<uintptr_t*>(&oGetStringValue));
 	Memory::AddHook(xor ("ObfuscatedString::SetValue"), xor ("ObfuscatedString::SetValue"), reinterpret_cast<uintptr_t>(setStringValueHook), reinterpret_cast<uintptr_t*>(&oSetStringValue));

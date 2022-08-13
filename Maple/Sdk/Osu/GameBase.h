@@ -10,6 +10,7 @@ class GameBase
 public:
 	static void Initialize();
 
+	static int GetTime();
 	static OsuModes GetMode();
 	static void SetTickrate(double value);
 	static bool GetIsFullscreen();

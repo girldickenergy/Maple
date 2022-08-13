@@ -9,6 +9,18 @@
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/xorstr.hpp"
+#include "../Osu/GameBase.h"
+#include "../../Features/Timewarp/Timewarp.h"
+
+void Score::spoofPlayDuration()
+{
+	const int playStartTime = *reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET);
+	const int playEndTime = GameBase::GetTime();
+	const int playDuration = playEndTime - playStartTime;
+	const int scaledDuration = static_cast<int>(playDuration * Timewarp::GetRateMultiplier());
+
+	*reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET) = playEndTime - scaledDuration;
+}
 
 bool Score::handleScoreSubmission()
 {
@@ -28,6 +40,9 @@ bool Score::handleScoreSubmission()
 
 		return false;
 	}
+
+	if (Config::Timewarp::Enabled)
+		spoofPlayDuration();
 
 	return true;
 }
@@ -65,6 +80,9 @@ void Score::Initialize()
 
 void Score::Submit()
 {
+	if (Config::Timewarp::Enabled)
+		spoofPlayDuration();
+
 	oSubmit(scoreInstance);
 
 	Vanilla::RemoveRelocation(std::ref(scoreInstance));

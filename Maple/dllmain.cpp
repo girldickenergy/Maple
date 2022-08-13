@@ -21,7 +21,6 @@
 #include "SDK/GL/GLControl.h"
 #include "SDK/Helpers/ErrorSubmission.h"
 #include "SDK/Helpers/Obfuscated.h"
-#include "SDK/Helpers/pWebRequest.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
 #include "SDK/Online/BanchoClient.h"
@@ -142,7 +141,6 @@ void InitializeMaple()
 
         GameBase::Initialize();
         BanchoClient::Initialize();
-        pWebRequest::Initialize();
         ErrorSubmission::Initialize();
         AudioEngine::Initialize();
         InputManager::Initialize();

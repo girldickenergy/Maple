@@ -9,7 +9,7 @@ void GameField::Initialize()
 {
 	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("GameField::Instance"), xor ("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D"), 0xB, 1);
+	Memory::AddObject(xor ("GameField::Instance"), xor ("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? A1"), 0xB, 1);
 
 	STR_ENCRYPT_END
 }

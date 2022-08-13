@@ -107,9 +107,6 @@
     <ClCompile Include="SDK\Helpers\ErrorSubmission.cpp">
       <Filter>SDK\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="SDK\Helpers\pWebRequest.cpp">
-      <Filter>SDK\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.cpp">
       <Filter>UI\Visualisations\SnowVisualisation</Filter>
     </ClCompile>
@@ -1222,9 +1219,6 @@
       <Filter>SDK\Scoring</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Helpers\ErrorSubmission.h">
-      <Filter>SDK\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="SDK\Helpers\pWebRequest.h">
       <Filter>SDK\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="UI\Visualisations\SnowVisualisation\SnowVisualisation.h">

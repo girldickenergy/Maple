@@ -106,7 +106,7 @@ int __declspec(naked) Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 
 void Ruleset::Initialize()
 {
-	Memory::AddObject(xor ("Ruleset::IncreaseScoreHit"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 F0 83 7D F0 00"));
+	Memory::AddObject(xor ("Ruleset::IncreaseScoreHit"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 F0 83 7D F0 00 75 0A"));
 	Memory::AddPatch(xor ("Ruleset::IncreaseScoreHit_HackCheck"), xor ("Ruleset::IncreaseScoreHit"), xor ("80 78 7C 00 0F 84"), 0x1D36, 0x5, { 0x8D });
 
 	Memory::AddObject(xor ("Ruleset::LoadFlashlight"), xor ("55 8B EC 57 56 53 83 EC 30 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D D8 8B 45 D8 83 78 5C 00"));
