@@ -124,9 +124,9 @@ void InitializeMaple()
 	}
 
 	#ifdef _DEBUG
-	    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
+	    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
 	#else
-	    Logger::Initialize(LogSeverity::Error | LogSeverity::Assert | LogSeverity::Warning);
+	    Logger::Initialize(LogSeverity::All, true);
 	#endif
 
 	Logger::Log(LogSeverity::Info, xor ("Initialization started."));

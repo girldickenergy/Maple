@@ -13,6 +13,7 @@
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Utilities/Security/xorstr.hpp"
+#include "../../Utilities/Clipboard/ClipboardUtilities.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -445,7 +446,7 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel(xor ("Spoofer"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1, 1)));
+                Widgets::BeginPanel(xor ("Spoofer"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 1, 2)));
                 {
                     const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
                     const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
@@ -494,10 +495,45 @@ void MainMenu::Render()
                         ImGui::PopStyleVar();
                     }
 
+                    if (Widgets::Button(xor ("Import from clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Spoofer::Import();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button(xor ("Export to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Spoofer::Export();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
                     ImGui::Spacing();
 
-                    ImGui::InputText(xor ("Profile name"), Spoofer::NewProfileName, IM_ARRAYSIZE(Spoofer::NewProfileName));
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
 
+                    ImGui::InputText(xor ("Profile name##profilerename"), Spoofer::RenamedProfileName, IM_ARRAYSIZE(Spoofer::RenamedProfileName));
+                    if (Widgets::Button(xor ("Rename selected profile"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Spoofer::Rename();
+
+                    if (currentProfileIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::Spacing();
+
+                    ImGui::InputText(xor ("Profile name##newprofile"), Spoofer::NewProfileName, IM_ARRAYSIZE(Spoofer::NewProfileName));
                     if (Widgets::Button(xor ("Create new profile"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                         Spoofer::Create();
                 }
@@ -505,12 +541,11 @@ void MainMenu::Render()
             }
             if (currentTab == 6)
             {
-                Widgets::BeginPanel(xor ("Misc"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
+                Widgets::BeginPanel(xor ("Misc"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
                     const char* scoreSubmissionTypes[] = { xor ("Allow"), xor ("Disallow"), xor ("Prompt") };
                     Widgets::Combo(xor ("Score submission"), &Config::Misc::ScoreSubmissionType, scoreSubmissionTypes, IM_ARRAYSIZE(scoreSubmissionTypes)); ImGui::SameLine(); Widgets::Tooltip(xor ("Specifies score submission behavior.\n\nAllow: all scores will be sent to osu! servers.\nDisallow: your scores won't be sent to osu! servers.\nPrompt: before submitting a score Maple will ask you whether or not you really want to submit it."));
                     Widgets::Checkbox(xor ("Disable spectators"), &Config::Misc::DisableSpectators); ImGui::SameLine(); Widgets::Tooltip(xor ("Spectators will keep buffering infinitely."));
-                    Widgets::Checkbox(xor ("Disable logging"), &Config::Misc::DisableLogging); ImGui::SameLine(); Widgets::Tooltip(xor ("Disables Maple's log output to both console and runtime.log file."));
 
                     bool storageConfigEdited = false;
                     storageConfigEdited |= Widgets::Checkbox(xor ("Show menu after injection"), &StorageConfig::ShowMenuAfterInjection);
@@ -521,13 +556,19 @@ void MainMenu::Render()
 
                     if (storageConfigEdited)
                         Storage::SaveStorageConfig();
+                }
+                Widgets::EndPanel();
 
-                    if (Widgets::Button(xor ("Open Maple folder"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                Widgets::BeginPanel(xor ("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                {
+                    Widgets::Checkbox(xor ("Disable logging"), &Config::Misc::Logging::DisableLogging); ImGui::SameLine(); Widgets::Tooltip(xor ("Disables Maple's log output to both console and runtime.log file."));
+                    if (Widgets::Button(xor ("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {
-                        std::wstring wPath = std::wstring(Storage::StorageDirectory.begin(), Storage::StorageDirectory.end());
-                        LPCWSTR path = wPath.c_str();
+                        std::ifstream ifs(Storage::LogsDirectory + xor ("\\runtime.log"));
+                        const std::string logData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+                        ifs.close();
 
-                        ShellExecute(NULL, L"open", path, NULL, NULL, SW_RESTORE);
+                        ClipboardUtilities::Write(CryptoUtilities::Base64Encode(logData));
                     }
                 }
                 Widgets::EndPanel();
@@ -557,8 +598,10 @@ void MainMenu::Render()
             }
             if (currentTab == 7)
             {
-                Widgets::BeginPanel(xor ("Config"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 0, 1)));
+                Widgets::BeginPanel(xor ("Config"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 0, 2)));
                 {
+                    const bool currentConfigIsDefault = Config::CurrentConfig == 0;
+
                     const float buttonWidth = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
                     Widgets::Combo(xor ("Config"), &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
                         {
@@ -579,7 +622,7 @@ void MainMenu::Render()
 
                     ImGui::SameLine();
 
-                    if (Config::CurrentConfig == 0)
+                    if (currentConfigIsDefault)
                     {
                         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
@@ -588,7 +631,7 @@ void MainMenu::Render()
                     if (Widgets::Button(xor ("Save"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                         Config::Save();
 
-                    if (Config::CurrentConfig == 0)
+                    if (currentConfigIsDefault)
                     {
                         ImGui::PopItemFlag();
                         ImGui::PopStyleVar();
@@ -596,12 +639,66 @@ void MainMenu::Render()
 
                     ImGui::SameLine();
 
-                    if (Widgets::Button(xor ("Refresh"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
-                        Config::Refresh();
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button(xor ("Delete"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+                        Config::Delete();
+
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    if (Widgets::Button(xor ("Import from clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    {
+                        Config::Import();
+
+                        updateBackground();
+                        StyleProvider::UpdateColours();
+                        StyleProvider::UpdateScale();
+                    }
+
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    if (Widgets::Button(xor ("Export to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Config::Export();
+
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
 
                     ImGui::Spacing();
 
-                    ImGui::InputText(xor ("Config name"), Config::NewConfigName, IM_ARRAYSIZE(Config::NewConfigName));
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
+                    }
+
+                    ImGui::InputText(xor ("Config name##configrename"), Config::RenamedConfigName, IM_ARRAYSIZE(Config::RenamedConfigName));
+                    if (Widgets::Button(xor ("Rename selected config"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        Config::Rename();
+
+                    if (currentConfigIsDefault)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+
+                    ImGui::Spacing();
+
+                    ImGui::InputText(xor ("Config name##newconfig"), Config::NewConfigName, IM_ARRAYSIZE(Config::NewConfigName));
                     if (Widgets::Button(xor ("Create new config"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {
                         Config::Create();

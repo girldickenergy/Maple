@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "ThemidaSDK.h"
 #include "Vanilla.h"
 
 #include "../../Storage/Storage.h"
@@ -13,6 +14,8 @@
 #include "../../Utilities/Crypto/CryptoUtilities.h"
 #include "../../SDK/Online/BanchoClient.h"
 #include "../../Utilities/Security/xorstr.hpp"
+#include "../../Utilities/Clipboard/ClipboardUtilities.h"
+#include "../../Utilities/Strings/StringUtilities.h"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -66,21 +69,6 @@ std::string Spoofer::getRandomAdapters()
 	return adapters;
 }
 
-bool Spoofer::isSameName(const std::string& a, const std::string& b)
-{
-	std::string aLowerCase = a;
-	std::string bLowerCase = b;
-	std::transform(aLowerCase.begin(), aLowerCase.end(), aLowerCase.begin(), tolower);
-	std::transform(bLowerCase.begin(), bLowerCase.end(), bLowerCase.begin(), tolower);
-
-	return aLowerCase == bLowerCase;
-}
-
-bool Spoofer::isValidName(const std::string& name)
-{
-	return !name.empty() && !isSameName(name, xor ("none"));
-}
-
 void Spoofer::refresh()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
@@ -89,7 +77,7 @@ void Spoofer::refresh()
 	Profiles.emplace_back(xor ("none"));
 
 	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
-		if (file.path().extension() == xor (".profile") && isValidName(file.path().filename().stem().string()))
+		if (file.path().extension() == xor (".profile") && Storage::IsValidFileName(file.path().filename().stem().string()))
 			Profiles.push_back(file.path().filename().stem().string());
 }
 
@@ -188,17 +176,163 @@ void Spoofer::Delete()
 	Load();
 }
 
+void Spoofer::Import()
+{
+	STR_ENCRYPT_START
+
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	const std::string encodedProfileData = ClipboardUtilities::Read();
+
+	if (encodedProfileData.empty())
+		return;
+
+	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xor ("ZSj1CrtmTNCL98o8"));
+	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
+
+	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
+		return;
+
+	std::string profileName = CryptoUtilities::Base64Decode(decodedProfileDataSplit[0]);
+	const std::string profileData = CryptoUtilities::Base64Decode(decodedProfileDataSplit[1]);
+
+	std::string profileFilePath = Storage::ProfilesDirectory + xor ("\\") + profileName + xor (".profile");
+
+	if (!Storage::IsValidFileName(profileName))
+		return;
+
+	if (std::filesystem::exists(profileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = profileName + xor ("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xor ("\\") + newProfileName + xor (".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				profileName = newProfileName;
+				profileFilePath = newProfileFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::ofstream ofs(profileFilePath);
+	ofs << profileData << std::endl;
+	ofs.close();
+
+	refresh();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+
+	Load();
+
+	STR_ENCRYPT_END
+}
+
+void Spoofer::Export()
+{
+	STR_ENCRYPT_START
+
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	if (SelectedProfile == 0)
+		return;
+
+	const std::string profileFilePath = Storage::ProfilesDirectory + xor ("\\") + Profiles[SelectedProfile] + xor (".profile");
+
+	std::ifstream ifs(profileFilePath);
+	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xor ("|") + CryptoUtilities::Base64Encode(profileData), xor ("ZSj1CrtmTNCL98o8")));
+
+	ClipboardUtilities::Write(encodedProfileData);
+
+	STR_ENCRYPT_END
+}
+
+void Spoofer::Rename()
+{
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	if (SelectedProfile == 0)
+		return;
+
+	const std::string profileFilePath = Storage::ProfilesDirectory + xor ("\\") + Profiles[SelectedProfile] + xor (".profile");
+
+	if (!Storage::IsValidFileName(RenamedProfileName) || Storage::IsSameFileName(RenamedProfileName, Profiles[SelectedProfile]))
+		return;
+
+	std::string renamedProfileName = RenamedProfileName;
+	std::string renamedProfileFilePath = Storage::ProfilesDirectory + xor ("\\") + renamedProfileName + xor (".profile");
+
+	if (std::filesystem::exists(renamedProfileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = renamedProfileName + xor ("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xor ("\\") + newProfileName + xor (".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				renamedProfileName = newProfileName;
+				renamedProfileFilePath = newProfileFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::rename(profileFilePath.c_str(), renamedProfileFilePath.c_str());
+
+	refresh();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), renamedProfileName);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+}
+
 void Spoofer::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	const std::string profilePath = Storage::ProfilesDirectory + xor ("\\") + NewProfileName + xor (".profile");
+	std::string profileName = NewProfileName;
+	std::string profileFilePath = Storage::ProfilesDirectory + xor ("\\") + profileName + xor (".profile");
 
-	if (!isValidName(NewProfileName) || std::filesystem::exists(profilePath))
+	if (!Storage::IsValidFileName(profileName))
 		return;
 
+	if (std::filesystem::exists(profileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = profileName + xor ("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xor ("\\") + newProfileName + xor (".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				profileName = newProfileName;
+				profileFilePath = newProfileFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
 	std::ofstream ofs;
-	ofs.open(profilePath, std::ofstream::out | std::ofstream::trunc);
+	ofs.open(profileFilePath, std::ofstream::out | std::ofstream::trunc);
 
 	ofs << xor ("UninstallID=") << getRandomUninstallID() << std::endl;
 	ofs << xor ("DiskID=") << getRandomDiskID() << std::endl;
@@ -208,7 +342,7 @@ void Spoofer::Create()
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), NewProfileName);
+	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
 
 	if (it != Profiles.end())
 		SelectedProfile = std::distance(Profiles.begin(), it);

@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+#include "base64.h"
 #include "md5.h"
 #include "hex.h"
 
@@ -53,4 +54,43 @@ std::wstring CryptoUtilities::GetMD5Hash(const std::wstring& str)
     std::transform(strHashed.begin(), strHashed.end(), strHashed.begin(), ::tolower);
 
     return std::wstring(strHashed.begin(), strHashed.end());
+}
+
+std::string CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
+{
+    std::string result = str;
+
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < str.length(); i++)
+    {
+        result[i] = str[i] ^ key[j];
+
+        j = (++j < key.length() ? j : 0);
+    }
+
+    return result;
+}
+
+std::string CryptoUtilities::Base64Encode(const std::string& str)
+{
+    std::string result;
+
+    CryptoPP::Base64Encoder encoder;
+    encoder.Attach(new CryptoPP::StringSink(result));
+    encoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    encoder.MessageEnd();
+
+    return result;
+}
+
+std::string CryptoUtilities::Base64Decode(const std::string& str)
+{
+    std::string result;
+
+    CryptoPP::Base64Decoder decoder;
+    decoder.Attach(new CryptoPP::StringSink(result));
+    decoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    decoder.MessageEnd();
+
+    return result;
 }

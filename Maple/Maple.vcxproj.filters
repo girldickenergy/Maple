@@ -737,6 +737,9 @@
     <ClCompile Include="Dependencies\CryptoPP\Wrapper\AES.cpp">
       <Filter>Dependencies\CryptoPP\Wrapper</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities\Clipboard\ClipboardUtilities.cpp">
+      <Filter>Utilities\Clipboard</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -945,6 +948,9 @@
     </Filter>
     <Filter Include="Dependencies\CryptoPP\Wrapper">
       <UniqueIdentifier>{35fd7d1f-6bf6-462f-9953-f2e3b2ea9844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Clipboard">
+      <UniqueIdentifier>{f9e894b6-aa05-45a2-9f45-b35c5233ae0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1913,6 +1919,9 @@
     </ClInclude>
     <ClInclude Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.h">
       <Filter>Dependencies\CryptoPP\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h">
+      <Filter>Utilities\Clipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

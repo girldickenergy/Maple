@@ -9,17 +9,6 @@
 #include "../Utilities/Security/xorstr.hpp"
 #include "StorageConfig.h"
 
-bool Storage::isSameName(const std::string& a, const std::string& b)
-{
-    std::string aLowerCase = a;
-    std::string bLowerCase = b;
-
-    std::transform(aLowerCase.begin(), aLowerCase.end(), aLowerCase.begin(), tolower);
-    std::transform(bLowerCase.begin(), bLowerCase.end(), bLowerCase.begin(), tolower);
-
-    return aLowerCase == bLowerCase;
-}
-
 void Storage::loadStorageConfig()
 {
     STR_ENCRYPT_START
@@ -83,9 +72,20 @@ void Storage::Initialize(const std::string& uniqueName)
     STR_ENCRYPT_END
 }
 
+bool Storage::IsSameFileName(const std::string& a, const std::string& b)
+{
+    std::string aLowerCase = a;
+    std::string bLowerCase = b;
+
+    std::transform(aLowerCase.begin(), aLowerCase.end(), aLowerCase.begin(), tolower);
+    std::transform(bLowerCase.begin(), bLowerCase.end(), bLowerCase.begin(), tolower);
+
+    return aLowerCase == bLowerCase;
+}
+
 bool Storage::IsValidFileName(const std::string& filename)
 {
-    return !filename.empty() && !isSameName(filename, xor ("default")) && !isSameName(filename, xor ("none"));
+    return !filename.empty() && !IsSameFileName(filename, xor ("default")) && !IsSameFileName(filename, xor ("none"));
 }
 
 void Storage::EnsureDirectoryExists(const std::string& directory)

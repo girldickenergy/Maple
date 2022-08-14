@@ -10,16 +10,21 @@ class Config
 {
 	static ImVec4 parseImVec4(std::string vec);
 	static void loadDefaults();
+	static void refresh();
 public:
 	static inline std::vector<std::string> Configs;
 	static inline int CurrentConfig = 0;
+	static inline char RenamedConfigName[24] = { };
 	static inline char NewConfigName[24] = { };
 
 	static void Initialize();
 	static void Load();
 	static void Save();
+	static void Delete();
+	static void Import();
+	static void Export();
+	static void Rename();
 	static void Create();
-	static void Refresh();
 
 	//Version 0.0 - first version
 	//Version 1.0 - breaks aim assist config compatibility (removed aav1, added aav3 (aqn))
@@ -138,7 +143,11 @@ public:
 		static inline int ScoreSubmissionType;
 		static inline bool ForceDisableScoreSubmission = false;
 		static inline bool DisableSpectators;
-		static inline bool DisableLogging;
+
+		struct Logging
+		{
+			static inline bool DisableLogging;
+		};
 
 		struct DiscordRichPresenceSpoofer
 		{

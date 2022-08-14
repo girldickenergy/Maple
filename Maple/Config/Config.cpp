@@ -8,6 +8,9 @@
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../Storage/Storage.h"
 #include "../Storage/StorageConfig.h"
+#include "../Utilities/Clipboard/ClipboardUtilities.h"
+#include "../Utilities/Crypto/CryptoUtilities.h"
+#include "../Utilities/Strings/StringUtilities.h"
 
 ImVec4 Config::parseImVec4(std::string vec)
 {
@@ -89,7 +92,7 @@ void Config::loadDefaults()
 
 	Misc::ScoreSubmissionType = 0;
 	Misc::DisableSpectators = false;
-	Misc::DisableLogging = false;
+	Misc::Logging::DisableLogging = false;
 	Misc::DiscordRichPresenceSpoofer::Enabled = false;
 	Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled = false;
 	strcpy_s(Misc::DiscordRichPresenceSpoofer::CustomLargeImageText, xor ("peppy (rank #18,267,309)"));
@@ -105,9 +108,21 @@ void Config::loadDefaults()
 	STR_ENCRYPT_END
 }
 
+void Config::refresh()
+{
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	Configs.clear();
+	Configs.emplace_back(xor ("default"));
+
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ConfigsDirectory))
+		if (file.path().extension() == xor (".cfg") && Storage::IsValidFileName(file.path().filename().stem().string()))
+			Configs.push_back(file.path().filename().stem().string());
+}
+
 void Config::Initialize()
 {
-	Refresh();
+	refresh();
 
 	const auto it = std::find(Configs.begin(), Configs.end(), StorageConfig::DefaultConfig);
 
@@ -132,7 +147,7 @@ void Config::Load()
 	if (CurrentConfig == 0)
 		return;
 
-	std::string configFilePath = Storage::ConfigsDirectory + "\\" + Configs[CurrentConfig] + xor (".cfg");
+	std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + Configs[CurrentConfig] + xor (".cfg");
 
 	if (!std::filesystem::exists(configFilePath))
 		return;
@@ -267,8 +282,8 @@ void Config::Load()
 			Misc::ScoreSubmissionType = std::stoi(value);
 		if (variable == xor ("Misc_DisableSpectators"))
 			Misc::DisableSpectators = value == xor ("1");
-		if (variable == xor ("Misc_DisableLogging"))
-			Misc::DisableLogging = value == xor ("1");
+		if (variable == xor ("Misc_Logging_DisableLogging"))
+			Misc::Logging::DisableLogging = value == xor ("1");
 		if (variable == xor("Misc_DiscordRichPresenceSpoofer_Enabled"))
 			Misc::DiscordRichPresenceSpoofer::Enabled = value == xor ("1");
 		if (variable == xor ("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled"))
@@ -307,7 +322,7 @@ void Config::Save()
 
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	const std::string configFilePath = Storage::ConfigsDirectory + "\\" + Configs[CurrentConfig] + xor (".cfg");
+	const std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + Configs[CurrentConfig] + xor (".cfg");
 
 	std::ofstream ofs;
 	ofs.open(configFilePath, std::ofstream::out | std::ofstream::trunc);
@@ -372,7 +387,7 @@ void Config::Save()
 	
 	ofs << xor ("Misc_ScoreSubmissionType=") << Misc::ScoreSubmissionType << std::endl;
 	ofs << xor ("Misc_DisableSpectators=") << Misc::DisableSpectators << std::endl;
-	ofs << xor ("Misc_DisableLogging=") << Misc::DisableLogging << std::endl;
+	ofs << xor ("Misc_Logging_DisableLogging=") << Misc::Logging::DisableLogging << std::endl;
 	ofs << xor ("Misc_DiscordRichPresenceSpoofer_Enabled=") << Misc::DiscordRichPresenceSpoofer::Enabled << std::endl;
 	ofs << xor ("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled << std::endl;
 	ofs << xor ("Misc_DiscordRichPresenceSpoofer_CustomLargeImageText=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageText << std::endl;
@@ -390,36 +405,188 @@ void Config::Save()
 	STR_ENCRYPT_END
 }
 
+void Config::Delete()
+{
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	if (CurrentConfig == 0)
+		return;
+
+	const std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + Configs[CurrentConfig] + xor (".cfg");
+
+	std::filesystem::remove(configFilePath);
+	
+	refresh();
+
+	CurrentConfig = 0;
+
+	Load();
+}
+
+void Config::Import()
+{
+	STR_ENCRYPT_START
+
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	const std::string encodedConfigData = ClipboardUtilities::Read();
+
+	if (encodedConfigData.empty())
+		return;
+
+	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xor ("TKDUe0IE0GUffHNj"));
+	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, "|");
+
+	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
+		return;
+
+	std::string configName = CryptoUtilities::Base64Decode(decodedConfigDataSplit[0]);
+	const std::string configData = CryptoUtilities::Base64Decode(decodedConfigDataSplit[1]);
+
+	std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + configName + xor (".cfg");
+
+	if (!Storage::IsValidFileName(configName))
+		return;
+
+	if (std::filesystem::exists(configFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newConfigName = configName + xor ("_") + std::to_string(i);
+			const std::string newConfigFilePath = Storage::ConfigsDirectory + xor ("\\") + newConfigName + xor (".cfg");
+			if (!std::filesystem::exists(newConfigFilePath))
+			{
+				configName = newConfigName;
+				configFilePath = newConfigFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::ofstream ofs(configFilePath);
+	ofs << configData << std::endl;
+	ofs.close();
+
+	refresh();
+
+	const auto it = std::find(Configs.begin(), Configs.end(), configName);
+
+	if (it != Configs.end())
+		CurrentConfig = std::distance(Configs.begin(), it);
+
+	Load();
+
+	STR_ENCRYPT_END
+}
+
+void Config::Export()
+{
+	STR_ENCRYPT_START
+	
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	if (CurrentConfig == 0)
+		return;
+
+	const std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + Configs[CurrentConfig] + xor (".cfg");
+
+	std::ifstream ifs(configFilePath);
+	const std::string configData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xor ("|") + CryptoUtilities::Base64Encode(configData), xor ("TKDUe0IE0GUffHNj")));
+
+	ClipboardUtilities::Write(encodedConfigData);
+
+	STR_ENCRYPT_END
+}
+
+void Config::Rename()
+{
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+	
+	if (CurrentConfig == 0)
+		return;
+
+	const std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + Configs[CurrentConfig] + xor (".cfg");
+
+	if (!Storage::IsValidFileName(RenamedConfigName) || Storage::IsSameFileName(RenamedConfigName, Configs[CurrentConfig]))
+		return;
+
+	std::string renamedConfigName = RenamedConfigName;
+	std::string renamedConfigFilePath = Storage::ConfigsDirectory + xor ("\\") + renamedConfigName + xor (".cfg");
+
+	if (std::filesystem::exists(renamedConfigFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newConfigName = renamedConfigName + xor ("_") + std::to_string(i);
+			const std::string newConfigFilePath = Storage::ConfigsDirectory + xor ("\\") + newConfigName + xor (".cfg");
+			if (!std::filesystem::exists(newConfigFilePath))
+			{
+				renamedConfigName = newConfigName;
+				renamedConfigFilePath = newConfigFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+	
+	std::rename(configFilePath.c_str(), renamedConfigFilePath.c_str());
+
+	refresh();
+
+	const auto it = std::find(Configs.begin(), Configs.end(), renamedConfigName);
+
+	if (it != Configs.end())
+		CurrentConfig = std::distance(Configs.begin(), it);
+}
+
 void Config::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	const std::string configFilePath = Storage::ConfigsDirectory + "\\" + NewConfigName + xor (".cfg");
+	std::string configName = NewConfigName;
+	std::string configFilePath = Storage::ConfigsDirectory + xor ("\\") + NewConfigName + xor (".cfg");
 
-	if (!Storage::IsValidFileName(NewConfigName) || std::filesystem::exists(configFilePath))
+	if (!Storage::IsValidFileName(configName))
 		return;
+
+	if (std::filesystem::exists(configFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newConfigName = configName + xor ("_") + std::to_string(i);
+			const std::string newConfigFilePath = Storage::ConfigsDirectory + xor ("\\") + newConfigName + xor (".cfg");
+			if (!std::filesystem::exists(newConfigFilePath))
+			{
+				configName = newConfigName;
+				configFilePath = newConfigFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
 
 	std::ofstream ofs(configFilePath);
 	ofs.close();
+	
+	refresh();
 
-	Refresh();
-
-	const auto it = std::find(Configs.begin(), Configs.end(), NewConfigName);
+	const auto it = std::find(Configs.begin(), Configs.end(), configName);
 
 	if (it != Configs.end())
 		CurrentConfig = std::distance(Configs.begin(), it);
 
 	loadDefaults();
-}
-
-void Config::Refresh()
-{
-	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
-
-	Configs.clear();
-	Configs.emplace_back(xor ("default"));
-
-	for (const auto& file : std::filesystem::directory_iterator(Storage::ConfigsDirectory))
-		if (file.path().extension() == ".cfg" && Storage::IsValidFileName(file.path().filename().stem().string()))
-			Configs.push_back(file.path().filename().stem().string());
 }

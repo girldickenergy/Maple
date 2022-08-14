@@ -10,6 +10,7 @@
 #include "../Config/Config.h"
 #include "../Utilities/Security/xorstr.hpp"
 #include "../Storage/Storage.h"
+#include "../Utilities/Crypto/CryptoUtilities.h"
 
 void Logger::clearLogFile()
 {
@@ -27,7 +28,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
 	STR_ENCRYPT_START
 		
-	if (Config::Misc::DisableLogging)
+	if (Config::Misc::Logging::DisableLogging)
 		return;
 
 	std::ostringstream entry;
@@ -75,7 +76,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	entry << message;
 
 	if (consoleHandle)
-		std::cout << entry.str() << std::endl;
+		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xor ("psBeI5m5vNsBHVaT")) : entry.str()) << std::endl;
 
 	if (logFilePath.empty())
 		return;
@@ -84,16 +85,18 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << entry.str() << std::endl;
+	logFile << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xor ("psBeI5m5vNsBHVaT")) : entry.str()) << std::endl;
 	logFile.close();
 	
 	STR_ENCRYPT_END
 }
 
-void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
+void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole, LPCWSTR consoleTitle)
 {
 	VM_FISH_RED_START
 	STR_ENCRYPT_START
+
+	shouldEncrypt = encrypt;
 		
 	Logger::logFilePath = Storage::LogsDirectory + xor ("\\runtime.log");
 	Logger::scope = scope;
