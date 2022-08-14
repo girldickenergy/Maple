@@ -56,15 +56,15 @@ void __declspec(naked) Score::submitHook(uintptr_t instance)
 		pushad
 		pushfd
 		call handleScoreSubmission
-		cmp eax, 0x1
-		je orig
-		popfd
-		popad
-		ret
-		orig:
+		test al, al
+		je skipSubmission
 		popfd
 		popad
 		jmp oSubmit
+		skipSubmission:
+		popfd
+		popad
+		ret
 	}
 }
 
