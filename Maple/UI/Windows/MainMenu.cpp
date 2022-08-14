@@ -168,9 +168,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xor ("l12082022"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xor ("l14082022"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xor ("l12082022"));
+                ImGui::TextColored(StyleProvider::MottoColour, xor ("l14082022"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -237,7 +237,6 @@ void MainMenu::Render()
                     Widgets::SliderFloat(xor ("Direction prediction scale"), &Config::Relax::HitScan::DirectionPredictionScale, 0.f, 1.f, .1f, 1.f, xor ("%.1f"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xor ("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle."));
                 }
                 Widgets::EndPanel();
-
 
                 Widgets::BeginPanel(xor ("Blatant"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(1, 1)));
                 {
