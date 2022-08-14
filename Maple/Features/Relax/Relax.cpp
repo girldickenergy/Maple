@@ -56,7 +56,7 @@ void Relax::updateTimings()
 {
 	//approximation is made using 2.5 sigma, we're using 2.3 sigma here to account for the distribution error
 	offset = normalDistribution(rng) * (((Config::Relax::Timing::TargetUnstableRate - 0.00533158) / 3.99535) / 2.3);
-	holdTime = ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTime : Config::Relax::Timing::AverageSliderHoldTime) + (normalDistribution(rng) * ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTimeError : Config::Relax::Timing::AverageSliderHoldTimeError) / 2.5))) * rateMultiplier;
+	holdTime = Config::Relax::Blatant::UseLowestPossibleHoldTimes ? (std::min)(25, nextHitObject.IsNull ? 25 : (int)((nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f)) : ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTime : Config::Relax::Timing::AverageSliderHoldTime) + (normalDistribution(rng) * ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTimeError : Config::Relax::Timing::AverageSliderHoldTimeError) / 2.5))) * rateMultiplier;
 }
 
 bool Relax::handleHitScan()
@@ -234,7 +234,7 @@ OsuKeys Relax::Update()
 	if (currentIndex < hitObjectsCount && time >= currentHitObject.StartTime - hitWindow50)
 	{
 		bool fastSingletap = abs(time - (currentKey == primaryKey ? primaryKeyPressTime : secondaryKeyPressTime)) < 90 * rateMultiplier;
-		if ((handleHitScan() && !fastSingletap) || time > currentHitObject.StartTime + hitWindow50)
+		if ((handleHitScan() && (!fastSingletap || Config::Relax::Blatant::UseLowestPossibleHoldTimes)) || time > currentHitObject.StartTime + hitWindow50)
 		{
 			handleKeyPress();
 			moveToNextHitObject();

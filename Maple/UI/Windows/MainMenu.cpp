@@ -237,6 +237,14 @@ void MainMenu::Render()
                     Widgets::SliderFloat(xor ("Direction prediction scale"), &Config::Relax::HitScan::DirectionPredictionScale, 0.f, 1.f, .1f, 1.f, xor ("%.1f"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xor ("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle."));
                 }
                 Widgets::EndPanel();
+
+
+                Widgets::BeginPanel(xor ("Blatant"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(1, 1)));
+                {
+                    ImGui::TextColored(StyleProvider::AccentColour, xor ("Don't use this on legit servers!"));
+                    Widgets::Checkbox(xor ("Use lowest possible hold times"), &Config::Relax::Blatant::UseLowestPossibleHoldTimes);
+                }
+                Widgets::EndPanel();
             }
             if (currentTab == 1)
             {

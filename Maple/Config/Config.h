@@ -51,6 +51,11 @@ public:
 			static inline int DirectionPredictionAngle;
 			static inline float DirectionPredictionScale;
 		};
+
+		struct Blatant
+		{
+			static inline bool UseLowestPossibleHoldTimes;
+		};
 	};
 
 	struct AimAssist

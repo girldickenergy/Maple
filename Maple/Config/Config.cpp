@@ -47,6 +47,7 @@ void Config::loadDefaults()
 	Relax::HitScan::DirectionPredictionEnabled = true;
 	Relax::HitScan::DirectionPredictionAngle = 45;
 	Relax::HitScan::DirectionPredictionScale = 0.7f;
+	Relax::Blatant::UseLowestPossibleHoldTimes = false;
 
 	AimAssist::Enabled = false;
 	AimAssist::Algorithm = 0;
@@ -182,6 +183,9 @@ void Config::Load()
 			Relax::HitScan::DirectionPredictionAngle = std::stoi(value);
 		if (variable == xor ("Relax_HitScan_DirectionPrediction_Scale"))
 			Relax::HitScan::DirectionPredictionScale = std::stof(value);
+
+		if (variable == xor ("Relax_Blatant_UseLowestPossibleHoldTimes"))
+			Relax::Blatant::UseLowestPossibleHoldTimes = value == xor ("1");
 
 		if (configVersion >= 1.f)
 		{
@@ -326,6 +330,7 @@ void Config::Save()
 	ofs << xor ("Relax_HitScan_DirectionPrediction_Enabled=") << Relax::HitScan::DirectionPredictionEnabled << std::endl;
 	ofs << xor ("Relax_HitScan_DirectionPrediction_Angle=") << Relax::HitScan::DirectionPredictionAngle << std::endl;
 	ofs << xor ("Relax_HitScan_DirectionPrediction_Scale=") << Relax::HitScan::DirectionPredictionScale << std::endl;
+	ofs << xor ("Relax_Blatant_UseLowestPossibleHoldTimes=") << Relax::Blatant::UseLowestPossibleHoldTimes << std::endl;
 
 	ofs << xor ("AimAssist_Enabled=") << AimAssist::Enabled << std::endl;
 	ofs << xor ("AimAssist_Algorithm=") << AimAssist::Algorithm << std::endl;
