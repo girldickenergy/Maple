@@ -8,6 +8,7 @@
 #include "../../Utilities/Security/xorstr.hpp"
 
 #include "../Memory.h"
+#include "../Helpers/Obfuscated.h"
 
 void GameBase::Initialize()
 {
@@ -105,7 +106,7 @@ std::wstring GameBase::GetUniqueID()
 {
 	const uintptr_t uniqueIDAddress = Memory::Objects[xor ("GameBase::UniqueID")];
 
-	return uniqueIDAddress ? (*reinterpret_cast<CLRString**>(uniqueIDAddress))->Data().data() : L"";
+	return uniqueIDAddress ? Obfuscated::GetString(*reinterpret_cast<uintptr_t*>(uniqueIDAddress))->Data().data() : L"";
 }
 
 uintptr_t GameBase::GetUniqueID2Instance()
@@ -119,7 +120,7 @@ std::wstring GameBase::GetUniqueID2()
 {
 	const uintptr_t uniqueID2Address = Memory::Objects[xor ("GameBase::UniqueID2")];
 
-	return uniqueID2Address ? (*reinterpret_cast<CLRString**>(uniqueID2Address))->Data().data() : L"";
+	return uniqueID2Address ? Obfuscated::GetString(*reinterpret_cast<uintptr_t*>(uniqueID2Address))->Data().data() : L"";
 }
 
 uintptr_t GameBase::GetUniqueCheckInstance()
@@ -133,5 +134,5 @@ std::wstring GameBase::GetUniqueCheck()
 {
 	const uintptr_t uniqueCheckAddress = Memory::Objects[xor ("GameBase::UniqueCheck")];
 
-	return uniqueCheckAddress ? (*reinterpret_cast<CLRString**>(uniqueCheckAddress))->Data().data() : L"";
+	return uniqueCheckAddress ? Obfuscated::GetString(*reinterpret_cast<uintptr_t*>(uniqueCheckAddress))->Data().data() : L"";
 }
