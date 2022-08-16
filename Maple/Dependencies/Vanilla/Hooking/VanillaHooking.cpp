@@ -42,9 +42,8 @@ std::vector<uint8_t> VanillaHooking::getFunctionPrologue(uintptr_t functionAddre
 
 	std::vector<uint8_t> functionPrologue;
 	for (unsigned int i = 0; i < functionPrologueLength; i++)
-	{
 		functionPrologue.push_back(*reinterpret_cast<uint8_t*>(functionAddress + i));
-	}
+
 	return functionPrologue;
 }
 
@@ -68,19 +67,7 @@ void VanillaHooking::relocateRelativeAddresses(uintptr_t oldLocation, uintptr_t 
 	}
 }
 
-uintptr_t VanillaHooking::installDetourStub(uintptr_t detourAddress)
-{
-	const uintptr_t detourStubAddress = reinterpret_cast<uintptr_t>(VirtualAlloc(nullptr, detourStubBytes.size(), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
-
-	for (unsigned int i = 0; i < detourStubBytes.size(); i++)
-		*reinterpret_cast<uint8_t*>(detourStubAddress + i) = detourStubBytes[i];
-
-	*reinterpret_cast<uintptr_t*>(detourStubAddress + detourStubAddressOffset) = detourAddress;
-
-	return detourStubAddress;
-}
-
-uintptr_t VanillaHooking::installTrampoline(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue)
+uintptr_t VanillaHooking::installTrampoline(uintptr_t functionAddress, const std::vector<uint8_t>& functionPrologue)
 {
 	const uintptr_t trampolineAddress = reinterpret_cast<uintptr_t>(VirtualAlloc(nullptr, functionPrologue.size() + trampolineBytes.size(), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
 
@@ -97,9 +84,9 @@ uintptr_t VanillaHooking::installTrampoline(uintptr_t functionAddress, uintptr_t
 	return trampolineAddress;
 }
 
-uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t detourStubAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue)
+uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue)
 {
-	const uintptr_t trampolineAddress = installTrampoline(functionAddress, detourAddress, functionPrologue);
+	const uintptr_t trampolineAddress = installTrampoline(functionAddress, functionPrologue);
 	
 	DWORD oldProtect;
 	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), detourBytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
@@ -107,7 +94,7 @@ uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t
 	for (unsigned int i = 0; i < detourBytes.size(); i++)
 		*reinterpret_cast<uint8_t*>(functionAddress + i) = detourBytes[i];
 
-	*reinterpret_cast<uintptr_t*>(functionAddress + detourAddressOffset) = detourStubAddress;
+	*reinterpret_cast<uintptr_t*>(functionAddress + detourAddressOffset) = detourAddress;
 
 	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), detourBytes.size(), oldProtect, &oldProtect);
 
@@ -120,13 +107,12 @@ VanillaResult VanillaHooking::InstallHook(const std::string& name, uintptr_t fun
 		return VanillaResult::HookAlreadyInstalled;
 	
 	const std::vector<uint8_t> functionPrologue = getFunctionPrologue(functionAddress, detourBytes.size());
-	const uintptr_t detourStubAddress = installDetourStub(detourAddress);
 
-	const uintptr_t trampolineAddress = installInlineHook(functionAddress, detourStubAddress, detourAddress, functionPrologue);
+	const uintptr_t trampolineAddress = installInlineHook(functionAddress, detourAddress, functionPrologue);
 
 	*originalFunction = trampolineAddress;
 
-	hooks.push_back(new VanillaHook(name, functionAddress, detourStubAddress, trampolineAddress, functionPrologue));
+	hooks.push_back(new VanillaHook(name, functionAddress, trampolineAddress, functionPrologue));
 
 	return VanillaResult::Success;
 
@@ -141,8 +127,7 @@ VanillaResult VanillaHooking::UninstallHook(const std::string& name)
 
 	for (size_t i = 0; i < hook->FunctionPrologue.size(); i++)
 		*reinterpret_cast<uint8_t*>(hook->FunctionAddress + i) = hook->FunctionPrologue[i];
-
-	VirtualFree(reinterpret_cast<LPVOID>(hook->DetourStubAddress), 0, MEM_RELEASE);
+	
 	VirtualFree(reinterpret_cast<LPVOID>(hook->TrampolineAddress), 0, MEM_RELEASE);
 
 	removeHook(name);
