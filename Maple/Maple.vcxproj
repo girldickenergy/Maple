@@ -679,7 +679,6 @@
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHooking.h" />
-    <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHookType.h" />
     <ClInclude Include="Dependencies\Vanilla\Patching\VanillaPatch.h" />
     <ClInclude Include="Dependencies\Vanilla\Patching\VanillaPatcher.h" />
     <ClInclude Include="Dependencies\Vanilla\PatternScanning\VanillaPatternScanner.h" />

@@ -1086,9 +1086,6 @@
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHook.h">
       <Filter>Dependencies\Vanilla\Hooking</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHookType.h">
-      <Filter>Dependencies\Vanilla\Hooking</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHooking.h">
       <Filter>Dependencies\Vanilla\Hooking</Filter>
     </ClInclude>

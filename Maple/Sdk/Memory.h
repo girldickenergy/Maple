@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "Hooking/VanillaHookType.h"
-
 struct MaplePattern
 {
 	std::string Pattern;
@@ -48,14 +46,12 @@ struct MapleHook
 	std::string Name;
 	uintptr_t DetourFunctionAddress;
 	uintptr_t* OriginalFunction;
-	VanillaHookType Type;
 
-	MapleHook(const std::string& name, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, VanillaHookType type)
+	MapleHook(const std::string& name, uintptr_t detourFunctionAddress, uintptr_t* originalFunction)
 	{
 		Name = name;
 		DetourFunctionAddress = detourFunctionAddress;
 		OriginalFunction = originalFunction;
-		Type = type;
 	}
 
 	MapleHook() = default;
@@ -79,5 +75,5 @@ public:
 
 	static void AddObject(const std::string& name, const std::string& pattern, unsigned int offset = 0, unsigned int readCount = 0);
 	static void AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch);
-	static void AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, VanillaHookType type = VanillaHookType::Inline);
+	static void AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction);
 };

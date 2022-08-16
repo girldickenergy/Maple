@@ -44,10 +44,10 @@ void AudioEngine::Initialize()
 	Memory::AddObject(xor ("AudioEngine::Time"), xor ("7E 55 8B 76 10 DB 05 ?? ?? ?? ?? D9 5D F8 D9 45 F8 6A 00"), 0x7, 1);
 
 	Memory::AddObject(xor ("AudioEngine::GetCurrentPlaybackRate"), xor ("55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 75 08 D9 05 ?? ?? ?? ?? 5D C3"));
-	Memory::AddHook(xor ("AudioEngine::GetCurrentPlaybackRate"), xor ("AudioEngine::GetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(getCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oGetCurrentPlaybackRate), VanillaHookType::UndetectedInline);
+	Memory::AddHook(xor ("AudioEngine::GetCurrentPlaybackRate"), xor ("AudioEngine::GetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(getCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oGetCurrentPlaybackRate));
 
 	Memory::AddObject(xor ("AudioEngine::SetCurrentPlaybackRate"), xor ("55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 0F 94 C2 0F B6 D2 8B CE"));
-	Memory::AddHook(xor ("AudioEngine::SetCurrentPlaybackRate"), xor ("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate), VanillaHookType::UndetectedInline);
+	Memory::AddHook(xor ("AudioEngine::SetCurrentPlaybackRate"), xor ("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate));
 
 	STR_ENCRYPT_END
 }

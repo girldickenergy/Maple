@@ -49,7 +49,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Type) == VanillaResult::Success)
+			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction) == VanillaResult::Success)
 				Logger::Log(LogSeverity::Info, xor ("Hooked %s dynamically!"), it->second.Name.c_str());
 			else
 				Logger::Log(LogSeverity::Error, xor ("Failed to hook %s dynamically!"), it->second.Name.c_str());
@@ -117,13 +117,13 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 	STR_ENCRYPT_END
 }
 
-void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, VanillaHookType type)
+void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction)
 {
 	STR_ENCRYPT_START
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, type) == VanillaResult::Success)
+		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction) == VanillaResult::Success)
 			Logger::Log(LogSeverity::Info, xor ("Hooked %s!"), name.c_str());
 		else
 			Logger::Log(LogSeverity::Error, xor ("Failed to hook %s!"), name.c_str());
@@ -132,7 +132,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 	{
 		Logger::Log(LogSeverity::Debug, xor ("Failed to hook %s. Adding it to the queue for dynamic hooking."), name.c_str());
 
-		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, type);
+		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction);
 	}
 
 	STR_ENCRYPT_END

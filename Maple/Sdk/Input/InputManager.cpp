@@ -110,7 +110,7 @@ void InputManager::Initialize()
 	Memory::AddObject(xor ("InputManager::leftButton"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON_OFFSET, 1);
 	Memory::AddObject(xor ("InputManager::rightButton"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON_OFFSET, 1);
 
-	Memory::AddHook(xor ("MouseManager::SetMousePosition"), xor ("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition), VanillaHookType::UndetectedInline);
+	Memory::AddHook(xor ("MouseManager::SetMousePosition"), xor ("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
 	Memory::AddHook(xor ("InputManager::MouseViaKeyboardControls"), xor ("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 
 	STR_ENCRYPT_END

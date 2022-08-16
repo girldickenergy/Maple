@@ -6,28 +6,25 @@
 #include "VanillaHook.h"
 #include "VanillaResult.h"
 
-typedef void* (__fastcall* fnBaseThreadInitThunk)(ULONG Unknown, PVOID StartAddress, PVOID ThreadParameter);
-
 class VanillaHooking
 {
 	static inline std::vector<VanillaHook*> hooks;
 	static VanillaHook* findHook(const std::string& name);
 	static void removeHook(const std::string& name);
 
-	typedef void* (__fastcall* fnBaseThreadInitThunk)(ULONG Unknown, PVOID StartAddress, PVOID ThreadParameter);
-	static inline PVOID exceptionHandlerHandle = reinterpret_cast<PVOID>(0x00DE00FF);
-	static inline fnBaseThreadInitThunk m_oBaseThreadInitThunk = reinterpret_cast<fnBaseThreadInitThunk>(0x00000000);
-	static LONG __stdcall hwbrkHandler(PEXCEPTION_POINTERS ExceptionInfo);
-	static void* __fastcall hkBaseThreadInitThunk(ULONG Unknown, PVOID StartAddress, PVOID ThreadParameter);
+	static inline std::vector<uint8_t> detourBytes = { 0x55, 0xBD, 0xFF, 0xFF, 0xFF, 0xFF, 0x83, 0xEC, 0x04, 0x87, 0x2C, 0x24, 0xC3 };
+	static inline constexpr unsigned int detourAddressOffset = 2;
 
-	static VanillaResult installHWBPHook(uintptr_t functionAddress, HANDLE hookThread, HANDLE hThread = nullptr);
+	static inline std::vector<uint8_t> detourStubBytes = { 0x5D, 0x68, 0xFF, 0xFF, 0xFF, 0xFF, 0xC3 };
+	static inline constexpr unsigned int detourStubAddressOffset = 2;
 
-	static std::vector<uint8_t> getFunctionPrologue(uintptr_t functionAddress, unsigned int minimumBytes = 5);
-	static uintptr_t installTrampoline(uintptr_t functionAddress, const std::vector<uint8_t>& functionPrologue);
+	static std::vector<uint8_t> getFunctionPrologue(uintptr_t functionAddress, unsigned int minimumBytes);
 	static void relocateRelativeAddresses(uintptr_t oldLocation, uintptr_t newLocation, unsigned int length);
-	static uintptr_t installInlineHook(uintptr_t functionAddress, uintptr_t detourFunctionAddress, const std::vector<uint8_t>& functionPrologue);
+	static uintptr_t installDetourStub(uintptr_t detourAddress);
+	static uintptr_t installTrampoline(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue);
+	static uintptr_t installInlineHook(uintptr_t functionAddress, uintptr_t detourStubAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue);
 public:
-	static VanillaResult InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, VanillaHookType type = VanillaHookType::Inline);
+	static VanillaResult InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction);
 	static VanillaResult UninstallHook(const std::string& name);
 	static void UninstallAllHooks();
 };
