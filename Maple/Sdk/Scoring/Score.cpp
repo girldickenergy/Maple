@@ -1,5 +1,4 @@
 #include "Score.h"
-
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
 
@@ -22,7 +21,8 @@ void Score::spoofPlayDuration()
 	*reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET) = playEndTime - scaledDuration;
 }
 
-bool Score::handleScoreSubmission()
+#pragma optimize("", off)
+int Score::handleScoreSubmission()
 {
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xor ("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
@@ -30,7 +30,7 @@ bool Score::handleScoreSubmission()
 	Player::ResetAnticheatFlag();
 
 	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
-		return false;
+		return 0;
 
 	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
 	{
@@ -38,14 +38,15 @@ bool Score::handleScoreSubmission()
 
 		ScoreSubmissionDialog::Show();
 
-		return false;
+		return 0;
 	}
 
 	if (Config::Timewarp::Enabled)
 		spoofPlayDuration();
 
-	return true;
+	return 1;
 }
+#pragma optimize("", on)
 
 void __declspec(naked) Score::submitHook(uintptr_t instance)
 {
@@ -56,7 +57,7 @@ void __declspec(naked) Score::submitHook(uintptr_t instance)
 		pushad
 		pushfd
 		call handleScoreSubmission
-		test al, al
+		cmp eax, 0
 		je skipSubmission
 		popfd
 		popad

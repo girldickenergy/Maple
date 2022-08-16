@@ -7,9 +7,9 @@ class Score
 	static inline constexpr int STARTTIME_OFFSET = 0x74;
 
 	static void spoofPlayDuration();
-
+	
 	static inline uintptr_t scoreInstance;
-	static bool handleScoreSubmission();
+	static int handleScoreSubmission();
 
 	typedef void(__fastcall* fnSubmit)(uintptr_t instance);
 	static inline fnSubmit oSubmit;
