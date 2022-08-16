@@ -18,6 +18,9 @@ class VanillaHooking
 	static inline std::vector<uint8_t> detourStubBytes = { 0x5D, 0x68, 0xFF, 0xFF, 0xFF, 0xFF, 0xC3 };
 	static inline constexpr unsigned int detourStubAddressOffset = 2;
 
+	static inline std::vector<uint8_t> trampolineBytes = { 0x68, 0xFF, 0xFF, 0xFF, 0xFF, 0xC3 };
+	static inline constexpr unsigned int trampolineAddressOffset = 1;
+
 	static std::vector<uint8_t> getFunctionPrologue(uintptr_t functionAddress, unsigned int minimumBytes);
 	static void relocateRelativeAddresses(uintptr_t oldLocation, uintptr_t newLocation, unsigned int length);
 	static uintptr_t installDetourStub(uintptr_t detourAddress);

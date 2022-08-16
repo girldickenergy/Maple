@@ -35,7 +35,7 @@ std::vector<uint8_t> VanillaHooking::getFunctionPrologue(uintptr_t functionAddre
 		const unsigned int instructionLength = hde32_disasm(reinterpret_cast<void*>(functionAddress + functionPrologueLength), &hde);
 
 		if (hde.opcode == 0x74 || hde.opcode == 0x75)
-			minimumBytes += *reinterpret_cast<uint8_t*>(functionAddress + functionPrologueLength + 1) + 1;
+			minimumBytes += *reinterpret_cast<uint8_t*>(functionAddress + functionPrologueLength + 1);
 
 		functionPrologueLength += instructionLength;
 	}
@@ -82,18 +82,17 @@ uintptr_t VanillaHooking::installDetourStub(uintptr_t detourAddress)
 
 uintptr_t VanillaHooking::installTrampoline(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue)
 {
-	const uintptr_t trampolineAddress = reinterpret_cast<uintptr_t>(VirtualAlloc(nullptr, functionPrologue.size() + 0x5, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+	const uintptr_t trampolineAddress = reinterpret_cast<uintptr_t>(VirtualAlloc(nullptr, functionPrologue.size() + trampolineBytes.size(), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
 
 	for (size_t i = 0; i < functionPrologue.size(); i++)
 		*reinterpret_cast<uint8_t*>(trampolineAddress + i) = functionPrologue[i];
 
 	relocateRelativeAddresses(functionAddress, trampolineAddress, functionPrologue.size());
 
-	*reinterpret_cast<uint8_t*>(trampolineAddress + functionPrologue.size()) = 0xE9;
+	for (unsigned int i = 0; i < trampolineBytes.size(); i++)
+		*reinterpret_cast<uint8_t*>(trampolineAddress + functionPrologue.size() + i) = trampolineBytes[i];
 
-	const intptr_t relativeReturnAddress = (static_cast<intptr_t>(functionAddress) + functionPrologue.size()) - (static_cast<intptr_t>(trampolineAddress) + functionPrologue.size() + 0x5);
-
-	*reinterpret_cast<intptr_t*>(trampolineAddress + functionPrologue.size() + 0x1) = relativeReturnAddress;
+	*reinterpret_cast<uintptr_t*>(trampolineAddress + functionPrologue.size() + trampolineAddressOffset) = functionAddress + functionPrologue.size();
 
 	return trampolineAddress;
 }
