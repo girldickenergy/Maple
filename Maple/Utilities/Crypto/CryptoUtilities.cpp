@@ -75,7 +75,7 @@ std::string CryptoUtilities::Base64Encode(const std::string& str)
 {
     std::string result;
 
-    CryptoPP::Base64Encoder encoder;
+    CryptoPP::Base64Encoder encoder(nullptr, false);
     encoder.Attach(new CryptoPP::StringSink(result));
     encoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
     encoder.MessageEnd();

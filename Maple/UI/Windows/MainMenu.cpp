@@ -568,7 +568,7 @@ void MainMenu::Render()
                         const std::string logData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
                         ifs.close();
 
-                        ClipboardUtilities::Write(CryptoUtilities::Base64Encode(logData));
+                        ClipboardUtilities::Write(logData);
                     }
                 }
                 Widgets::EndPanel();
