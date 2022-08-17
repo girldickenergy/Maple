@@ -80,7 +80,7 @@ struct CustomArgs : ArgsBase
 DWORD WINAPI Initialize(LPVOID data_addr)
 {
     VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
+    STR_ENCRYPT_START
 
 	auto pArgs = (CustomArgs*)data_addr;
 
@@ -88,7 +88,7 @@ DWORD WINAPI Initialize(LPVOID data_addr)
 
 	std::vector<std::string> split = StringUtilities::Split(data);
 
-	Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
+    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
 
     Communication::ConnectToServer();
 
@@ -119,7 +119,7 @@ void InitializeMaple()
     if (std::filesystem::exists(GetAuthPath()))
     {
         const std::string authHash = GetAuthHash();
-        if (authHash != xor ("FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC") && authHash != xor ("176063779747AF3659FCFA4BC8BA01FFD9A6EA9BC4FCCA5A406A7D7CD9058318") && authHash != xor ("EA61F14A2FB494395887B83DACD80EF9BA7CCBF342EDD030387ADBE5807BA5A6") && authHash != xor ("C8862DA8AE15362FA7943BC96C35C04D4D2CF2C13D74EA1B475E6E391FAF1EF1") && authHash != xor ("64DCBC6BC55853D031C6621DA3B538CFE93D079D330CADBB6F6F90D3727E8D09"))
+        if (authHash != xor ("FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC") && authHash != xor ("176063779747AF3659FCFA4BC8BA01FFD9A6EA9BC4FCCA5A406A7D7CD9058318") && authHash != xor ("EA61F14A2FB494395887B83DACD80EF9BA7CCBF342EDD030387ADBE5807BA5A6") && authHash != xor ("C8862DA8AE15362FA7943BC96C35C04D4D2CF2C13D74EA1B475E6E391FAF1EF1") && authHash != xor ("8062D1A861DE8FC3693D3DAA7C69ECEA70CDB74A58C221E7ED7152E56ADE77EB") && authHash != xor ("64DCBC6BC55853D031C6621DA3B538CFE93D079D330CADBB6F6F90D3727E8D09"))
             Config::Misc::ForceDisableScoreSubmission = true;
 	}
 
@@ -156,6 +156,23 @@ void InitializeMaple()
         GLControl::Initialize();
 
         Memory::EndInitialize();
+
+        uintptr_t failSafe = Memory::Objects[xor ("GameBase::ClientHash")];
+        unsigned int retries = 0;
+        while (!failSafe)
+        {
+            if (retries >= 15)
+            {
+                Logger::Log(LogSeverity::Error, xor ("Maple failed to initialize with code %i"), 0xdeadbeef);
+
+                Security::CorruptMemory();
+            }
+
+            retries++;
+            failSafe = Memory::Objects[xor ("GameBase::ClientHash")];
+
+            Sleep(1000);
+        }
 
         //initializing UI and Spoofer
         //TODO: maybe we can move spoofer initialization outside of ui hooks?
