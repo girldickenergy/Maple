@@ -740,6 +740,9 @@
     <ClCompile Include="Utilities\Clipboard\ClipboardUtilities.cpp">
       <Filter>Utilities\Clipboard</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities\Anticheat\AnticheatUtilities.cpp">
+      <Filter>Utilities\Anticheat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -951,6 +954,9 @@
     </Filter>
     <Filter Include="Utilities\Clipboard">
       <UniqueIdentifier>{f9e894b6-aa05-45a2-9f45-b35c5233ae0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Anticheat">
+      <UniqueIdentifier>{13ef1eea-d5be-44e2-81ad-b8bc7ce8e68d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1919,6 +1925,9 @@
     </ClInclude>
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h">
       <Filter>Utilities\Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Anticheat\AnticheatUtilities.h">
+      <Filter>Utilities\Anticheat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
