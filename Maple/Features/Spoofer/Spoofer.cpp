@@ -187,7 +187,7 @@ void Spoofer::Import()
 	if (encodedProfileData.empty())
 		return;
 
-	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xor ("ZSj1CrtmTNCL98o8"));
+	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xor ("OvpvutSCyRdrx0BF"));
 	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
 
 	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
@@ -251,7 +251,7 @@ void Spoofer::Export()
 	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xor ("|") + CryptoUtilities::Base64Encode(profileData), xor ("ZSj1CrtmTNCL98o8")));
+	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xor ("|") + CryptoUtilities::Base64Encode(profileData), xor ("OvpvutSCyRdrx0BF")));
 
 	ClipboardUtilities::Write(encodedProfileData);
 

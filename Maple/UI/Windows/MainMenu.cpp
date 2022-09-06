@@ -169,9 +169,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xor ("l16082022"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xor ("l06092022"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xor ("l16082022"));
+                ImGui::TextColored(StyleProvider::MottoColour, xor ("l06092022"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();

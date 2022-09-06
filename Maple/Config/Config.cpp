@@ -434,7 +434,7 @@ void Config::Import()
 	if (encodedConfigData.empty())
 		return;
 
-	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xor ("TKDUe0IE0GUffHNj"));
+	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xor ("xbb9tuvQCGJRhN8z"));
 	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, "|");
 
 	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
@@ -498,7 +498,7 @@ void Config::Export()
 	const std::string configData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xor ("|") + CryptoUtilities::Base64Encode(configData), xor ("TKDUe0IE0GUffHNj")));
+	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xor ("|") + CryptoUtilities::Base64Encode(configData), xor ("xbb9tuvQCGJRhN8z")));
 
 	ClipboardUtilities::Write(encodedConfigData);
 

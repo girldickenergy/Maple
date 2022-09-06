@@ -76,7 +76,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	entry << message;
 
 	if (consoleHandle)
-		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xor ("psBeI5m5vNsBHVaT")) : entry.str()) << std::endl;
+		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xor ("vD5KJvfDRKZEaR9I")) : entry.str()) << std::endl;
 
 	if (logFilePath.empty())
 		return;
@@ -85,7 +85,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xor ("psBeI5m5vNsBHVaT"))) : entry.str()) << std::endl;
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xor ("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
 	
 	STR_ENCRYPT_END
