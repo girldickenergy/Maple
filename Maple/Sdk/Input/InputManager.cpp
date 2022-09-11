@@ -2,6 +2,8 @@
 
 #define NOMINMAX
 
+#include <iostream>
+
 #include "ThemidaSDK.h"
 
 #include "../Memory.h"
@@ -12,6 +14,16 @@
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Utilities/Security/xorstr.hpp"
+
+inline float roundoff(float val)
+{
+	return  static_cast<int>(val + 0.5 - (val < 0));
+}
+
+inline Vector2 roundVec(Vector2 val)
+{
+	return Vector2(roundoff(val.X), roundoff(val.Y));
+}
 
 void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 {
@@ -24,23 +36,25 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 
 		if (ReplayBot::Ready && !ReplayBot::DisableAiming)
 		{
-			newPosition = ReplayBot::GetCursorPosition();
+			newPosition = roundVec(ReplayBot::GetCursorPosition());
 
 			accumulatedOffset = newPosition - pos;
 		}
 		else if (Config::AimAssist::Enabled)
-			newPosition = AimAssist::GetCursorPosition(pos);
+			newPosition = roundVec(AimAssist::GetCursorPosition(pos));
 	}
 	else
 	{
 		if (!lastCursorPosition.IsNull())
 			accumulatedOffset = Resync(lastCursorPosition - pos, accumulatedOffset, .5f);
 
-		newPosition = pos + accumulatedOffset;
+		newPosition = roundVec(pos + accumulatedOffset);
 	}
 
 	cursorPosition = newPosition;
 	lastCursorPosition = pos;
+
+	std::cout << cursorPosition.X << ", " << cursorPosition.Y << std::endl;
 	
 	oSetMousePosition(newPosition);
 }
