@@ -2,8 +2,6 @@
 
 #define NOMINMAX
 
-#include <iostream>
-
 #include "ThemidaSDK.h"
 
 #include "../Memory.h"
@@ -53,8 +51,6 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 
 	cursorPosition = newPosition;
 	lastCursorPosition = pos;
-
-	std::cout << cursorPosition.X << ", " << cursorPosition.Y << std::endl;
 	
 	oSetMousePosition(newPosition);
 }
