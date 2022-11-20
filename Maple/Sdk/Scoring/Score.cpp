@@ -10,6 +10,7 @@
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../Osu/GameBase.h"
 #include "../../Features/Timewarp/Timewarp.h"
+#include "../../Communication/Communication.h"
 
 void Score::spoofPlayDuration()
 {
@@ -25,7 +26,7 @@ void Score::spoofPlayDuration()
 int Score::handleScoreSubmission()
 {
 	if (Player::GetAnticheatFlag() != 0)
-		Logger::Log(LogSeverity::Warning, xor ("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
+		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
 	Player::ResetAnticheatFlag();
 
@@ -71,12 +72,14 @@ void __declspec(naked) Score::submitHook(uintptr_t instance)
 
 void Score::Initialize()
 {
+	VM_FISH_RED_START
 	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("Score::Submit"), xor ("55 8B EC 57 56 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"));
-	Memory::AddHook(xor ("Score::Submit"), xor ("Score::Submit"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit));
+	Memory::AddObject(xorstr_("Score::Submit"), xorstr_("55 8B EC 57 56 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"));
+	Memory::AddHook(xorstr_("Score::Submit"), xorstr_("Score::Submit"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit));
 
 	STR_ENCRYPT_END
+	VM_FISH_RED_END
 }
 
 void Score::Submit()

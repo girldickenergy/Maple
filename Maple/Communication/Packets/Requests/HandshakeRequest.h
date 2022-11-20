@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Request.h"
+#include <vector>
 
-class HandshakeRequest : public Request
+class HandshakeRequest
 {
 public:
-	HandshakeRequest();
+	HandshakeRequest() = default;
+	std::vector<unsigned char> Serialize();
 };

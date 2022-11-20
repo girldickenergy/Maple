@@ -7,6 +7,7 @@
 #include "../Osu/GameBase.h"
 #include "../../Config/Config.h"
 #include "../../Utilities/Security/xorstr.hpp"
+#include "../../Communication/Communication.h"
 
 void __declspec(naked) Ruleset::loadFlashlightHook(uintptr_t instance)
 {
@@ -106,17 +107,23 @@ int __declspec(naked) Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 
 void Ruleset::Initialize()
 {
-	Memory::AddObject(xor ("Ruleset::IncreaseScoreHit"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 F0 83 7D F0 00 75 0A"));
-	Memory::AddPatch(xor ("Ruleset::IncreaseScoreHit_HackCheck"), xor ("Ruleset::IncreaseScoreHit"), xor ("80 78 7C 00 0F 84"), 0x1D36, 0x5, { 0x8D });
+	VM_FISH_RED_START
+	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("Ruleset::LoadFlashlight"), xor ("55 8B EC 57 56 53 83 EC 30 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D D8 8B 45 D8 83 78 5C 00"));
-	Memory::AddHook(xor ("Ruleset::LoadFlashlight"), xor ("Ruleset::LoadFlashlight"), reinterpret_cast<uintptr_t>(loadFlashlightHook), reinterpret_cast<uintptr_t*>(&oLoadFlashlight));
+	Memory::AddObject(xorstr_("Ruleset::IncreaseScoreHit"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 F0 83 7D F0 00 75 0A"));
+	Memory::AddPatch(xorstr_("Ruleset::IncreaseScoreHit_HackCheck"), xorstr_("Ruleset::IncreaseScoreHit"), xorstr_("80 78 7C 00 0F 84"), 0x1D36, 0x5, { 0x8D });
 
-	Memory::AddObject(xor ("RulesetMania::LoadFlashlight"), xor ("55 8B EC 57 56 53 83 EC 30 8B F1 8D 7D C4 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D D4 8B 45 D4 83 78 5C 00"));
-	Memory::AddHook(xor ("RulesetMania::LoadFlashlight"), xor ("RulesetMania::LoadFlashlight"), reinterpret_cast<uintptr_t>(loadManiaFlashlightHook), reinterpret_cast<uintptr_t*>(&oLoadManiaFlashlight));
+	Memory::AddObject(xorstr_("Ruleset::LoadFlashlight"), xorstr_("55 8B EC 57 56 53 83 EC 30 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D D8 8B 45 D8 83 78 5C 00"));
+	Memory::AddHook(xorstr_("Ruleset::LoadFlashlight"), xorstr_("Ruleset::LoadFlashlight"), reinterpret_cast<uintptr_t>(loadFlashlightHook), reinterpret_cast<uintptr_t*>(&oLoadFlashlight));
 
-	Memory::AddObject(xor ("RulesetMania::StageMania::GetHasHiddenSprites"), xor ("55 8B EC 56 A1 ?? ?? ?? ?? 85 C0 74 24 8B 50 1C 8B 4A 04 8B 72 08 FF 72 0C 8B D6"));
-	Memory::AddHook(xor ("RulesetMania::StageMania::GetHasHiddenSprites"), xor ("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
+	Memory::AddObject(xorstr_("RulesetMania::LoadFlashlight"), xorstr_("55 8B EC 57 56 53 83 EC 30 8B F1 8D 7D C4 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D D4 8B 45 D4 83 78 5C 00"));
+	Memory::AddHook(xorstr_("RulesetMania::LoadFlashlight"), xorstr_("RulesetMania::LoadFlashlight"), reinterpret_cast<uintptr_t>(loadManiaFlashlightHook), reinterpret_cast<uintptr_t*>(&oLoadManiaFlashlight));
+
+	Memory::AddObject(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("55 8B EC 56 A1 ?? ?? ?? ?? 85 C0 74 24 8B 50 1C 8B 4A 04 8B 72 08 FF 72 0C 8B D6"));
+	Memory::AddHook(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
+
+	STR_ENCRYPT_END
+	VM_FISH_RED_END
 }
 
 uintptr_t Ruleset::GetInstance()

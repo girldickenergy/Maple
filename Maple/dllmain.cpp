@@ -1,5 +1,4 @@
 ﻿#include <clocale>
-#include <iostream>
 #include <WinSock2.h>
 
 #include "curl.h"
@@ -50,14 +49,12 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     return TRUE;
 }
 
-struct ArgsBase
+struct UserData
 {
-    long long size;
-};
-
-struct CustomArgs : ArgsBase
-{
-    char user_data[256 * 5 * 10];
+    char Username[25];
+    char SessionToken[33];
+    char DiscordID[33];
+    char DiscordAvatarHash[33];
 };
 
 DWORD WINAPI Initialize(LPVOID data_addr)
@@ -65,19 +62,22 @@ DWORD WINAPI Initialize(LPVOID data_addr)
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
 
-    auto pArgs = (CustomArgs*)data_addr;
+    int protectionVar = 0x501938CA;
+    CHECK_PROTECTION(protectionVar, 0x9CCC379)
+    if (protectionVar != 0x9CCC379)
+        Security::CorruptMemory();
 
-    std::string data(pArgs->user_data, 255);
+    if (!data_addr)
+        Security::CorruptMemory();
 
-    std::vector<std::string> split = StringUtilities::Split(data);
+    UserData userData = *static_cast<UserData*>(data_addr);
+    Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 
-    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
+    memset(data_addr, 0x0, sizeof(UserData));
 
-    Communication::ConnectToServer();
+    Communication::Connect();
 
-    curl_global_init(CURL_GLOBAL_ALL);
-
-    while (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+    while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Sleep(500);
 
     InitializeMaple();
@@ -93,25 +93,25 @@ void InitializeMaple()
     VM_FISH_RED_START
     STR_ENCRYPT_START
 
-    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+    if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
-    Storage::Initialize(Communication::CurrentUser->UsernameHashed);
+    Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
     Config::Initialize();
 
-	#ifdef _DEBUG
-	    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
-	#else
-	    Logger::Initialize(LogSeverity::All, true);
-	#endif
+#ifdef _DEBUG
+    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
+#else
+    Logger::Initialize(LogSeverity::All, true);
+#endif
 
-	Logger::Log(LogSeverity::Info, xor ("Initialization started."));
+    Logger::Log(LogSeverity::Info, xorstr_("Initialization started."));
 
     VanillaResult vanillaResult = Vanilla::Initialize(true);
     if (vanillaResult == VanillaResult::Success)
     {
-        Logger::Log(LogSeverity::Info, xor ("Initialized Vanilla!"));
-		
+        Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
+
         //initializing SDK
         Memory::StartInitialize();
 
@@ -132,9 +132,9 @@ void InitializeMaple()
         GLControl::Initialize();
 
         Memory::EndInitialize();
-		
+
         WaitForCriticalSDKToInitialize();
-		
+
         if (!AnticheatUtilities::IsRunningGoodKnownVersion())
             Config::Misc::ForceDisableScoreSubmission = true;
 
@@ -144,7 +144,7 @@ void InitializeMaple()
     }
     else
     {
-        Logger::Log(LogSeverity::Error, xor ("Vanilla failed to initialize with code %i"), (int)vanillaResult);
+        Logger::Log(LogSeverity::Error, xorstr_("Vanilla failed to initialize with code %i"), (int)vanillaResult);
 
         Security::CorruptMemory();
     }
@@ -158,9 +158,9 @@ void WaitForCriticalSDKToInitialize()
     VM_FISH_RED_START
     STR_ENCRYPT_START
 
-    uintptr_t clientHash = Memory::Objects[xor ("GameBase::ClientHash")];
-    uintptr_t updateTiming = Memory::Objects[xor ("GameBase::UpdateTiming")];
-    uintptr_t initializePrivate = Memory::Objects[xor ("BanchoClient::InitializePrivate")];
+    uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
+    uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+    uintptr_t initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
 
     VM_FISH_RED_END
     STR_ENCRYPT_END
@@ -173,16 +173,16 @@ void WaitForCriticalSDKToInitialize()
 
         if (retries >= 30)
         {
-            Logger::Log(LogSeverity::Error, xor ("Maple failed to initialize with code %i"), 0xdeadbeef);
+            Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
 
             Security::CorruptMemory();
         }
 
         retries++;
 
-        clientHash = Memory::Objects[xor ("GameBase::ClientHash")];
-        updateTiming = Memory::Objects[xor ("GameBase::UpdateTiming")];
-        initializePrivate = Memory::Objects[xor ("BanchoClient::InitializePrivate")];
+        clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
+        updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+        initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
 
         Sleep(1000);
 

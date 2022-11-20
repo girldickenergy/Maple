@@ -46,15 +46,12 @@ public:
 		return wc;
 	}
 
-	static __forceinline bool CheckIfThreadIsAlive(HANDLE hnd, bool crashIfNotAlive = false)
+	static __forceinline bool CheckIfThreadIsAlive(HANDLE hnd)
 	{
 		DWORD exitCode;
 		if (GetExitCodeThread(hnd, &exitCode))
 			if (exitCode != STILL_ACTIVE)
-				if (crashIfNotAlive)
-					CorruptMemory();
-				else
-					return false;
+				return false;
 
 		return true;
 	}

@@ -12,6 +12,7 @@
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Utilities/Security/xorstr.hpp"
+#include "../../Communication/Communication.h"
 
 inline float roundoff(float val)
 {
@@ -66,16 +67,16 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 		const bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
 		const bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
 
-		const uintptr_t leftButton1Address = Memory::Objects[xor ("InputManager::leftButton1")];
-		const uintptr_t leftButton1iAddress = Memory::Objects[xor ("InputManager::leftButton1i")];
-		const uintptr_t leftButton2Address = Memory::Objects[xor ("InputManager::leftButton2")];
-		const uintptr_t leftButton2iAddress = Memory::Objects[xor ("InputManager::leftButton2i")];
-		const uintptr_t rightButton1Address = Memory::Objects[xor ("InputManager::rightButton1")];
-		const uintptr_t rightButton1iAddress = Memory::Objects[xor ("InputManager::rightButton1i")];
-		const uintptr_t rightButton2Address = Memory::Objects[xor ("InputManager::rightButton2")];
-		const uintptr_t rightButton2iAddress = Memory::Objects[xor ("InputManager::rightButton2i")];
-		const uintptr_t leftButtonAddress = Memory::Objects[xor ("InputManager::leftButton")];
-		const uintptr_t rightButtonAddress = Memory::Objects[xor ("InputManager::rightButton")];
+		const uintptr_t leftButton1Address = Memory::Objects[xorstr_("InputManager::leftButton1")];
+		const uintptr_t leftButton1iAddress = Memory::Objects[xorstr_("InputManager::leftButton1i")];
+		const uintptr_t leftButton2Address = Memory::Objects[xorstr_("InputManager::leftButton2")];
+		const uintptr_t leftButton2iAddress = Memory::Objects[xorstr_("InputManager::leftButton2i")];
+		const uintptr_t rightButton1Address = Memory::Objects[xorstr_("InputManager::rightButton1")];
+		const uintptr_t rightButton1iAddress = Memory::Objects[xorstr_("InputManager::rightButton1i")];
+		const uintptr_t rightButton2Address = Memory::Objects[xorstr_("InputManager::rightButton2")];
+		const uintptr_t rightButton2iAddress = Memory::Objects[xorstr_("InputManager::rightButton2i")];
+		const uintptr_t leftButtonAddress = Memory::Objects[xorstr_("InputManager::leftButton")];
+		const uintptr_t rightButtonAddress = Memory::Objects[xorstr_("InputManager::rightButton")];
 
 		if (leftButton1Address && leftButton1iAddress && leftButton2Address && leftButton2iAddress && rightButton1Address && rightButton1iAddress && rightButton2Address && rightButton2iAddress && leftButtonAddress && rightButtonAddress)
 		{
@@ -104,26 +105,28 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 
 void InputManager::Initialize()
 {
+	VM_FISH_RED_START
 	STR_ENCRYPT_START
-	
-	Memory::AddObject(xor ("MouseManager::SetMousePosition"), xor ("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"));
-	Memory::AddObject(xor ("InputManager::MouseViaKeyboardControls"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"));
 
-	Memory::AddObject(xor ("InputManager::leftButton1"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::leftButton1i"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1I_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::leftButton2"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON2_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::leftButton2i"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON2I_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::rightButton1"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON1_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::rightButton1i"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON1I_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::rightButton2"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON2_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::rightButton2i"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON2I_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::leftButton"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON_OFFSET, 1);
-	Memory::AddObject(xor ("InputManager::rightButton"), xor ("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON_OFFSET, 1);
+	Memory::AddObject(xorstr_("MouseManager::SetMousePosition"), xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"));
+	Memory::AddObject(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"));
 
-	Memory::AddHook(xor ("MouseManager::SetMousePosition"), xor ("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
-	Memory::AddHook(xor ("InputManager::MouseViaKeyboardControls"), xor ("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
+	Memory::AddObject(xorstr_("InputManager::leftButton1"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::leftButton1i"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON1I_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::leftButton2"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON2_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::leftButton2i"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON2I_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::rightButton1"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON1_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::rightButton1i"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON1I_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::rightButton2"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON2_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::rightButton2i"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON2I_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::leftButton"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), LEFTBUTTON_OFFSET, 1);
+	Memory::AddObject(xorstr_("InputManager::rightButton"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02"), RIGHTBUTTON_OFFSET, 1);
+
+	Memory::AddHook(xorstr_("MouseManager::SetMousePosition"), xorstr_("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
+	Memory::AddHook(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 
 	STR_ENCRYPT_END
+	VM_FISH_RED_END
 }
 
 Vector2 InputManager::GetCursorPosition()
@@ -143,7 +146,7 @@ Vector2 InputManager::GetAccumulatedOffset()
 
 void InputManager::SetAccumulatedOffset(Vector2 value)
 {
-	accumulatedOffset = value;
+	accumulatedOffset = (Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (Vector2(-value.X, -value.Y)) : value;
 }
 
 Vector2 InputManager::Resync(Vector2 displacement, Vector2 offset, float resyncFactor)

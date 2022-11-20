@@ -72,12 +72,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,14 +160,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Communication\Communication.cpp" />
+    <ClCompile Include="Communication\Crypto\CryptoProvider.cpp" />
     <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp" />
     <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp" />
-    <ClCompile Include="Communication\Packets\Requests\Request.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
-    <ClCompile Include="Communication\Packets\Responses\Response.cpp" />
-    <ClCompile Include="Communication\TCP\Client.cpp" />
-    <ClCompile Include="Communication\TCP\TCP_Client.cpp" />
+    <ClCompile Include="Communication\TCP\TCPClient.cpp" />
+    <ClCompile Include="Communication\User.cpp" />
     <ClCompile Include="Config\Config.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
     <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
@@ -183,6 +182,7 @@
     <ClCompile Include="Dependencies\CryptoPP\aria_simd.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\asn.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\authenc.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\badcert.cxx" />
     <ClCompile Include="Dependencies\CryptoPP\base32.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\base64.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\basecode.cpp" />
@@ -281,12 +281,12 @@
     <ClCompile Include="Dependencies\CryptoPP\padlkrng.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\panama.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\pch.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\pem_common.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\pem_read.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\pem_write.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\pkcspad.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\poly1305.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\polynomi.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ppc_power7.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ppc_power8.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ppc_power9.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\ppc_simd.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\pssr.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\pubkey.cpp" />
@@ -345,8 +345,7 @@
     <ClCompile Include="Dependencies\CryptoPP\vmac.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\wake.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\whrlpool.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\Wrapper\AES.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.cpp" />
+    <ClCompile Include="Dependencies\CryptoPP\x509cert.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xed25519.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xtr.cpp" />
     <ClCompile Include="Dependencies\CryptoPP\xtrcrypt.cpp" />
@@ -410,19 +409,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Communication\Communication.h" />
-    <ClInclude Include="Communication\MatchedClient.h" />
+    <ClInclude Include="Communication\Crypto\CryptoProvider.h" />
+    <ClInclude Include="Communication\Packets\PacketType.h" />
     <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h" />
     <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h" />
-    <ClInclude Include="Communication\Packets\Requests\Request.h" />
-    <ClInclude Include="Communication\Packets\Requests\RequestType.h" />
     <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h" />
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
-    <ClInclude Include="Communication\Packets\Responses\Response.h" />
-    <ClInclude Include="Communication\Packets\Responses\ResponseType.h" />
-    <ClInclude Include="Communication\TCP\Client.h" />
-    <ClInclude Include="Communication\TCP\Client_Observer.h" />
-    <ClInclude Include="Communication\TCP\Pipe_Ret_T.h" />
-    <ClInclude Include="Communication\TCP\TCP_Client.h" />
+    <ClInclude Include="Communication\TCP\TCPClient.h" />
     <ClInclude Include="Communication\User.h" />
     <ClInclude Include="Config\Config.h" />
     <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h" />
@@ -551,6 +544,8 @@
     <ClInclude Include="Dependencies\CryptoPP\padlkrng.h" />
     <ClInclude Include="Dependencies\CryptoPP\panama.h" />
     <ClInclude Include="Dependencies\CryptoPP\pch.h" />
+    <ClInclude Include="Dependencies\CryptoPP\pem.h" />
+    <ClInclude Include="Dependencies\CryptoPP\pem_common.h" />
     <ClInclude Include="Dependencies\CryptoPP\pkcspad.h" />
     <ClInclude Include="Dependencies\CryptoPP\poly1305.h" />
     <ClInclude Include="Dependencies\CryptoPP\polynomi.h" />
@@ -615,8 +610,7 @@
     <ClInclude Include="Dependencies\CryptoPP\wake.h" />
     <ClInclude Include="Dependencies\CryptoPP\whrlpool.h" />
     <ClInclude Include="Dependencies\CryptoPP\words.h" />
-    <ClInclude Include="Dependencies\CryptoPP\Wrapper\AES.h" />
-    <ClInclude Include="Dependencies\CryptoPP\Wrapper\RSADecrypt.h" />
+    <ClInclude Include="Dependencies\CryptoPP\x509cert.h" />
     <ClInclude Include="Dependencies\CryptoPP\xed25519.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtr.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtrcrypt.h" />
@@ -658,6 +652,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\JSON\json.hpp" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\Vector2.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitObjectType.h" />

@@ -86,9 +86,9 @@ public:
 
 	static void LoadTextures()
 	{
-		if (Communication::CurrentUser->DiscordID != "-1" && Communication::CurrentUser->AvatarHash != "-1")
+		if (Communication::GetUser()->GetDiscordID() != "-1" && Communication::GetUser()->GetAvatarHash() != "-1")
 		{
-			const std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::CurrentUser->DiscordID + "/" + Communication::CurrentUser->AvatarHash + ".png?size=64";
+			const std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::GetUser()->GetDiscordID() + "/" + Communication::GetUser()->GetAvatarHash() + ".png?size=64";
 
 			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromURLOGL3(avatarURL) : TextureLoader::LoadTextureFromURLD3D9(UI::D3D9Device, avatarURL);
 		}

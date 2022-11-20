@@ -1,36 +1,41 @@
 #include "HandshakeResponse.h"
 
-#include "../../Communication.h"
-#include "../../../Utilities/Strings/StringUtilities.h"
+#include "json.hpp"
+#include "ThemidaSDK.h"
 
-HandshakeResponse::HandshakeResponse(const char* msg, size_t size) : Response(msg, size)
+#include "../../Crypto/CryptoProvider.h"
+#include "../../../Utilities/Strings/StringUtilities.h"
+#include "../../../Utilities/Security/xorstr.hpp"
+
+HandshakeResponse::HandshakeResponse(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
+{
+	this->key = key;
+	this->iv = iv;
+}
+
+const std::vector<unsigned char>& HandshakeResponse::GetKey()
+{
+	return key;
+}
+
+const std::vector<unsigned char>& HandshakeResponse::GetIV()
+{
+	return iv;
+}
+
+#pragma optimize("", off)
+HandshakeResponse HandshakeResponse::Deserialize(const std::vector<unsigned char>& payload)
 {
 	VM_SHARK_BLACK_START
-	std::chrono::milliseconds msEpoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+	STR_ENCRYPT_START
 
-	std::vector<unsigned char> encrypted = StringUtilities::StringToByteArray(RawData[1]);
+	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::GetInstance()->RSADecrypt(payload)));
 
-	encrypted.erase(encrypted.begin());
-	RawData[0].erase(RawData[0].begin());
+	HandshakeResponse response = HandshakeResponse(CryptoProvider::GetInstance()->Base64Decode(jsonPayload[xorstr_("Key")]), CryptoProvider::GetInstance()->Base64Decode(jsonPayload[xorstr_("IV")]));
 
-	std::vector<unsigned char> decoded = Communication::RSA.Decode(encrypted, std::stoi(RawData[0]));
-
-	IV = std::vector<unsigned char>(decoded.begin(), decoded.end() - (32 + (decoded.size() - 32 - 16)));
-	Key = std::vector<unsigned char>(decoded.begin() + 16, decoded.end() - (decoded.size() - 32 - 16));
-	std::string epoch = std::string(decoded.begin() + 48, decoded.end());
-
-	if (decoded.size() < 48 || decoded.size() > 100 || IV.size() != 16 || Key.size() != 32)
-	{
-		Result = HandshakeResult::InternalError;
-		return;
-	}
-
-	if (std::abs(msEpoch.count() - ((std::stoll(epoch)*2) ^ 0xDA)) > 5000)
-	{
-		Result = HandshakeResult::EpochTimedOut;
-		return;
-	}
-
-	Result = HandshakeResult::Success;
+	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END
+
+	return response;
 }
+#pragma optimize("", on)

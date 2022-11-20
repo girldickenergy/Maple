@@ -37,7 +37,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	tm timeStruct{};
 	localtime_s(&timeStruct, &time);
 
-	entry << xor ("[") << std::put_time(&timeStruct, xor ("%c")) << xor ("] ");
+	entry << xorstr_("[") << std::put_time(&timeStruct, xorstr_("%c")) << xorstr_("] ");
 
 	switch (severity)
 	{
@@ -45,38 +45,38 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 		if (consoleHandle)
 			SetConsoleTextAttribute(consoleHandle, 8);
 
-		entry << xor ("[DEBUG] ");
+		entry << xorstr_("[DEBUG] ");
 		break;
 	case LogSeverity::Warning:
 		if (consoleHandle)
 			SetConsoleTextAttribute(consoleHandle, 6);
 
-		entry << xor ("[WARNING] ");
+		entry << xorstr_("[WARNING] ");
 		break;
 	case LogSeverity::Error:
 		if (consoleHandle)
 			SetConsoleTextAttribute(consoleHandle, 4);
 
-		entry << xor ("[ERROR] ");
+		entry << xorstr_("[ERROR] ");
 		break;
 	case LogSeverity::Assert:
 		if (consoleHandle)
 			SetConsoleTextAttribute(consoleHandle, 5);
 
-		entry << xor ("[ASSERT FAIL] ");
+		entry << xorstr_("[ASSERT FAIL] ");
 		break;
 	default:
 		if (consoleHandle)
 			SetConsoleTextAttribute(consoleHandle, 7);
 
-		entry << xor ("[INFO] ");
+		entry << xorstr_("[INFO] ");
 		break;
 	}
 
 	entry << message;
 
 	if (consoleHandle)
-		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xor ("vD5KJvfDRKZEaR9I")) : entry.str()) << std::endl;
+		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I")) : entry.str()) << std::endl;
 
 	if (logFilePath.empty())
 		return;
@@ -85,7 +85,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xor ("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
 	
 	STR_ENCRYPT_END
@@ -98,13 +98,13 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 	shouldEncrypt = encrypt;
 		
-	Logger::logFilePath = Storage::LogsDirectory + xor ("\\runtime.log");
+	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
 	{
 		AllocConsole();
-		freopen_s(reinterpret_cast<FILE**>(stdout), xor ("CONOUT$"), xor ("w"), stdout);
+		freopen_s(reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
 		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		SetConsoleTitle(consoleTitle);
@@ -146,7 +146,7 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 			createLogEntry(LogSeverity::Assert, std::string(buffer));
 
 		if (throwIfFalse)
-			throw std::runtime_error(std::string(xor("Assertion failed: ")) + buffer);
+			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
 	}
 	
 	STR_ENCRYPT_END

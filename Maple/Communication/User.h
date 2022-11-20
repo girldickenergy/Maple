@@ -1,21 +1,20 @@
 #pragma once
 
-#include "../Utilities/Crypto/CryptoUtilities.h"
+#include <string>
 
-struct User
+class User
 {
-	std::string Username;
-	std::string UsernameHashed;
-	std::string SessionID;
-	std::string DiscordID;
-	std::string AvatarHash;
+	std::string username;
+	std::string sessionToken;
+	std::string discordID;
+	std::string avatarHash;
+public:
+	User(const std::string& username, const std::string& sessionToken, const std::string& discordID, const std::string& avatarHash);
+	User() = default;
 
-	User(const std::string& username, const std::string& sessionID, const std::string& discordID, const std::string& avatarHash)
-	{
-		Username = username;
-		UsernameHashed = CryptoUtilities::GetMD5Hash(username);
-		SessionID = sessionID;
-		DiscordID = discordID;
-		AvatarHash = avatarHash;
-	}
+	const std::string& GetUsername();
+	std::string GetUsernameHashed();
+	const std::string& GetSessionToken();
+	const std::string& GetDiscordID();
+	const std::string& GetAvatarHash();
 };

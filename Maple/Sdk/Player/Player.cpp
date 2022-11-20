@@ -4,6 +4,7 @@
 
 #include "HitObjectManager.h"
 #include "../Memory.h"
+#include "../Osu/GameBase.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Features/Enlighten/Enlighten.h"
@@ -11,8 +12,10 @@
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Config/Config.h"
-#include "../Osu/GameBase.h"
 #include "../../Utilities/Security/xorstr.hpp"
+
+#include "../../Utilities/Security/Security.h"
+#include "../../Logging/Logger.h"
 
 void Player::initializeFeatures()
 {
@@ -69,42 +72,48 @@ void __declspec(naked) Player::updateFlashlightHook(uintptr_t instance)
 
 void Player::Initialize()
 {
-	Memory::AddObject(xor ("Player::Instance"), xor ("80 3D ?? ?? ?? ?? 00 75 26 A1 ?? ?? ?? ?? 85 C0 74 0C"), 0xA, 1);
-	Memory::AddObject(xor ("Player::Retrying"), xor ("8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00"), 0xA, 1);
-	Memory::AddObject(xor ("Player::Failed"), xor ("8B 15 ?? ?? ?? ?? 89 90 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 74 57 80 3D"), 0xE, 1);
-	Memory::AddObject(xor ("Player::Flag"), xor ("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), 0x9, 1);
+	VM_FISH_RED_START
+	STR_ENCRYPT_START
 
-	Memory::AddObject(xor ("Player::GetAllowSubmissionVariableConditions"), xor ("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
-	Memory::AddPatch(xor ("Player::GetAllowSubmissionVariableConditions_HackCheck"), xor ("Player::GetAllowSubmissionVariableConditions"), xor ("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
+	Memory::AddObject(xorstr_("Player::Instance"), xorstr_("80 3D ?? ?? ?? ?? 00 75 26 A1 ?? ?? ?? ?? 85 C0 74 0C"), 0xA, 1);
+	Memory::AddObject(xorstr_("Player::Retrying"), xorstr_("8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00"), 0xA, 1);
+	Memory::AddObject(xorstr_("Player::Failed"), xorstr_("8B 15 ?? ?? ?? ?? 89 90 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 74 57 80 3D"), 0xE, 1);
+	Memory::AddObject(xorstr_("Player::Flag"), xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), 0x9, 1);
 
-	Memory::AddObject(xor ("Player::HandleScoreSubmission"), xor ("55 8B EC 57 56 53 83 EC 08 8B F1 80 BE ?? ?? ?? ?? 00 75 26 B9"));
-	Memory::AddPatch(xor ("Player::HandleScoreSubmission_HackCheck"), xor ("Player::HandleScoreSubmission"), xor ("80 78 7C 00 0F 84"), 0x40F, 0x5, { 0x8D });
+	Memory::AddObject(xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
+	Memory::AddPatch(xorstr_("Player::GetAllowSubmissionVariableConditions_HackCheck"), xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
 
-	Memory::AddObject(xor ("Player::Update"), xor ("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 85 C0 74 05"));
-	Memory::AddPatch(xor ("Player::Update_AudioCheck"), xor ("Player::Update"), xor ("0F 85 ?? ?? ?? ?? 83 BE ?? ?? ?? ?? FF"), 0x1BCC, 0x1, { 0x8D });
+	Memory::AddObject(xorstr_("Player::HandleScoreSubmission"), xorstr_("55 8B EC 57 56 53 83 EC 08 8B F1 80 BE ?? ?? ?? ?? 00 75 26 B9"));
+	Memory::AddPatch(xorstr_("Player::HandleScoreSubmission_HackCheck"), xorstr_("Player::HandleScoreSubmission"), xorstr_("80 78 7C 00 0F 84"), 0x40F, 0x5, { 0x8D });
 
-	Memory::AddObject(xor ("Player::CheckFlashlightHax"), xor ("55 8B EC 57 56 53 83 EC 18 8B F9 80 3D"));
-	Memory::AddPatch(xor ("Player::CheckFlashlightHax_FLCheck"), xor ("Player::CheckFlashlightHax"), xor ("80 3D ?? ?? ?? ?? 00 75 24 83 BF"), 0x375, 0x7, { 0x7D });
+	Memory::AddObject(xorstr_("Player::Update"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 85 C0 74 05"));
+	Memory::AddPatch(xorstr_("Player::Update_AudioCheck"), xorstr_("Player::Update"), xorstr_("0F 85 ?? ?? ?? ?? 83 BE ?? ?? ?? ?? FF"), 0x1BCC, 0x1, { 0x8D });
 
-	Memory::AddObject(xor ("Player::HaxCheckMouse"), xor ("55 8B EC 57 56 83 EC 54 80 3D"));
-	Memory::AddPatch(xor ("Player::HaxCheckMouse_MouseCheck"), xor ("Player::HaxCheckMouse"), xor ("80 3D ?? ?? ?? ?? 00 75 14"), 0x2C0, 0x7, { 0x7D });
+	Memory::AddObject(xorstr_("Player::CheckFlashlightHax"), xorstr_("55 8B EC 57 56 53 83 EC 18 8B F9 80 3D"));
+	Memory::AddPatch(xorstr_("Player::CheckFlashlightHax_FLCheck"), xorstr_("Player::CheckFlashlightHax"), xorstr_("80 3D ?? ?? ?? ?? 00 75 24 83 BF"), 0x375, 0x7, { 0x7D });
 
-	Memory::AddObject(xor ("Player::CheckAimAssist"), xor ("55 8B EC 57 56 83 EC 24 8B F1 8D 86"));
-	Memory::AddPatch(xor ("Player::CheckAimAssist_AACheck"), xor ("Player::CheckAimAssist"), xor ("80 38 00 74 0B"), 0x212, 0x3, { 0x7D });
+	Memory::AddObject(xorstr_("Player::HaxCheckMouse"), xorstr_("55 8B EC 57 56 83 EC 54 80 3D"));
+	Memory::AddPatch(xorstr_("Player::HaxCheckMouse_MouseCheck"), xorstr_("Player::HaxCheckMouse"), xorstr_("80 3D ?? ?? ?? ?? 00 75 14"), 0x2C0, 0x7, { 0x7D });
 
-	Memory::AddObject(xor ("Player::HaxCheckPass"), xor ("55 8B EC 57 56 53 83 EC 2C 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 83 3D ?? ?? ?? ?? 00 75 0A B8"));
-	Memory::AddPatch(xor ("Player::HaxCheckPass_UniqueIDCheck"), xor ("Player::HaxCheckPass"), xor ("EB 02 33 C0 85 C0 75 13"), 0x400, 0x8, { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
+	Memory::AddObject(xorstr_("Player::CheckAimAssist"), xorstr_("55 8B EC 57 56 83 EC 24 8B F1 8D 86"));
+	Memory::AddPatch(xorstr_("Player::CheckAimAssist_AACheck"), xorstr_("Player::CheckAimAssist"), xorstr_("80 38 00 74 0B"), 0x212, 0x3, { 0x7D });
 
-	Memory::AddObject(xor ("Player::OnLoadComplete"), xor ("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"));
-	Memory::AddHook(xor ("Player::OnLoadComplete"), xor ("Player::OnLoadComplete"), reinterpret_cast<uintptr_t>(onLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnLoadComplete));
+	Memory::AddObject(xorstr_("Player::HaxCheckPass"), xorstr_("55 8B EC 57 56 53 83 EC 2C 8B F1 8D 7D C8 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 83 3D ?? ?? ?? ?? 00 75 0A B8"));
+	Memory::AddPatch(xorstr_("Player::HaxCheckPass_UniqueIDCheck"), xorstr_("Player::HaxCheckPass"), xorstr_("EB 02 33 C0 85 C0 75 13"), 0x400, 0x8, { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
 
-	Memory::AddObject(xor ("Player::UpdateFlashlight"), xor ("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 60 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));
-	Memory::AddHook(xor ("Player::UpdateFlashlight"), xor ("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
+	Memory::AddObject(xorstr_("Player::OnLoadComplete"), xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"));
+	Memory::AddHook(xorstr_("Player::OnLoadComplete"), xorstr_("Player::OnLoadComplete"), reinterpret_cast<uintptr_t>(onLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnLoadComplete));
+
+	Memory::AddObject(xorstr_("Player::UpdateFlashlight"), xorstr_("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 60 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));
+	Memory::AddHook(xorstr_("Player::UpdateFlashlight"), xorstr_("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
+
+	STR_ENCRYPT_END
+	VM_FISH_RED_END
 }
 
 uintptr_t Player::GetInstance()
 {
-	const uintptr_t instanceAddress = Memory::Objects[xor ("Player::Instance")];
+	const uintptr_t instanceAddress = Memory::Objects[xorstr_("Player::Instance")];
 
 	return instanceAddress ? *reinterpret_cast<uintptr_t*>(instanceAddress) : 0u;
 }
@@ -132,27 +141,27 @@ PlayModes Player::GetPlayMode()
 
 bool Player::GetIsRetrying()
 {
-	const uintptr_t retryingAddress = Memory::Objects[xor ("Player::Retrying")];
+	const uintptr_t retryingAddress = Memory::Objects[xorstr_("Player::Retrying")];
 
 	return retryingAddress ? *reinterpret_cast<bool*>(retryingAddress) : false;
 }
 
 bool Player::GetIsFailed()
 {
-	const uintptr_t failedAddress = Memory::Objects[xor ("Player::Failed")];
+	const uintptr_t failedAddress = Memory::Objects[xorstr_("Player::Failed")];
 
 	return failedAddress ? *reinterpret_cast<bool*>(failedAddress) : false;
 }
 
 int Player::GetAnticheatFlag()
 {
-	const uintptr_t flagAddress = Memory::Objects[xor ("Player::Flag")];
+	const uintptr_t flagAddress = Memory::Objects[xorstr_("Player::Flag")];
 
 	return flagAddress ? *reinterpret_cast<int*>(flagAddress) : 0;
 }
 
 void Player::ResetAnticheatFlag()
 {
-	if (const uintptr_t flagAddress = Memory::Objects[xor ("Player::Flag")])
+	if (const uintptr_t flagAddress = Memory::Objects[xorstr_("Player::Flag")])
 		*reinterpret_cast<int*>(flagAddress) = 0;
 }

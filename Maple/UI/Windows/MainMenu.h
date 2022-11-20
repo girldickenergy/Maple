@@ -7,6 +7,7 @@ class MainMenu
 	static inline void* backgroundTexture = nullptr;
 
 	static void updateBackground();
+	static void renderTabs();
 public:
 	static void Render();
 

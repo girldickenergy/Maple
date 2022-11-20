@@ -3,9 +3,9 @@
  * Description: VC inline assembly macros definitions
  *
  * Author/s: Oreans Technologies 
- * (c) 2015 Oreans Technologies
+ * (c) 2021 Oreans Technologies
  *
- * --- File generated automatically from Oreans VM Generator (16/6/2015) ---
+ * --- File generated automatically from Oreans VM Generator (14/5/2021) ---
  ******************************************************************************/
 
 /***********************************************
@@ -793,6 +793,138 @@
   __asm _emit 0x20 \
   __asm _emit 0x20 \
   __asm _emit 0x26 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_WHITE_START
+#define VM_LION_WHITE_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA0 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_WHITE_END
+#define VM_LION_WHITE_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x30 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_RED_START
+#define VM_LION_RED_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA2 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_RED_END
+#define VM_LION_RED_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x32 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_BLACK_START
+#define VM_LION_BLACK_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA4 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_BLACK_END
+#define VM_LION_BLACK_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x34 \
   __asm _emit 0x02 \
   __asm _emit 0x00 \
   __asm _emit 0x00 \
@@ -1633,6 +1765,138 @@
   __asm _emit 0x20 \
   __asm _emit 0x20 \
   __asm _emit 0x27 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_WHITE_START
+#define VM_LION_WHITE_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA1 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_WHITE_END
+#define VM_LION_WHITE_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x31 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_RED_START
+#define VM_LION_RED_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA3 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_RED_END
+#define VM_LION_RED_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x33 \
+  __asm _emit 0x02 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_BLACK_START
+#define VM_LION_BLACK_START \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0xA5 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x00 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 
+#endif
+
+#ifndef VM_LION_BLACK_END
+#define VM_LION_BLACK_END \
+  __asm _emit 0xEB \
+  __asm _emit 0x10 \
+  __asm _emit 0x57\
+  __asm _emit 0x4C\
+  __asm _emit 0x20 \
+  __asm _emit 0x20 \
+  __asm _emit 0x35 \
   __asm _emit 0x02 \
   __asm _emit 0x00 \
   __asm _emit 0x00 \

@@ -16,14 +16,14 @@ void ScoreSubmissionDialog::Render()
 	
 	//hack hack hack
 	ImGui::PushFont(StyleProvider::FontDefaultBold);
-	const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize(xor ("Score Submission"));
+	const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize(xorstr_("Score Submission"));
 	const float panelHeaderHeight = panelHeaderLabelSize.y + StyleProvider::Padding.y * 2;
 	ImGui::PopFont();
 
 	ImGui::PushFont(StyleProvider::FontDefault);
 
 	const float panelContentHeight = Widgets::CalcPanelHeight(2, 1);
-	const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize(xor ("Do you really want to submit this score?")).x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
+	const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize(xorstr_("Do you really want to submit this score?")).x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
 
 	if (resetPosition)
 	{
@@ -36,17 +36,17 @@ void ScoreSubmissionDialog::Render()
 	}
 
 	ImGui::SetNextWindowSize(windowSize);
-	ImGui::Begin(xor ("Score Submission Dialog"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Begin(xorstr_("Score Submission Dialog"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 	{
-		Widgets::BeginPanel(xor ("Score Submission"), ImVec2(windowSize.x, panelContentHeight));
+		Widgets::BeginPanel(xorstr_("Score Submission"), ImVec2(windowSize.x, panelContentHeight));
 		{
 			const float panelContentWidth = ImGui::GetWindowWidth();
 
-			ImGui::Text(xor ("Do you really want to submit this score?"));
+			ImGui::Text(xorstr_("Do you really want to submit this score?"));
 
 			const float buttonWidth = panelContentWidth / 1.5f;
 			ImGui::SetCursorPosX(panelContentWidth / 2 - buttonWidth / 2);
-			if (Widgets::Button(xor ("Yes"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+			if (Widgets::Button(xorstr_("Yes"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
 			{
 				Score::Submit();
 				
@@ -54,7 +54,7 @@ void ScoreSubmissionDialog::Render()
 			}
 
 			ImGui::SetCursorPosX(panelContentWidth / 2 - buttonWidth / 2);
-			if (Widgets::Button(xor ("No"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
+			if (Widgets::Button(xorstr_("No"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
 			{
 				Score::AbortSubmission();
 

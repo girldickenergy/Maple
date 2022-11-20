@@ -259,30 +259,30 @@ void UI::Initialize()
 {
 	STR_ENCRYPT_START
 
-	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA(xor("user32.dll")), xor ("GetKeyboardState"));
-	if (VanillaHooking::InstallHook(xor ("User32::GetKeyboardState"), reinterpret_cast<uintptr_t>(pGetKeyboardState), reinterpret_cast<uintptr_t>(getKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState)) == VanillaResult::Success)
-		Logger::Log(LogSeverity::Info, xor ("Hooked User32::GetKeyboardState"));
+	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA(xorstr_("user32.dll")), xorstr_("GetKeyboardState"));
+	if (VanillaHooking::InstallHook(xorstr_("User32::GetKeyboardState"), reinterpret_cast<uintptr_t>(pGetKeyboardState), reinterpret_cast<uintptr_t>(getKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState)) == VanillaResult::Success)
+		Logger::Log(LogSeverity::Info, xorstr_("Hooked User32::GetKeyboardState"));
 	else
-		Logger::Log(LogSeverity::Error, xor ("Failed to hook User32::GetKeyboardState"));
+		Logger::Log(LogSeverity::Error, xorstr_("Failed to hook User32::GetKeyboardState"));
 
 	if (GLControl::GetUsesAngle())
 	{
-		if (const uintptr_t pPresent = VanillaPatternScanner::FindPatternInModule(xor ("8B FF 55 8B EC FF 75 1C"), xor ("d3d9.dll")))
+		if (const uintptr_t pPresent = VanillaPatternScanner::FindPatternInModule(xorstr_("8B FF 55 8B EC FF 75 1C"), xorstr_("d3d9.dll")))
 		{
-			if (VanillaHooking::InstallHook(xor ("D3D9::Present"), pPresent, reinterpret_cast<uintptr_t>(presentHook), reinterpret_cast<uintptr_t*>(&oPresent)) == VanillaResult::Success)
-				Logger::Log(LogSeverity::Info, xor ("Hooked D3D9::Present"));
+			if (VanillaHooking::InstallHook(xorstr_("D3D9::Present"), pPresent, reinterpret_cast<uintptr_t>(presentHook), reinterpret_cast<uintptr_t*>(&oPresent)) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked D3D9::Present"));
 			else
-				Logger::Log(LogSeverity::Error, xor ("Failed to hook D3D9::Present"));
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook D3D9::Present"));
 		}
-		else Logger::Log(LogSeverity::Error, xor ("Failed to hook D3D9::Present"));
+		else Logger::Log(LogSeverity::Error, xorstr_("Failed to hook D3D9::Present"));
 	}
 	else
 	{
-		void* pWglSwapBuffers = GetProcAddress(GetModuleHandleA(xor ("opengl32.dll")), xor ("wglSwapBuffers"));
-		if (VanillaHooking::InstallHook(xor ("OpenGL32::wglSwapBuffers"), reinterpret_cast<uintptr_t>(pWglSwapBuffers), reinterpret_cast<uintptr_t>(wglSwapBuffersHook), reinterpret_cast<uintptr_t*>(&oWglSwapBuffers)) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xor ("Hooked OpenGL32::wglSwapBuffers"));
+		void* pWglSwapBuffers = GetProcAddress(GetModuleHandleA(xorstr_("opengl32.dll")), xorstr_("wglSwapBuffers"));
+		if (VanillaHooking::InstallHook(xorstr_("OpenGL32::wglSwapBuffers"), reinterpret_cast<uintptr_t>(pWglSwapBuffers), reinterpret_cast<uintptr_t>(wglSwapBuffersHook), reinterpret_cast<uintptr_t*>(&oWglSwapBuffers)) == VanillaResult::Success)
+			Logger::Log(LogSeverity::Info, xorstr_("Hooked OpenGL32::wglSwapBuffers"));
 		else
-			Logger::Log(LogSeverity::Error, xor ("Failed to hook OpenGL32::wglSwapBuffers"));
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
 	}
 
 	STR_ENCRYPT_END

@@ -3,9 +3,9 @@
  * Description:  Definitions for Custom VMs in SecureEngine
  *
  * Author/s: Oreans Technologies 
- * (c) 2015 Oreans Technologies
+ * (c) 2021 Oreans Technologies
  *
- * --- File generated automatically from Oreans VM Generator (16/6/2015) ---
+ * --- File generated automatically from Oreans VM Generator (14/5/2021) ---
  ******************************************************************************/
 
 // ***********************************************
@@ -160,6 +160,30 @@ DLL_IMPORT void STDCALL_CONVENTION CustomVM00000151_Start(void);
 
 DLL_IMPORT void STDCALL_CONVENTION CustomVM00000151_End(void);
 
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000160_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000160_End(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000161_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000161_End(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000162_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000162_End(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000163_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000163_End(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000164_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000164_End(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000165_Start(void);
+
+DLL_IMPORT void STDCALL_CONVENTION CustomVM00000165_End(void);
+
 DLL_IMPORT void STDCALL_CONVENTION Mutate_Start(void);
 
 DLL_IMPORT void STDCALL_CONVENTION Mutate_End(void);
@@ -233,6 +257,15 @@ DLL_IMPORT void STDCALL_CONVENTION Mutate_End(void);
 #define VM_EAGLE_BLACK_START CustomVM00000151_Start();
 #define VM_EAGLE_BLACK_END CustomVM00000151_End();
 
+#define VM_LION_WHITE_START CustomVM00000161_Start();
+#define VM_LION_WHITE_END CustomVM00000161_End();
+
+#define VM_LION_RED_START CustomVM00000163_Start();
+#define VM_LION_RED_END CustomVM00000163_End();
+
+#define VM_LION_BLACK_START CustomVM00000165_Start();
+#define VM_LION_BLACK_END CustomVM00000165_End();
+
 #define VM_MUTATE_ONLY_START Mutate_Start();
 #define VM_MUTATE_ONLY_END Mutate_End();
 
@@ -300,6 +333,15 @@ DLL_IMPORT void STDCALL_CONVENTION Mutate_End(void);
 
 #define VM_EAGLE_BLACK_START CustomVM00000150_Start();
 #define VM_EAGLE_BLACK_END CustomVM00000150_End();
+
+#define VM_LION_WHITE_START CustomVM00000160_Start();
+#define VM_LION_WHITE_END CustomVM00000160_End();
+
+#define VM_LION_RED_START CustomVM00000162_Start();
+#define VM_LION_RED_END CustomVM00000162_End();
+
+#define VM_LION_BLACK_START CustomVM00000164_Start();
+#define VM_LION_BLACK_END CustomVM00000164_End();
 
 #define VM_MUTATE_ONLY_START Mutate_Start();
 #define VM_MUTATE_ONLY_END Mutate_End();

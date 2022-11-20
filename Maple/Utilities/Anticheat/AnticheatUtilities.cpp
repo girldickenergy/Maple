@@ -15,9 +15,9 @@ std::string AnticheatUtilities::getAnticheatChecksum()
 	
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    const std::string::size_type pos = std::string(buffer).find_last_of(xor ("\\/"));
+    const std::string::size_type pos = std::string(buffer).find_last_of(xorstr_("\\/"));
 
-    const std::string osuAuthFilePath = std::string(buffer).substr(0, pos) + xor ("\\osu!auth.dll");
+    const std::string osuAuthFilePath = std::string(buffer).substr(0, pos) + xorstr_("\\osu!auth.dll");
 
     std::string checksum;
     CryptoPP::SHA256 algo;
