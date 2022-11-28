@@ -55,7 +55,7 @@ void Relax::updateAlternation()
 void Relax::updateTimings()
 {
 	//approximation is made using 2.5 sigma, we're using 2.3 sigma here to account for the distribution error
-	offset = normalDistribution(rng) * (((Config::Relax::Timing::TargetUnstableRate - 0.00533158) / 3.99535) / 2.3);
+	offset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
 	holdTime = Config::Relax::Blatant::UseLowestPossibleHoldTimes ? (std::min)(25, nextHitObject.IsNull ? 25 : (int)((nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f)) : ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTime : Config::Relax::Timing::AverageSliderHoldTime) + (normalDistribution(rng) * ((currentHitObject.IsType(HitObjectType::Normal) ? Config::Relax::Timing::AverageHoldTimeError : Config::Relax::Timing::AverageSliderHoldTimeError) / 2.5))) * rateMultiplier;
 }
 
