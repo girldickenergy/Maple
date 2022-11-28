@@ -43,15 +43,15 @@ public:
 		{
 			static inline int Offset;
 			static inline int TargetUnstableRate;
-			static inline int AverageHoldTime;
-			static inline int AverageHoldTimeError;
-			static inline int AverageSliderHoldTime;
-			static inline int AverageSliderHoldTimeError;
+			static inline int AllowableHitRange;
+			static inline int MinimumHoldTime;
+			static inline int MaximumHoldTime;
+			static inline int MinimumSliderHoldTime;
+			static inline int MaximumSliderHoldTime;
 		};
 
 		struct HitScan
 		{
-			static inline bool WaitLateEnabled;
 			static inline bool DirectionPredictionEnabled;
 			static inline int DirectionPredictionAngle;
 			static inline float DirectionPredictionScale;

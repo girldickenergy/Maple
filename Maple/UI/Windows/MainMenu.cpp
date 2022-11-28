@@ -201,40 +201,20 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("Timing"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(6)));
+                Widgets::BeginPanel(xorstr_("Timing"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(7)));
                 {
                     Widgets::SliderInt(xorstr_("Offset"), &Config::Relax::Timing::Offset, -50, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Offsets keypresses by the specified amount of milliseconds.\n\nUseful if you don't want your hits to be centered around 0 ms offset or if you're having latency issues."));
                     Widgets::SliderInt(xorstr_("Target unstable rate"), &Config::Relax::Timing::TargetUnstableRate, 0, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
-
-                    if (Widgets::SliderInt(xorstr_("Average hold time"), &Config::Relax::Timing::AverageHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput))
-                        if (Config::Relax::Timing::AverageHoldTime - Config::Relax::Timing::AverageHoldTimeError < 25)
-                            Config::Relax::Timing::AverageHoldTimeError = Config::Relax::Timing::AverageHoldTime - 25;
-
-                    ImGui::SameLine(); Widgets::Tooltip(xorstr_("An average duration of a keypress."));
-
-                    if (Widgets::SliderInt(xorstr_("Average hold time error"), &Config::Relax::Timing::AverageHoldTimeError, 0, 75, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput))
-                        if (Config::Relax::Timing::AverageHoldTime - Config::Relax::Timing::AverageHoldTimeError < 25)
-                            Config::Relax::Timing::AverageHoldTime = Config::Relax::Timing::AverageHoldTimeError + 25;
-
-                    ImGui::SameLine(); Widgets::Tooltip(xorstr_("An average deviation from the duration of a keypress."));
-
-                    if (Widgets::SliderInt(xorstr_("Average slider hold time"), &Config::Relax::Timing::AverageSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput))
-                        if (Config::Relax::Timing::AverageSliderHoldTime - Config::Relax::Timing::AverageSliderHoldTimeError < 25)
-                            Config::Relax::Timing::AverageSliderHoldTimeError = Config::Relax::Timing::AverageSliderHoldTime - 25;
-
-                    ImGui::SameLine(); Widgets::Tooltip(xorstr_("An average duration of a keypress for sliders and spinners."));
-
-                    if (Widgets::SliderInt(xorstr_("Average slider hold time error"), &Config::Relax::Timing::AverageSliderHoldTimeError, 0, 75, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput))
-                        if (Config::Relax::Timing::AverageSliderHoldTime - Config::Relax::Timing::AverageSliderHoldTimeError < 25)
-                            Config::Relax::Timing::AverageSliderHoldTime = Config::Relax::Timing::AverageSliderHoldTimeError + 25;
-
-                    ImGui::SameLine(); Widgets::Tooltip(xorstr_("An average deviation from the duration of a keypress for sliders and spinners."));
+                    Widgets::SliderInt(xorstr_("Allowable hit range"), &Config::Relax::Timing::AllowableHitRange, 0, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderInt(xorstr_("Minimum hold time"), &Config::Relax::Timing::MinimumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress."));
+                    Widgets::SliderInt(xorstr_("Maximum hold time"), &Config::Relax::Timing::MaximumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress."));
+                    Widgets::SliderInt(xorstr_("Minimum slider hold time"), &Config::Relax::Timing::MinimumSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress for sliders and spinners."));
+                    Widgets::SliderInt(xorstr_("Maximum slider hold time"), &Config::Relax::Timing::MaximumSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress for sliders and spinners."));
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("Hit Scan"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
+                Widgets::BeginPanel(xorstr_("Hit Scan"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    Widgets::Checkbox(xorstr_("Wait late"), &Config::Relax::HitScan::WaitLateEnabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Delays a keypress if you failed to aim a hitobject in time."));
                     Widgets::Checkbox(xorstr_("Direction prediction"), &Config::Relax::HitScan::DirectionPredictionEnabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Predicts whether or not you're leaving the circle and clicks if you are."));
                     Widgets::SliderInt(xorstr_("Direction prediction angle"), &Config::Relax::HitScan::DirectionPredictionAngle, 0, 90, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum angle between current cursor position, last cursor position and next circle position for prediction to trigger.\n\nLower value = worse prediction."));
                     Widgets::SliderFloat(xorstr_("Direction prediction scale"), &Config::Relax::HitScan::DirectionPredictionScale, 0.f, 1.f, .1f, 1.f, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Specifies a portion of the circle where prediction will trigger.\n\n0 = full circle."));

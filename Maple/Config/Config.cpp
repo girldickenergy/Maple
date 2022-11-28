@@ -42,11 +42,11 @@ void Config::loadDefaults()
 	Relax::SliderAlternationOverride = false;
 	Relax::Timing::Offset = 0;
 	Relax::Timing::TargetUnstableRate = 100;
-	Relax::Timing::AverageHoldTime = 80;
-	Relax::Timing::AverageHoldTimeError = 20;
-	Relax::Timing::AverageSliderHoldTime = 65;
-	Relax::Timing::AverageSliderHoldTimeError = 15;
-	Relax::HitScan::WaitLateEnabled = true;
+	Relax::Timing::AllowableHitRange = 300;
+	Relax::Timing::MinimumHoldTime = 60;
+	Relax::Timing::MaximumHoldTime = 80;
+	Relax::Timing::MinimumSliderHoldTime = 50;
+	Relax::Timing::MaximumSliderHoldTime = 65;
 	Relax::HitScan::DirectionPredictionEnabled = true;
 	Relax::HitScan::DirectionPredictionAngle = 45;
 	Relax::HitScan::DirectionPredictionScale = 0.7f;
@@ -181,17 +181,17 @@ void Config::Load()
 			Relax::Timing::Offset = std::stoi(value);
 		if (variable == xorstr_("Relax_Timing_TargetUnstableRate"))
 			Relax::Timing::TargetUnstableRate = std::stoi(value);
-		if (variable == xorstr_("Relax_Timing_AverageHoldTime"))
-			Relax::Timing::AverageHoldTime = std::stoi(value);
-		if (variable == xorstr_("Relax_Timing_AverageHoldTimeError"))
-			Relax::Timing::AverageHoldTimeError = std::stoi(value);
-		if (variable == xorstr_("Relax_Timing_AverageSliderHoldTime"))
-			Relax::Timing::AverageSliderHoldTime = std::stoi(value);
-		if (variable == xorstr_("Relax_Timing_AverageSliderHoldTimeError"))
-			Relax::Timing::AverageSliderHoldTimeError = std::stoi(value);
-
-		if (variable == xorstr_("Relax_HitScan_WaitLate_Enabled"))
-			Relax::HitScan::WaitLateEnabled = value == xorstr_("1");
+		if (variable == xorstr_("Relax_Timing_AllowableHitRange"))
+			Relax::Timing::AllowableHitRange = std::stoi(value);
+		if (variable == xorstr_("Relax_Timing_MinimumHoldTime"))
+			Relax::Timing::MinimumHoldTime = std::stoi(value);
+		if (variable == xorstr_("Relax_Timing_MaximumHoldTime"))
+			Relax::Timing::MaximumHoldTime = std::stoi(value);
+		if (variable == xorstr_("Relax_Timing_MinimumSliderHoldTime"))
+			Relax::Timing::MinimumSliderHoldTime = std::stoi(value);
+		if (variable == xorstr_("Relax_Timing_MaximumSliderHoldTime"))
+			Relax::Timing::MaximumSliderHoldTime = std::stoi(value);
+		
 		if (variable == xorstr_("Relax_HitScan_DirectionPrediction_Enabled"))
 			Relax::HitScan::DirectionPredictionEnabled = value == xorstr_("1");
 		if (variable == xorstr_("Relax_HitScan_DirectionPrediction_Angle"))
@@ -337,11 +337,11 @@ void Config::Save()
 	ofs << xorstr_("Relax_SliderAlternationOverride=") << Relax::SliderAlternationOverride << std::endl;
 	ofs << xorstr_("Relax_Timing_Offset=") << Relax::Timing::Offset << std::endl;
 	ofs << xorstr_("Relax_Timing_TargetUnstableRate=") << Relax::Timing::TargetUnstableRate << std::endl;
-	ofs << xorstr_("Relax_Timing_AverageHoldTime=") << Relax::Timing::AverageHoldTime << std::endl;
-	ofs << xorstr_("Relax_Timing_AverageHoldTimeError=") << Relax::Timing::AverageHoldTimeError << std::endl;
-	ofs << xorstr_("Relax_Timing_AverageSliderHoldTime=") << Relax::Timing::AverageSliderHoldTime << std::endl;
-	ofs << xorstr_("Relax_Timing_AverageSliderHoldTimeError=") << Relax::Timing::AverageSliderHoldTimeError << std::endl;
-	ofs << xorstr_("Relax_HitScan_WaitLate_Enabled=") << Relax::HitScan::WaitLateEnabled << std::endl;
+	ofs << xorstr_("Relax_Timing_AllowableHitRange=") << Relax::Timing::AllowableHitRange << std::endl;
+	ofs << xorstr_("Relax_Timing_MinimumHoldTime=") << Relax::Timing::MinimumHoldTime << std::endl;
+	ofs << xorstr_("Relax_Timing_MaximumHoldTime=") << Relax::Timing::MaximumHoldTime << std::endl;
+	ofs << xorstr_("Relax_Timing_MinimumSliderHoldTime=") << Relax::Timing::MinimumSliderHoldTime << std::endl;
+	ofs << xorstr_("Relax_Timing_MaximumSliderHoldTime=") << Relax::Timing::MaximumSliderHoldTime << std::endl;
 	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Enabled=") << Relax::HitScan::DirectionPredictionEnabled << std::endl;
 	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Angle=") << Relax::HitScan::DirectionPredictionAngle << std::endl;
 	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Scale=") << Relax::HitScan::DirectionPredictionScale << std::endl;
