@@ -65,6 +65,9 @@ HitScanResult Relax::handleHitScan()
 	Vector2 lastCursorPosition = cursorPosition;
 	cursorPosition = GameField::DisplayToField(InputManager::GetCursorPosition());
 
+	if (ignoreHitScan && time >= currentHitObject.StartTime + currentHitOffset)
+		return HitScanResult::Hit;
+
 	if (AudioEngine::GetTime() < currentHitObject.StartTime - allowableScanOffset)
 		return HitScanResult::Wait;
 
@@ -214,6 +217,8 @@ void Relax::Initialize()
 		std::cout << urarr[i] / 10000.0 << std::endl;*/
 
 	rateMultiplier = ModManager::GetModPlaybackRate() / 100.0;
+
+	ignoreHitScan = ModManager::CheckActive(Mods::Relax2);
 
 	hitObjectsCount = HitObjectManager::GetHitObjectsCount();
 	currentHitObjectIndex = HitObjectManager::GetCurrentHitObjectIndex();

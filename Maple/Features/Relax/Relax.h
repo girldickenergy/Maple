@@ -17,6 +17,8 @@ class Relax
 	static inline int time;
 	static inline double rateMultiplier;
 
+	static inline bool ignoreHitScan;
+
 	static inline int hitObjectsCount;
 	static inline int currentHitObjectIndex;
 	static inline HitObject currentHitObject;
