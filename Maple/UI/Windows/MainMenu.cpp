@@ -171,9 +171,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-20112022"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-29112022"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-20112022"));
+                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-29112022"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -201,11 +201,12 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("Timing"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(7)));
+                Widgets::BeginPanel(xorstr_("Timing"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8)));
                 {
                     Widgets::SliderInt(xorstr_("Offset"), &Config::Relax::Timing::Offset, -50, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Offsets keypresses by the specified amount of milliseconds.\n\nUseful if you don't want your hits to be centered around 0 ms offset or if you're having latency issues."));
                     Widgets::SliderInt(xorstr_("Target unstable rate"), &Config::Relax::Timing::TargetUnstableRate, 0, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
                     Widgets::SliderInt(xorstr_("Allowable hit range"), &Config::Relax::Timing::AllowableHitRange, 0, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+                    Widgets::HitErrorBar(Config::Relax::Timing::AllowableHitRange);
                     Widgets::SliderInt(xorstr_("Minimum hold time"), &Config::Relax::Timing::MinimumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress."));
                     Widgets::SliderInt(xorstr_("Maximum hold time"), &Config::Relax::Timing::MaximumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress."));
                     Widgets::SliderInt(xorstr_("Minimum slider hold time"), &Config::Relax::Timing::MinimumSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress for sliders and spinners."));

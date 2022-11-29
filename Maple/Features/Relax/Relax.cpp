@@ -27,25 +27,37 @@ OsuKeys Relax::mapleKeyToOsuKey(int key)
 	return OsuKeys::None;
 }
 
-void Relax::moveToNextHitObject(int count)
+void Relax::moveToNextHitObject(int skipCount)
 {
-	currentHitObjectIndex += count;
-	if (currentHitObjectIndex < hitObjectsCount)
+	do
 	{
-		previousHitObject = currentHitObject;
-		currentHitObject = nextHitObject;
-		nextHitObject = currentHitObjectIndex + 1 < hitObjectsCount ? HitObjectManager::GetHitObject(currentHitObjectIndex + 1) : HitObject();
+		currentHitObjectIndex++;
+		if (currentHitObjectIndex < hitObjectsCount)
+		{
+			previousHitObject = currentHitObject;
+			currentHitObject = nextHitObject;
+			nextHitObject = currentHitObjectIndex + 1 < hitObjectsCount ? HitObjectManager::GetHitObject(currentHitObjectIndex + 1) : HitObject();
 
-		wasInMissRadius = false;
-		missPosition = Vector2();
+			wasInMissRadius = false;
+			missPosition = Vector2();
+		}
 
-		currentHitOffset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
+		skipCount--;
+	} while (skipCount > 0);
+}
 
-		if (!previousHitObject.IsNull && 60000 / std::clamp(currentHitObject.StartTime - (previousHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? previousHitObject.StartTime : previousHitObject.EndTime), 1, 60000) / 4 >= Config::Relax::AlternateBPM)
-			currentKey = currentKey == primaryKey ? secondaryKey : primaryKey;
-		else
-			currentKey = primaryKey;
-	}
+void Relax::updateTimings()
+{
+	currentHitOffset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(rng) : sliderHoldTime(rng) * rateMultiplier;
+}
+
+void Relax::updateAlternation()
+{
+	if (!previousHitObject.IsNull && 60000 / std::clamp(currentHitObject.StartTime - (previousHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? previousHitObject.StartTime : previousHitObject.EndTime), 1, 60000) / 4 >= Config::Relax::AlternateBPM)
+		currentKey = currentKey == primaryKey ? secondaryKey : primaryKey;
+	else
+		currentKey = primaryKey;
 }
 
 HitScanResult Relax::handleHitScan()
@@ -53,7 +65,7 @@ HitScanResult Relax::handleHitScan()
 	Vector2 lastCursorPosition = cursorPosition;
 	cursorPosition = GameField::DisplayToField(InputManager::GetCursorPosition());
 
-	if (time < currentHitObject.StartTime - allowableScanOffset)
+	if (AudioEngine::GetTime() < currentHitObject.StartTime - allowableScanOffset)
 		return HitScanResult::Wait;
 
 	if (currentHitObject.IsType(HitObjectType::Spinner) && time >= currentHitObject.StartTime + currentHitOffset)
@@ -64,7 +76,7 @@ HitScanResult Relax::handleHitScan()
 	const float distanceToNext = nextHitObject.IsNull ? 0 : cursorPosition.Distance(nextHitObject.Position);
 	const float distanceBetweenObjects = nextHitObject.IsNull ? 0 : currentHitObject.Position.Distance(nextHitObject.Position);
 
-	if (time > currentHitObject.StartTime + allowableScanOffset)
+	if (AudioEngine::GetTime() > currentHitObject.StartTime + allowableScanOffset)
 	{
 		if (distanceToObject <= hitObjectRadius * 3 && distanceToObject > hitObjectRadius)
 			return HitScanResult::Hit;
@@ -129,16 +141,13 @@ double Relax::calculateDirectionAngle(Vector2 lastPosition, Vector2 currentPosit
 	return angle * (360.0 / (M_PI * 2.0));
 }
 
-void Relax::handleKeyPress()
+void Relax::handleKeyPress(int customEndTime)
 {
-	const std::uniform_int_distribution<int> normalHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumHoldTime, Config::Relax::Timing::MaximumHoldTime);
-	const std::uniform_int_distribution<int> sliderHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumSliderHoldTime, Config::Relax::Timing::MaximumSliderHoldTime);
-
 	int releaseTime;
 	if (Config::Relax::Blatant::UseLowestPossibleHoldTimes)
-		releaseTime = (currentHitObject.IsType(HitObjectType::Normal) ? time : currentHitObject.EndTime) + (std::min)(25, nextHitObject.IsNull ? 25 : static_cast<int>((nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f));
+		releaseTime = (customEndTime == INT_MIN ? (currentHitObject.IsType(HitObjectType::Normal) ? time : currentHitObject.EndTime) : customEndTime) + (std::min)(25, nextHitObject.IsNull ? 25 : static_cast<int>((nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f));
 	else
-		releaseTime = ((currentHitObject.IsType(HitObjectType::Normal) ? time + normalHoldTime(rng) : currentHitObject.EndTime) + sliderHoldTime(rng)) * rateMultiplier;
+		releaseTime = (customEndTime == INT_MIN ? (currentHitObject.IsType(HitObjectType::Normal) ? time : currentHitObject.EndTime) : customEndTime) + currentHoldTime;
 
 	if (currentKey == primaryKey)
 	{
@@ -229,7 +238,11 @@ void Relax::Initialize()
 
 	allowableScanOffset = hitWindowStartTime + (hitWindowTime * multiplier);
 
+	normalHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumHoldTime, Config::Relax::Timing::MaximumHoldTime);
+	sliderHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumSliderHoldTime, Config::Relax::Timing::MaximumSliderHoldTime);
+
 	currentHitOffset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(rng) : sliderHoldTime(rng) * rateMultiplier;
 
 	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	cursorPosition = Vector2();
@@ -262,13 +275,33 @@ OsuKeys Relax::Update()
 				const bool fastSingletap = abs(time - (currentKey == primaryKey ? primaryKeyPressTime : secondaryKeyPressTime)) < 90 * rateMultiplier;
 				if (!fastSingletap || Config::Relax::Blatant::UseLowestPossibleHoldTimes)
 				{
-					handleKeyPress();
-					moveToNextHitObject();
+					int customEndTime = INT_MIN;
+					int skipCount = 0;
+					for (int i = currentHitObjectIndex; i + 1 < hitObjectsCount; i++)
+					{
+						HitObject current = HitObjectManager::GetHitObject(i);
+						HitObject next = HitObjectManager::GetHitObject(i + 1);
+						if (next.IsType(HitObjectType::Spinner) && next.StartTime - current.EndTime <= 500 / rateMultiplier)
+						{
+							customEndTime = next.EndTime;
+
+							skipCount++;
+						}
+						else break;
+					}
+
+					handleKeyPress(customEndTime);
+					moveToNextHitObject(skipCount);
+					updateTimings();
+
+					if (!skipCount)
+						updateAlternation();
 				}
 			}
 				break;
 			case HitScanResult::Skip:
 				moveToNextHitObject();
+				updateTimings();
 
 				break;
 			case HitScanResult::Wait:
