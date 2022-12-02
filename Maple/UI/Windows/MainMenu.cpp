@@ -171,9 +171,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-29112022"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-30112022"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-29112022"));
+                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-30112022"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -208,9 +208,9 @@ void MainMenu::Render()
                     Widgets::SliderInt(xorstr_("Allowable hit range"), &Config::Relax::Timing::AllowableHitRange, 0, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
                     Widgets::HitErrorBar(Config::Relax::Timing::AllowableHitRange);
                     Widgets::SliderInt(xorstr_("Minimum hold time"), &Config::Relax::Timing::MinimumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress."));
-                    Widgets::SliderInt(xorstr_("Maximum hold time"), &Config::Relax::Timing::MaximumHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress."));
+                    Widgets::SliderInt(xorstr_("Maximum hold time"), &Config::Relax::Timing::MaximumHoldTime, 25, 150, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress."));
                     Widgets::SliderInt(xorstr_("Minimum slider hold time"), &Config::Relax::Timing::MinimumSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A minimum duration of a keypress for sliders and spinners."));
-                    Widgets::SliderInt(xorstr_("Maximum slider hold time"), &Config::Relax::Timing::MaximumSliderHoldTime, 25, 100, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress for sliders and spinners."));
+                    Widgets::SliderInt(xorstr_("Maximum slider hold time"), &Config::Relax::Timing::MaximumSliderHoldTime, 25, 150, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A maximum duration of a keypress for sliders and spinners."));
                 }
                 Widgets::EndPanel();
 
