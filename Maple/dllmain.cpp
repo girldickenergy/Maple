@@ -1,4 +1,4 @@
-﻿#include <clocale>
+#include <clocale>
 #include <WinSock2.h>
 
 #include "curl.h"
@@ -111,6 +111,16 @@ void InitializeMaple()
     if (vanillaResult == VanillaResult::Success)
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
+
+        //bypass crc
+        Bypass b = Bypass();
+        b.Prepare();
+        if (!b.PreparationFinishedSuccessfully)
+            Security::CorruptMemory();
+
+        b.DoBypass();
+        if (!b.FinishedSuccessfully)
+            Security::CorruptMemory();
 
         //initializing SDK
         Memory::StartInitialize();
