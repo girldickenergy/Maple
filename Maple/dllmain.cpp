@@ -64,12 +64,13 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-DWORD WINAPI Initialize(LPVOID data_addr)
+DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
-    STR_ENCRYPT_START
+	STR_ENCRYPT_START
 
 	auto data_addr = data;
+
     int protectionVar = 0x501938CA;
     CHECK_PROTECTION(protectionVar, 0x9CCC379)
     if (protectionVar != 0x9CCC379)
