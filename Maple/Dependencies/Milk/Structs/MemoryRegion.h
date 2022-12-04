@@ -8,6 +8,7 @@ struct MemoryRegion
 	DWORD State;
 	DWORD Protect;
 	DWORD Type;
+	DWORD AllocationProtect;
 
 	MemoryRegion(MEMORY_BASIC_INFORMATION32 mbi)
 	{
@@ -16,5 +17,6 @@ struct MemoryRegion
 		State = mbi.State;
 		Protect = mbi.Protect;
 		Type = mbi.Type;
+		AllocationProtect = mbi.AllocationProtect;
 	}
 };
