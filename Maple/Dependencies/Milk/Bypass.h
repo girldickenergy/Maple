@@ -11,6 +11,11 @@ class Bypass
 	
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();
+
+	/**
+	 * \brief Bypasses the detection vector where functions would be checked against CRC32.
+	 */
+	void doCRCBypass();
 public:
 	bool PreparationFinishedSuccessfully;
 	bool FinishedSuccessfully;

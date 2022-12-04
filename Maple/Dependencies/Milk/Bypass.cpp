@@ -1,8 +1,9 @@
 #include "Bypass.h"
-#include <iostream>
+
 #include "../Vanilla/PatternScanning/VanillaPatternScanner.h"
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../../Logging/Logger.h"
+#include "../../Utilities/Security/Security.h"
 #include <ThemidaSDK.h>
 
 Bypass::Bypass()
@@ -56,16 +57,24 @@ uintptr_t Bypass::findFirstCRCAddress()
 	return 0;
 }
 
+void Bypass::doCRCBypass()
+{
+	VM_LION_BLACK_START
+	if (_firstCRC == nullptr)
+		return;
+
+	_firstCRC->nextEntry = nullptr;
+	if (_firstCRC->nextEntry != nullptr)
+		return;
+	VM_LION_BLACK_END
+}
+
 void Bypass::DoBypass()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
-	if (_firstCRC == nullptr)
-		return;
-	
-	_firstCRC->nextEntry = nullptr;
-	if (_firstCRC->nextEntry != nullptr)
-		return;
+
+	doCRCBypass();
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] Success!"));
 	FinishedSuccessfully = true;
