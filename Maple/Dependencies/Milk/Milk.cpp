@@ -6,6 +6,8 @@
 #include "../../Utilities/Security/Security.h"
 #include <ThemidaSDK.h>
 
+#pragma optimize("", off)
+
 Milk::Milk(singletonLock)
 {
 	VM_FISH_RED_START
@@ -35,10 +37,11 @@ uintptr_t Milk::findAuthStub()
 		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
 			return region.BaseAddress;
 
-	VM_LION_BLACK_END
 	return 0;
+	VM_LION_BLACK_END
 }
 
+// ReSharper disable once CppInconsistentNaming
 uintptr_t Milk::findFirstCRCAddress()
 {
 	VM_LION_BLACK_START
@@ -55,9 +58,9 @@ uintptr_t Milk::findFirstCRCAddress()
 		if (result > _authStubBaseAddress)
 			return result;
 	}
-	VM_LION_BLACK_END
 
 	return 0;
+	VM_LION_BLACK_END
 }
 
 bool Milk::doCRCBypass()
@@ -70,8 +73,8 @@ bool Milk::doCRCBypass()
 	if (_firstCRC->nextEntry != nullptr)
 		return false;
 
-	VM_LION_BLACK_END
 	return true;
+	VM_LION_BLACK_END
 }
 
 bool Milk::DoBypass()
@@ -86,15 +89,17 @@ bool Milk::DoBypass()
 		return false;
 	
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] Success!"));
+
+	return true;
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
-	return true;
 }
 
 bool Milk::prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
+
 	_authStubBaseAddress = findAuthStub();
 	if (_authStubBaseAddress == 0x00000000)
 		return false;
@@ -112,7 +117,7 @@ bool Milk::prepare()
 	if (_firstCRC->functionSize != 7)
 		return false;
 	
+	return true;
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
-	return true;
 }

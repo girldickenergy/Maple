@@ -1,19 +1,27 @@
 #include "MilkMemory.h"
 
+#include <ThemidaSDK.h>
+#pragma optimize("", off)
+
 MilkMemory::MilkMemory()
 {
+	VM_FISH_RED_START
 	_memoryRegions = std::vector<MemoryRegion>();
 	cacheMemoryRegions();
+	VM_FISH_RED_END
 }
 
 MilkMemory::~MilkMemory()
 {
+	VM_FISH_RED_START
 	_memoryRegions.clear();
 	_memoryRegions.shrink_to_fit();
+	VM_FISH_RED_END
 }
 
 void MilkMemory::cacheMemoryRegions()
 {
+	VM_LION_BLACK_START
 	_memoryRegions.clear();
 
 	MEMORY_BASIC_INFORMATION32 mbi{};
@@ -25,10 +33,12 @@ void MilkMemory::cacheMemoryRegions()
 
 		address = reinterpret_cast<LPVOID>(mbi.BaseAddress + mbi.RegionSize);
 	}
+	VM_LION_BLACK_END
 }
 
 std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 {
+	VM_LION_BLACK_START
 	auto buffer = std::vector<uint8_t>(size);
 	for(SIZE_T i = 0; i < size; i++)
 	{
@@ -37,15 +47,19 @@ std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 	}
 
 	return buffer;
+	VM_LION_BLACK_END
 }
 
 std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 {
+	VM_LION_BLACK_START
 	return &_memoryRegions;
+	VM_LION_BLACK_END
 }
 
 uint32_t* MilkMemory::FindCodeCave()
 {
+	VM_LION_BLACK_START
 	for(auto const& region : _memoryRegions)
 	{
 		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE_READ &&
@@ -75,4 +89,5 @@ uint32_t* MilkMemory::FindCodeCave()
 	}
 
 	return nullptr;
+	VM_LION_BLACK_END
 }
