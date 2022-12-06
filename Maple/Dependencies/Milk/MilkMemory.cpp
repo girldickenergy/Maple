@@ -58,7 +58,7 @@ uint32_t* MilkMemory::FindCodeCave()
 				auto memoryBuffer = ReadMemory(readingAddress, 1024);
 
 				int occurrences = 0;
-				for (int i = 0; i < memoryBuffer.size(); i++)
+				for (size_t i = 0; i < memoryBuffer.size(); i++)
 				{
 					auto const& byte = memoryBuffer[i];
 					if (byte == 0xCC)
