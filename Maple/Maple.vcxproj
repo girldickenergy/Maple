@@ -363,7 +363,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Dependencies\Milk\Bypass.cpp" />
+    <ClCompile Include="Dependencies\Milk\Milk.cpp" />
     <ClCompile Include="Dependencies\Milk\MilkMemory.cpp" />
     <ClCompile Include="Dependencies\Milk\MilkThread.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Hooking\VanillaHooking.cpp" />
@@ -656,7 +656,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\JSON\json.hpp" />
-    <ClInclude Include="Dependencies\Milk\Bypass.h" />
+    <ClInclude Include="Dependencies\Milk\Milk.h" />
     <ClInclude Include="Dependencies\Milk\MilkMemory.h" />
     <ClInclude Include="Dependencies\Milk\MilkThread.h" />
     <ClInclude Include="Dependencies\Milk\Structs\CRC.h" />

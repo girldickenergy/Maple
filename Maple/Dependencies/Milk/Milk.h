@@ -1,8 +1,9 @@
 #pragma once
 #include "Structs/CRC.h"
 #include "MilkMemory.h"
+#include "../../Utilities/Architecture/Singleton.hpp"
 
-class Bypass
+class Milk : public Singleton<Milk>
 {
 	MilkMemory _milkMemory;
 	uintptr_t _authStubBaseAddress;
@@ -19,8 +20,8 @@ class Bypass
 public:
 	bool PreparationFinishedSuccessfully;
 	bool FinishedSuccessfully;
-	Bypass();
-	~Bypass();
+	Milk(singletonLock);
+	~Milk();
 
 	void DoBypass();
 	void Prepare();

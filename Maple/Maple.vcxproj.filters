@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -743,10 +743,10 @@
     <ClCompile Include="Dependencies\Milk\MilkThread.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\Milk\Bypass.cpp">
+    <ClCompile Include="Dependencies\Milk\MilkMemory.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\Milk\MilkMemory.cpp">
+    <ClCompile Include="Dependencies\Milk\Milk.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1944,14 +1944,14 @@
     <ClInclude Include="Dependencies\Milk\MilkThread.h">
       <Filter>Dependencies\Milk</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\Milk\Bypass.h">
-      <Filter>Dependencies\Milk</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\Milk\Structs\MemoryRegion.h">
       <Filter>Dependencies\Milk\Structs</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\Milk\Structs\CRC.h">
       <Filter>Dependencies\Milk\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\Milk.h">
+      <Filter>Dependencies\Milk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

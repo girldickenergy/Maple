@@ -1,4 +1,4 @@
-#include "Bypass.h"
+#include "Milk.h"
 
 #include "../Vanilla/PatternScanning/VanillaPatternScanner.h"
 #include "../../Utilities/Security/xorstr.hpp"
@@ -6,7 +6,7 @@
 #include "../../Utilities/Security/Security.h"
 #include <ThemidaSDK.h>
 
-Bypass::Bypass()
+Milk::Milk(singletonLock)
 {
 	VM_FISH_RED_START
 	_milkMemory = MilkMemory();
@@ -18,14 +18,14 @@ Bypass::Bypass()
 	VM_FISH_RED_END
 }
 
-Bypass::~Bypass()
+Milk::~Milk()
 {
 	VM_FISH_RED_START
 	_milkMemory.~MilkMemory();
 	VM_FISH_RED_END
 }
 
-uintptr_t Bypass::findAuthStub()
+uintptr_t Milk::findAuthStub()
 {
 	VM_LION_BLACK_START
 	for (auto const& region : *_milkMemory.GetMemoryRegions())
@@ -36,7 +36,7 @@ uintptr_t Bypass::findAuthStub()
 	return 0;
 }
 
-uintptr_t Bypass::findFirstCRCAddress()
+uintptr_t Milk::findFirstCRCAddress()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
@@ -57,7 +57,7 @@ uintptr_t Bypass::findFirstCRCAddress()
 	return 0;
 }
 
-void Bypass::doCRCBypass()
+void Milk::doCRCBypass()
 {
 	VM_LION_BLACK_START
 	if (_firstCRC == nullptr)
@@ -69,7 +69,7 @@ void Bypass::doCRCBypass()
 	VM_LION_BLACK_END
 }
 
-void Bypass::DoBypass()
+void Milk::DoBypass()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
@@ -82,7 +82,7 @@ void Bypass::DoBypass()
 	VM_LION_BLACK_END
 }
 
-void Bypass::Prepare()
+void Milk::Prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
