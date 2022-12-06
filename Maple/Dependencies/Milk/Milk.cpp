@@ -13,6 +13,11 @@ Milk::Milk(singletonLock)
 	_authStubBaseAddress = 0x00000000;
 	_firstCRCAddress = 0x00000000;
 	_firstCRC = nullptr;
+	preparationSuccess = false;
+
+	if (prepare())
+		preparationSuccess = true;
+
 	VM_FISH_RED_END
 }
 
@@ -74,6 +79,9 @@ bool Milk::DoBypass()
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
 
+	if (!preparationSuccess)
+		return false;
+
 	if (!doCRCBypass())
 		return false;
 	
@@ -83,7 +91,7 @@ bool Milk::DoBypass()
 	return true;
 }
 
-bool Milk::Prepare()
+bool Milk::prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START

@@ -123,8 +123,6 @@ void InitializeMaple()
 
         //bypass crc
         auto& milk = Milk::Get();
-        if (!milk.Prepare())
-            Security::CorruptMemory();
         
         if (!milk.DoBypass())
             Security::CorruptMemory();

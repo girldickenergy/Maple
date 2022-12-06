@@ -9,10 +9,12 @@ class Milk : public Singleton<Milk>
 	uintptr_t _authStubBaseAddress;
 	uintptr_t _firstCRCAddress;
 	CRC* _firstCRC;
-	
+	bool preparationSuccess;
+
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();
 
+	bool prepare();
 	/**
 	 * \brief Bypasses the detection vector where functions would be checked against CRC32.
 	 */
@@ -22,5 +24,4 @@ public:
 	~Milk();
 
 	bool DoBypass();
-	bool Prepare();
 };
