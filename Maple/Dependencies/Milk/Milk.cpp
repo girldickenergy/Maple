@@ -46,14 +46,14 @@ uintptr_t Milk::findFirstCRCAddress()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
-	auto pattern = xorstr_("C3 CC 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC");
+	auto pattern = xorstr_("5D C3 CC 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55 8B EC");
 	STR_ENCRYPT_END
 	for (auto const& region : *_milkMemory.GetMemoryRegions())
 	{
 		if (region.BaseAddress < _authStubBaseAddress)
 			continue;
 
-		uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 6);
+		uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 7);
 
 		if (result > _authStubBaseAddress)
 			return result;
@@ -114,7 +114,7 @@ bool Milk::prepare()
 	Logger::Log(LogSeverity::Debug, _firstCRC->className);
 	Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
 	Logger::Log(LogSeverity::Debug, std::to_string(_firstCRC->functionSize).c_str());
-	if (_firstCRC->functionSize != 7)
+	if (_firstCRC->functionSize < 5 || _firstCRC->functionSize > 1000)
 		return false;
 	
 	return true;
