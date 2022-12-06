@@ -6,10 +6,16 @@
 class Milk : public Singleton<Milk>
 {
 	MilkMemory _milkMemory;
-	uintptr_t _authStubBaseAddress;
+	static inline uintptr_t _authStubBaseAddress;
 	uintptr_t _firstCRCAddress;
 	CRC* _firstCRC;
+	static inline uintptr_t _realJITVtable;
+	static inline uintptr_t* _fakeJITVtable;
 	bool preparationSuccess;
+
+	typedef uintptr_t(__stdcall* fnGetJit)();
+	static inline fnGetJit oGetJit;
+	static uintptr_t __stdcall getJitHook();
 
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();
@@ -24,4 +30,5 @@ public:
 	~Milk();
 
 	bool DoBypass();
+	void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
 };
