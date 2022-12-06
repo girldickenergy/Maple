@@ -13,8 +13,6 @@ Milk::Milk(singletonLock)
 	_authStubBaseAddress = 0x00000000;
 	_firstCRCAddress = 0x00000000;
 	_firstCRC = nullptr;
-	PreparationFinishedSuccessfully = false;
-	FinishedSuccessfully = false;
 	VM_FISH_RED_END
 }
 
@@ -57,43 +55,46 @@ uintptr_t Milk::findFirstCRCAddress()
 	return 0;
 }
 
-void Milk::doCRCBypass()
+bool Milk::doCRCBypass()
 {
 	VM_LION_BLACK_START
 	if (_firstCRC == nullptr)
-		return;
+		return false;
 
 	_firstCRC->nextEntry = nullptr;
 	if (_firstCRC->nextEntry != nullptr)
-		return;
+		return false;
+
 	VM_LION_BLACK_END
+	return true;
 }
 
-void Milk::DoBypass()
+bool Milk::DoBypass()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
 
-	doCRCBypass();
-
+	if (!doCRCBypass())
+		return false;
+	
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] Success!"));
-	FinishedSuccessfully = true;
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
+	return true;
 }
 
-void Milk::Prepare()
+bool Milk::Prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
 	_authStubBaseAddress = findAuthStub();
 	if (_authStubBaseAddress == 0x00000000)
-		return;
+		return false;
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] AS != 0x00000000"));
 
 	_firstCRCAddress = findFirstCRCAddress();
 	if (_firstCRCAddress == 0x00000000)
-		return;
+		return false;
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC != 0x00000000"));
 	
 	_firstCRC = **reinterpret_cast<CRC***>(_firstCRCAddress);
@@ -101,9 +102,9 @@ void Milk::Prepare()
 	Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
 	Logger::Log(LogSeverity::Debug, std::to_string(_firstCRC->functionSize).c_str());
 	if (_firstCRC->functionSize != 7)
-		return;
-
-	PreparationFinishedSuccessfully = true;
+		return false;
+	
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
+	return true;
 }

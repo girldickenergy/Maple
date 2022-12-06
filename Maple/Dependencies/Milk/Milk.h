@@ -16,13 +16,11 @@ class Milk : public Singleton<Milk>
 	/**
 	 * \brief Bypasses the detection vector where functions would be checked against CRC32.
 	 */
-	void doCRCBypass();
+	bool doCRCBypass();
 public:
-	bool PreparationFinishedSuccessfully;
-	bool FinishedSuccessfully;
 	Milk(singletonLock);
 	~Milk();
 
-	void DoBypass();
-	void Prepare();
+	bool DoBypass();
+	bool Prepare();
 };

@@ -123,12 +123,10 @@ void InitializeMaple()
 
         //bypass crc
         auto& milk = Milk::Get();
-        milk.Prepare();
-        if (!milk.PreparationFinishedSuccessfully)
+        if (!milk.Prepare())
             Security::CorruptMemory();
-
-        milk.DoBypass();
-        if (!milk.FinishedSuccessfully)
+        
+        if (!milk.DoBypass())
             Security::CorruptMemory();
 
         //initializing SDK
