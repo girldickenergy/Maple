@@ -729,6 +729,7 @@
     <ClInclude Include="UI\Windows\MainMenu.h" />
     <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h" />
     <ClInclude Include="Utilities\Anticheat\AnticheatUtilities.h" />
+    <ClInclude Include="Utilities\Architecture\Singleton.hpp" />
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h" />
     <ClInclude Include="Utilities\Crypto\CryptoUtilities.h" />
     <ClInclude Include="Utilities\Security\Security.h" />

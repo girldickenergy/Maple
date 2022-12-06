@@ -967,6 +967,9 @@
     <Filter Include="Dependencies\JSON">
       <UniqueIdentifier>{b850f708-748b-413f-b037-f7230aa4b1d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utilities\Architecture">
+      <UniqueIdentifier>{84427acf-88bc-4cdd-84b3-323a1ed08a3a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Dependencies\Milk">
       <UniqueIdentifier>{dfb7ab53-58c3-4fb1-b365-cb55089c02da}</UniqueIdentifier>
     </Filter>
@@ -1931,6 +1934,9 @@
     </ClInclude>
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h">
       <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Architecture\Singleton.hpp">
+      <Filter>Utilities\Architecture</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\Milk\MilkMemory.h">
       <Filter>Dependencies\Milk</Filter>
