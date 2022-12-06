@@ -10,7 +10,7 @@
 #include "Logging/Logger.h"
 #include "Storage/Storage.h"
 #include "Config/Config.h"
-#include "Dependencies/Milk/Bypass.h"
+#include "Dependencies/Milk/Milk.h"
 
 #include "Utilities/Security/xorstr.hpp"
 #include "Utilities/Security/Security.h"
@@ -122,13 +122,13 @@ void InitializeMaple()
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
         //bypass crc
-        Bypass b = Bypass();
-        b.Prepare();
-        if (!b.PreparationFinishedSuccessfully)
+        auto& milk = Milk::Get();
+        milk.Prepare();
+        if (!milk.PreparationFinishedSuccessfully)
             Security::CorruptMemory();
 
-        b.DoBypass();
-        if (!b.FinishedSuccessfully)
+        milk.DoBypass();
+        if (!milk.FinishedSuccessfully)
             Security::CorruptMemory();
 
         //initializing SDK
