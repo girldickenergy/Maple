@@ -14,6 +14,8 @@
 #include "Packets/Responses/HandshakeResponse.h"
 #include "Packets/Responses/HeartbeatResponse.h"
 
+#include "../Dependencies/Milk/MilkThread.h"
+
 #pragma optimize("", off)
 void Communication::pingThread()
 {
@@ -169,10 +171,13 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 
 			handshakeSucceeded = true;
 
-			heartbeatThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(heartbeatThread), nullptr, 0, nullptr);
+			MilkThread heartbeat = MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
+			heartbeatThreadHandle = heartbeat.Start();
+
 			heartbeatThreadLaunched = true;
 
-			pingThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(pingThread), nullptr, 0, nullptr);
+			MilkThread pingthread = MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
+			pingThreadHandle = pingthread.Start();
 
 			STR_ENCRYPT_END
 			VM_SHARK_BLACK_END
@@ -252,7 +257,8 @@ bool Communication::Connect()
 
 	connected = true;
 
-	ThreadCheckerHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(checkerThread), nullptr, 0, nullptr);
+	MilkThread mt = MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
+	ThreadCheckerHandle = mt.Start();
 
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	tcpClient.Send(handshakeRequest.Serialize());

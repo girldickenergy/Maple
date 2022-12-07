@@ -55,18 +55,17 @@ void MilkThread::cleanCodeCave()
 	VM_LION_BLACK_END
 }
 
-bool MilkThread::Start()
+HANDLE MilkThread::Start()
 {
 	VM_LION_BLACK_START
 	if (_codeCaveLocation == nullptr)
-		return false; //TODO: error logging & crash osu!
+		return nullptr; //TODO: error logging & crash osu!
 
 	if (!_codeCavePrepared)
 		prepareCodeCave();
 
-	auto ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
+	return CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
-	return ret != nullptr;
 	VM_LION_BLACK_END
 }
 

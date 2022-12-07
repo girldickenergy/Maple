@@ -15,7 +15,7 @@ public:
 	MilkThread(uintptr_t function, bool lazy = false);
 	~MilkThread();
 
-	bool Start();
+	HANDLE Start();
 
 	void SetFunctionPointer(uintptr_t function);
 };
