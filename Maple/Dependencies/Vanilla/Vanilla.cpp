@@ -43,7 +43,7 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 	
 	if (usingCLR)
 	{
-		Milk::Get().HookJITVtable(0, (uintptr_t)compileMethodHook, (uintptr_t*)&oCompileMethod);
+		Milk::Get().HookJITVtable(0, reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod));
 
 		void* relocateAddressAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 57 8B 7D 08 8B 0F 3B 0D", "clr.dll"));
 		if (!relocateAddressAddress)

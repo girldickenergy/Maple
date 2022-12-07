@@ -6,14 +6,14 @@
 class Milk : public Singleton<Milk>
 {
 	MilkMemory _milkMemory;
-	static inline uintptr_t _authStubBaseAddress;
+	uintptr_t _authStubBaseAddress;
 	uintptr_t _firstCRCAddress;
 	CRC* _firstCRC;
 	static inline uintptr_t _realJITVtable;
 	static inline uintptr_t* _fakeJITVtable;
 	bool preparationSuccess;
 
-	typedef uintptr_t(__stdcall* fnGetJit)();
+	using fnGetJit = uintptr_t(__stdcall*)();
 	static inline fnGetJit oGetJit;
 	static uintptr_t __stdcall getJitHook();
 
