@@ -49,7 +49,7 @@ void Relax::moveToNextHitObject(int skipCount)
 void Relax::updateTimings()
 {
 	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(gen) : sliderHoldTime(gen) * rateMultiplier;
+	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MinimumHoldTime + (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2) : (Config::Relax::Timing::MinimumSliderHoldTime + (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2 : (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
 }
 
 void Relax::updateAlternation()
@@ -243,11 +243,8 @@ void Relax::Initialize()
 
 	allowableScanOffset = hitWindowStartTime + (hitWindowTime * multiplier);
 
-	normalHoldTime = std::uniform_int_distribution(Config::Relax::Timing::MinimumHoldTime, Config::Relax::Timing::MaximumHoldTime);
-	sliderHoldTime = std::uniform_int_distribution(Config::Relax::Timing::MinimumSliderHoldTime, Config::Relax::Timing::MaximumSliderHoldTime);
-
 	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(gen) : sliderHoldTime(gen) * rateMultiplier;
+	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MinimumHoldTime + (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2) : (Config::Relax::Timing::MinimumSliderHoldTime + (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2 : (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
 
 	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	cursorPosition = Vector2();
