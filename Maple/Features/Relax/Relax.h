@@ -25,7 +25,8 @@ class Relax
 	static inline HitObject previousHitObject;
 	static inline HitObject nextHitObject;
 
-	static inline std::default_random_engine rng = std::default_random_engine();
+	static inline std::random_device rd{};
+	static inline std::mt19937 gen{ rd() };
 	static inline std::normal_distribution<double> normalDistribution = std::normal_distribution<double>(0, 1);
 	static inline std::uniform_int_distribution<int> normalHoldTime;
 	static inline std::uniform_int_distribution<int> sliderHoldTime;

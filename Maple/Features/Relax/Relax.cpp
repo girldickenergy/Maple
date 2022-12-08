@@ -48,8 +48,8 @@ void Relax::moveToNextHitObject(int skipCount)
 
 void Relax::updateTimings()
 {
-	currentHitOffset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(rng) : sliderHoldTime(rng) * rateMultiplier;
+	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(gen) : sliderHoldTime(gen) * rateMultiplier;
 }
 
 void Relax::updateAlternation()
@@ -205,7 +205,7 @@ void Relax::Initialize()
 			for (int j = 0; j < num; j++)
 			{
 				hits++;
-				auto hitValue = normalDistribution(rng) * (i / 2.5);
+				auto hitValue = normalDistribution(gen) * (i / 2.5);
 				totalHitValue += hitValue;
 				auto avg = totalHitValue / hits;
 				ur += std::pow(hitValue - avg, 2);
@@ -243,11 +243,11 @@ void Relax::Initialize()
 
 	allowableScanOffset = hitWindowStartTime + (hitWindowTime * multiplier);
 
-	normalHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumHoldTime, Config::Relax::Timing::MaximumHoldTime);
-	sliderHoldTime = std::uniform_int_distribution<int>(Config::Relax::Timing::MinimumSliderHoldTime, Config::Relax::Timing::MaximumSliderHoldTime);
+	normalHoldTime = std::uniform_int_distribution(Config::Relax::Timing::MinimumHoldTime, Config::Relax::Timing::MaximumHoldTime);
+	sliderHoldTime = std::uniform_int_distribution(Config::Relax::Timing::MinimumSliderHoldTime, Config::Relax::Timing::MaximumSliderHoldTime);
 
-	currentHitOffset = normalDistribution(rng) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(rng) : sliderHoldTime(rng) * rateMultiplier;
+	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = currentHitObject.IsType(HitObjectType::Normal) ? normalHoldTime(gen) : sliderHoldTime(gen) * rateMultiplier;
 
 	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	cursorPosition = Vector2();
