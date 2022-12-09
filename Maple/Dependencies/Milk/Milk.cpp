@@ -43,7 +43,7 @@ uintptr_t __stdcall Milk::getJitHook()
 	bool isAuthCall = retAddress > Get()._authStubBaseAddress && retAddress < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
 
 	if (isAuthCall)
-		return reinterpret_cast<uintptr_t>(&_realJITVtable);
+		return reinterpret_cast<uintptr_t>(&_originalJITVtable);
 
 	return oGetJit();
 }
@@ -125,8 +125,8 @@ bool Milk::DoBypass()
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
 {
-	*originalFunction = _fakeJITVtable[index];
-	_fakeJITVtable[index] = detour;
+	*originalFunction = _copiedJITVtable[index];
+	_copiedJITVtable[index] = detour;
 }
 
 bool Milk::prepare()
@@ -169,16 +169,16 @@ bool Milk::prepare()
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] J != 0x00000000"));
 
-	_realJITVtable = *reinterpret_cast<uintptr_t*>(jit);
-	if (!_realJITVtable)
+	_originalJITVtable = *reinterpret_cast<uintptr_t*>(jit);
+	if (!_originalJITVtable)
 		return false;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] JVMT != 0x00000000"));
 
-	_fakeJITVtable = new uintptr_t[7];
-	memcpy(_fakeJITVtable, reinterpret_cast<void*>(_realJITVtable), 7 * 4);
+	_copiedJITVtable = new uintptr_t[7];
+	memcpy(_copiedJITVtable, reinterpret_cast<void*>(_originalJITVtable), 7 * 4);
 
-	*reinterpret_cast<uintptr_t*>(jit) = reinterpret_cast<uintptr_t>(_fakeJITVtable);
+	*reinterpret_cast<uintptr_t*>(jit) = reinterpret_cast<uintptr_t>(_copiedJITVtable);
 
 	if (VanillaHooking::InstallHook(xorstr_("GetJitHook"), reinterpret_cast<uintptr_t>(getJit), reinterpret_cast<uintptr_t>(getJitHook), reinterpret_cast<uintptr_t*>(&oGetJit)) != VanillaResult::Success)
 		return false;
