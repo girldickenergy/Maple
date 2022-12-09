@@ -30,5 +30,6 @@ public:
 	~Milk();
 
 	bool DoBypass();
+	bool CheckFunction(uintptr_t function);
 	void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
 };

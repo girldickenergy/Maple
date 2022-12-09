@@ -2,7 +2,7 @@
 
 struct CRC
 {
-	void* unknownPointer;
+	void* functionPointer;
 	int functionSize;
 	int unknown;
 	char className[256];

@@ -123,6 +123,11 @@ bool Milk::DoBypass()
 	VM_LION_BLACK_END
 }
 
+bool Milk::CheckFunction(uintptr_t function)
+{
+	return !(function >= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) && function <= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) + _firstCRC->functionSize);
+}
+
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
 {
 	*originalFunction = _copiedJITVtable[index];
