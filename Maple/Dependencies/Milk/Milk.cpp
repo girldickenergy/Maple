@@ -14,6 +14,7 @@
 Milk::Milk(singletonLock)
 {
 	VM_FISH_RED_START
+
 	_milkMemory = MilkMemory();
 	_authStubBaseAddress = 0x00000000;
 	_firstCRCAddress = 0x00000000;
@@ -39,8 +40,7 @@ uintptr_t __stdcall Milk::getJitHook()
 	const uint32_t BUFFER = 0x1000;
 
 	auto retAddress = reinterpret_cast<uintptr_t>(_ReturnAddress());
-	bool isAuthCall = retAddress > Get()._authStubBaseAddress && retAddress < Get()._authStubBaseAddress + STUB_SIZE +
-		BUFFER;
+	bool isAuthCall = retAddress > Get()._authStubBaseAddress && retAddress < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
 
 	if (isAuthCall)
 		return reinterpret_cast<uintptr_t>(&_realJITVtable);
@@ -51,11 +51,13 @@ uintptr_t __stdcall Milk::getJitHook()
 uintptr_t Milk::findAuthStub()
 {
 	VM_LION_BLACK_START
+
 	for (const auto& region : *_milkMemory.GetMemoryRegions())
 		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
 			return region.BaseAddress;
 
 	return 0;
+
 	VM_LION_BLACK_END
 }
 
@@ -63,9 +65,13 @@ uintptr_t Milk::findAuthStub()
 uintptr_t Milk::findFirstCRCAddress()
 {
 	VM_LION_BLACK_START
+
 	STR_ENCRYPT_START
+
 	auto pattern = xorstr_("5D C3 CC 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55 8B EC");
+
 	STR_ENCRYPT_END
+
 	for (const auto& region : *_milkMemory.GetMemoryRegions())
 	{
 		if (region.BaseAddress < _authStubBaseAddress)
@@ -78,12 +84,14 @@ uintptr_t Milk::findFirstCRCAddress()
 	}
 
 	return 0;
+
 	VM_LION_BLACK_END
 }
 
 bool Milk::doCRCBypass()
 {
 	VM_LION_BLACK_START
+
 	if (_firstCRC == nullptr)
 		return false;
 
@@ -92,6 +100,7 @@ bool Milk::doCRCBypass()
 		return false;
 
 	return true;
+
 	VM_LION_BLACK_END
 }
 
@@ -109,6 +118,7 @@ bool Milk::DoBypass()
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] Success!"));
 
 	return true;
+
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
 }
@@ -125,45 +135,58 @@ bool Milk::prepare()
 	STR_ENCRYPT_START
 
 	_authStubBaseAddress = findAuthStub();
-	if (_authStubBaseAddress == 0x00000000)
+	if (!_authStubBaseAddress)
 		return false;
+
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] AS != 0x00000000"));
 
 	_firstCRCAddress = findFirstCRCAddress();
-	if (_firstCRCAddress == 0x00000000)
+	if (!_firstCRCAddress)
 		return false;
+
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC != 0x00000000"));
 
 	_firstCRC = **reinterpret_cast<CRC***>(_firstCRCAddress);
+
 	Logger::Log(LogSeverity::Debug, _firstCRC->className);
 	Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
 	Logger::Log(LogSeverity::Debug, std::to_string(_firstCRC->functionSize).c_str());
+
 	if (_firstCRC->functionSize < 5 || _firstCRC->functionSize > 1000)
 		return false;
+
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
 
 	void* getJit = GetProcAddress(GetModuleHandleA(xorstr_("clrjit.dll")), xorstr_("getJit"));
 	if (!getJit)
 		return false;
 
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] GJ != 0x00000000"));
+
 	uintptr_t jit = static_cast<fnGetJit>(getJit)();
 	if (!jit)
 		return false;
 
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] J != 0x00000000"));
+
 	_realJITVtable = *reinterpret_cast<uintptr_t*>(jit);
 	if (!_realJITVtable)
 		return false;
+
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] JVMT != 0x00000000"));
 
 	_fakeJITVtable = new uintptr_t[7];
 	memcpy(_fakeJITVtable, reinterpret_cast<void*>(_realJITVtable), 7 * 4);
 
 	*reinterpret_cast<uintptr_t*>(jit) = reinterpret_cast<uintptr_t>(_fakeJITVtable);
 
-	if (VanillaHooking::InstallHook(xorstr_("GetJitHook"), reinterpret_cast<uintptr_t>(getJit),
-	                                reinterpret_cast<uintptr_t>(getJitHook), reinterpret_cast<uintptr_t*>(&oGetJit)) !=
-		VanillaResult::Success)
+	if (VanillaHooking::InstallHook(xorstr_("GetJitHook"), reinterpret_cast<uintptr_t>(getJit), reinterpret_cast<uintptr_t>(getJitHook), reinterpret_cast<uintptr_t*>(&oGetJit)) != VanillaResult::Success)
 		return false;
 
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] GJH OK"));
+
 	return true;
+
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
 }
