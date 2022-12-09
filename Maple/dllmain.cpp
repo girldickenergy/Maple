@@ -45,7 +45,6 @@ static inline MilkThread* initializeThread = nullptr;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-    AllocConsole();
     std::setlocale(LC_NUMERIC, "en_US");
     DisableThreadLibraryCalls(hModule);
 

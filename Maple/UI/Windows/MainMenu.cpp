@@ -723,13 +723,13 @@ void MainMenu::Render()
             {
                 if (Config::Misc::BypassFailed)
                 {
-                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.")).x / 2);
-                    ImGui::Text(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe."));
+                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Maple was unable to confirm the detection status. Please report this.")).x / 2);
+                    ImGui::Text(xorstr_("Maple was unable to confirm the detection status. Please report this."));
                 }
                 else
                 {
-                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Maple was unable to confirm the detection status. Please report this.")).x / 2);
-                    ImGui::Text(xorstr_("Maple was unable to confirm the detection status. Please report this."));
+                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.")).x / 2);
+                    ImGui::Text(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe."));
                 }
 
                 ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Score submission has been disabled to prevent your account from being flagged or banned.")).x / 2);
