@@ -34,10 +34,13 @@
 #include "UI/UI.h"
 #include "Utilities/Anticheat/AnticheatUtilities.h"
 #include "Utilities/Strings/StringUtilities.h"
+#include "Dependencies/Milk/MilkThread.h"
 
-DWORD WINAPI Initialize(LPVOID data_addr);
+DWORD WINAPI Initialize();
 void InitializeMaple();
 void WaitForCriticalSDKToInitialize();
+
+static inline LPVOID data;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -45,7 +48,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     DisableThreadLibraryCalls(hModule);
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-        Initialize(lpReserved);
+    {
+        data = lpReserved;
+        MilkThread mt = MilkThread(reinterpret_cast<uintptr_t>(Initialize));
+    }
         
     return TRUE;
 }
@@ -58,10 +64,12 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-DWORD WINAPI Initialize(LPVOID data_addr)
+DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
 	STR_ENCRYPT_START
+
+	auto data_addr = data;
 
     int protectionVar = 0x501938CA;
     CHECK_PROTECTION(protectionVar, 0x9CCC379)
