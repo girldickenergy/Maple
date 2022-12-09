@@ -40,7 +40,8 @@ DWORD WINAPI Initialize();
 void InitializeMaple();
 void WaitForCriticalSDKToInitialize();
 
-static inline LPVOID data;
+LPVOID data;
+MilkThread initializeThread;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -50,7 +51,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
     {
         data = lpReserved;
-        MilkThread mt = MilkThread(reinterpret_cast<uintptr_t>(Initialize));
+        initializeThread = MilkThread(reinterpret_cast<uintptr_t>(Initialize));
     }
         
     return TRUE;
@@ -67,7 +68,10 @@ struct UserData
 DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
+    STR_ENCRYPT_START
+
+    initializeThread.CleanCodeCave();
+    initializeThread.~MilkThread();
 
 	auto data_addr = data;
 

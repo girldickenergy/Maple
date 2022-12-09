@@ -9,6 +9,7 @@
 MilkThread::MilkThread(uintptr_t function, bool lazy)
 {
 	VM_FISH_RED_START
+
 	_milkMemory = MilkMemory();
 	_function = function;
 
@@ -16,6 +17,7 @@ MilkThread::MilkThread(uintptr_t function, bool lazy)
 
 	if (!lazy)
 		Start();
+
 	VM_FISH_RED_END
 }
 
@@ -23,6 +25,7 @@ MilkThread::~MilkThread()
 {
 	VM_FISH_RED_START
 	_codeCaveLocation = nullptr;
+	_codeCavePrepared = false;
 	_function = NULL;
 	_milkMemory.~MilkMemory();
 	VM_FISH_RED_END
@@ -31,6 +34,7 @@ MilkThread::~MilkThread()
 void MilkThread::prepareCodeCave()
 {
 	VM_LION_BLACK_START
+
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0xE9; // rel jmp
@@ -39,12 +43,14 @@ void MilkThread::prepareCodeCave()
 	VirtualProtect(_codeCaveLocation, 5, oldProtection, &oldProtection);
 
 	_codeCavePrepared = true;
+
 	VM_LION_BLACK_END
 }
 
-void MilkThread::cleanCodeCave()
+void MilkThread::CleanCodeCave()
 {
 	VM_LION_BLACK_START
+
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0xCC;
@@ -52,12 +58,14 @@ void MilkThread::cleanCodeCave()
 	VirtualProtect(_codeCaveLocation, 5, oldProtection, &oldProtection);
 
 	_codeCavePrepared = false;
+
 	VM_LION_BLACK_END
 }
 
 HANDLE MilkThread::Start()
 {
 	VM_LION_BLACK_START
+
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
 
@@ -66,13 +74,16 @@ HANDLE MilkThread::Start()
 
 	return CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
+
 	VM_LION_BLACK_END
 }
 
 void MilkThread::SetFunctionPointer(uintptr_t function)
 {
 	VM_LION_BLACK_START
+
 	_function = function;
-	cleanCodeCave();
+	CleanCodeCave();
+
 	VM_LION_BLACK_END
 }

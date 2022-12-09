@@ -17,8 +17,15 @@
 #include "../Dependencies/Milk/MilkThread.h"
 
 #pragma optimize("", off)
+MilkThread pingMilkThread;
+MilkThread heartbeatMilkThread;
+MilkThread checkerMilkThread;
+
 void Communication::pingThread()
 {
+	pingMilkThread.CleanCodeCave();
+	pingMilkThread.~MilkThread();
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -40,6 +47,9 @@ void Communication::pingThread()
 
 void Communication::checkerThread()
 {
+	checkerMilkThread.CleanCodeCave();
+	checkerMilkThread.~MilkThread();
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -62,6 +72,9 @@ void Communication::checkerThread()
 
 void Communication::heartbeatThread()
 {
+	heartbeatMilkThread.CleanCodeCave();
+	heartbeatMilkThread.~MilkThread();
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -171,13 +184,13 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 
 			handshakeSucceeded = true;
 
-			MilkThread heartbeat = MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
-			heartbeatThreadHandle = heartbeat.Start();
+			heartbeatMilkThread = MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
+			heartbeatThreadHandle = heartbeatMilkThread.Start();
 
 			heartbeatThreadLaunched = true;
 
-			MilkThread pingthread = MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
-			pingThreadHandle = pingthread.Start();
+			pingMilkThread = MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
+			pingThreadHandle = pingMilkThread.Start();
 
 			STR_ENCRYPT_END
 			VM_SHARK_BLACK_END
@@ -257,8 +270,8 @@ bool Communication::Connect()
 
 	connected = true;
 
-	MilkThread mt = MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
-	ThreadCheckerHandle = mt.Start();
+	checkerMilkThread = MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
+	ThreadCheckerHandle = checkerMilkThread.Start();
 
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	tcpClient.Send(handshakeRequest.Serialize());

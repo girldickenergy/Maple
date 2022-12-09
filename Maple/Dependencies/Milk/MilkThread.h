@@ -10,12 +10,14 @@ class MilkThread
 	bool _codeCavePrepared;
 
 	void prepareCodeCave();
-	void cleanCodeCave();
+	
 public:
 	MilkThread(uintptr_t function, bool lazy = false);
+	MilkThread() = default;
 	~MilkThread();
 
 	HANDLE Start();
 
+	void CleanCodeCave();
 	void SetFunctionPointer(uintptr_t function);
 };
