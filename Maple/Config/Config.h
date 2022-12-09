@@ -142,6 +142,7 @@ public:
 	{
 		static inline int ScoreSubmissionType;
 		static inline bool ForceDisableScoreSubmission = false;
+		static inline bool BypassFailed = false;
 		static inline bool DisableSpectators;
 
 		struct Logging

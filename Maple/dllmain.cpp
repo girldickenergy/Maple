@@ -121,11 +121,14 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
-        //bypass crc
-        auto& milk = Milk::Get();
-        
-        if (!milk.DoBypass())
-            Security::CorruptMemory();
+        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
+        bool bypassSucceeded = Milk::Get().DoBypass();
+
+        if (!goodKnownAuthVersion || !bypassSucceeded)
+            Config::Misc::ForceDisableScoreSubmission = true;
+
+        if (goodKnownAuthVersion && !bypassSucceeded)
+            Config::Misc::BypassFailed = true;
 
         //initializing SDK
         Memory::StartInitialize();
@@ -149,9 +152,6 @@ void InitializeMaple()
         Memory::EndInitialize();
 
         WaitForCriticalSDKToInitialize();
-
-        if (!AnticheatUtilities::IsRunningGoodKnownVersion())
-            Config::Misc::ForceDisableScoreSubmission = true;
 
         //initializing UI and Spoofer
         //TODO: maybe we can move spoofer initialization outside of ui hooks?

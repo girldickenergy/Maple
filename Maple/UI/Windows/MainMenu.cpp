@@ -706,28 +706,37 @@ void MainMenu::Render()
     if (Config::Misc::ForceDisableScoreSubmission)
     {
         ImGui::PushFont(StyleProvider::FontDefaultBold);
-        const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize("Attention!");
+        const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize(xorstr_("Attention!"));
         const float panelHeaderHeight = panelHeaderLabelSize.y + StyleProvider::Padding.y * 2;
         ImGui::PopFont();
 
         ImGui::PushFont(StyleProvider::FontDefault);
 
         const float panelContentHeight = Widgets::CalcPanelHeight(1, 3);
-        const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.").x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
+        const ImVec2 windowSize = ImVec2(ImGui::CalcTextSize(Config::Misc::BypassFailed ? xorstr_("Score submission has been disabled to prevent your account from being flagged or banned.") : xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.")).x, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
 
         ImGui::SetNextWindowSize(windowSize);
         ImGui::SetNextWindowPos(ImVec2(GameBase::GetClientPosition().X + GameBase::GetClientSize().X / 2 - windowSize.x / 2, GameBase::GetClientPosition().Y + GameBase::GetClientSize().Y - windowSize.y - StyleProvider::Padding.y));
-        ImGui::Begin("AuthNotice", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Begin(xorstr_("AuthNotice"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
         {
-            Widgets::BeginPanel("Attention!", ImVec2(windowSize.x, panelContentHeight));
+            Widgets::BeginPanel(xorstr_("Attention!"), ImVec2(windowSize.x, panelContentHeight));
             {
-                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.").x / 2);
-                ImGui::Text("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.");
-                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("Score submission has been disabled to prevent your account from being flagged or banned.").x / 2);
-                ImGui::Text("Score submission has been disabled to prevent your account from being flagged or banned.");
-                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize("If you want to re-enable score submission, click the button below.").x / 2);
-                ImGui::Text("If you want to re-enable score submission, click the button below.");
-                if (Widgets::Button("I understand the risks, enable score submission", ImVec2(ImGui::GetWindowWidth(), ImGui::GetFrameHeight())))
+                if (Config::Misc::BypassFailed)
+                {
+                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe.")).x / 2);
+                    ImGui::Text(xorstr_("Your osu! client is running a newer version of the anti-cheat, which has not yet been confirmed to be safe."));
+                }
+                else
+                {
+                    ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Maple was unable to confirm the detection status. Please report this.")).x / 2);
+                    ImGui::Text(xorstr_("Maple was unable to confirm the detection status. Please report this."));
+                }
+
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("Score submission has been disabled to prevent your account from being flagged or banned.")).x / 2);
+                ImGui::Text(xorstr_("Score submission has been disabled to prevent your account from being flagged or banned."));
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(xorstr_("If you want to re-enable score submission, click the button below.")).x / 2);
+                ImGui::Text(xorstr_("If you want to re-enable score submission, click the button below."));
+                if (Widgets::Button(xorstr_("I understand the risks, enable score submission"), ImVec2(ImGui::GetWindowWidth(), ImGui::GetFrameHeight())))
                 {
                     Config::Misc::ForceDisableScoreSubmission = false;
                 }

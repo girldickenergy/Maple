@@ -9,8 +9,8 @@ class Milk : public Singleton<Milk>
 	uintptr_t _authStubBaseAddress;
 	uintptr_t _firstCRCAddress;
 	CRC* _firstCRC;
-	static inline uintptr_t _realJITVtable;
-	static inline uintptr_t* _fakeJITVtable;
+	static inline uintptr_t _originalJITVtable;
+	static inline uintptr_t* _copiedJITVtable;
 	bool preparationSuccess;
 
 	using fnGetJit = uintptr_t(__stdcall*)();
