@@ -6,9 +6,9 @@
 
 class Player
 {
-	static inline constexpr int ASYNC_LOAD_COMPLETE_OFFSET = 0x182;
+	static inline constexpr int ASYNC_LOAD_COMPLETE_OFFSET = 0x184;
 	static inline constexpr int PLAY_MODE_OFFSET = 0x114;
-	static inline constexpr int REPLAY_MODE_OFFSET = 0x17A;
+	static inline constexpr int REPLAY_MODE_OFFSET = 0x17B;
 
 	static void initializeFeatures();
 

@@ -6,6 +6,7 @@
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/Security.h"
+#include "../../SDK/Audio/AudioEngine.h"
 #include <ThemidaSDK.h>
 #include <Hooking/VanillaHooking.h>
 
@@ -46,6 +47,53 @@ uintptr_t __stdcall Milk::getJitHook()
 		return reinterpret_cast<uintptr_t>(&_originalJITVtable);
 
 	return oGetJit();
+}
+
+void _declspec(naked) Milk::someBassFuncHook()
+{
+	_asm
+	{
+		mov eax, ebp
+		mov ecx, dword ptr[esp]
+		push ebp
+		mov ebp, esp
+		push ecx
+		push eax
+		mov ecx, dword ptr[ebp + 8]
+		push ecx
+		call spoofPlaybackRate
+		pop ebp
+		retn 4
+	}
+}
+
+int __stdcall Milk::spoofPlaybackRate(int a1, DWORD ebp, DWORD ret)
+{
+	auto val = oSomeBassFunc(a1);
+
+	const uint32_t STUB_SIZE = 0x7F5000;
+	const uint32_t BUFFER = 0x1000;
+
+	bool isAuthCall = ret > Get()._authStubBaseAddress && ret < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
+
+	if (isAuthCall)
+	{
+		auto var_ptr = (v8fix**)(ebp + 0x40);
+
+		v8.v7 = &v7;
+		v7.speed = AudioEngine::GetModTempo(); // fix speed
+
+		*var_ptr = &v8;
+
+		_InterlockedExchangeAdd((volatile unsigned __int32*)(val + 164), 0xFFFFFFFF);
+
+		v10.v9 = &v9;
+		v9.freq = AudioEngine::GetModFrequency(); // fix freq
+
+		return (int)(&v10);
+	}
+
+	return val;
 }
 
 uintptr_t Milk::findAuthStub()
@@ -189,6 +237,17 @@ bool Milk::prepare()
 		return false;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] GJH OK"));
+
+	uintptr_t someBassFunc = VanillaPatternScanner::FindPatternInModule(xorstr_("55 8B EC F7 45 08"), xorstr_("bass.dll"));
+	if (!someBassFunc)
+		return false;
+
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SBF != 0x00000000"));
+
+	if (VanillaHooking::InstallHook(xorstr_("SomeBassFunc"), someBassFunc, reinterpret_cast<uintptr_t>(someBassFuncHook), reinterpret_cast<uintptr_t*>(&oSomeBassFunc)) != VanillaResult::Success)
+		return false;
+
+	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SBFH OK"));
 
 	return true;
 
