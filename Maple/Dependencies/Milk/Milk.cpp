@@ -67,9 +67,9 @@ void _declspec(naked) Milk::someBassFuncHook()
 	}
 }
 
-int __stdcall Milk::spoofPlaybackRate(int a1, DWORD ebp, DWORD ret)
+int __stdcall Milk::spoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
 {
-	auto val = oSomeBassFunc(a1);
+	auto val = oSomeBassFunc(handle);
 
 	const uint32_t STUB_SIZE = 0x7F5000;
 	const uint32_t BUFFER = 0x1000;
@@ -87,8 +87,18 @@ int __stdcall Milk::spoofPlaybackRate(int a1, DWORD ebp, DWORD ret)
 
 		_InterlockedExchangeAdd((volatile unsigned __int32*)(val + 164), 0xFFFFFFFF);
 
+		// grab frequency, needed for some tracks as they are 44.8khz and not 44.1khz
+		BASS_CHANNELINFO  data = { };
+		using fnChannelGetInfo = bool(__stdcall*)(int handle, BASS_CHANNELINFO* info);
+		auto bassHandle = GetModuleHandleA("bass.dll");
+		auto getInfoAddress = reinterpret_cast<fnChannelGetInfo>(GetProcAddress(bassHandle, "BASS_ChannelGetInfo"));
+		bool returnValue = getInfoAddress(handle, &data);
+
+		if (!returnValue) // channelGetInfo returns false if it fails.
+			Security::CorruptMemory(); // TODO: think about something else here?
+
 		v10.v9 = &v9;
-		v9.freq = AudioEngine::GetModFrequency(); // fix freq
+		v9.freq = AudioEngine::GetModFrequency(data.freq); // fix freq
 
 		return (int)(&v10);
 	}

@@ -3,6 +3,18 @@
 #include "MilkMemory.h"
 #include "../../Utilities/Architecture/Singleton.hpp"
 
+struct BASS_CHANNELINFO
+{
+	DWORD freq;
+	DWORD chans;
+	DWORD flags;
+	DWORD ctype;
+	DWORD origres;
+	HANDLE plugin;
+	HANDLE sample;
+	char* filename;
+};
+
 struct v7fix
 {
 	uint8_t padding[0x40];
@@ -46,10 +58,10 @@ class Milk : public Singleton<Milk>
 	static inline struct v8fix v8 = {};
 	static inline struct v9fix v9 = {};
 	static inline struct v10fix v10 = {};
-	using fnSomeBassFunc = int(__stdcall*)(int a1);
+	using fnSomeBassFunc = int(__stdcall*)(int handle);
 	static inline fnSomeBassFunc oSomeBassFunc;
 	static void someBassFuncHook();
-	static int __stdcall spoofPlaybackRate(int a1, DWORD ebp, DWORD ret);
+	static int __stdcall spoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();

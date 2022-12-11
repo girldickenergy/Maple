@@ -66,10 +66,10 @@ double AudioEngine::GetModTempo()
 	return 1.0;
 }
 
-float AudioEngine::GetModFrequency()
+float AudioEngine::GetModFrequency(float samplingRate)
 {
 	if (ModManager::CheckActive(Mods::Nightcore))
-		return 44100.f * 1.5f; //todo: get frequency from TrackBass
+		return samplingRate * 1.5f;
 
-	return 44100.f;
+	return samplingRate;
 }
