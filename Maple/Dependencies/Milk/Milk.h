@@ -3,18 +3,6 @@
 #include "MilkMemory.h"
 #include "../../Utilities/Architecture/Singleton.hpp"
 
-struct BASS_CHANNELINFO
-{
-	DWORD freq;
-	DWORD chans;
-	DWORD flags;
-	DWORD ctype;
-	DWORD origres;
-	HANDLE plugin;
-	HANDLE sample;
-	char* filename;
-};
-
 struct v7fix
 {
 	uint8_t padding[0x40];

@@ -66,10 +66,10 @@ double AudioEngine::GetModTempo()
 	return 1.0;
 }
 
-float AudioEngine::GetModFrequency(float samplingRate)
+float AudioEngine::GetModFrequency(float currentFrequency)
 {
-	if (ModManager::CheckActive(Mods::Nightcore))
-		return samplingRate * 1.5f;
+	if (ModManager::CheckActive(Mods::Nightcore) && Config::Timewarp::Enabled)
+		return currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f;
 
-	return samplingRate;
+	return currentFrequency;
 }

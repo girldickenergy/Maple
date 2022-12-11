@@ -85,20 +85,12 @@ int __stdcall Milk::spoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
 
 		*var_ptr = &v8;
 
+		auto freq = ((v10fix*)val)->v9->freq; // get current frequency
+
 		_InterlockedExchangeAdd((volatile unsigned __int32*)(val + 164), 0xFFFFFFFF);
 
-		// grab frequency, needed for some tracks as they are 44.8khz and not 44.1khz
-		BASS_CHANNELINFO  data = { };
-		using fnChannelGetInfo = bool(__stdcall*)(int handle, BASS_CHANNELINFO* info);
-		auto bassHandle = GetModuleHandleA("bass.dll");
-		auto getInfoAddress = reinterpret_cast<fnChannelGetInfo>(GetProcAddress(bassHandle, "BASS_ChannelGetInfo"));
-		bool returnValue = getInfoAddress(handle, &data);
-
-		if (!returnValue) // channelGetInfo returns false if it fails.
-			Security::CorruptMemory(); // TODO: think about something else here?
-
 		v10.v9 = &v9;
-		v9.freq = AudioEngine::GetModFrequency(data.freq); // fix freq
+		v9.freq = AudioEngine::GetModFrequency(freq); // fix freq
 
 		return (int)(&v10);
 	}

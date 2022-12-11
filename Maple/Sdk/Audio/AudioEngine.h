@@ -18,5 +18,5 @@ public:
 	static int GetTime();
 	static bool GetIsPaused();
 	static double GetModTempo();
-	static float GetModFrequency(float samplingRate = 44100.f);
+	static float GetModFrequency(float currentFrequency);
 };
