@@ -23,8 +23,10 @@ static inline MilkThread* checkerMilkThread;
 
 void Communication::pingThread()
 {
-	pingMilkThread->CleanCodeCave();
-	delete pingMilkThread;
+	//pingMilkThread->CleanCodeCave();
+	//delete pingMilkThread;
+
+	pingThreadLaunched = true;
 
 	while (true)
 	{
@@ -47,14 +49,14 @@ void Communication::pingThread()
 
 void Communication::checkerThread()
 {
-	checkerMilkThread->CleanCodeCave();
-	delete checkerMilkThread;
+	//checkerMilkThread->CleanCodeCave();
+	//delete checkerMilkThread;
 
 	while (true)
 	{
 		VM_SHARK_BLACK_START
 
-		if (heartbeatThreadLaunched)
+		if (heartbeatThreadLaunched && pingThreadLaunched)
 		{
 			if (!Security::CheckIfThreadIsAlive(heartbeatThreadHandle) || !Security::CheckIfThreadIsAlive(pingThreadHandle))
 			{
@@ -72,8 +74,10 @@ void Communication::checkerThread()
 
 void Communication::heartbeatThread()
 {
-	heartbeatMilkThread->CleanCodeCave();
-	delete heartbeatMilkThread;
+	//heartbeatMilkThread->CleanCodeCave();
+	//delete heartbeatMilkThread;
+
+	heartbeatThreadLaunched = true;
 
 	while (true)
 	{
@@ -186,8 +190,6 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 			
 			heartbeatMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
 			heartbeatThreadHandle = heartbeatMilkThread->Start();
-
-			heartbeatThreadLaunched = true;
 
 			pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
 			pingThreadHandle = pingMilkThread->Start();

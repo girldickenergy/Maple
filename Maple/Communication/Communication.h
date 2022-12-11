@@ -11,6 +11,7 @@ class Communication
 	static inline bool connected = false;
 	static inline bool handshakeSucceeded = false;
 	static inline bool heartbeatThreadLaunched = false;
+	static inline bool pingThreadLaunched = false;
 	static inline HANDLE pingThreadHandle;
 	static inline HANDLE heartbeatThreadHandle;
 
