@@ -7,10 +7,6 @@ class AudioEngine
 {
 	static inline constexpr int AUDIO_STATE_OFFSET = 0x30;
 
-	typedef double(__fastcall* fnGetCurrentPlaybackRate)(uintptr_t ecx, uintptr_t edx);
-	static inline fnGetCurrentPlaybackRate oGetCurrentPlaybackRate;
-	static double __fastcall getCurrentPlaybackRateHook(uintptr_t ecx, uintptr_t edx);
-
 	static inline std::mutex mutex;
 
 	typedef void(__stdcall* fnSetCurrentPlaybackRate)(double rate);
@@ -21,4 +17,6 @@ public:
 	
 	static int GetTime();
 	static bool GetIsPaused();
+	static double GetModTempo();
+	static float GetModFrequency(float currentFrequency);
 };

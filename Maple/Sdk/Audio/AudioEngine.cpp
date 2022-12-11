@@ -1,8 +1,5 @@
 #include "AudioEngine.h"
 
-#include <intrin.h>
-#include <iostream>
-
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
 
@@ -14,17 +11,6 @@
 #include "../Osu/GameBase.h"
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
-
-double __fastcall AudioEngine::getCurrentPlaybackRateHook(uintptr_t ecx, uintptr_t edx)
-{
-	const uintptr_t returnAddress = reinterpret_cast<uintptr_t>(_ReturnAddress());
-	if (Vanilla::CheckAddressInModule(returnAddress, "clr.dll")) {
-		std::cout << "auth!" << std::endl;
-		return ModManager::GetModPlaybackRate();
-
-	}
-	return oGetCurrentPlaybackRate(ecx, edx);
-}
 
 void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 {
@@ -48,9 +34,6 @@ void AudioEngine::Initialize()
 
 	Memory::AddObject(xorstr_("AudioEngine::Time"), xorstr_("D9 58 2C 8B 3D ?? ?? ?? ?? 8B 1D"), 0xB, 1);
 
-	Memory::AddObject(xorstr_("AudioEngine::GetCurrentPlaybackRate"), xorstr_("55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 75 08 D9 05 ?? ?? ?? ?? 5D C3"));
-	Memory::AddHook(xorstr_("AudioEngine::GetCurrentPlaybackRate"), xorstr_("AudioEngine::GetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(getCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oGetCurrentPlaybackRate));
-
 	Memory::AddObject(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 0F 94 C2 0F B6 D2 8B CE"));
 	Memory::AddHook(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate));
 
@@ -70,4 +53,23 @@ bool AudioEngine::GetIsPaused()
 	const uintptr_t timeAddress = Memory::Objects[xorstr_("AudioEngine::Time")];
 
 	return timeAddress ? *reinterpret_cast<int*>(timeAddress + AUDIO_STATE_OFFSET) == 0 : false;
+}
+
+double AudioEngine::GetModTempo()
+{
+	if (ModManager::CheckActive(Mods::HalfTime))
+		return 0.75;
+
+	if (ModManager::CheckActive(Mods::DoubleTime) && !ModManager::CheckActive(Mods::Nightcore))
+		return 1.5;
+
+	return 1.0;
+}
+
+float AudioEngine::GetModFrequency(float currentFrequency)
+{
+	if (ModManager::CheckActive(Mods::Nightcore) && Config::Timewarp::Enabled)
+		return currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f;
+
+	return currentFrequency;
 }

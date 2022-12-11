@@ -1,4 +1,4 @@
-﻿#include <clocale>
+#include <clocale>
 #include <WinSock2.h>
 
 #include "curl.h"
@@ -10,6 +10,7 @@
 #include "Logging/Logger.h"
 #include "Storage/Storage.h"
 #include "Config/Config.h"
+#include "Dependencies/Milk/Milk.h"
 
 #include "Utilities/Security/xorstr.hpp"
 #include "Utilities/Security/Security.h"
@@ -33,10 +34,14 @@
 #include "UI/UI.h"
 #include "Utilities/Anticheat/AnticheatUtilities.h"
 #include "Utilities/Strings/StringUtilities.h"
+#include "Dependencies/Milk/MilkThread.h"
 
-DWORD WINAPI Initialize(LPVOID data_addr);
+DWORD WINAPI Initialize();
 void InitializeMaple();
 void WaitForCriticalSDKToInitialize();
+
+static inline LPVOID data;
+static inline MilkThread* initializeThread = nullptr;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -44,8 +49,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     DisableThreadLibraryCalls(hModule);
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-        CreateThread(nullptr, 0, Initialize, lpReserved, 0, nullptr);
-
+    {
+        data = lpReserved;
+        initializeThread = new MilkThread(reinterpret_cast<uintptr_t>(Initialize));
+    }
+        
     return TRUE;
 }
 
@@ -57,10 +65,15 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-DWORD WINAPI Initialize(LPVOID data_addr)
+DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
+
+    initializeThread->CleanCodeCave();
+    delete initializeThread;
+
+	auto data_addr = data;
 
     int protectionVar = 0x501938CA;
     CHECK_PROTECTION(protectionVar, 0x9CCC379)
@@ -112,6 +125,15 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
+        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
+        bool bypassSucceeded = Milk::Get().DoBypass();
+
+        if (!goodKnownAuthVersion || !bypassSucceeded)
+            Config::Misc::ForceDisableScoreSubmission = true;
+
+        if (goodKnownAuthVersion && !bypassSucceeded)
+            Config::Misc::BypassFailed = true;
+
         //initializing SDK
         Memory::StartInitialize();
 
@@ -134,9 +156,6 @@ void InitializeMaple()
         Memory::EndInitialize();
 
         WaitForCriticalSDKToInitialize();
-
-        if (!AnticheatUtilities::IsRunningGoodKnownVersion())
-            Config::Misc::ForceDisableScoreSubmission = true;
 
         //initializing UI and Spoofer
         //TODO: maybe we can move spoofer initialization outside of ui hooks?

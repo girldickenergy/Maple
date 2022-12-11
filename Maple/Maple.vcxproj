@@ -363,6 +363,9 @@
     <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\Milk\Milk.cpp" />
+    <ClCompile Include="Dependencies\Milk\MilkMemory.cpp" />
+    <ClCompile Include="Dependencies\Milk\MilkThread.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Hooking\VanillaHooking.cpp" />
     <ClCompile Include="Dependencies\Vanilla\Patching\VanillaPatcher.cpp" />
     <ClCompile Include="Dependencies\Vanilla\PatternScanning\VanillaPatternScanner.cpp" />
@@ -653,6 +656,11 @@
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\JSON\json.hpp" />
+    <ClInclude Include="Dependencies\Milk\Milk.h" />
+    <ClInclude Include="Dependencies\Milk\MilkMemory.h" />
+    <ClInclude Include="Dependencies\Milk\MilkThread.h" />
+    <ClInclude Include="Dependencies\Milk\Structs\CRC.h" />
+    <ClInclude Include="Dependencies\Milk\Structs\MemoryRegion.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\Vector2.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitObjectType.h" />
@@ -721,6 +729,7 @@
     <ClInclude Include="UI\Windows\MainMenu.h" />
     <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h" />
     <ClInclude Include="Utilities\Anticheat\AnticheatUtilities.h" />
+    <ClInclude Include="Utilities\Architecture\Singleton.hpp" />
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h" />
     <ClInclude Include="Utilities\Crypto\CryptoUtilities.h" />
     <ClInclude Include="Utilities\Security\Security.h" />

@@ -14,9 +14,18 @@
 #include "Packets/Responses/HandshakeResponse.h"
 #include "Packets/Responses/HeartbeatResponse.h"
 
+#include "../Dependencies/Milk/MilkThread.h"
+
 #pragma optimize("", off)
+static inline MilkThread* pingMilkThread;
+static inline MilkThread* heartbeatMilkThread;
+static inline MilkThread* checkerMilkThread;
+
 void Communication::pingThread()
 {
+	pingMilkThread->CleanCodeCave();
+	delete pingMilkThread;
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -38,6 +47,9 @@ void Communication::pingThread()
 
 void Communication::checkerThread()
 {
+	checkerMilkThread->CleanCodeCave();
+	delete checkerMilkThread;
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -60,6 +72,9 @@ void Communication::checkerThread()
 
 void Communication::heartbeatThread()
 {
+	heartbeatMilkThread->CleanCodeCave();
+	delete heartbeatMilkThread;
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
@@ -168,11 +183,14 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 			CryptoProvider::GetInstance()->InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
 
 			handshakeSucceeded = true;
+			
+			heartbeatMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
+			heartbeatThreadHandle = heartbeatMilkThread->Start();
 
-			heartbeatThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(heartbeatThread), nullptr, 0, nullptr);
 			heartbeatThreadLaunched = true;
 
-			pingThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(pingThread), nullptr, 0, nullptr);
+			pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
+			pingThreadHandle = pingMilkThread->Start();
 
 			STR_ENCRYPT_END
 			VM_SHARK_BLACK_END
@@ -247,12 +265,13 @@ bool Communication::Connect()
 	}
 
 	tcpClient = TCPClient(&onReceive, &onDisconnect);
-	if (!tcpClient.Connect(xorstr_("198.251.89.179"), xorstr_("9999")))
+	if (!tcpClient.Connect(xorstr_("127.0.0.1"), xorstr_("9999")))
 		return false;
 
 	connected = true;
 
-	ThreadCheckerHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(checkerThread), nullptr, 0, nullptr);
+	checkerMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
+	ThreadCheckerHandle = checkerMilkThread->Start();
 
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	tcpClient.Send(handshakeRequest.Serialize());

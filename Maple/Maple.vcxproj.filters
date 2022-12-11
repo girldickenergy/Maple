@@ -740,6 +740,15 @@
     <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp">
       <Filter>Communication\Packets\Responses</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\Milk\MilkThread.cpp">
+      <Filter>Dependencies\Milk</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Milk\MilkMemory.cpp">
+      <Filter>Dependencies\Milk</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Milk\Milk.cpp">
+      <Filter>Dependencies\Milk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -957,6 +966,15 @@
     </Filter>
     <Filter Include="Dependencies\JSON">
       <UniqueIdentifier>{b850f708-748b-413f-b037-f7230aa4b1d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Architecture">
+      <UniqueIdentifier>{84427acf-88bc-4cdd-84b3-323a1ed08a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Milk">
+      <UniqueIdentifier>{dfb7ab53-58c3-4fb1-b365-cb55089c02da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Milk\Structs">
+      <UniqueIdentifier>{ab7b97e5-9fa3-448e-b0ca-5f1e358178ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1916,6 +1934,24 @@
     </ClInclude>
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h">
       <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Architecture\Singleton.hpp">
+      <Filter>Utilities\Architecture</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\MilkMemory.h">
+      <Filter>Dependencies\Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\MilkThread.h">
+      <Filter>Dependencies\Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\Structs\MemoryRegion.h">
+      <Filter>Dependencies\Milk\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\Structs\CRC.h">
+      <Filter>Dependencies\Milk\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Milk\Milk.h">
+      <Filter>Dependencies\Milk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
