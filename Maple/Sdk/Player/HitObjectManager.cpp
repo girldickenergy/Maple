@@ -67,7 +67,7 @@ void HitObjectManager::spoofVisuals()
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		const std::uniform_int_distribution<> behaviorRNG(1, 8);
+		std::uniform_int_distribution<> behaviorRNG(1, 8);
 
 		const int behavior = behaviorRNG(gen);
 
