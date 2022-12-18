@@ -1,13 +1,21 @@
 #include "Spoofer.h"
 
+#include <combaseapi.h>
 #include <time.h>
 #include <filesystem>
 #include <fstream>
 
-#include "../../Sdk/Osu/GameBase.h"
-#include "../../Utilities/Crypto/CryptoHelper.h"
+#include "ThemidaSDK.h"
+#include "Vanilla.h"
+
 #include "../../Storage/Storage.h"
 #include "../../Storage/StorageConfig.h"
+#include "../../SDK/Osu/GameBase.h"
+#include "../../Utilities/Crypto/CryptoUtilities.h"
+#include "../../SDK/Online/BanchoClient.h"
+#include "../../Utilities/Security/xorstr.hpp"
+#include "../../Utilities/Clipboard/ClipboardUtilities.h"
+#include "../../Utilities/Strings/StringUtilities.h"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -16,7 +24,7 @@ std::string Spoofer::getRandomUninstallID()
 
 	char uninstallID[39];
 	snprintf(uninstallID, sizeof(uninstallID),
-		"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		xorstr_("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"),
 		uninstallIDGUID.Data1, uninstallIDGUID.Data2, uninstallIDGUID.Data3,
 		uninstallIDGUID.Data4[0], uninstallIDGUID.Data4[1], uninstallIDGUID.Data4[2], uninstallIDGUID.Data4[3],
 		uninstallIDGUID.Data4[4], uninstallIDGUID.Data4[5], uninstallIDGUID.Data4[6], uninstallIDGUID.Data4[7]);
@@ -61,30 +69,15 @@ std::string Spoofer::getRandomAdapters()
 	return adapters;
 }
 
-bool Spoofer::isSameName(const std::string& a, const std::string& b)
-{
-	std::string aLowerCase = a;
-	std::string bLowerCase = b;
-	std::transform(aLowerCase.begin(), aLowerCase.end(), aLowerCase.begin(), tolower);
-	std::transform(bLowerCase.begin(), bLowerCase.end(), bLowerCase.begin(), tolower);
-
-	return aLowerCase == bLowerCase;
-}
-
-bool Spoofer::isValidName(const std::string& name)
-{
-	return !name.empty() && !isSameName(name, "none");
-}
-
 void Spoofer::refresh()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	Profiles.clear();
-	Profiles.emplace_back("none");
+	Profiles.emplace_back(xorstr_("none"));
 
 	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
-		if (file.path().extension() == ".profile" && isValidName(file.path().filename().stem().string()))
+		if (file.path().extension() == xorstr_(".profile") && Storage::IsValidFileName(file.path().filename().stem().string()))
 			Profiles.push_back(file.path().filename().stem().string());
 }
 
@@ -95,12 +88,12 @@ void Spoofer::Initialize()
 	realUniqueID2 = GameBase::GetUniqueID2();
 	realUniqueCheck = GameBase::GetUniqueCheck();
 
-	for (int i = 0; i < realClientHash.size(); i++)
+	for (const wchar_t c : realClientHash)
 	{
-		if (realClientHash[i] == ':')
+		if (c == ':')
 			break;
-
-		fileMD5 += realClientHash[i];
+		
+		fileMD5 += c;
 	}
 
 	refresh();
@@ -113,6 +106,8 @@ void Spoofer::Initialize()
 		SelectedProfile = 0;
 
 	Load();
+
+	Initialized = true;
 }
 
 void Spoofer::Load()
@@ -128,7 +123,7 @@ void Spoofer::Load()
 	}
 	else
 	{
-		std::ifstream file(Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile");
+		std::ifstream file(Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile"));
 		std::string line;
 
 		std::wstring currentAdapters;
@@ -139,23 +134,23 @@ void Spoofer::Load()
 			std::string variable = line.substr(0, delimiterIndex);
 			std::string value = line.substr(delimiterIndex + 1, std::string::npos);
 
-			if (variable == "UninstallID")
-				currentUniqueID = CryptoHelper::GetMD5Hash(std::wstring(value.begin(), value.end()));
+			if (variable == xorstr_("UninstallID"))
+				currentUniqueID = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
 
-			if (variable == "DiskID")
-				currentUniqueID2 = CryptoHelper::GetMD5Hash(std::wstring(value.begin(), value.end()));
+			if (variable == xorstr_("DiskID"))
+				currentUniqueID2 = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
 
-			if (variable == "Adapters")
+			if (variable == xorstr_("Adapters"))
 				currentAdapters = std::wstring(value.begin(), value.end());
 		}
 
 		file.close();
 
-		currentUniqueCheck = CryptoHelper::GetMD5Hash(currentUniqueID + L"8" + L"512" + currentUniqueID2);
-		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoHelper::GetMD5Hash(currentAdapters) + L":" + CryptoHelper::GetMD5Hash(currentUniqueID) + L":" + CryptoHelper::GetMD5Hash(currentUniqueID2) + L":";
+		currentUniqueCheck = CryptoUtilities::GetMD5Hash(currentUniqueID + L"8" + L"512" + currentUniqueID2);
+		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoUtilities::GetMD5Hash(currentAdapters) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID2) + L":";
 	}
 
-	GameBase::RawGameBase["ClientHash"].Field.SetValueUnsafe(variant_t(), variant_t(currentClientHash.c_str()));
+	BanchoClient::InitializePrivate();
 
 	LoadedProfile = SelectedProfile;
 
@@ -170,7 +165,7 @@ void Spoofer::Delete()
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profilePath = Storage::ProfilesDirectory + "\\" + Profiles[SelectedProfile] + ".profile";
+	const std::string profilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
 
 	std::filesystem::remove(profilePath);
 
@@ -181,27 +176,173 @@ void Spoofer::Delete()
 	Load();
 }
 
+void Spoofer::Import()
+{
+	STR_ENCRYPT_START
+
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	const std::string encodedProfileData = ClipboardUtilities::Read();
+
+	if (encodedProfileData.empty())
+		return;
+
+	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xorstr_("OvpvutSCyRdrx0BF"));
+	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
+
+	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
+		return;
+
+	std::string profileName = CryptoUtilities::Base64Decode(decodedProfileDataSplit[0]);
+	const std::string profileData = CryptoUtilities::Base64Decode(decodedProfileDataSplit[1]);
+
+	std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + profileName + xorstr_(".profile");
+
+	if (!Storage::IsValidFileName(profileName))
+		return;
+
+	if (std::filesystem::exists(profileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = profileName + xorstr_("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				profileName = newProfileName;
+				profileFilePath = newProfileFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::ofstream ofs(profileFilePath);
+	ofs << profileData << std::endl;
+	ofs.close();
+
+	refresh();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+
+	Load();
+
+	STR_ENCRYPT_END
+}
+
+void Spoofer::Export()
+{
+	STR_ENCRYPT_START
+
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	if (SelectedProfile == 0)
+		return;
+
+	const std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
+
+	std::ifstream ifs(profileFilePath);
+	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData), xorstr_("OvpvutSCyRdrx0BF")));
+
+	ClipboardUtilities::Write(encodedProfileData);
+
+	STR_ENCRYPT_END
+}
+
+void Spoofer::Rename()
+{
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	if (SelectedProfile == 0)
+		return;
+
+	const std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
+
+	if (!Storage::IsValidFileName(RenamedProfileName) || Storage::IsSameFileName(RenamedProfileName, Profiles[SelectedProfile]))
+		return;
+
+	std::string renamedProfileName = RenamedProfileName;
+	std::string renamedProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + renamedProfileName + xorstr_(".profile");
+
+	if (std::filesystem::exists(renamedProfileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = renamedProfileName + xorstr_("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				renamedProfileName = newProfileName;
+				renamedProfileFilePath = newProfileFilePath;
+
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::rename(profileFilePath.c_str(), renamedProfileFilePath.c_str());
+
+	refresh();
+
+	const auto it = std::find(Profiles.begin(), Profiles.end(), renamedProfileName);
+
+	if (it != Profiles.end())
+		SelectedProfile = std::distance(Profiles.begin(), it);
+}
+
 void Spoofer::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	const std::string profilePath = Storage::ProfilesDirectory + "\\" + NewProfileName + ".profile";
+	std::string profileName = NewProfileName;
+	std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + profileName + xorstr_(".profile");
 
-	if (!isValidName(NewProfileName) || std::filesystem::exists(profilePath))
+	if (!Storage::IsValidFileName(profileName))
 		return;
 
-	std::ofstream ofs;
-	ofs.open(profilePath, std::ofstream::out | std::ofstream::trunc);
+	if (std::filesystem::exists(profileFilePath))
+	{
+		unsigned int i = 2;
+		while (true)
+		{
+			const std::string newProfileName = profileName + xorstr_("_") + std::to_string(i);
+			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
+			if (!std::filesystem::exists(newProfileFilePath))
+			{
+				profileName = newProfileName;
+				profileFilePath = newProfileFilePath;
 
-	ofs << "UninstallID=" << getRandomUninstallID() << std::endl;
-	ofs << "DiskID=" << getRandomDiskID() << std::endl;
-	ofs << "Adapters=" << getRandomAdapters() << std::endl;
+				break;
+			}
+
+			i++;
+		}
+	}
+
+	std::ofstream ofs;
+	ofs.open(profileFilePath, std::ofstream::out | std::ofstream::trunc);
+
+	ofs << xorstr_("UninstallID=") << getRandomUninstallID() << std::endl;
+	ofs << xorstr_("DiskID=") << getRandomDiskID() << std::endl;
+	ofs << xorstr_("Adapters=") << getRandomAdapters() << std::endl;
 
 	ofs.close();
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), NewProfileName);
+	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
 
 	if (it != Profiles.end())
 		SelectedProfile = std::distance(Profiles.begin(), it);
@@ -209,28 +350,22 @@ void Spoofer::Create()
 	Load();
 }
 
-COMString* __fastcall Spoofer::ObfuscatedStringGetValueHook(void* instance)
+CLRString* __fastcall Spoofer::GetClientHash()
 {
-	if (instance == GameBase::GetUniqueIDInstance())
-		return COMString::CreateString(currentUniqueID.c_str());
-
-	if (instance == GameBase::GetUniqueID2Instance())
-		return COMString::CreateString(currentUniqueID2.c_str());
-
-	if (instance == GameBase::GetUniqueCheckInstance())
-		return COMString::CreateString(currentUniqueCheck.c_str());
-
-	return oObfuscatedStringGetValue(instance);
+	return Vanilla::AllocateCLRString(currentClientHash.c_str());
 }
 
-void __fastcall Spoofer::ObfuscatedStringSetValueHook(void* instance, COMString* value)
+CLRString* Spoofer::GetUniqueID()
 {
-	if (instance == GameBase::GetUniqueIDInstance())
-		oObfuscatedStringSetValue(instance, COMString::CreateString(currentUniqueID.c_str()));
-	else if (instance == GameBase::GetUniqueID2Instance())
-		oObfuscatedStringSetValue(instance, COMString::CreateString(currentUniqueID2.c_str()));
-	else if (instance == GameBase::GetUniqueCheckInstance())
-		oObfuscatedStringSetValue(instance, COMString::CreateString(currentUniqueCheck.c_str()));
-	else
-		oObfuscatedStringSetValue(instance, value);
+	return Vanilla::AllocateCLRString(currentUniqueID.c_str());
+}
+
+CLRString* Spoofer::GetUniqueID2()
+{
+	return Vanilla::AllocateCLRString(currentUniqueID2.c_str());
+}
+
+CLRString* Spoofer::GetUniqueCheck()
+{
+	return Vanilla::AllocateCLRString(currentUniqueCheck.c_str());
 }

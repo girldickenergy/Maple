@@ -1,31 +1,41 @@
 #include "GameField.h"
 
-#include "GameBase.h"
+#include "ThemidaSDK.h"
+
+#include "../Memory.h"
+#include "../../Utilities/Security/xorstr.hpp"
+#include "../../Communication/Communication.h"
 
 void GameField::Initialize()
 {
-	RawGameField = Vanilla::Explorer["osu.GameField"];
+	VM_FISH_RED_START
+	STR_ENCRYPT_START
 
-	gameFieldInstanceAddress = GameBase::RawGameBase["GameField"].Field.GetAddress();
-	
-	heightField = RawGameField["<Height>k__BackingField"].Field;
-	widthField = RawGameField["<Width>k__BackingField"].Field;
-	offsetField = RawGameField["<OffsetVector1>k__BackingField"].Field;
+	Memory::AddObject(xorstr_("GameField::Instance"), xorstr_("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? A1"), 0xB, 1);
+
+	STR_ENCRYPT_END
+	VM_FISH_RED_END
 }
 
-void* GameField::Instance()
+uintptr_t GameField::GetInstance()
 {
-	return *static_cast<void**>(gameFieldInstanceAddress);
-}
+	const uintptr_t instanceAddress = Memory::Objects[xorstr_("GameField::Instance")];
 
-float GameField::GetHeight()
-{
-	return *static_cast<float*>(heightField.GetAddress(Instance()));
+	return instanceAddress ? *reinterpret_cast<uintptr_t*>(instanceAddress) : 0u;
 }
 
 float GameField::GetWidth()
 {
-	return *static_cast<float*>(widthField.GetAddress(Instance()));
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<float*>(instance + WIDTH_OFFSET) : 0.0f;
+}
+
+float GameField::GetHeight()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<float*>(instance + HEIGHT_OFFSET) : 0.0f;
 }
 
 float GameField::GetRatio()
@@ -33,17 +43,19 @@ float GameField::GetRatio()
 	return GetHeight() / 384.f;
 }
 
-Vector2 GameField::GetOffsetVector()
+Vector2 GameField::GetOffset()
 {
-	return *static_cast<Vector2*>(offsetField.GetAddress(Instance()));
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<Vector2*>(instance + OFFSETVECTOR_OFFSET) : Vector2(0, 0);
 }
 
-Vector2 GameField::DisplayToField(Vector2 pos)
+Vector2 GameField::DisplayToField(Vector2 display)
 {
-	return (pos - GetOffsetVector()) / GetRatio();
+	return (display - GetOffset()) / GetRatio(); //todo: possible division by zero
 }
 
-Vector2 GameField::FieldToDisplay(Vector2 pos)
+Vector2 GameField::FieldToDisplay(Vector2 field)
 {
-	return pos * GetRatio() + GetOffsetVector();
+	return field * GetRatio() + GetOffset();
 }

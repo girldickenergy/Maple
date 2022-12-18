@@ -1,9 +1,9 @@
 #include "Widgets.h"
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui_internal.h>
-
 #include <map>
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
 
 #include "../StyleProvider.h"
 
@@ -122,9 +122,9 @@ bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags 
     // FIXME: We can standardize the behavior of those two, we could also keep the fast path of override ClipRect + full push on render only,
     // which would be advantageous since most selectable are not selected.
     if (span_all_columns && window->DC.CurrentColumns)
-	    ImGui::PushColumnsBackground();
+        ImGui::PushColumnsBackground();
     else if (span_all_columns && g.CurrentTable)
-	    ImGui::TablePushBackgroundChannel();
+        ImGui::TablePushBackgroundChannel();
 
     // We use NoHoldingActiveID on menus so user can click and _hold_ on a menu then drag to browse child entries
     ImGuiButtonFlags button_flags = 0;
@@ -147,15 +147,15 @@ bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags 
     {
         if (!g.NavDisableMouseHover && g.NavWindow == window && g.NavLayer == window->DC.NavLayerCurrent)
         {
-	        ImGui::SetNavID(id, window->DC.NavLayerCurrent, window->DC.NavFocusScopeIdCurrent, ImRect(bb.Min - window->Pos, bb.Max - window->Pos));
+            ImGui::SetNavID(id, window->DC.NavLayerCurrent, window->DC.NavFocusScopeIdCurrent, ImRect(bb.Min - window->Pos, bb.Max - window->Pos));
             g.NavDisableHighlight = true;
         }
     }
     if (pressed)
-	    ImGui::MarkItemEdited(id);
+        ImGui::MarkItemEdited(id);
 
     if (flags & ImGuiSelectableFlags_AllowItemOverlap)
-	    ImGui::SetItemAllowOverlap();
+        ImGui::SetItemAllowOverlap();
 
     // In this branch, Selectable() cannot toggle the selection so this will never trigger.
     if (selected != was_selected) //-V547
@@ -210,9 +210,9 @@ bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags 
     ImGui::RenderNavHighlight(bb, id, ImGuiNavHighlightFlags_TypeThin | ImGuiNavHighlightFlags_NoRounding);
 
     if (span_all_columns && window->DC.CurrentColumns)
-	    ImGui::PopColumnsBackground();
+        ImGui::PopColumnsBackground();
     else if (span_all_columns && g.CurrentTable)
-	    ImGui::TablePopBackgroundChannel();
+        ImGui::TablePopBackgroundChannel();
 
     if (flags & ImGuiSelectableFlags_Disabled) ImGui::PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
     ImGui::RenderTextClipped(text_min, text_max, label, NULL, &label_size, style.SelectableTextAlign, &bb);
@@ -220,7 +220,7 @@ bool Widgets::Selectable(const char* label, bool selected, ImGuiSelectableFlags 
 
     // Automatically close popups
     if (pressed && (window->Flags & ImGuiWindowFlags_Popup) && !(flags & ImGuiSelectableFlags_DontClosePopups) && !(window->DC.ItemFlags & ImGuiItemFlags_SelectableDontClosePopup))
-	    ImGui::CloseCurrentPopup();
+        ImGui::CloseCurrentPopup();
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags);
     return pressed;
@@ -345,7 +345,7 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
 
     const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
     const float animationTime = 150.f;
-	
+
     static std::map<ImGuiID, float> hoverAnimationMap;
     auto hoverAnimation = hoverAnimationMap.find(id);
     if (hoverAnimation == hoverAnimationMap.end())
@@ -377,13 +377,13 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
         holdAnimation->second -= elapsed / animationTime;
 
     holdAnimation->second = ImClamp(holdAnimation->second, 0.f, 1.f);
-	
+
     // Render
     if (held && (flags & ImGuiSelectableFlags_DrawHoveredWhenHeld))
         hovered = true;
 
     ImColor col = ImLerp(selected ? style.Colors[ImGuiCol_Header] : ImVec4(style.Colors[ImGuiCol_Header].x, style.Colors[ImGuiCol_Header].y, style.Colors[ImGuiCol_Header].z, 0), style.Colors[ImGuiCol_HeaderHovered], hoverAnimation->second);
-	if (held)
+    if (held)
         col = ImLerp(col, style.Colors[ImGuiCol_HeaderActive], holdAnimation->second);
     else
         col = ImLerp(style.Colors[ImGuiCol_HeaderActive], col, 1.f - holdAnimation->second);
@@ -412,10 +412,10 @@ bool Widgets::Tab(const char* label, void* icon, bool selected, ImGuiSelectableF
 
 float Widgets::CalcPanelHeight(int widgetCount, int textCount, int spacingCount)
 {
-	const float totalWidgetHeight = ImGui::GetFrameHeight() * static_cast<float>(widgetCount);
-	const float totalTextHeight = ImGui::GetCurrentContext()->FontSize * static_cast<float>(textCount);
-	const float totalSpacingHeight = static_cast<float>(widgetCount + textCount + spacingCount - 1) * ImGui::GetStyle().ItemSpacing.y;
-	
+    const float totalWidgetHeight = ImGui::GetFrameHeight() * static_cast<float>(widgetCount);
+    const float totalTextHeight = ImGui::GetCurrentContext()->FontSize * static_cast<float>(textCount);
+    const float totalSpacingHeight = static_cast<float>(widgetCount + textCount + spacingCount - 1) * ImGui::GetStyle().ItemSpacing.y;
+
     return totalWidgetHeight + totalTextHeight + totalSpacingHeight;
 }
 
@@ -424,12 +424,12 @@ void Widgets::BeginPanel(const char* label, const ImVec2& size)
     ImGuiStyle& style = ImGui::GetStyle();
 
     const ImVec2 pos = ImGui::GetCursorScreenPos();
-	
+
     ImGui::PushFont(StyleProvider::FontDefaultBold);
 
     const ImVec2 labelSize = ImGui::CalcTextSize(label);
     const float titleBarHeight = labelSize.y + StyleProvider::Padding.y * 2;
-	
+
     ImGui::BeginChild(("###panelChild1-" + std::string(label)).c_str(), ImVec2(size.x, size.y + titleBarHeight + StyleProvider::Padding.y * 2), false, ImGuiWindowFlags_NoBackground);
     {
         ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + titleBarHeight), ImColor(StyleProvider::MenuColourVeryDark), style.ChildRounding, ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_TopRight);
@@ -496,10 +496,10 @@ bool Widgets::Checkbox(const char* label, bool* v)
         positionAnimationMap.insert({ id, 0.f });
         positionAnimation = positionAnimationMap.find(id);
     }
-	
+
     if (*v && positionAnimation->second < 1.f)
         positionAnimation->second += elapsed / animationTime;
-	
+
     if (!*v && positionAnimation->second > 0.f)
         positionAnimation->second -= elapsed / animationTime;
 
@@ -533,23 +533,23 @@ bool Widgets::Checkbox(const char* label, bool* v)
     if (positionAnimation->second > 0.f && positionAnimation->second < 1.f)
     {
         checkboxColour = ImLerp(style.Colors[ImGuiCol_FrameBgHovered], style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], *v ? positionAnimation->second : 1.f - positionAnimation->second);
-        checkMarkColour = ImLerp(StyleProvider::CheckMarkHoveredColour, *v? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, *v ? positionAnimation->second : 1.f - positionAnimation->second);
+        checkMarkColour = ImLerp(StyleProvider::CheckMarkHoveredColour, *v ? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, *v ? positionAnimation->second : 1.f - positionAnimation->second);
     }
     else
     {
         checkboxColour = ImLerp(style.Colors[*v ? ImGuiCol_FrameBg : ImGuiCol_FrameBgActive], style.Colors[ImGuiCol_FrameBgHovered], colourAnimation->second);
         checkMarkColour = ImLerp(*v ? StyleProvider::CheckMarkColour : StyleProvider::CheckMarkActiveColour, StyleProvider::CheckMarkHoveredColour, colourAnimation->second);
     }
-	
+
     window->DrawList->AddRectFilled(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, checkboxColour, 60.f);
     window->DrawList->AddCircleFilled(ImVec2(ImLerp(frame_bb.Min.x + checkMarkSize.x / 2, frame_bb.Max.x - checkMarkSize.x / 2, positionAnimation->second), frame_bb.Min.y + checkMarkSize.y / 2), checkMarkSize.y / 2, checkMarkColour, 36);
 
     bool mixed_value = (window->DC.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
     ImVec2 label_pos = ImVec2(total_bb.Max.x - label_size.x, total_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
-	    ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
+        ImGui::LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
     if (label_size.x > 0.0f)
-	    ImGui::RenderText(label_pos, label);
+        ImGui::RenderText(label_pos, label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
     return pressed;
@@ -628,13 +628,13 @@ bool Widgets::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFla
     ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
     if (g.LogEnabled)
-	    ImGui::LogSetNextTextDecoration("[", "]");
+        ImGui::LogSetNextTextDecoration("[", "]");
 
     ImGui::RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
 
     // Automatically close popups
     //if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
-	//    ImGui::CloseCurrentPopup();
+    //    ImGui::CloseCurrentPopup();
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.LastItemStatusFlags);
     return pressed;
@@ -660,7 +660,7 @@ bool Widgets::Hotkey(const char* label, int* k)
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
         return false;
-	
+
     ImGuiContext& g = *GImGui;
     ImGuiIO& io = g.IO;
     const ImGuiStyle& style = g.Style;
@@ -677,9 +677,10 @@ bool Widgets::Hotkey(const char* label, int* k)
         strcpy_s(buf_display, "<Press a key>");
     }
 
+    const ImVec2 label_size = ImGui::CalcTextSize(label);
     const ImVec2 hotkey_size = ImGui::CalcTextSize(buf_display, NULL, true);
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + hotkey_size + ImVec2(style.FramePadding.x * 2, style.FramePadding.y * 2));
-    const ImRect total_bb(window->DC.CursorPos, frame_bb.Max);
+    const ImRect total_bb(window->DC.CursorPos, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.f));
 
     ImGui::ItemSize(total_bb, style.FramePadding.y);
     if (!ImGui::ItemAdd(total_bb, id))
@@ -704,7 +705,7 @@ bool Widgets::Hotkey(const char* label, int* k)
             memset(io.KeysDown, 0, sizeof(io.KeysDown));
             *k = 0;
         }
-    	
+
         ImGui::SetActiveID(id, window);
         ImGui::FocusWindow(window);
     }
@@ -721,21 +722,21 @@ bool Widgets::Hotkey(const char* label, int* k)
             if (io.MouseDown[i] || GetAsyncKeyState(VK_XBUTTON1) || GetAsyncKeyState(VK_XBUTTON2))
             {
                 switch (i)
-            	{
-	                case 0:
-	                    key = VK_LBUTTON;
-	                    break;
-	                case 1:
-	                    key = VK_RBUTTON;
-	                    break;
-	                case 2:
-	                    key = VK_MBUTTON;
-	                    break;
+                {
+                case 0:
+                    key = VK_LBUTTON;
+                    break;
+                case 1:
+                    key = VK_RBUTTON;
+                    break;
+                case 2:
+                    key = VK_MBUTTON;
+                    break;
                 }
-            	
+
                 if (GetAsyncKeyState(VK_XBUTTON2))
                     key = VK_XBUTTON2;
-            	
+
                 if (GetAsyncKeyState(VK_XBUTTON1))
                     key = VK_XBUTTON1;
 
@@ -743,16 +744,16 @@ bool Widgets::Hotkey(const char* label, int* k)
                 ImGui::ClearActiveID();
             }
         }
-    	
+
         if (!value_changed)
         {
-            for (auto i = VK_BACK; i <= VK_RMENU; i++)
+            for (auto i = VK_BACK; i <= VK_OEM_8; i++)
             {
                 if (io.KeysDown[i])
                 {
                     key = i;
                     value_changed = true;
-                	
+
                     ImGui::ClearActiveID();
                 }
             }
@@ -809,8 +810,11 @@ bool Widgets::Hotkey(const char* label, int* k)
         col = ImLerp(style.Colors[ImGuiCol_FrameBgActive], col, 1.f - activeAnimation->second);
 
     window->DrawList->AddRectFilled(frame_bb.Min, frame_bb.Max, col, style.FrameRounding);
-	
-    ImGui::RenderText(ImVec2(total_bb.Max.x + style.ItemInnerSpacing.x, total_bb.Min.y + style.FramePadding.y), label);
+
+    const ImVec2 label_pos = ImVec2(total_bb.Max.x - label_size.x, total_bb.Min.y + style.FramePadding.y);
+    if (label_size.x > 0.0f)
+        ImGui::RenderText(label_pos, label);
+
     ImGui::RenderTextClipped(frame_bb.Min, frame_bb.Max, buf_display, NULL, &hotkey_size, ImVec2(0.5f, 0.5f), &frame_bb);
 
     return value_changed;
@@ -856,21 +860,21 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
         ImGui::SameLine(0, style.ItemInnerSpacing.x);
         if (ButtonEx("-", ImVec2(button_size, button_size), button_flags))
         {
-	        ImGui::DataTypeApplyOp(data_type, '-', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            ImGui::DataTypeApplyOp(data_type, '-', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
         }
         ImGui::SameLine(0, style.ItemInnerSpacing.x);
         if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
         {
-	        ImGui::DataTypeApplyOp(data_type, '+', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            ImGui::DataTypeApplyOp(data_type, '+', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
         }
 
         const char* label_end = ImGui::FindRenderedTextEnd(label);
         if (label != label_end)
         {
-	        ImGui::SameLine(0, style.ItemInnerSpacing.x);
-	        ImGui::TextEx(label, label_end);
+            ImGui::SameLine(0, style.ItemInnerSpacing.x);
+            ImGui::TextEx(label, label_end);
         }
         style.FramePadding = backup_frame_padding;
 
@@ -883,7 +887,7 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
             value_changed = ImGui::DataTypeApplyOpFromText(buf, g.InputTextState.InitialTextA.Data, data_type, p_data, format);
     }
     if (value_changed)
-	    ImGui::MarkItemEdited(window->DC.LastItemId);
+        ImGui::MarkItemEdited(window->DC.LastItemId);
 
     return value_changed;
 }
@@ -931,7 +935,7 @@ bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_d
     ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
     const bool value_changed = ImGui::SliderBehavior(ImRect(frame_bb.Min + ImVec2(sliderGrabSize.x / 2 - overlapAllowance.x, overlapAllowance.y), frame_bb.Max - ImVec2(sliderGrabSize.x / 2 - overlapAllowance.x, overlapAllowance.y)), id, data_type, p_data, p_min, p_max, format, flags, &grab_bb);
     ImGui::PopStyleVar();
-	
+
     if (value_changed)
         ImGui::MarkItemEdited(id);
 
@@ -960,18 +964,18 @@ bool Widgets::SliderScalar(const char* label, ImGuiDataType data_type, void* p_d
     ImColor sliderColour = ImColor(ImLerp(style.Colors[ImGuiCol_FrameBgActive], style.Colors[ImGuiCol_FrameBgHovered], hoverAnimation->second));
     ImColor sliderFillColour = ImColor(ImLerp(StyleProvider::SliderColour, StyleProvider::SliderHoveredColour, hoverAnimation->second));
     ImColor sliderGrabColour = ImColor(ImLerp(StyleProvider::SliderGrabColour, StyleProvider::SliderGrabHoveredColour, hoverAnimation->second));
-	
+
     // Draw frame
     ImGui::RenderNavHighlight(frame_bb, id);
     ImGui::RenderFrame(frame_bb.Min + overlapAllowance, frame_bb.Max - overlapAllowance, sliderColour, true, g.Style.FrameRounding);
     ImGui::RenderFrame(frame_bb.Min + overlapAllowance, ImVec2(grabPos.x, frame_bb.Max.y - overlapAllowance.y), sliderFillColour, true, g.Style.FrameRounding);
-	
+
     // Render grab
     window->DrawList->AddCircleFilled(grabPos, sliderGrabSize.y / 2, sliderGrabColour, 36);
 
     if (label_size.x > 0.0f)
-	    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
-	
+        ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags);
     return value_changed;
 }
@@ -981,17 +985,17 @@ bool Widgets::SliderInt(const char* label, int* v, int v_min, int v_max, int ste
     const float totalWidth = ImGui::GetWindowWidth() * 0.5f - ImGui::GetStyle().ItemInnerSpacing.x;
     const float sliderWidth = totalWidth * 0.6f;
     const float inputWidth = totalWidth - sliderWidth;
-	
-    ImGui::PushItemWidth(sliderWidth);
-	const bool sliderValueChanged = SliderScalar(("###slider-" + std::string(label)).c_str(), ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
 
-	ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+    ImGui::PushItemWidth(sliderWidth);
+    const bool sliderValueChanged = SliderScalar(("###slider-" + std::string(label)).c_str(), ImGuiDataType_S32, v, &v_min, &v_max, format, flags);
+
+    ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
     ImGui::PushItemWidth(inputWidth);
-	const bool inputValueChanged = InputScalar(label, ImGuiDataType_S32, v, &step, &stepFast, format);
+    const bool inputValueChanged = InputScalar(label, ImGuiDataType_S32, v, &step, &stepFast, format);
 
     if ((flags & ImGuiSliderFlags_AlwaysClamp) != 0)
         *v = ImClamp(*v, v_min, v_max);
-	
+
     return sliderValueChanged || inputValueChanged;
 }
 
@@ -1077,11 +1081,11 @@ bool Widgets::BeginCombo(const char* label, const char* preview_value, ImGuiComb
     {
         ImVec2 preview_pos = frame_bb.Min + style.FramePadding;
         if (g.LogEnabled)
-	        ImGui::LogSetNextTextDecoration("{", "}");
+            ImGui::LogSetNextTextDecoration("{", "}");
         ImGui::RenderTextClipped(preview_pos, ImVec2(value_x2, frame_bb.Max.y), preview_value, NULL, NULL, ImVec2(0.0f, 0.0f));
     }
     if (label_size.x > 0)
-	    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     if ((pressed || g.NavActivateId == id) && !popup_open)
     {
@@ -1143,7 +1147,7 @@ bool Widgets::BeginCombo(const char* label, const char* preview_value, ImGuiComb
     ImGui::PopStyleVar(2);
     if (!ret)
     {
-	    ImGui::EndPopup();
+        ImGui::EndPopup();
         IM_ASSERT(0);   // This should never happen as we tested for IsPopupOpen() above
         return false;
     }
@@ -1161,7 +1165,7 @@ bool Widgets::Combo(const char* label, int* current_item, bool(*items_getter)(vo
 
     // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need it, but we emulate it here.
     if (popup_max_height_in_items != -1 && !(g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint))
-	    ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, calcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+        ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, calcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
 
     if (!BeginCombo(label, preview_value, ImGuiComboFlags_None))
         return false;
@@ -1171,7 +1175,7 @@ bool Widgets::Combo(const char* label, int* current_item, bool(*items_getter)(vo
     bool value_changed = false;
     for (int i = 0; i < items_count; i++)
     {
-	    ImGui::PushID((void*)(intptr_t)i);
+        ImGui::PushID((void*)(intptr_t)i);
         const bool item_selected = (i == *current_item);
         const char* item_text;
         if (!items_getter(data, i, &item_text))
@@ -1182,13 +1186,13 @@ bool Widgets::Combo(const char* label, int* current_item, bool(*items_getter)(vo
             *current_item = i;
         }
         if (item_selected)
-	        ImGui::SetItemDefaultFocus();
+            ImGui::SetItemDefaultFocus();
         ImGui::PopID();
     }
 
     ImGui::EndCombo();
     if (value_changed)
-	    ImGui::MarkItemEdited(g.CurrentWindow->DC.LastItemId);
+        ImGui::MarkItemEdited(g.CurrentWindow->DC.LastItemId);
 
     return value_changed;
 }
@@ -1201,14 +1205,95 @@ bool Widgets::Combo(const char* label, int* current_item, const char* const item
 
 void Widgets::Tooltip(const char* text)
 {
-    if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(text);
+    ImGui::PushFont(StyleProvider::FontSmallBold);
+	ImVec2 label_size = ImGui::CalcTextSize("?", NULL, true);
+    ImGui::PopFont();
+
+    ImVec2 pos = window->DC.CursorPos;
+    ImVec2 size = ImGui::CalcItemSize(ImVec2(0.f, 0.f), label_size.y + style.FramePadding.x, label_size.y + style.FramePadding.y);
+
+    const ImRect bb(pos + ImVec2(0, ImGui::GetFrameHeight() / 2.f - size.y / 2), pos + ImVec2(size.x, ImGui::GetFrameHeight() / 2.f + size.y / 2));
+    ImGui::ItemSize(size, style.FramePadding.y / 2.f);
+    if (!ImGui::ItemAdd(bb, id))
+        return;
+
+    bool hovered, held;
+    const bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held);
+
+    const float elapsed = ImGui::GetIO().DeltaTime * 1000.f;
+    const float animationTime = 150.f;
+
+    static std::map<ImGuiID, float> hoverAnimationMap;
+    auto hoverAnimation = hoverAnimationMap.find(id);
+    if (hoverAnimation == hoverAnimationMap.end())
+    {
+        hoverAnimationMap.insert({ id, 0.f });
+        hoverAnimation = hoverAnimationMap.find(id);
+    }
+
+    if (hovered && hoverAnimation->second < 1.f)
+        hoverAnimation->second += elapsed / animationTime;
+
+    if (!hovered && hoverAnimation->second > 0.f)
+        hoverAnimation->second -= elapsed / animationTime;
+
+    hoverAnimation->second = ImClamp(hoverAnimation->second, 0.f, 1.f);
+
+    static std::map<ImGuiID, float> holdAnimationMap;
+    auto holdAnimation = holdAnimationMap.find(id);
+    if (holdAnimation == holdAnimationMap.end())
+    {
+        holdAnimationMap.insert({ id, 0.f });
+        holdAnimation = holdAnimationMap.find(id);
+    }
+
+    if (held && holdAnimation->second < 1.f)
+        holdAnimation->second += elapsed / animationTime;
+
+    if (!held && holdAnimation->second > 0.f)
+        holdAnimation->second -= elapsed / animationTime;
+
+    holdAnimation->second = ImClamp(holdAnimation->second, 0.f, 1.f);
+
+    // Render
+    ImGui::RenderNavHighlight(bb, id);
+
+    ImColor col = ImLerp(style.Colors[ImGuiCol_Button], style.Colors[ImGuiCol_ButtonHovered], hoverAnimation->second);
+    if (held)
+        col = ImLerp(col, style.Colors[ImGuiCol_ButtonActive], holdAnimation->second);
+    else
+        col = ImLerp(style.Colors[ImGuiCol_ButtonActive], col, 1.f - holdAnimation->second);
+
+    ImGui::RenderFrame(bb.Min, bb.Max, col, true, 100);
+
+    if (g.LogEnabled)
+        ImGui::LogSetNextTextDecoration("[", "]");
+
+    ImGui::PushFont(StyleProvider::FontSmallBold);
+    ImGui::RenderTextClipped(bb.Min + style.FramePadding / 2.f, bb.Max - style.FramePadding / 2.f, "?", NULL, &label_size, style.ButtonTextAlign, &bb);
+    ImGui::PopFont();
+
+    // Automatically close popups
+    //if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
+    //    ImGui::CloseCurrentPopup();
+
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.LastItemStatusFlags);
+
+    if (ImGui::IsItemHovered())
     {
         ImGui::PushStyleColor(ImGuiCol_PopupBg, ImGui::GetColorU32(ImGuiCol_FrameBg));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, StyleProvider::Padding);
         ImGui::BeginTooltip();
         ImGui::PopStyleVar();
-    	ImGui::PopStyleColor();
-        ImGui::PushTextWrapPos((StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x) * 0.5f);
+        ImGui::PopStyleColor();
+        ImGui::PushTextWrapPos((std::min)(ImGui::CalcTextSize(text).x, (StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x) * 0.75f));
         ImGui::TextUnformatted(text);
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
@@ -1217,7 +1302,7 @@ void Widgets::Tooltip(const char* text)
 
 void Widgets::HitErrorBar(int window)
 {
-	const float hitWindowWidth = (ImGui::GetWindowSize().x * 0.5f) / 6.0f;
+    const float hitWindowWidth = (ImGui::GetWindowSize().x * 0.5f) / 6.0f;
 
     ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetCurrentWindow()->DC.CursorPos, ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ImGui::GetWindowSize().x * 0.5f, ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight()), ImColor(218, 174, 70, 255), ImGui::GetStyle().FrameRounding);
     ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + hitWindowWidth, ImGui::GetCurrentWindow()->DC.CursorPos.y), ImVec2(ImGui::GetCurrentWindow()->DC.CursorPos.x + ImGui::GetWindowSize().x * 0.5f - hitWindowWidth, ImGui::GetCurrentWindow()->DC.CursorPos.y + ImGui::GetFrameHeight()), ImColor(87, 227, 19, 255));

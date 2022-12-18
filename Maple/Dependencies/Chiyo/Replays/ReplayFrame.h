@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Enums/Gameplay/OsuKeys.h>
-#include <Enums/Gameplay/TaikoKeys.h>
-#include <Enums/Gameplay/CatchTheBeatKeys.h>
-#include <Enums/Gameplay/OsuManiaKeys.h>
+#include "Osu/Keys/CatchTheBeatKeys.h"
+#include "Osu/Keys/OsuKeys.h"
+#include "Osu/Keys/OsuManiaKeys.h"
+#include "Osu/Keys/TaikoKeys.h"
 
 struct ReplayFrame
 {

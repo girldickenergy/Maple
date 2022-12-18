@@ -1,59 +1,39 @@
 #pragma once
 
-#pragma comment(lib, "mscoree.lib")
-#include "mscorlib.h"
-
-#include <map>
+#include <mutex>
 #include <vector>
 
-#include "COM/Assembly.h"
-#include "Explorer/Explorer.h"
-#include "Patching/Patch.h"
-
-struct MemoryRegion
-{
-	DWORD BaseAddress;
-	SIZE_T RegionSize;
-	DWORD State;
-	DWORD Protect;
-	DWORD Type;
-
-	MemoryRegion(MEMORY_BASIC_INFORMATION32 mbi)
-	{
-		BaseAddress = mbi.BaseAddress;
-		RegionSize = mbi.RegionSize;
-		State = mbi.State;
-		Protect = mbi.Protect;
-		Type = mbi.Type;
-	}
-};
+#include "CLR/CLRString.h"
+#include "VanillaResult.h"
 
 class Vanilla
 {
-	static inline std::vector<MemoryRegion> memoryRegions;
-	static void cacheMemoryRegions();
+	typedef int(__stdcall* fnCompileMethod)(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
+	typedef void(__cdecl* fnJITCallback)(uintptr_t functionAddress, unsigned int functionSize);
+	static inline fnCompileMethod oCompileMethod;
+	static int __stdcall compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
 
-	static inline std::map<std::string, Patch> patches;
+	static inline std::mutex mutex;
+	static inline std::vector<std::reference_wrapper<std::uintptr_t>> relocations;
 
-	static void initializeCOM();
-	static void populateAssemblies();
+	typedef void(__stdcall* fnRelocateAddress)(uint8_t** block);
+	static inline fnRelocateAddress oRelocateAddress;
+	static void __stdcall relocateAddressHook(uint8_t** block);
+
+	typedef CLRString* (__cdecl* fnAllocateCLRString)(const wchar_t* pwsz);
+	static inline fnAllocateCLRString allocateCLRString;
+
+	static inline bool usingCLR = false;
+	static inline fnJITCallback jitCallback = nullptr;
 public:
-	static inline mscorlib::_AppDomainPtr DefaultDomain = NULL;
-
-	static inline Assembly OsuStubAssembly;
-	static inline Assembly OsuAssembly;
-	static inline Assembly MscorlibAssembly;
-
-	static inline ::Explorer Explorer;
+	static VanillaResult Initialize(bool useCLR = false);
+	static void Shutdown();
 	
-	static void Initialize();
+	static void SetJITCallback(void* callback);
+	static void RemoveJITCallback();
+	static void AddRelocation(std::reference_wrapper<std::uintptr_t> relocation);
+	static void RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation);
+	static CLRString* AllocateCLRString(const wchar_t* pwsz);
 
-	static uintptr_t FindSignature(const char* pattern, const char* mask);
-	static uintptr_t FindSignature(const char* signature, const char* mask, uintptr_t entryPoint, int size);
-	static DWORD GetModuleSize(const char* moduleName);
-
-	static bool InstallPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, const char* patch);
-	static bool InstallNOPPatch(const std::string& name, uintptr_t entryPoint, const char* signature, const char* mask, int size, int offset, int nopSize);
-	static void RemovePatch(const std::string& name);
-	static void RemoveAllPatches();
+	static bool CheckAddressInModule(uintptr_t address, const std::string& moduleName);
 };

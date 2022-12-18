@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Request.h"
+#include <string>
+#include <vector>
 
-#include "../../MatchedClient.h"
-
-class HeartbeatRequest : public Request
+class HeartbeatRequest
 {
+	std::string sessionToken;
 public:
-	HeartbeatRequest(std::string sessionID, MatchedClient* matchedClient);
+	HeartbeatRequest(const std::string& sessionToken);
+	std::vector<unsigned char> Serialize();
 };

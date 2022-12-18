@@ -1,33 +1,38 @@
 #pragma once
 
-#include "MatchedClient.h"
 #include "User.h"
-#include "TCP/TCP_Client.h"
-#include "Wrapper/RSADecrypt.h"
+#include "TCP/TCPClient.h"
 
 class Communication
 {
+	static inline User* user;
+	static inline TCPClient tcpClient;
+	
+	static inline bool connected = false;
+	static inline bool handshakeSucceeded = false;
+	static inline bool heartbeatThreadLaunched = false;
+	static inline bool pingThreadLaunched = false;
 	static inline HANDLE pingThreadHandle;
 	static inline HANDLE heartbeatThreadHandle;
 
 	static void pingThread();
 	static void heartbeatThread();
 	static void checkerThread();
-	
-	static void onIncomingMessage(const char* msg, size_t size);
-	static void onDisconnection(const pipe_ret_t& ret);
+
+	static void onReceive(const std::vector<unsigned char>& data);
+	static void onDisconnect();
 public:
-	static inline RSADecrypt RSA = RSADecrypt();
-	static inline TcpClient TCPClient = TcpClient();
-	static inline MatchedClient* MatchedClient = nullptr;
-
-	static inline User* CurrentUser;
-	static inline bool EstablishedConnection = false;
-
-	static inline bool HandshakeSucceeded = false;
-	static inline bool HeartbeatThreadLaunched = false;
-
 	static inline HANDLE ThreadCheckerHandle;
-	
-	static void ConnectToServer();
+	static inline unsigned int IntegritySignature1 = 0xdeadbeef;
+	static inline unsigned int IntegritySignature2 = 0xefbeadde;
+	static inline unsigned int IntegritySignature3 = 0xbeefdead;
+
+	static bool Connect();
+	static void Disconnect();
+
+	static bool GetIsConnected();
+	static bool GetIsHandshakeSucceeded();
+	static bool GetIsHeartbeatThreadLaunched();
+	static User* GetUser();
+	static void SetUser(User* user);
 };

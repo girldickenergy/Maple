@@ -1,7 +1,14 @@
 #include "ReplayDecoder.h"
 
+#include "Osu/Mods.h"
+#include "Osu/Keys/CatchTheBeatKeys.h"
+#include "Osu/Keys/OsuKeys.h"
+#include "Osu/Keys/OsuManiaKeys.h"
+#include "Osu/Keys/TaikoKeys.h"
+#include "Osu/PlayModes.h"
+
 #include "../Serialization/SerializationReader.h"
-#include "../Utilities/StringUtilities.h"
+#include "../Utilities/ChiyoStringUtilities.h"
 #include "../LZMA/lzma_helper.hpp"
 
 Replay ReplayDecoder::Decode(std::string filepath)
@@ -36,9 +43,9 @@ Replay ReplayDecoder::Decode(std::istream* filestream)
     std::string lifeData = reader.ReadString();
     if (!lifeData.empty())
     {
-        for (const std::string& lifeBlock : StringUtilities::Split(lifeData, ","))
+        for (const std::string& lifeBlock : ChiyoStringUtilities::Split(lifeData, ","))
         {
-            std::vector<std::string> tokens = StringUtilities::Split(lifeBlock, "|");
+            std::vector<std::string> tokens = ChiyoStringUtilities::Split(lifeBlock, "|");
             if (tokens.size() < 2)
                 continue;
 
@@ -56,12 +63,12 @@ Replay ReplayDecoder::Decode(std::istream* filestream)
     if (compressedReplayFrames.size() > 0)
     {
         int lastTime = 0;
-        for (const std::string& replayBlock : StringUtilities::Split(StringUtilities::ByteArrayToString(lh::lzma_decompress(compressedReplayFrames)), ","))
+        for (const std::string& replayBlock : ChiyoStringUtilities::Split(ChiyoStringUtilities::ByteArrayToString(lh::lzma_decompress(compressedReplayFrames)), ","))
         {
             if (replayBlock.empty())
                 continue;
 
-            std::vector<std::string> tokens = StringUtilities::Split(replayBlock, "|");
+            std::vector<std::string> tokens = ChiyoStringUtilities::Split(replayBlock, "|");
 
             if (tokens.size() < 4)
                 continue;

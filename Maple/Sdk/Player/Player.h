@@ -1,37 +1,33 @@
 #pragma once
 
-#include <Explorer/TypeExplorer.h>
-#include <Enums/PlayModes.h>
+#include <cstdint>
+
+#include "Osu/PlayModes.h"
 
 class Player
 {
-	static inline bool isLoaded = false;
-	
-	static inline Field asyncLoadCompleteField;
-	static inline Field replayModeStableField;
-	
-	static inline void* instanceAddress = nullptr;
-	static inline void* isRetryingAddress = nullptr;
-	static inline void* playingAddress = nullptr;
-	static inline void* modeAddress = nullptr;
-	static inline void* pausedAddress = nullptr;
+	static inline constexpr int ASYNC_LOAD_COMPLETE_OFFSET = 0x184;
+	static inline constexpr int PLAY_MODE_OFFSET = 0x114;
+	static inline constexpr int REPLAY_MODE_OFFSET = 0x17B;
+
+	static void initializeFeatures();
+
+	typedef int(__fastcall* fnOnLoadComplete)(uintptr_t instance, bool success);
+	static inline fnOnLoadComplete oOnLoadComplete;
+	static int __fastcall onLoadCompleteHook(uintptr_t instance, bool success);
+
+	typedef void(__fastcall* fnUpdateFlashlight)(uintptr_t instance);
+	static inline fnUpdateFlashlight oUpdateFlashlight;
+	static void __fastcall updateFlashlightHook(uintptr_t instance);
 public:
-	static inline TypeExplorer RawPlayer;
-
 	static void Initialize();
-	static void* Instance();
-	static bool IsLoaded();
-	static bool IsReplayMode();
-	static bool IsRetrying();
-	static bool IsPlaying();
-	static PlayModes PlayMode();
-	static bool IsPaused();
 
-	typedef void(__fastcall* fnDispose)(void* instance, BOOL disposing);
-	static inline fnDispose oDispose;
-	static void __fastcall DisposeHook(void* instance, BOOL disposing);
-
-	typedef BOOL(__fastcall* fnOnPlayerLoadComplete)(void* instance, BOOL success);
-	static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete;
-	static BOOL __fastcall OnPlayerLoadCompleteHook(void* instance, BOOL success);
+	static uintptr_t GetInstance();
+	static bool GetIsLoaded();
+	static bool GetIsReplayMode();
+	static PlayModes GetPlayMode();
+	static bool GetIsRetrying();
+	static bool GetIsFailed();
+	static int GetAnticheatFlag();
+	static void ResetAnticheatFlag();
 };

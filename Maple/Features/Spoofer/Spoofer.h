@@ -3,13 +3,10 @@
 #include <string>
 #include <vector>
 
-#include <COM/COMString.h>
+#include "CLR/CLRString.h"
 
 class Spoofer
 {
-	typedef COMString* (__fastcall* fnObfuscatedStringGetValue)(void* instance);
-	typedef void (__fastcall* fnObfuscatedStringSetValue)(void* instance, COMString* value);
-
 	static inline std::wstring fileMD5;
 	static inline std::wstring realClientHash;
 	static inline std::wstring realUniqueID;
@@ -25,23 +22,26 @@ class Spoofer
 	static std::string getRandomDiskID();
 	static std::string getRandomAdapters();
 
-	static bool isSameName(const std::string& a, const std::string& b);
-	static bool isValidName(const std::string& name);
 	static void refresh();
 public:
 	static inline std::vector<std::string> Profiles;
 	static inline int SelectedProfile = 0;
 	static inline int LoadedProfile = 0;
+	static inline char RenamedProfileName[24];
 	static inline char NewProfileName[24];
+
+	static inline bool Initialized = false;
 
 	static void Initialize();
 	static void Load();
 	static void Delete();
+	static void Import();
+	static void Export();
+	static void Rename();
 	static void Create();
 
-	static inline fnObfuscatedStringGetValue oObfuscatedStringGetValue = nullptr;
-	static COMString* __fastcall ObfuscatedStringGetValueHook(void* instance);
-
-	static inline fnObfuscatedStringSetValue oObfuscatedStringSetValue = nullptr;
-	static void __fastcall ObfuscatedStringSetValueHook(void* instance, COMString* value);
+	static CLRString* __fastcall GetClientHash();
+	static CLRString* GetUniqueID();
+	static CLRString* GetUniqueID2();
+	static CLRString* GetUniqueCheck();
 };

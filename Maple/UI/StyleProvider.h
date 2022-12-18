@@ -1,15 +1,15 @@
 #pragma once
 
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui_internal.h>
-#include <imgui.h>
+#include "imgui_internal.h"
+#include "imgui.h"
 
 #include "Assets/Textures.h"
 #include "Assets/Fonts.h"
-#include "Rendering/TextureLoader.h"
-#include "../Communication/Communication.h"
 #include "../Config/Config.h"
-#include "Overlay.h"
+#include "UI.h"
+#include "../Utilities/Textures/TextureLoader.h"
+#include "../Communication/Communication.h"
 
 class StyleProvider
 {
@@ -36,12 +36,12 @@ public:
 	static inline ImVec2 Padding;
 
 	static inline ImVec4 AccentColour;
-    static inline ImVec4 MenuColour;
-    static inline ImVec4 ControlColour;
-    static inline ImVec4 TextColour;
+	static inline ImVec4 MenuColour;
+	static inline ImVec4 ControlColour;
+	static inline ImVec4 TextColour;
 	static inline ImVec4 MottoColour;
-    static inline ImVec4 MenuColourDark;
-    static inline ImVec4 MenuColourVeryDark;
+	static inline ImVec4 MenuColourDark;
+	static inline ImVec4 MenuColourVeryDark;
 	static inline ImVec4 PanelGradientStartColour;
 	static inline ImVec4 CheckMarkColour;
 	static inline ImVec4 CheckMarkHoveredColour;
@@ -66,7 +66,7 @@ public:
 	static void LoadFonts()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		
+
 		FontDefault = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaData, Fonts::ComfortaaSize, 16);
 		FontDefaultSemiBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaSemiBoldData, Fonts::ComfortaaSemiBoldSize, 16);
 		FontDefaultBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaBoldData, Fonts::ComfortaaBoldSize, 16);
@@ -86,28 +86,28 @@ public:
 
 	static void LoadTextures()
 	{
-		if (Communication::CurrentUser->DiscordID != "-1" && Communication::CurrentUser->AvatarHash != "-1")
+		if (Communication::GetUser()->GetDiscordID() != "-1" && Communication::GetUser()->GetAvatarHash() != "-1")
 		{
-			std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::CurrentUser->DiscordID + "/" + Communication::CurrentUser->AvatarHash + ".png?size=64";
+			const std::string avatarURL = "https://cdn.discordapp.com/avatars/" + Communication::GetUser()->GetDiscordID() + "/" + Communication::GetUser()->GetAvatarHash() + ".png?size=64";
 
-			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromURLOGL3(avatarURL) : TextureLoader::LoadTextureFromURLD3D9(Overlay::D3D9Device, avatarURL);
+			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromURLOGL3(avatarURL) : TextureLoader::LoadTextureFromURLD3D9(UI::D3D9Device, avatarURL);
 		}
 		else
-			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
 
 		if (!AvatarTexture)
-			AvatarTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
-		
-		MapleLogoTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MapleLogo, Textures::MapleLogoSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::MapleLogo, Textures::MapleLogoSize);
-		RelaxIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::RelaxIcon, Textures::RelaxIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::RelaxIcon, Textures::RelaxIconSize);
-		AimAssistIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::AimAssistIcon, Textures::AimAssistIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::AimAssistIcon, Textures::AimAssistIconSize);
-		TimewarpIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::TimewarpIcon, Textures::TimewarpIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::TimewarpIcon, Textures::TimewarpIconSize);
-		ReplaysIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ReplaysIcon, Textures::ReplaysIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::ReplaysIcon, Textures::ReplaysIconSize);
-		VisualsIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::VisualsIcon, Textures::VisualsIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::VisualsIcon, Textures::VisualsIconSize);
-		SpooferIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::SpooferIcon, Textures::SpooferIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::SpooferIcon, Textures::SpooferIconSize);
-		MiscIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MiscIcon, Textures::MiscIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::MiscIcon, Textures::MiscIconSize);
-		ConfigIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ConfigIcon, Textures::ConfigIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::ConfigIcon, Textures::ConfigIconSize);
-		ChevronIconTexture = Overlay::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ChevronIcon, Textures::ChevronIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(Overlay::D3D9Device, Textures::ChevronIcon, Textures::ChevronIconSize);
+			AvatarTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::DefaultAvatar, Textures::DefaultAvatarSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::DefaultAvatar, Textures::DefaultAvatarSize);
+
+		MapleLogoTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MapleLogo, Textures::MapleLogoSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::MapleLogo, Textures::MapleLogoSize);
+		RelaxIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::RelaxIcon, Textures::RelaxIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::RelaxIcon, Textures::RelaxIconSize);
+		AimAssistIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::AimAssistIcon, Textures::AimAssistIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::AimAssistIcon, Textures::AimAssistIconSize);
+		TimewarpIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::TimewarpIcon, Textures::TimewarpIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::TimewarpIcon, Textures::TimewarpIconSize);
+		ReplaysIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ReplaysIcon, Textures::ReplaysIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::ReplaysIcon, Textures::ReplaysIconSize);
+		VisualsIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::VisualsIcon, Textures::VisualsIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::VisualsIcon, Textures::VisualsIconSize);
+		SpooferIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::SpooferIcon, Textures::SpooferIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::SpooferIcon, Textures::SpooferIconSize);
+		MiscIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::MiscIcon, Textures::MiscIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::MiscIcon, Textures::MiscIconSize);
+		ConfigIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ConfigIcon, Textures::ConfigIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::ConfigIcon, Textures::ConfigIconSize);
+		ChevronIconTexture = UI::Renderer == Renderer::OGL3 ? TextureLoader::LoadTextureFromMemoryOGL3(Textures::ChevronIcon, Textures::ChevronIconSize) : TextureLoader::LoadTextureFromMemoryD3D9(UI::D3D9Device, Textures::ChevronIcon, Textures::ChevronIconSize);
 	}
 
 	static void UpdateScale()
@@ -181,7 +181,7 @@ public:
 		{
 			style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(ControlColour.x + 0.1f, ControlColour.y + 0.1f, ControlColour.z + 0.1f, ControlColour.w);
 			style.Colors[ImGuiCol_FrameBgActive] = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
-			
+
 			CheckMarkColour = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
 			CheckMarkHoveredColour = ImVec4(ControlColour.x + 0.15f, ControlColour.y + 0.15f, ControlColour.z + 0.15f, ControlColour.w);
 			CheckMarkActiveColour = ControlColour;
@@ -205,12 +205,12 @@ public:
 			SliderGrabColour = ImVec4(ControlColour.x + 0.05f, ControlColour.y + 0.05f, ControlColour.z + 0.05f, ControlColour.w);
 			SliderGrabHoveredColour = ImVec4(ControlColour.x + 0.15f, ControlColour.y + 0.15f, ControlColour.z + 0.15f, ControlColour.w);
 		}
-		
+
 		MottoColour = ImVec4(MenuColour.x + 0.2f * mottoColourMultiplier, MenuColour.y + 0.2f * mottoColourMultiplier, MenuColour.z + 0.2f * mottoColourMultiplier, MenuColour.w);
 		MenuColourDark = ImVec4(MenuColour.x - 0.05f * menuColourMultiplier, MenuColour.y - 0.05f * menuColourMultiplier, MenuColour.z - 0.05f * menuColourMultiplier, MenuColour.w);
 		MenuColourVeryDark = ImVec4(MenuColour.x - 0.1f * menuColourMultiplier, MenuColour.y - 0.1f * menuColourMultiplier, MenuColour.z - 0.1f * menuColourMultiplier, MenuColour.w);
 		PanelGradientStartColour = ImColor(MenuColourVeryDark.x + 0.025f * menuColourMultiplier, MenuColourVeryDark.y + 0.025f * menuColourMultiplier, MenuColourVeryDark.z + 0.025f * menuColourMultiplier, MenuColourVeryDark.w);
-		
+
 		style.Colors[ImGuiCol_WindowBg] = MenuColour;
 		style.Colors[ImGuiCol_ChildBg] = MenuColourDark;
 
@@ -219,7 +219,7 @@ public:
 		style.Colors[ImGuiCol_TitleBg] = MenuColourVeryDark;
 		style.Colors[ImGuiCol_TitleBgActive] = MenuColourVeryDark;
 		style.Colors[ImGuiCol_TitleBgCollapsed] = MenuColourVeryDark;
-		
+
 		style.Colors[ImGuiCol_Header] = style.Colors[ImGuiCol_FrameBg];
 		style.Colors[ImGuiCol_HeaderHovered] = style.Colors[ImGuiCol_FrameBgHovered];
 		style.Colors[ImGuiCol_HeaderActive] = style.Colors[ImGuiCol_FrameBgActive];

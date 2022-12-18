@@ -1,29 +1,34 @@
 #include "HeartbeatResponse.h"
 
+#include "ThemidaSDK.h"
+#include "json.hpp"
+#include "../../Crypto/CryptoProvider.h"
 #include "../../../Utilities/Strings/StringUtilities.h"
+#include "../../../Utilities/Security/xorstr.hpp"
 
-#include <chrono>
+HeartbeatResponse::HeartbeatResponse(HeartbeatResult result)
+{
+	this->result = result;
+}
 
-HeartbeatResponse::HeartbeatResponse(const char* msg, size_t size, MatchedClient* matchedClient) : Response(msg, size)
+HeartbeatResult HeartbeatResponse::GetResult()
+{
+	return result;
+}
+
+#pragma optimize("", off)
+HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char>& payload)
 {
 	VM_SHARK_BLACK_START
-	std::chrono::milliseconds msEpoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+	STR_ENCRYPT_START
 
-	auto encrypted = StringUtilities::StringToByteArray(RawData[0]);
+	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::GetInstance()->AESDecrypt(payload)));
 
-	encrypted.erase(encrypted.begin());
+	HeartbeatResponse response = HeartbeatResponse(jsonPayload[xorstr_("Result")]);
 
-	std::string decrypted = matchedClient->aes->Decrypt(encrypted);
-
-	std::vector<std::string> decryptedSplit = StringUtilities::Split(decrypted);
-	Result = static_cast<HeartbeatResult>(decryptedSplit[0][0]);
-	decryptedSplit[1].erase(decryptedSplit[1].begin());
-	std::string epoch = decryptedSplit[1];
-
-	if (std::abs(msEpoch.count() - ((std::stoll(epoch) * 2) ^ 0xDA)) > 5000)
-	{
-		Result = HeartbeatResult::EpochTimedOut;
-		return;
-	}
+	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END
+
+	return response;
 }
+#pragma optimize("", on)

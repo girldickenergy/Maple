@@ -1,18 +1,21 @@
 #pragma once
 
-#include "Response.h"
+#include <vector>
 
-enum class HeartbeatResult : unsigned char
+enum class HeartbeatResult
 {
-	Success = 0x0,
-	InvalidSession = 0x2,
-	EpochTimedOut = 0x3,
-	InternalError = 0x4
+	Success = 0,
+	InvalidSession = 1,
+	UnknownError = 2
 };
 
-class HeartbeatResponse : public Response
+class HeartbeatResponse
 {
+	HeartbeatResult result;
+
+	HeartbeatResponse(HeartbeatResult result);
 public:
-	HeartbeatResult Result;
-	HeartbeatResponse(const char* msg, size_t size, MatchedClient* matchedClient);
+	HeartbeatResult GetResult();
+
+	static HeartbeatResponse Deserialize(const std::vector<unsigned char>& payload);
 };

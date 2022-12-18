@@ -1,20 +1,16 @@
 #pragma once
 
-#include "Response.h"
+#include <vector>
 
-enum class HandshakeResult : unsigned char
+class HandshakeResponse
 {
-	Success = 0x0,
-	EpochTimedOut = 0x1,
-	InternalError = 0x2
-};
+	std::vector<unsigned char> key;
+	std::vector<unsigned char> iv;
 
-class HandshakeResponse : public Response
-{
+	HandshakeResponse(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv);
 public:
-	HandshakeResult Result;
-	std::vector<unsigned char> IV;
-	std::vector<unsigned char> Key;
+	const std::vector<unsigned char>& GetKey();
+	const std::vector<unsigned char>& GetIV();
 
-	HandshakeResponse(const char* msg, size_t size);
+	static HandshakeResponse Deserialize(const std::vector<unsigned char>& payload);
 };

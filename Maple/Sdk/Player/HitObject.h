@@ -1,10 +1,9 @@
 #pragma once
-#define NOMINMAX
 
 #include <vector>
 
-#include "../DataTypes/Structs/Vector2.h"
-#include "../DataTypes/Enums/HitObjectType.h"
+#include "Math/Vector2.h"
+#include "Osu/HitObjects/HitObjectType.h"
 
 class HitObject
 {

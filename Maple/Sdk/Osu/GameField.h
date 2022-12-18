@@ -1,23 +1,20 @@
 #pragma once
 
-#include <Vanilla.h>
-#include "../DataTypes/Structs/Vector2.h"
+#include "Math/Vector2.h"
 
 class GameField
 {
-	static inline void* gameFieldInstanceAddress = nullptr;
-	
-	static inline Field heightField;
-	static inline Field widthField;
-	static inline Field offsetField;
+	static inline constexpr int WIDTH_OFFSET = 0x8;
+	static inline constexpr int HEIGHT_OFFSET = 0xC;
+	static inline constexpr int OFFSETVECTOR_OFFSET = 0x18;
 public:
-	static inline TypeExplorer RawGameField;
 	static void Initialize();
-	static void* Instance();
-	static float GetHeight();
+
+	static uintptr_t GetInstance();
 	static float GetWidth();
+	static float GetHeight();
 	static float GetRatio();
-	static Vector2 GetOffsetVector();
-	static Vector2 DisplayToField(Vector2 pos);
-	static Vector2 FieldToDisplay(Vector2 pos);
+	static Vector2 GetOffset();
+	static Vector2 DisplayToField(Vector2 display);
+	static Vector2 FieldToDisplay(Vector2 field);
 };

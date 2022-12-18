@@ -1,184 +1,343 @@
 #include "Communication.h"
 
-#include <ThemidaSDK.h>
+#include <random>
+
+#include "ThemidaSDK.h"
 
 #include "../Utilities/Security/Security.h"
-
+#include "../Logging/Logger.h"
+#include "../Utilities/Security/xorstr.hpp"
+#include "Crypto/CryptoProvider.h"
+#include "Packets/PacketType.h"
 #include "Packets/Requests/HandshakeRequest.h"
 #include "Packets/Requests/HeartbeatRequest.h"
-
 #include "Packets/Responses/HandshakeResponse.h"
 #include "Packets/Responses/HeartbeatResponse.h"
-#include "Packets/Responses/Response.h"
-#include "Packets/Responses/ResponseType.h"
 
-#include "../Utilities/Security/xorstr.hpp"
+#include "../Dependencies/Milk/MilkThread.h"
+
+#pragma optimize("", off)
+static inline MilkThread* pingMilkThread;
+static inline MilkThread* heartbeatMilkThread;
+static inline MilkThread* checkerMilkThread;
 
 void Communication::pingThread()
 {
+	//pingMilkThread->CleanCodeCave();
+	//delete pingMilkThread;
+
+	pingThreadLaunched = true;
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
-		Request pingPacket = Request(RequestType::Ping);
-		pipe_ret_t sendRet = TCPClient.sendBytes(pingPacket.Data);
-		if (!sendRet.success) {
-			Security::CorruptMemory();
-			break;
+
+		if (!connected || !handshakeSucceeded || !heartbeatThreadLaunched || !Security::CheckIfThreadIsAlive(ThreadCheckerHandle))
+		{
+			IntegritySignature1 -= 0x1;
+			IntegritySignature2 -= 0x1;
+			IntegritySignature3 -= 0x1;
 		}
+
+		tcpClient.Send({ static_cast<unsigned char>(PacketType::Ping) });
 
 		Sleep(45000); //45 seconds
-		VM_SHARK_BLACK_END
-	}
-}
-
-void Communication::heartbeatThread()
-{
-	while (true)
-	{
-		VM_SHARK_BLACK_START
-		if (!HeartbeatThreadLaunched)
-			HeartbeatThreadLaunched = true;
-		HeartbeatRequest heartbeatPacket = HeartbeatRequest(CurrentUser->SessionID, MatchedClient);
-		pipe_ret_t sendRet = TCPClient.sendBytes(heartbeatPacket.Data);
-		if (!sendRet.success) {
-			Security::CorruptMemory();
-			break;
-		}
-
-		DWORD check = 0x7B4527CA;
-		CHECK_PROTECTION(check, 0x6DDE48A3);
-		if(check == 0x7B4527CA) {
-			Security::CorruptMemory();
-			break;
-		}
-
-		check = 0xF30BB4D0;
-		CHECK_CODE_INTEGRITY(check, 0xD4D4DCCF);
-		if (check == 0xF30BB4D0) {
-			Security::CorruptMemory();
-			break;
-		}
-
-		check = 0xFE248DCC;
-		CHECK_DEBUGGER(check, 0x5EE32188);
-		if (check == 0xFE248DCC) {
-			Security::CorruptMemory();
-			break;
-		}
-
-		Sleep(600000); //10 minutes
+		
 		VM_SHARK_BLACK_END
 	}
 }
 
 void Communication::checkerThread()
 {
+	//checkerMilkThread->CleanCodeCave();
+	//delete checkerMilkThread;
+
 	while (true)
 	{
 		VM_SHARK_BLACK_START
-		if (HeartbeatThreadLaunched)
-		{ 
-			Security::CheckIfThreadIsAlive(heartbeatThreadHandle, true); // Megumi Team cracked Maple by Terminating this Thread with ExitCode -> 1337
-			Security::CheckIfThreadIsAlive(pingThreadHandle, true);
+
+		if (heartbeatThreadLaunched && pingThreadLaunched)
+		{
+			if (!Security::CheckIfThreadIsAlive(heartbeatThreadHandle) || !Security::CheckIfThreadIsAlive(pingThreadHandle))
+			{
+				IntegritySignature1 -= 0x1;
+				IntegritySignature2 -= 0x1;
+				IntegritySignature3 -= 0x1;
+			}
 		}
 
 		Sleep(15000); //15 seconds
+
 		VM_SHARK_BLACK_END
 	}
 }
 
-void Communication::onIncomingMessage(const char* msg, size_t size)
+void Communication::heartbeatThread()
 {
-	auto* const response = static_cast<Response*>(Response::ConstructResponse(msg, size, MatchedClient));
-	switch (response->Type)
+	//heartbeatMilkThread->CleanCodeCave();
+	//delete heartbeatMilkThread;
+
+	heartbeatThreadLaunched = true;
+
+	while (true)
 	{
-		case ResponseType::FatalError:
+		VM_SHARK_BLACK_START
+		STR_ENCRYPT_START
+
+		int codeIntegrityVar = 0x671863E2;
+		CHECK_CODE_INTEGRITY(codeIntegrityVar, 0x40CD69D0)
+		if (codeIntegrityVar != 0x40CD69D0)
+		{
+			IntegritySignature1 -= 0x1;
+			IntegritySignature2 -= 0x1;
+			IntegritySignature3 -= 0x1;
+		}
+
+		int debuggerVar = 0xD0A7E6;
+		CHECK_DEBUGGER(debuggerVar, 0x3E839EE3)
+		if (debuggerVar != 0x3E839EE3)
+		{
+			IntegritySignature1 -= 0x1;
+			IntegritySignature2 -= 0x1;
+			IntegritySignature3 -= 0x1;
+		}
+
+		if (IntegritySignature1 != 0xdeadbeef || IntegritySignature2 != 0xefbeadde || IntegritySignature3 != 0xbeefdead)
+		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<> crashRNG(1, 2);
+
+			// 50% chance to crash right here
+			if (crashRNG(gen) == 1)
+			{
+				int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
+				int errorCode = 4099;
+				Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
+
+				Security::CorruptMemory();
+			}
+		}
+
+		HeartbeatRequest heartbeatRequest = HeartbeatRequest(user->GetSessionToken());
+		tcpClient.Send(heartbeatRequest.Serialize());
+
+		Sleep(600000); // 10 minutes
+
+		STR_ENCRYPT_END
+		VM_SHARK_BLACK_END
+	}
+}
+
+void Communication::onReceive(const std::vector<unsigned char>& data)
+{
+	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+
+	int codeIntegrityVar = 0x671863E2;
+	CHECK_CODE_INTEGRITY(codeIntegrityVar, 0x40CD69D0)
+	if (codeIntegrityVar != 0x40CD69D0)
+	{
+		IntegritySignature1 -= 0x1;
+		IntegritySignature2 -= 0x1;
+		IntegritySignature3 -= 0x1;
+	}
+
+	int debuggerVar = 0xD0A7E6;
+	CHECK_DEBUGGER(debuggerVar, 0x3E839EE3)
+	if (debuggerVar != 0x3E839EE3)
+	{
+		IntegritySignature1 -= 0x1;
+		IntegritySignature2 -= 0x1;
+		IntegritySignature3 -= 0x1;
+	}
+
+	if (IntegritySignature1 != 0xdeadbeef || IntegritySignature2 != 0xefbeadde || IntegritySignature3 != 0xbeefdead)
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> crashRNG(1, 10);
+
+		// 10% chance to crash right here
+		if (crashRNG(gen) == 3)
+		{
+			int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
+			int errorCode = 4097;
+			Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
+
+			Security::CorruptMemory();
+		}
+	}
+
+	const auto type = static_cast<PacketType>(data[0]);
+	const std::vector payload(data.begin() + 1, data.end());
+
+	STR_ENCRYPT_END
+	VM_SHARK_BLACK_END
+
+	switch (type)
+	{
+		case PacketType::Handshake:
 		{
 			VM_SHARK_BLACK_START
-			Security::CorruptMemory();
-			VM_SHARK_BLACK_END
-			break;
-		}
-		case ResponseType::Handshake:
-		{
-			auto* const handshakeResponse = static_cast<HandshakeResponse*>(response);
-			switch (handshakeResponse->Result)
-			{
-				case HandshakeResult::Success:
-				{
-					VM_SHARK_BLACK_START
-					MatchedClient = new ::MatchedClient(TCPClient);
-					MatchedClient->aes->SetIV(handshakeResponse->IV);
-					MatchedClient->aes->SetKey(handshakeResponse->Key);
+			STR_ENCRYPT_START
 
-					EstablishedConnection = true;
-					HandshakeSucceeded = true;
-					heartbeatThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(heartbeatThread), nullptr, 0, nullptr);
-					pingThreadHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(pingThread), nullptr, 0, nullptr);
-					VM_SHARK_BLACK_END
-					break;
-				}
-				case HandshakeResult::EpochTimedOut:
-				case HandshakeResult::InternalError:
-				{
-					VM_SHARK_BLACK_START
-					// Have both in a switch case, let's not tell anybody trying to crack that the epoch is wrong.
-					Security::CorruptMemory();
-					VM_SHARK_BLACK_END
-					break;
-				}
+			HandshakeResponse handshakeResponse = HandshakeResponse::Deserialize(payload);
+
+			CryptoProvider::GetInstance()->InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
+
+			handshakeSucceeded = true;
+			
+			heartbeatMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
+			heartbeatThreadHandle = heartbeatMilkThread->Start();
+
+			pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
+			pingThreadHandle = pingMilkThread->Start();
+
+			STR_ENCRYPT_END
+			VM_SHARK_BLACK_END
+		}
+			break;
+		case PacketType::Heartbeat:
+		{
+			VM_SHARK_BLACK_START
+			STR_ENCRYPT_START
+
+			HeartbeatResponse heartbeatResponse = HeartbeatResponse::Deserialize(payload);
+
+			if (heartbeatResponse.GetResult() != HeartbeatResult::Success)
+			{
+				int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
+				int errorCode = 4098;
+				Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
+
+				Security::CorruptMemory();
 			}
 
-			break;
+			STR_ENCRYPT_END
+			VM_SHARK_BLACK_END
 		}
-		case ResponseType::Heartbeat:
+			break;
+		case PacketType::Ping:
+			break;
+		default:
 		{
 			VM_SHARK_BLACK_START
 
-			auto* const heartbeatResponse = static_cast<HeartbeatResponse*>(response);
-			if (heartbeatResponse->Result != HeartbeatResult::Success)
-				Security::CorruptMemory();
+			IntegritySignature1 -= 0x1;
+			IntegritySignature2 -= 0x1;
+			IntegritySignature3 -= 0x1;
+
 			VM_SHARK_BLACK_END
-			break;
-		}
-		case ResponseType::Ping:
-		{
-			break;
 		}
 	}
 }
 
-void Communication::onDisconnection(const pipe_ret_t& ret)
+void Communication::onDisconnect()
 {
 	VM_SHARK_BLACK_START
+	STR_ENCRYPT_START
+
+	IntegritySignature1 -= 0x1;
+	IntegritySignature2 -= 0x1;
+	IntegritySignature3 -= 0x1;
+
+	int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
+	int errorCode = 4096;
+	Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
+
 	Security::CorruptMemory();
+
+	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END
 }
 
-void Communication::ConnectToServer()
+bool Communication::Connect()
 {
 	VM_FISH_RED_START
 	STR_ENCRYPT_START
-	client_observer_t observer;
-	observer.wantedIp = "198.251.89.179";
-	observer.incoming_packet_func = onIncomingMessage;
-	observer.disconnected_func = onDisconnection;
-	TCPClient.subscribe(observer);
 
-	pipe_ret_t connectRet = TCPClient.connectTo("198.251.89.179", 9999);
-	if (connectRet.success)
+	if (connected)
 	{
-		// Send initial Handshake, to get RSA Encrypted Client Key and IV
-		HandshakeRequest handshakePacket = HandshakeRequest();
+		IntegritySignature1 -= 0x1;
+		IntegritySignature2 -= 0x1;
+		IntegritySignature3 -= 0x1;
 
-		if (const pipe_ret_t sendRet = TCPClient.sendBytes(handshakePacket.Data); !sendRet.success)
-		{
-			Security::CorruptMemory();
-		}
-		
-		ThreadCheckerHandle = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(checkerThread), nullptr, 0, nullptr);
+		return true;
 	}
-	else Security::CorruptMemory();
+
+	tcpClient = TCPClient(&onReceive, &onDisconnect);
+	if (!tcpClient.Connect(xorstr_("198.251.89.179"), xorstr_("9999")))
+		return false;
+
+	connected = true;
+
+	checkerMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
+	ThreadCheckerHandle = checkerMilkThread->Start();
+
+	HandshakeRequest handshakeRequest = HandshakeRequest();
+	tcpClient.Send(handshakeRequest.Serialize());
+
 	STR_ENCRYPT_END
 	VM_FISH_RED_END
+
+	return true;
 }
+
+void Communication::Disconnect()
+{
+	VM_SHARK_BLACK_START
+
+	connected = false;
+	
+	tcpClient.Disconnect();
+
+	VM_SHARK_BLACK_END
+}
+
+bool Communication::GetIsConnected()
+{
+	VM_SHARK_BLACK_START
+
+	return connected;
+
+	VM_SHARK_BLACK_END
+}
+
+bool Communication::GetIsHandshakeSucceeded()
+{
+	VM_SHARK_BLACK_START
+
+	return handshakeSucceeded;
+
+	VM_SHARK_BLACK_END
+}
+
+bool Communication::GetIsHeartbeatThreadLaunched()
+{
+	VM_SHARK_BLACK_START
+
+	return heartbeatThreadLaunched;
+
+	VM_SHARK_BLACK_END
+}
+
+User* Communication::GetUser()
+{
+	VM_SHARK_BLACK_START
+
+	return user;
+
+	VM_SHARK_BLACK_END
+}
+
+void Communication::SetUser(User* user)
+{
+	VM_SHARK_BLACK_START
+	
+	delete Communication::user;
+	Communication::user = user;
+
+	VM_SHARK_BLACK_END
+}
+#pragma optimize("", on)

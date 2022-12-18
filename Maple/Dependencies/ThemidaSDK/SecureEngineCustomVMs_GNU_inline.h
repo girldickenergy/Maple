@@ -3,9 +3,9 @@
  * Description: GNU C inline assembly macros definitions
  *
  * Author/s: Oreans Technologies 
- * (c) 2015 Oreans Technologies
+ * (c) 2021 Oreans Technologies
  *
- * --- File generated automatically from Oreans VM Generator (16/6/2015) ---
+ * --- File generated automatically from Oreans VM Generator (14/5/2021) ---
  ******************************************************************************/
 
 /***********************************************
@@ -793,6 +793,138 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x20\n"\
      ".byte 0x26\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_WHITE_START
+#define VM_LION_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA0\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_WHITE_END
+#define VM_LION_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x30\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_RED_START
+#define VM_LION_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA2\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_RED_END
+#define VM_LION_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x32\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_BLACK_START
+#define VM_LION_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA4\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_BLACK_END
+#define VM_LION_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x34\n"\
      ".byte 0x02\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\
@@ -1633,6 +1765,138 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x20\n"\
      ".byte 0x27\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_WHITE_START
+#define VM_LION_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA1\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_WHITE_END
+#define VM_LION_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x31\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_RED_START
+#define VM_LION_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA3\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_RED_END
+#define VM_LION_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x33\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_BLACK_START
+#define VM_LION_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA5\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VM_LION_BLACK_END
+#define VM_LION_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x57\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x35\n"\
      ".byte 0x02\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\

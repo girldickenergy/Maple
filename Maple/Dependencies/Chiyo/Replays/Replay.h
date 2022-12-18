@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 
+#include "Osu/Mods.h"
+#include "Osu/PlayModes.h"
+
 #include "LifeFrame.h"
 #include "ReplayFrame.h"
-#include <Enums/PlayModes.h>
-#include <Enums/Mods.h>
 
 struct Replay
 {

@@ -1,39 +1,47 @@
-﻿#include <iostream>
-#include <thread>
-#include <windows.h>
 #include <clocale>
+#include <WinSock2.h>
 
-#include <ThemidaSDK.h>
-
+#include "curl.h"
+#include "ThemidaSDK.h"
+#include "Vanilla.h"
 #include "Communication/Communication.h"
-#include "Config/Config.h"
-#include "Features/Timewarp/Timewarp.h"
-#include "Hooks/Hooks.h"
-#include "Sdk/Anticheat/Anticheat.h"
-#include "Sdk/Audio/AudioEngine.h"
-#include "Sdk/Bindings/BindingManager.h"
-#include "Sdk/ConfigManager/ConfigManager.h"
-#include "Sdk/Input/InputManager.h"
-#include "Sdk/Mods/ModManager.h"
-#include "Sdk/Osu/GameBase.h"
-#include "Sdk/Player/HitObjectManager.h"
-#include "Sdk/Player/Player.h"
-#include "Sdk/Player/Ruleset.h"
+#include "Hooking/VanillaHooking.h"
+
 #include "Logging/Logger.h"
-#include "Sdk/Osu/GameField.h"
-#include "Utilities/Security/Security.h"
-#include "Utilities/Strings/StringUtilities.h"
-#include "Features/Spoofer/Spoofer.h"
 #include "Storage/Storage.h"
+#include "Config/Config.h"
+#include "Dependencies/Milk/Milk.h"
 
-#include <curl.h>
-#include "Sdk/Osu/WindowManager.h"
+#include "Utilities/Security/xorstr.hpp"
+#include "Utilities/Security/Security.h"
 
-DWORD WINAPI Initialize(LPVOID data_addr);
+#include "SDK/Memory.h"
+#include "SDK/Audio/AudioEngine.h"
+#include "SDK/Discord/DiscordRPC.h"
+#include "SDK/GL/GLControl.h"
+#include "SDK/Helpers/ErrorSubmission.h"
+#include "SDK/Helpers/Obfuscated.h"
+#include "SDK/Input/InputManager.h"
+#include "SDK/Mods/ModManager.h"
+#include "SDK/Online/BanchoClient.h"
+#include "SDK/Osu/GameBase.h"
+#include "SDK/Osu/GameField.h"
+#include "SDK/Player/HitObjectManager.h"
+#include "SDK/Player/Player.h"
+#include "SDK/Player/Ruleset.h"
+#include "SDK/Scoring/Score.h"
+#include "SDK/Streaming/StreamingManager.h"
+#include "UI/UI.h"
+#include "Utilities/Anticheat/AnticheatUtilities.h"
+#include "Utilities/Strings/StringUtilities.h"
+#include "Dependencies/Milk/MilkThread.h"
+
+DWORD WINAPI Initialize();
 void InitializeMaple();
-void InitializeLogging();
-void InitializeSdk();
-void StartFunctions();
+void WaitForCriticalSDKToInitialize();
+
+static inline LPVOID data;
+static inline MilkThread* initializeThread = nullptr;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -41,141 +49,163 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     DisableThreadLibraryCalls(hModule);
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-        CreateThread(nullptr, 0, Initialize, lpReserved, 0, nullptr);
-	
+    {
+        data = lpReserved;
+        initializeThread = new MilkThread(reinterpret_cast<uintptr_t>(Initialize));
+    }
+        
     return TRUE;
 }
 
-struct ArgsBase
+struct UserData
 {
-    long long size;
+    char Username[25];
+    char SessionToken[33];
+    char DiscordID[33];
+    char DiscordAvatarHash[33];
 };
 
-struct CustomArgs : ArgsBase
-{
-    char user_data[256 * 5 * 10];
-};
-
-DWORD WINAPI Initialize(LPVOID data_addr)
+DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START
-    auto pArgs = (CustomArgs*)data_addr;
 
-    std::string data(pArgs->user_data, 255);
+    initializeThread->CleanCodeCave();
+    delete initializeThread;
 
-    std::vector<std::string> split = StringUtilities::Split(data);
+	auto data_addr = data;
 
-    Communication::CurrentUser = new User(split[0], split[1], split[2], split[3]);
+    int protectionVar = 0x501938CA;
+    CHECK_PROTECTION(protectionVar, 0x9CCC379)
+    if (protectionVar != 0x9CCC379)
+        Security::CorruptMemory();
 
-    Communication::ConnectToServer();
+    if (!data_addr)
+        Security::CorruptMemory();
 
-    curl_global_init(CURL_GLOBAL_ALL);
+    UserData userData = *static_cast<UserData*>(data_addr);
+    Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 
-    while (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+    memset(data_addr, 0x0, sizeof(UserData));
+
+    Communication::Connect();
+
+    while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Sleep(500);
 
     InitializeMaple();
+
     STR_ENCRYPT_END
     VM_SHARK_BLACK_END
 
     return 0;
 }
 
-std::string GetAuthPath()
-{
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
-
-    return std::string(buffer).substr(0, pos) + "\\osu!auth.dll";
-}
-
-std::string GetAuthHash()
-{
-    std::string hash;
-    CryptoPP::SHA256 algo;
-    CryptoPP::FileSource fs(GetAuthPath().c_str(), true, new CryptoPP::HashFilter(algo, new CryptoPP::HexEncoder(new CryptoPP::StringSink(hash))));
-
-    return hash;
-}
-
 void InitializeMaple()
-{
-    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
-        Security::CorruptMemory();
-
-    Storage::Initialize(Communication::CurrentUser->UsernameHashed);
-	
-    Vanilla::Initialize();
-
-    InitializeLogging();
-
-    InitializeSdk();
-
-    Config::Initialize();
-
-    if (std::filesystem::exists(GetAuthPath()))
-    {
-        const std::string authHash = GetAuthHash();
-        if (authHash != "FD8321C346DC33CD24D7AF22DB750ADC2F42D9C091B31A15587291DC086147FC" && authHash != "176063779747AF3659FCFA4BC8BA01FFD9A6EA9BC4FCCA5A406A7D7CD9058318")
-            Config::Misc::DisableSubmission = true;
-    }
-
-    Hooks::InstallAllHooks();
-
-    StartFunctions();
-}
-
-void InitializeLogging()
 {
     VM_FISH_RED_START
     STR_ENCRYPT_START
-	
-    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
+
+    if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
-	
+
+    Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
+    Config::Initialize();
+
 #ifdef _DEBUG
-    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
+    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(LogSeverity::Error | LogSeverity::Debug | LogSeverity::Assert | LogSeverity::Warning);
+    Logger::Initialize(LogSeverity::All, true);
 #endif
-	
-    Logger::Log(LogSeverity::Info, xor ("Initialization started."));
+
+    Logger::Log(LogSeverity::Info, xorstr_("Initialization started."));
+
+    VanillaResult vanillaResult = Vanilla::Initialize(true);
+    if (vanillaResult == VanillaResult::Success)
+    {
+        Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
+
+        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
+        bool bypassSucceeded = Milk::Get().DoBypass();
+
+        if (!goodKnownAuthVersion || !bypassSucceeded)
+            Config::Misc::ForceDisableScoreSubmission = true;
+
+        if (goodKnownAuthVersion && !bypassSucceeded)
+            Config::Misc::BypassFailed = true;
+
+        //initializing SDK
+        Memory::StartInitialize();
+
+        GameBase::Initialize();
+        BanchoClient::Initialize();
+        ErrorSubmission::Initialize();
+        AudioEngine::Initialize();
+        InputManager::Initialize();
+        ModManager::Initialize();
+        Obfuscated::Initialize();
+        GameField::Initialize();
+        Player::Initialize();
+        Ruleset::Initialize();
+        HitObjectManager::Initialize();
+        Score::Initialize();
+        StreamingManager::Initialize();
+        DiscordRPC::Initialize();
+        GLControl::Initialize();
+
+        Memory::EndInitialize();
+
+        WaitForCriticalSDKToInitialize();
+
+        //initializing UI and Spoofer
+        //TODO: maybe we can move spoofer initialization outside of ui hooks?
+        UI::Initialize();
+    }
+    else
+    {
+        Logger::Log(LogSeverity::Error, xorstr_("Vanilla failed to initialize with code %i"), (int)vanillaResult);
+
+        Security::CorruptMemory();
+    }
 
     VM_FISH_RED_END
     STR_ENCRYPT_END
 }
 
-void InitializeSdk()
-{
-    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
-        Security::CorruptMemory();
-	
-    Anticheat::Initialize();
-    GameBase::Initialize();
-    GameField::Initialize();
-    WindowManager::Initialize();
-    InputManager::Initialize();
-    ConfigManager::Initialize();
-    BindingManager::Initialize();
-    AudioEngine::Initialize();
-    ModManager::Initialize();
-    Player::Initialize();
-    Ruleset::Initialize();
-    HitObjectManager::Initialize();
-}
-
-void StartFunctions()
+void WaitForCriticalSDKToInitialize()
 {
     VM_FISH_RED_START
-	
-    if (!Communication::EstablishedConnection || !Communication::HeartbeatThreadLaunched || !Communication::HandshakeSucceeded)
-        Security::CorruptMemory();
-	
-    Anticheat::DisableAnticheat();
-    Timewarp::Initialize();
-    Spoofer::Initialize();
+    STR_ENCRYPT_START
+
+    uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
+    uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+    uintptr_t initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
 
     VM_FISH_RED_END
+    STR_ENCRYPT_END
+
+    unsigned int retries = 0;
+    while (!clientHash || !updateTiming || !initializePrivate)
+    {
+        VM_FISH_RED_START
+        STR_ENCRYPT_START
+
+        if (retries >= 30)
+        {
+            Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
+
+            Security::CorruptMemory();
+        }
+
+        retries++;
+
+        clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
+        updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+        initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
+
+        Sleep(1000);
+
+        VM_FISH_RED_END
+        STR_ENCRYPT_END
+    }
 }
