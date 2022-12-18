@@ -749,6 +749,51 @@
     <ClCompile Include="Dependencies\Milk\Milk.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Editor.cpp">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\ClickTimeline.cpp">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\EventTimeline.cpp">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.cpp">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Drawable.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Drawing\DrawSlider.cpp">
+      <Filter>Features\ReplayEditor\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Playfields\OsuPlayfield.cpp">
+      <Filter>Features\ReplayEditor\Playfields</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Utilities\InputHandler.cpp">
+      <Filter>Features\ReplayEditor\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\clipper\clipper.cpp">
+      <Filter>Dependencies\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\DotNet\GarbageCollector.cpp">
+      <Filter>SDK\DotNet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -975,6 +1020,36 @@
     </Filter>
     <Filter Include="Dependencies\Milk\Structs">
       <UniqueIdentifier>{ab7b97e5-9fa3-448e-b0ca-5f1e358178ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor">
+      <UniqueIdentifier>{2f9622ea-2b1c-48b1-9b97-044d688d6df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Components">
+      <UniqueIdentifier>{87d2d40d-0492-464f-a41b-cdb7c3f2ee1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Drawing">
+      <UniqueIdentifier>{301a37c8-35ac-4c85-92ef-63decace3395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Playfields">
+      <UniqueIdentifier>{9c6f2494-69e5-4cf2-9c4b-ff3c207bab66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Utilities">
+      <UniqueIdentifier>{3cef89f5-7df1-4209-86a7-aeaccd0836de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Components\GUIComponents">
+      <UniqueIdentifier>{55892330-5509-4b0b-86dc-04f262680225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Components\GameplayComponents">
+      <UniqueIdentifier>{b95b4001-f721-45ea-9bcf-bde0b9a53221}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ReplayEditor\Components\GameplayComponents\Osu">
+      <UniqueIdentifier>{7dc0df75-5619-4ce0-b37a-6c1c83b49cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\clipper">
+      <UniqueIdentifier>{d61b9e53-ac9e-4d4c-97b2-8e6bfa0c1205}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\DotNet">
+      <UniqueIdentifier>{bdcf140c-e0fb-4936-ae0b-bb239dc9e215}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1952,6 +2027,54 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Milk\Milk.h">
       <Filter>Dependencies\Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Editor.h">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\EditorGlobals.h">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickTimeline.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\EventTimeline.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\Click.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Drawable.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Drawing\DrawSlider.h">
+      <Filter>Features\ReplayEditor\Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Playfields\OsuPlayfield.h">
+      <Filter>Features\ReplayEditor\Playfields</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\clipper\clipper.hpp">
+      <Filter>Dependencies\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\DotNet\GarbageCollector.h">
+      <Filter>SDK\DotNet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

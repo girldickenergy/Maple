@@ -23,6 +23,7 @@
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
+#include "SDK/DotNet/GarbageCollector.h"
 #include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
@@ -143,6 +144,7 @@ void InitializeMaple()
         AudioEngine::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();
+        GarbageCollector::Get().Initialize();
         Obfuscated::Initialize();
         GameField::Initialize();
         Player::Initialize();
