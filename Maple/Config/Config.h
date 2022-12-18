@@ -141,6 +141,7 @@ public:
 	struct Misc
 	{
 		static inline int ScoreSubmissionType;
+		static inline int PromptBehaviorOnRetry;
 		static inline bool ForceDisableScoreSubmission = false;
 		static inline bool BypassFailed = false;
 		static inline bool DisableSpectators;

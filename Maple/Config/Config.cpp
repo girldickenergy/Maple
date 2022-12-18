@@ -91,6 +91,7 @@ void Config::loadDefaults()
 	Visuals::UI::TextColour = ImVec4(ImColor(255, 255, 255, 255));
 
 	Misc::ScoreSubmissionType = 0;
+	Misc::PromptBehaviorOnRetry = 1;
 	Misc::DisableSpectators = false;
 	Misc::Logging::DisableLogging = false;
 	Misc::DiscordRichPresenceSpoofer::Enabled = false;
@@ -280,6 +281,8 @@ void Config::Load()
 
 		if (variable == xorstr_("Misc_ScoreSubmissionType"))
 			Misc::ScoreSubmissionType = std::stoi(value);
+		if (variable == xorstr_("Misc_PromptBehaviorOnRetry"))
+			Misc::PromptBehaviorOnRetry = std::stoi(value);
 		if (variable == xorstr_("Misc_DisableSpectators"))
 			Misc::DisableSpectators = value == xorstr_("1");
 		if (variable == xorstr_("Misc_Logging_DisableLogging"))
@@ -386,6 +389,7 @@ void Config::Save()
 	ofs << xorstr_("Visuals_UI_TextColour=") << Visuals::UI::TextColour.x << "," << Visuals::UI::TextColour.y << "," << Visuals::UI::TextColour.z << "," << Visuals::UI::TextColour.w << std::endl;
 	
 	ofs << xorstr_("Misc_ScoreSubmissionType=") << Misc::ScoreSubmissionType << std::endl;
+	ofs << xorstr_("Misc_PromptBehaviorOnRetry=") << Misc::PromptBehaviorOnRetry << std::endl;
 	ofs << xorstr_("Misc_DisableSpectators=") << Misc::DisableSpectators << std::endl;
 	ofs << xorstr_("Misc_Logging_DisableLogging=") << Misc::Logging::DisableLogging << std::endl;
 	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_Enabled=") << Misc::DiscordRichPresenceSpoofer::Enabled << std::endl;

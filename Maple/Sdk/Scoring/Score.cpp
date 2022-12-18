@@ -42,6 +42,9 @@ int Score::handleScoreSubmission()
 		return 0;
 	}
 
+	if (Config::Misc::ScoreSubmissionType == 2 && Player::GetIsRetrying() && Config::Misc::PromptBehaviorOnRetry == 1)
+		return 0;
+
 	if (Config::Timewarp::Enabled)
 		spoofPlayDuration();
 

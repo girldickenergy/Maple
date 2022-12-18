@@ -524,10 +524,16 @@ void MainMenu::Render()
             }
             if (currentTab == 6)
             {
-                Widgets::BeginPanel(xorstr_("Misc"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
+                Widgets::BeginPanel(xorstr_("Misc"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::Misc::ScoreSubmissionType == 2 ? 5 : 4)));
                 {
                     const char* scoreSubmissionTypes[] = { xorstr_("Allow"), xorstr_("Disallow"), xorstr_("Prompt") };
                     Widgets::Combo(xorstr_("Score submission"), &Config::Misc::ScoreSubmissionType, scoreSubmissionTypes, IM_ARRAYSIZE(scoreSubmissionTypes)); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Specifies score submission behavior.\n\nAllow: all scores will be sent to osu! servers.\nDisallow: your scores won't be sent to osu! servers.\nPrompt: before submitting a score Maple will ask you whether or not you really want to submit it."));
+                    if (Config::Misc::ScoreSubmissionType == 2)
+                    {
+                        const char* promptBehaviors[] = { xorstr_("Submit"), xorstr_("Don't submit") };
+						Widgets::Combo(xorstr_("Behavior on retry"), &Config::Misc::PromptBehaviorOnRetry, promptBehaviors, IM_ARRAYSIZE(promptBehaviors)); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Specifies what Maple should do with your score when you retry a map."));
+                    }
+					
                     Widgets::Checkbox(xorstr_("Disable spectators"), &Config::Misc::DisableSpectators); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Spectators will keep buffering infinitely."));
 
                     bool storageConfigEdited = false;
