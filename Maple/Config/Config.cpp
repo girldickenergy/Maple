@@ -91,7 +91,7 @@ void Config::loadDefaults()
 	Visuals::UI::TextColour = ImVec4(ImColor(255, 255, 255, 255));
 
 	Misc::ScoreSubmissionType = 0;
-	Misc::PromptBehaviorOnRetry = 1;
+	Misc::PromptBehaviorOnRetry = 0;
 	Misc::DisableSpectators = false;
 	Misc::Logging::DisableLogging = false;
 	Misc::DiscordRichPresenceSpoofer::Enabled = false;
