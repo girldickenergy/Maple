@@ -3,6 +3,7 @@
 #include <intrin.h>
 
 #define NOMINMAX
+#include <algorithm>
 #include <cmath>
 
 #include "../../SDK/Input/InputManager.h"
