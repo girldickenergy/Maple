@@ -3,11 +3,11 @@
 enum class OsuKeys : int
 {
     None = 0,
-    M1 = 1 << 0,
-    M2 = 1 << 1,
-    K1 = (1 << 2) + M1,
-    K2 = (1 << 3) + M2,
-    Smoke = 1 << 4,
+    M1 = 1,
+    M2 = 2,
+    K1 = 4,
+    K2 = 8,
+    Smoke = 16
 };
 
 inline OsuKeys operator&(OsuKeys a, OsuKeys b)

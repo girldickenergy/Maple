@@ -6,6 +6,7 @@
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_win32.h"
+#include "stb_image.h"
 #include "PatternScanning/VanillaPatternScanner.h"
 #include "Hooking/VanillaHooking.h"
 
@@ -189,6 +190,9 @@ void UI::initialize(HWND window, IDirect3DDevice9* d3d9Device)
 
 	D3D9Device = d3d9Device;
 	Window = window;
+
+	stbi_set_flip_vertically_on_load(0);
+	stbi_set_flip_vertically_on_load_thread(0);
 
 	ImGui::CreateContext();
 
