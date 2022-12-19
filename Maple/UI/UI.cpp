@@ -23,6 +23,8 @@
 #include "../Features/Relax/Relax.h"
 #include "../Utilities/Security/xorstr.hpp"
 
+#include <TlHelp32.h>
+
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -73,28 +75,58 @@ BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 	return oGetKeyboardState(arr);
 }
 
-BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
+HDC _hdc;
+BOOL _declspec(naked) UI::wglSwapBuffersHook(HDC hdc)
+{
+	__asm
+	{
+		mov ecx, [ebp + 8]
+		mov [_hdc], ecx
+		xor ecx, ecx
+		pushad
+		pushfd
+		call wglSwapBuffersWorker
+		popfd
+		popad
+		jmp oWglSwapBuffers
+	}
+}
+
+void UI::wglSwapBuffersWorker()
 {
 	if (!initialized)
-		initialize(WindowFromDC(hdc));
+		initialize(WindowFromDC(_hdc));
 
 	if (!Spoofer::Initialized)
 		Spoofer::Initialize();
-	
-	render();
 
-	return oWglSwapBuffers(hdc);
+	render();
 }
 
-int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion, DWORD dwFlags)
+IDirect3DSwapChain9* _pSwapChain;
+int _declspec(naked) UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion, DWORD dwFlags)
+{
+	__asm
+	{
+		mov [_pSwapChain], ecx - 0x20
+		pushad
+		pushfd
+		call presentWorker
+		popfd
+		popad
+		jmp oPresent
+	}
+}
+
+void UI::presentWorker()
 {
 	if (!initialized)
 	{
 		IDirect3DDevice9* d3dDevice;
 		D3DPRESENT_PARAMETERS d3dPresentParameters;
 
-		pSwapChain->GetDevice(&d3dDevice);
-		pSwapChain->GetPresentParameters(&d3dPresentParameters);
+		_pSwapChain->GetDevice(&d3dDevice);
+		_pSwapChain->GetPresentParameters(&d3dPresentParameters);
 
 		initialize(d3dPresentParameters.hDeviceWindow, d3dDevice);
 	}
@@ -103,8 +135,6 @@ int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSour
 		Spoofer::Initialize();
 
 	render();
-
-	return oPresent(pSwapChain, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 }
 
 void UI::enableRaw()
@@ -259,9 +289,64 @@ void UI::render()
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 }
 
+//todo: jesus fucking christ get rid of this fuckery
+void DoSuspendThread(DWORD targetProcessId, DWORD targetThreadId)
+{
+	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+	if (h != INVALID_HANDLE_VALUE)
+	{
+		THREADENTRY32 te;
+		te.dwSize = sizeof(te);
+		if (Thread32First(h, &te))
+		{
+			if (te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) + sizeof(te.th32OwnerProcessID))
+			{
+				if (te.th32ThreadID != targetThreadId && te.th32OwnerProcessID == targetProcessId)
+				{
+					HANDLE thread = ::OpenThread(THREAD_ALL_ACCESS, FALSE, te.th32ThreadID);
+					if (thread != NULL)
+					{
+						SuspendThread(thread);
+						CloseHandle(thread);
+					}
+				}
+			}
+		}
+		CloseHandle(h);
+	}
+}
+
+void DoResumeThread(DWORD targetProcessId, DWORD targetThreadId)
+{
+	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+	if (h != INVALID_HANDLE_VALUE)
+	{
+		THREADENTRY32 te;
+		te.dwSize = sizeof(te);
+		if (Thread32First(h, &te))
+		{
+			if (te.dwSize >= FIELD_OFFSET(THREADENTRY32, th32OwnerProcessID) + sizeof(te.th32OwnerProcessID))
+			{
+				if (te.th32ThreadID != targetThreadId && te.th32OwnerProcessID == targetProcessId)
+				{
+					HANDLE thread = ::OpenThread(THREAD_ALL_ACCESS, FALSE, te.th32ThreadID);
+					if (thread != NULL)
+					{
+						ResumeThread(thread);
+						CloseHandle(thread);
+					}
+				}
+			}
+		}
+		CloseHandle(h);
+	}
+}
+
 void UI::Initialize()
 {
 	STR_ENCRYPT_START
+
+	DoSuspendThread(GetCurrentProcessId(), GetCurrentThreadId());
 
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA(xorstr_("user32.dll")), xorstr_("GetKeyboardState"));
 	if (VanillaHooking::InstallHook(xorstr_("User32::GetKeyboardState"), reinterpret_cast<uintptr_t>(pGetKeyboardState), reinterpret_cast<uintptr_t>(getKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState)) == VanillaResult::Success)
@@ -271,7 +356,7 @@ void UI::Initialize()
 
 	if (GLControl::GetUsesAngle())
 	{
-		if (const uintptr_t pPresent = VanillaPatternScanner::FindPatternInModule(xorstr_("8B FF 55 8B EC FF 75 1C"), xorstr_("d3d9.dll")))
+		if (const uintptr_t pPresent = VanillaPatternScanner::FindPatternInModule(xorstr_("FF 75 14 8D 49 E0"), xorstr_("d3d9.dll")))
 		{
 			if (VanillaHooking::InstallHook(xorstr_("D3D9::Present"), pPresent, reinterpret_cast<uintptr_t>(presentHook), reinterpret_cast<uintptr_t*>(&oPresent)) == VanillaResult::Success)
 				Logger::Log(LogSeverity::Info, xorstr_("Hooked D3D9::Present"));
@@ -282,12 +367,17 @@ void UI::Initialize()
 	}
 	else
 	{
-		void* pWglSwapBuffers = GetProcAddress(GetModuleHandleA(xorstr_("opengl32.dll")), xorstr_("wglSwapBuffers"));
-		if (VanillaHooking::InstallHook(xorstr_("OpenGL32::wglSwapBuffers"), reinterpret_cast<uintptr_t>(pWglSwapBuffers), reinterpret_cast<uintptr_t>(wglSwapBuffersHook), reinterpret_cast<uintptr_t*>(&oWglSwapBuffers)) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xorstr_("Hooked OpenGL32::wglSwapBuffers"));
-		else
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
+		if (const uintptr_t pWglSwapBuffers = VanillaPatternScanner::FindPatternInModule(xorstr_("53 56 57 8B 7D 08 33 DB 8B CF E8"), xorstr_("opengl32.dll")))
+		{
+			if (VanillaHooking::InstallHook(xorstr_("OpenGL32::wglSwapBuffers"), pWglSwapBuffers, reinterpret_cast<uintptr_t>(wglSwapBuffersHook), reinterpret_cast<uintptr_t*>(&oWglSwapBuffers)) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked OpenGL32::wglSwapBuffers"));
+			else
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
+		}
+		else Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
 	}
+
+	DoResumeThread(GetCurrentProcessId(), GetCurrentThreadId());
 
 	STR_ENCRYPT_END
 }
