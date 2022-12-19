@@ -16,12 +16,10 @@ class UI
 	typedef int(__stdcall* fnWglSwapBuffers)(_In_ HDC hdc);
 	static inline fnWglSwapBuffers oWglSwapBuffers;
 	static BOOL WINAPI wglSwapBuffersHook(_In_ HDC hdc);
-	static void wglSwapBuffersWorker();
 
 	typedef int(__stdcall* fnPresent)(IDirect3DSwapChain9* pSwapChain, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion, DWORD dwFlags);
 	static inline fnPresent oPresent;
 	static int __stdcall presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion, DWORD dwFlags);
-	static void presentWorker();
 
 	static inline bool rawInputDisabled = false;
 	static inline RAWINPUTDEVICE* pDevices;
