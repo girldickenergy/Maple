@@ -23,6 +23,8 @@
 #include "../Features/Relax/Relax.h"
 #include "../Utilities/Security/xorstr.hpp"
 
+#include "../Features/ReplayEditor/Editor.h"
+
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -247,6 +249,9 @@ void UI::render()
 	
 	MainMenu::Render();
 	ScoreSubmissionDialog::Render();
+
+	if (ReplayEditor::Editor::IsOpen)
+		ReplayEditor::Editor::Render();
 
 	Enlighten::Render();
 	AimAssist::Render();

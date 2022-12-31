@@ -16,6 +16,8 @@
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 
+#include "../../Features/ReplayEditor/Editor.h"
+
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
 
@@ -148,7 +150,10 @@ void MainMenu::Render()
                         currentTab = currentTab == 6 ? -1 : 6;
 
                     if (Widgets::Tab(xorstr_("Config"), StyleProvider::ConfigIconTexture, currentTab == 7, ImGuiSelectableFlags_SpanAllColumns, tabSize))
-                        currentTab = currentTab == 7 ? -1 : 7;
+                        ReplayEditor::Editor::IsOpen = true;/*currentTab = currentTab == 7 ? -1 : 7;*/
+
+                   /* if (Widgets::Tab(xorstr_("Replay Editor"), StyleProvider::ReplaysIconTexture, currentTab == 8, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                		ReplayEditor::Editor::IsOpen = true;*/
 
                     ImGui::PopStyleVar();
                     ImGui::PopFont();

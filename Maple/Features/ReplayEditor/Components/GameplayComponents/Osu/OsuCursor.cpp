@@ -1,4 +1,7 @@
 #include "OsuCursor.h"
+
+#include <cmath>
+
 #include "../../../../../Config/Config.h"
 #include "../../../EditorGlobals.h"
 

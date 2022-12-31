@@ -17,6 +17,7 @@
 #include "../../Sdk/Mods/ModManager.h"
 #include "../../Sdk/Osu/GameBase.h"
 #include "../../Sdk/Osu/GameField.h"
+#include "../../UI/Widgets/Widgets.h"
 #include "../../UI/Widgets/3rd-party/FileDialog/imfilebrowser.h"
 #include "../../Dependencies/Chiyo/Decoders/ReplayDecoder.h"
 #include "../../Sdk/Beatmaps/Beatmap.h"
@@ -27,6 +28,8 @@
 #include "Drawing/DrawSlider.h"
 #include "EditorGlobals.h"
 #include "../../Sdk/Audio/AudioEngine.h"
+
+#include "../../Utilities/Architecture/Singleton.hpp"
 
 namespace ReplayEditor
 {
@@ -45,10 +48,8 @@ namespace ReplayEditor
 		Playing
 	};
 
-	class Editor
+	class Editor : Singleton<Editor>
 	{
-		static inline std::thread timerThread;
-
 		static inline bool fileDialogInitialized = false;
 		static inline ImGui::FileBrowser fileDialog;
 		static inline char replayPath[256];
@@ -104,6 +105,7 @@ namespace ReplayEditor
 
 		static void ForceUpdateCursorPosition();
 	public:
+		Editor(SingletonLock);
 		static inline bool IsOpen = false;
 		static void HandleInputs(int nCode, WPARAM wParam, LPARAM lParam);
 		static void Initialize();

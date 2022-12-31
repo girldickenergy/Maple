@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../../Sdk/DataTypes/Structs/Vector2.h"
+#include <Math/Vector2.h>
 #include "Transformation.h"
 #include <vector>
 

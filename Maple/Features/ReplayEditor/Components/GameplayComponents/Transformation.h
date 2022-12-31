@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cmath>
-#include "../../Sdk/DataTypes/Structs/Vector2.h"
+#include <Math/Vector2.h>
 
 namespace ReplayEditor
 {

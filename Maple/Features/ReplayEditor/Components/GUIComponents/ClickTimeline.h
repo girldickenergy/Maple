@@ -1,12 +1,12 @@
 #pragma once
 #include <imgui.h>
-#include "../../../../Sdk/DataTypes/Structs/sRectangle.h"
+#include <Math/sRectangle.h>
 #include "../Chiyo/Replays/Replay.h"
 #include "../../UI/StyleProvider.h"
 #include "../../EditorGlobals.h"
 #include "../../../../Sdk/Player/HitObject.h"
 #include "../../../../Config/Config.h"
-#include "Components/Click.h"
+#include "Click.h"
 #include <iostream>
 
 namespace ReplayEditor
@@ -22,7 +22,7 @@ namespace ReplayEditor
 		int* timer;
 		ImDrawList* drawList;
 		Replay* replay;
-		sRectangle* clientBounds;
+		Vector2* clientBounds;
 		std::vector<HitObject>* hitObjects;
 		int TimeToX(int time);
 		int XToTime(int x);
@@ -32,7 +32,7 @@ namespace ReplayEditor
 		bool IsInit;
 		std::pair<Vector2, Vector2> ClickTimelineLocation;
 		ClickTimeline();
-		ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, sRectangle* _clientBounds, std::vector<HitObject>* _hitObjects);
+		ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2* _clientBounds, std::vector<HitObject>* _hitObjects);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
 		void ParseClicks();
 		void HandleMouse(Vector2 _mousePos, bool _released);

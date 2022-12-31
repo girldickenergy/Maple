@@ -37,6 +37,10 @@ void AudioEngine::Initialize()
 	Memory::AddObject(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 0F 94 C2 0F B6 D2 8B CE"));
 	Memory::AddHook(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate));
 
+	// Replay Editor
+	Memory::AddObject(xorstr_("AudioEngine::TogglePause"), xorstr_("55 8B EC 80 3D ?? ?? ?? ?? 00 74 32 83"));
+	Memory::AddObject(xorstr_("AudioEngine::SeekTo"), xorstr_("55 8B EC 57 56 50 8b F1 8B FA 39 35"));
+
 	STR_ENCRYPT_END
 	VM_FISH_RED_END
 }
@@ -72,4 +76,19 @@ float AudioEngine::GetModFrequency(float currentFrequency)
 		return currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f;
 
 	return currentFrequency;
+}
+
+void AudioEngine::TogglePause()
+{
+	reinterpret_cast<fnTogglePause>(Memory::Objects[xorstr_("AudioEngine::TogglePause")])();
+}
+
+void AudioEngine::SetCurrentPlaybackRate(double rate)
+{
+	oSetCurrentPlaybackRate(rate);
+}
+
+void AudioEngine::SeekTo(int milliseconds, bool allowExceedingRange, bool force)
+{
+	reinterpret_cast<fnSeekTo>(Memory::Objects[xorstr_("AudioEngine::SeekTo")])(milliseconds, allowExceedingRange, force);
 }

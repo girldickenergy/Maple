@@ -6,7 +6,7 @@ class Singleton {
 public:
     static T& Get()
     {
-        static const std::unique_ptr<T> instance{ new T{singletonLock{ }} };
+        static const std::unique_ptr<T> instance{ new T{SingletonLock{ }} };
         return *instance;
     }
 
@@ -14,6 +14,6 @@ public:
     Singleton& operator= (const Singleton) = delete;
 
 protected:
-    struct singletonLock {};
+    struct SingletonLock {};
     Singleton() {}
 };

@@ -12,6 +12,10 @@ class AudioEngine
 	typedef void(__stdcall* fnSetCurrentPlaybackRate)(double rate);
 	static inline fnSetCurrentPlaybackRate oSetCurrentPlaybackRate;
 	static void __stdcall setCurrentPlaybackRateHook(double rate);
+
+	// Replay Editor
+	typedef void(__stdcall* fnTogglePause)();
+	typedef void(__stdcall* fnSeekTo)(int milliseconds, bool allowExceedingRange, bool force);
 public:
 	static void Initialize();
 	
@@ -19,4 +23,12 @@ public:
 	static bool GetIsPaused();
 	static double GetModTempo();
 	static float GetModFrequency(float currentFrequency);
+
+	// Replay Editor
+	static void TogglePause();
+	/**
+	 * \brief WARNING! Calling this function will call the ORIGINAL function, therefore the hook for `SetCurrentPlaybackRate` will not be hit!
+	 */
+	static void SetCurrentPlaybackRate(double rate);
+	static void SeekTo(int milliseconds, bool allowExceedingRange, bool force);
 };

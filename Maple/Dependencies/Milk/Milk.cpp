@@ -12,7 +12,7 @@
 
 #pragma optimize("", off)
 
-Milk::Milk(singletonLock)
+Milk::Milk(SingletonLock)
 {
 	VM_FISH_RED_START
 

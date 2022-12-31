@@ -3,12 +3,12 @@
 
 void ReplayEditor::OsuPlayfield::CalculatePlayareaCoordinates()
 {
-	if (_clientBounds == nullptr) return;
+	if (_clientBounds.X == 0 || _clientBounds.Y == 0) return;
 
-	float playAreaHeight = PERC(_clientBounds->Height, 80.f);
+	float playAreaHeight = PERC(_clientBounds.Y, 80.f);
 	float playAreaWidth = playAreaHeight * (512.f / 386.f);
 
-	Vector2 playAreaPosition = Vector2((_clientBounds->Width / 2.f) - (playAreaWidth / 2.f), PERC(_clientBounds->Height, 10.f));
+	Vector2 playAreaPosition = Vector2((_clientBounds.X / 2.f) - (playAreaWidth / 2.f), PERC(_clientBounds.Y, 10.f));
 
 	EditorGlobals::PlayfieldSize = Vector2(playAreaWidth, playAreaHeight);
 	EditorGlobals::PlayfieldOffset = playAreaPosition;
@@ -165,16 +165,15 @@ ReplayEditor::OsuPlayfield::OsuPlayfield()
 	_drawList = nullptr;
 	_replay = nullptr;
 	_beatmap = nullptr;
-	_hitObjectManager = nullptr;
+	_hitObjectManager = NULL;
 	_timer = nullptr;
 	_hitObjects = nullptr;
 	_currentFrame = nullptr;
-	_clientBounds = nullptr;
 	_osuCursor = OsuCursor::OsuCursor();
 	_drawables = std::vector<std::any>();
 }
 
-ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, void* hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects)
+ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects)
 {
 	_isInit = false;
 	_drawList = drawList;
@@ -184,7 +183,7 @@ ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, B
 	_timer = timer;
 	_hitObjects = hitObjects;
 	_currentFrame = currentFrame;
-	_clientBounds = GameBase::GetClientBounds();
+	_clientBounds = GameBase::GetClientSize();
 	_osuCursor = OsuCursor::OsuCursor(_currentFrame, _replay, _drawList);
 	_drawables = std::vector<std::any>();
 
@@ -197,10 +196,10 @@ void ReplayEditor::OsuPlayfield::Render()
 	if (_drawList == nullptr) return;
 	if (_replay == nullptr) return;
 	if (_beatmap == nullptr) return;
-	if (_hitObjectManager == nullptr) return;
+	if (_hitObjectManager == NULL) return;
 	if (_timer == nullptr) return;
 	if (_currentFrame == nullptr) return;
-	if (_clientBounds == nullptr) return;
+	if (_clientBounds.X == 0 || _clientBounds.Y == 0) return;
 
 	RenderPlayarea();
 	RenderDrawables();

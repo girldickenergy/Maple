@@ -791,8 +791,11 @@
     <ClCompile Include="Dependencies\clipper\clipper.cpp">
       <Filter>Dependencies\clipper</Filter>
     </ClCompile>
-    <ClCompile Include="Sdk\DotNet\GarbageCollector.cpp">
-      <Filter>SDK\DotNet</Filter>
+    <ClCompile Include="Sdk\Beatmaps\Beatmap.cpp">
+      <Filter>SDK\Beatmaps</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdk\Beatmaps\BeatmapManager.cpp">
+      <Filter>SDK\Beatmaps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1048,8 +1051,8 @@
     <Filter Include="Dependencies\clipper">
       <UniqueIdentifier>{d61b9e53-ac9e-4d4c-97b2-8e6bfa0c1205}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SDK\DotNet">
-      <UniqueIdentifier>{bdcf140c-e0fb-4936-ae0b-bb239dc9e215}</UniqueIdentifier>
+    <Filter Include="SDK\Beatmaps">
+      <UniqueIdentifier>{f2425187-4704-4c6d-80af-5814638958fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2073,8 +2076,11 @@
     <ClInclude Include="Dependencies\clipper\clipper.hpp">
       <Filter>Dependencies\clipper</Filter>
     </ClInclude>
-    <ClInclude Include="Sdk\DotNet\GarbageCollector.h">
-      <Filter>SDK\DotNet</Filter>
+    <ClInclude Include="Sdk\Beatmaps\Beatmap.h">
+      <Filter>SDK\Beatmaps</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Beatmaps\BeatmapManager.h">
+      <Filter>SDK\Beatmaps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

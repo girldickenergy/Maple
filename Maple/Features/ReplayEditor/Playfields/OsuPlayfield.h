@@ -10,12 +10,14 @@
 #include "../../../Sdk/Player/HitObject.h"
 #include "../../../Sdk/Player/HitObjectManager.h"
 #include "../../../Dependencies/Chiyo/Replays/Replay.h"
-#include "../Components/GameplayElements/Drawable.h"
-#include "../Components/GameplayElements/Transformation.h"
-#include "../Components/GameplayElements/Osu/OsuCursor.h"
-#include "../Components/GameplayElements/Osu/ApproachCircle.h"
-#include "../Components/GameplayElements/Osu/HitObjectOsu.h"
-#include "../Components/GameplayElements/Osu/SliderOsu.h"
+#include "../Components/GameplayComponents/Drawable.h"
+#include "../Components/GameplayComponents/Transformation.h"
+#include "../Components/GameplayComponents/Osu/OsuCursor.h"
+#include "../Components/GameplayComponents/Osu/ApproachCircle.h"
+#include "../Components/GameplayComponents/Osu/HitObjectOsu.h"
+#include "../Components/GameplayComponents/Osu/SliderOsu.h"
+
+#include <Math/sRectangle.h>
 
 namespace ReplayEditor
 {
@@ -33,7 +35,7 @@ namespace ReplayEditor
 		Beatmap* _beatmap;
 
 		/// @brief Pointer to the self constructed hit object manager.
-		void* _hitObjectManager;
+		uintptr_t _hitObjectManager;
 
 		/// @brief Pointer to the timer from the editor instance.
 		int* _timer;
@@ -44,8 +46,8 @@ namespace ReplayEditor
 		/// @brief Pointer to vector holding all the currently loaded hit objects.
 		std::vector<HitObject>* _hitObjects;
 
-		/// @brief Pointer to the client bounds struct from the gamebase.
-		sRectangle* _clientBounds;
+		/// @brief The client bounds struct from the gamebase.
+		Vector2 _clientBounds;
 
 		/// @brief Vector holding all the drawables meant to be displayed on screen.
 		std::vector<std::any> _drawables;
@@ -79,7 +81,7 @@ namespace ReplayEditor
 		/// @param timer Pointer to the timer from the editor instance.
 		/// @param currentFrame Pointer to the current frame field from the editor instance.
 		/// @param hitObjects Pointer to vector holding all the currently loaded hit objects.
-		OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, void* hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects);
+		OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects);
 
 		/// @brief Renders the osu playfield instance to the editor screen.
 		void Render();

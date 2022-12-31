@@ -394,8 +394,9 @@
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="SDK\Audio\AudioEngine.cpp" />
+    <ClCompile Include="Sdk\Beatmaps\Beatmap.cpp" />
+    <ClCompile Include="Sdk\Beatmaps\BeatmapManager.cpp" />
     <ClCompile Include="SDK\Discord\DiscordRPC.cpp" />
-    <ClCompile Include="Sdk\DotNet\GarbageCollector.cpp" />
     <ClCompile Include="SDK\GL\GLControl.cpp" />
     <ClCompile Include="SDK\Graphics\SpriteManager.cpp" />
     <ClCompile Include="SDK\Helpers\ErrorSubmission.cpp" />
@@ -728,8 +729,9 @@
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="Logging\LogSeverity.h" />
     <ClInclude Include="SDK\Audio\AudioEngine.h" />
+    <ClInclude Include="Sdk\Beatmaps\Beatmap.h" />
+    <ClInclude Include="Sdk\Beatmaps\BeatmapManager.h" />
     <ClInclude Include="SDK\Discord\DiscordRPC.h" />
-    <ClInclude Include="Sdk\DotNet\GarbageCollector.h" />
     <ClInclude Include="SDK\GL\GLControl.h" />
     <ClInclude Include="SDK\Graphics\SpriteManager.h" />
     <ClInclude Include="SDK\Helpers\ErrorSubmission.h" />

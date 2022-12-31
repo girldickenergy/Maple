@@ -5,7 +5,7 @@ ReplayEditor::ClickOverlay::ClickOverlay()
 	_isInit = false;
 }
 
-ReplayEditor::ClickOverlay::ClickOverlay(int* timer, std::vector<Click>* clicks, ImDrawList* drawList, sRectangle* clientBounds)
+ReplayEditor::ClickOverlay::ClickOverlay(int* timer, std::vector<Click>* clicks, ImDrawList* drawList, Vector2* clientBounds)
 {
 	_timer = timer;
 	_clicks = clicks;
@@ -17,20 +17,20 @@ ReplayEditor::ClickOverlay::ClickOverlay(int* timer, std::vector<Click>* clicks,
 void ReplayEditor::ClickOverlay::Render()
 {
 	/// @brief The button size, both x and y
-	float buttonSize = PERC(_clientBounds->Height, 4.f) * StyleProvider::Scale;
+	float buttonSize = PERC(_clientBounds->Y, 4.f) * StyleProvider::Scale;
 	float offset = 2.0f;
 
-	ImVec2 buttonOneStart = ImVec2(_clientBounds->Width - buttonSize - (offset * 2),
-		(_clientBounds->Height / 2) - (buttonSize / 2));
-	ImVec2 buttonOneEnd = ImVec2(_clientBounds->Width - (offset * 2),
-		(_clientBounds->Height / 2) + (buttonSize / 2));
+	ImVec2 buttonOneStart = ImVec2(_clientBounds->X - buttonSize - (offset * 2),
+		(_clientBounds->Y / 2) - (buttonSize / 2));
+	ImVec2 buttonOneEnd = ImVec2(_clientBounds->X - (offset * 2),
+		(_clientBounds->Y / 2) + (buttonSize / 2));
 	_drawList->AddRect(buttonOneStart, buttonOneEnd,
 		ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f)), 6.f, 0, 2.f);
 
-	ImVec2 buttonTwoStart = ImVec2(_clientBounds->Width - buttonSize - (offset * 2),
-		(_clientBounds->Height / 2) + (buttonSize / 2) + offset);
-	ImVec2 buttonTwoEnd = ImVec2(_clientBounds->Width - (offset * 2),
-		(_clientBounds->Height / 2) + (buttonSize * 1.5f) + offset);
+	ImVec2 buttonTwoStart = ImVec2(_clientBounds->X - buttonSize - (offset * 2),
+		(_clientBounds->Y / 2) + (buttonSize / 2) + offset);
+	ImVec2 buttonTwoEnd = ImVec2(_clientBounds->X - (offset * 2),
+		(_clientBounds->Y / 2) + (buttonSize * 1.5f) + offset);
 	_drawList->AddRect(buttonTwoStart, buttonTwoEnd,
 		ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f)), 6.f, 0, 2.f);
 

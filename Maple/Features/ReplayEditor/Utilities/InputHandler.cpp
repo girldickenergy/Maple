@@ -239,7 +239,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		mouseY = (int)((short)HIWORD(pMsg->lParam));
 		if (isLeftMouseDown && Editor::EditorState != EditorState::Playing)
 		{
-			sRectangle* clientBounds = GameBase::GetClientBounds();
+			Vector2 clientBounds = GameBase::GetClientSize();
 			Dragging = true;
 			auto xPos = (int)((short)LOWORD(pMsg->lParam));
 			auto yPos = (int)((short)HIWORD(pMsg->lParam));
@@ -250,7 +250,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			Vector2 realFirstPoint = Vector2((std::min)(firstPoint.X, currentPoint.X), (std::min)(firstPoint.Y, currentPoint.Y));
 			Vector2 realSecondPoint = Vector2((std::max)(firstPoint.X, currentPoint.X), (std::max)(firstPoint.Y, currentPoint.Y));
 
-			float topBarHeight = ((clientBounds->Height * 3.75f) / 100.f) * StyleProvider::Scale;
+			float topBarHeight = ((clientBounds.Y * 3.75f) / 100.f) * StyleProvider::Scale;
 			std::pair<Vector2, Vector2> et = eventTimeline.EventTimelineLocation;
 
 			if (realFirstPoint.Y > topBarHeight && realSecondPoint.Y > topBarHeight &&
@@ -342,7 +342,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		if (IsEditing)
 		{
 			// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-			sRectangle* clientBounds = eventTimeline.clientBounds;
+			Vector2* clientBounds = eventTimeline.clientBounds;
 			ImDrawList* drawList = eventTimeline.drawList;
 			Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 				clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
@@ -366,7 +366,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		frame.OsuKeys = keys;
 
 		// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-		sRectangle* clientBounds = eventTimeline.clientBounds;
+		Vector2* clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
@@ -391,7 +391,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		frame.OsuKeys = keys;
 
 		// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-		sRectangle* clientBounds = eventTimeline.clientBounds;
+		Vector2* clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);

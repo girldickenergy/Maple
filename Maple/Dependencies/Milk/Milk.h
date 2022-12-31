@@ -60,7 +60,7 @@ class Milk : public Singleton<Milk>
 	 */
 	bool doCRCBypass();
 public:
-	Milk(singletonLock);
+	Milk(SingletonLock);
 	~Milk();
 
 	bool DoBypass();

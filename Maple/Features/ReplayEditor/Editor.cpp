@@ -8,50 +8,41 @@
 #include "../../Sdk/Player/Ruleset.h"
 #include "../../UI/StyleProvider.h"
 #include "../../UI/Widgets/Widgets.h"
-#include "../../Sdk/DotNet/GarbageCollector.h"
 
 #include <algorithm>
 #include <iostream>
 #include <ranges>
 
+#include <Vanilla.h>
+
 #include "Math/sRectangle.h"
+
+#include "../../Dependencies/Milk/MilkThread.h"
+
+#include "../../Logging/Logger.h"
 
 using namespace ReplayEditor;
 
 inline bool init = false;
 
+
 void Editor::CreateHitObjectManager()
 {
 	if (customHomInstance != 0x00000000)
 	{
-		int idx = 0;
-		for (auto it = GarbageCollector::Get().Relocations.begin(); it != GarbageCollector::Get().Relocations.end(); ++it)
-		{
-			auto& reloc = *it;
-			if (reloc.get() == customHomInstance)
-			{
-				idx = std::distance(GarbageCollector::Get().Relocations.begin(), it);
-				break;
-			}
-		}
-
-		GarbageCollector::Get().Relocations.erase(GarbageCollector::Get().Relocations.begin() + idx);
+		Vanilla::RemoveRelocation(std::ref(customHomInstance));
 	}
 
 	switch (selectedReplay.PlayMode)
 	{
 	case PlayModes::Osu:
 	{
-		HitObjectManager::RawHitObjectManagerOsu["SetBeatmap"].Method.Compile();
-		HitObjectManager::RawHitObjectManagerOsu["Load"].Method.Compile();
-
-		Ruleset::RawRulesetOsu["CreateHitObjectManager"].Method.Compile();
-		void* ptr = Ruleset::RawRulesetOsu["CreateHitObjectManager"].Method.GetNativeStart();
-
 		typedef void* (__fastcall* fnCreateHom)(void*);
-		customHomInstance = reinterpret_cast<uintptr_t>((reinterpret_cast<fnCreateHom>(ptr))(nullptr));
+
+		customHomInstance = Ruleset::CreateHitObjectManager(NULL);
+		Vanilla::AddRelocation(std::ref(customHomInstance));
+		Logger::Log(LogSeverity::Debug, "HOM Instance Pointer: %X", customHomInstance);
 		customHomPlayMode = selectedReplay.PlayMode;
-		Hooks::relocations.push_back(std::ref(customHomInstance));
 	}
 	break;
 	}
@@ -63,18 +54,24 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 		CreateHitObjectManager();
 
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	void* bm = BeatmapManager::GetBeatmapByChecksum(converter.from_bytes(selectedReplay.BeatmapHash));
-	bmap = Beatmap::Beatmap(bm);
+	uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(converter.from_bytes(selectedReplay.BeatmapHash));
 
-	HitObjectManager::SetBeatmap(reinterpret_cast<void*>(customHomInstance), bm, selectedReplay.Mods);
-	HitObjectManager::Load(reinterpret_cast<void*>(customHomInstance), true, 0);
-	HitObjectManager::UpdateAllSliders(reinterpret_cast<void*>(customHomInstance), false);
-	HitObjectManager::UpdateStacking(0, -1, reinterpret_cast<void*>(customHomInstance));
+	Logger::Log(LogSeverity::Debug, "Beatmap Pointer: %X", beatmapPointer);
+
+	bmap = Beatmap(beatmapPointer);
+
+	HitObjectManager::SetBeatmap(customHomInstance, beatmapPointer, selectedReplay.Mods);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::SetBeatmap");
+	HitObjectManager::Load(customHomInstance, true, 0);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::Load");
+	HitObjectManager::UpdateSlidersAll(customHomInstance, false);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateSlidersAll");
+	HitObjectManager::UpdateStacking(customHomInstance, 0, -1);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateStacking");
 
 	Drawables.clear();
 	hitObjects.clear();
-	hitObjects = HitObjectManager::GetAllHitObjects(reinterpret_cast<void*>(customHomInstance));
-	for (auto& object : hitObjects)
+	for (auto& object : HitObjectManager::HitObjects)
 		if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
 			object.Position = Vector2(object.Position.X, 384 - object.Position.Y);
 	clickTimeline.SetHitObjects(&hitObjects);
@@ -83,16 +80,21 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
 		cs = std::min(10.f, cs * 1.3f);
 
+	Logger::Log(LogSeverity::Debug, "Reached before eventTimeline.SetHomInstance");
 	eventTimeline.SetHomInstance(customHomInstance);
 	eventTimeline.SetHitObjects(&hitObjects);
 	eventTimeline.SetCircleSize(cs);
 	eventTimeline.SetOverallDifficulty(bmap.GetOverallDifficulty());
+	Logger::Log(LogSeverity::Debug, "after before eventTimeline.SetOverallDifficulty");
 
-	osuPlayfield = OsuPlayfield::OsuPlayfield(drawList, &Editor::selectedReplay, &Editor::bmap, reinterpret_cast<void*>(customHomInstance),
+	osuPlayfield = OsuPlayfield(drawList, &Editor::selectedReplay, &Editor::bmap, customHomInstance,
 	                                          &Time, &Editor::currentFrame, &hitObjects);
 	eventTimeline.ParseEvents();
 
-	BeatmapManager::Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
+	Logger::Log(LogSeverity::Debug, "Reached before BeatmapManager::Get().Load()");
+	Logger::Log(LogSeverity::Debug, "Pointers: VOID %X | UINT %X", reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()), bmap.GetBeatmapOsuPointer());
+	BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
+	Logger::Log(LogSeverity::Debug, "Reached until after BeatmapManager::Get().Load()");
 	AudioEngine::TogglePause();
 }
 
@@ -139,10 +141,15 @@ void Editor::ForceUpdateCursorPosition()
 	}
 }
 
+Editor::Editor(SingletonLock)
+{
+}
+
 void Editor::Initialize()
 {
-	timerThread = std::thread(TimerThread);
-	timerThread.detach();
+	MilkThread mt = MilkThread(reinterpret_cast<uintptr_t>(TimerThread));
+	/*timerThread = std::thread(TimerThread);
+	timerThread.detach();*/
 }
 
 void Editor::Render()
@@ -224,14 +231,14 @@ void Editor::Render()
 					selectedReplay.ReplayFrames.erase(selectedReplay.ReplayFrames.begin() + idx);
 
 				// click timeline
-				clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr);
+				clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, nullptr);
 				clickTimeline.ParseClicks();
 
 				// click overlay
-				clickOverlay = ClickOverlay::ClickOverlay(&Time, &clickTimeline.clicks, drawList, clientBounds);
+				clickOverlay = ClickOverlay::ClickOverlay(&Time, &clickTimeline.clicks, drawList, &clientBounds);
 
 				// event timeline
-				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr, 0, 0, customHomInstance);
+				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, nullptr, 0, 0, customHomInstance);
 				// PARSE EVENTS AFTER BEATMAP LOADING XDDD
 
 				//bm
@@ -262,13 +269,13 @@ void Editor::Render()
 			Widgets::BeginPanel("Options", OptionsSize);
 			{
 				Widgets::Checkbox("Show Replay Frames", &Config::ReplayEditor::ShowReplayFrames);
-				Widgets::SliderInt("Frame Count", &Config::ReplayEditor::FrameCount, 5, 50, "%d", ImGuiSliderFlags_ClampOnInput);
-				Widgets::SliderFloat("Timeline Resolution", &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, "%.1f", ImGuiSliderFlags_ClampOnInput);
-				if (Widgets::SliderFloat("Playback rate", &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, "%.1f", ImGuiSliderFlags_ClampOnInput))
+				Widgets::SliderInt("Frame Count", &Config::ReplayEditor::FrameCount, 5, 50, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput);
+				Widgets::SliderFloat("Timeline Resolution", &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, 0.1f, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
+				if (Widgets::SliderFloat("Playback rate", &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, 0.1f, 1, "%.1f", ImGuiSliderFlags_ClampOnInput))
 				{
-					AudioEngine::SetPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
+					AudioEngine::SetCurrentPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
 				}
-				Widgets::SliderInt("Edit Resync Time", &Config::ReplayEditor::EditResyncTime, 50, 500, "%d", ImGuiSliderFlags_ClampOnInput);
+				Widgets::SliderInt("Edit Resync Time", &Config::ReplayEditor::EditResyncTime, 50, 500, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput);
 #if _DEBUG
 				if (Widgets::Button("Debug Tools"))
 					Editor::debugToolsOpen = !Editor::debugToolsOpen;
@@ -315,36 +322,6 @@ void Editor::Render()
 			clickOverlay.Render();
 	}
 	ImGui::End();
-#if _DEBUG
-	if (Editor::debugToolsOpen)
-	{
-		ImGuiStyle& style = ImGui::GetStyle();
-		ImGui::SetNextWindowSize(ImVec2(540, 420));
-
-		ImGui::Begin("Debug Tools", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-		{
-			const ImVec2 menuPos = ImGui::GetCurrentWindow()->Pos;
-			ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + ImVec2(540, 420), ImColor(StyleProvider::MenuColourDark), style.WindowRounding);
-
-			static int item_current_idx = 0; // Here we store our selection data as an index.
-			if (ImGui::BeginListBox("Frames", ImVec2(-FLT_MIN, 10 * ImGui::GetTextLineHeightWithSpacing())))
-			{
-				for (auto it = selectedReplay.ReplayFrames.begin() + (currentFrame); it != selectedReplay.ReplayFrames.end(); ++it)
-				{
-					auto& frame = *it;
-					std::string text = "T: " + std::to_string(frame.Time) + " X: " + std::to_string(frame.X) +
-						" Y: " + std::to_string(frame.X) + " Keys: " + std::to_string(static_cast<int>(frame.OsuKeys));
-					if (ImGui::Selectable(text.c_str(), (std::distance(selectedReplay.ReplayFrames.begin(), it) - currentFrame) == 0))
-					{
-
-					}
-				}
-				ImGui::EndListBox();
-			}
-		}
-		ImGui::End();
-	}
-#endif
 }
 
 void Editor::Pause()

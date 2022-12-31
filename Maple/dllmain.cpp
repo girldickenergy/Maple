@@ -23,7 +23,7 @@
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
-#include "SDK/DotNet/GarbageCollector.h"
+#include "SDK/Beatmaps/BeatmapManager.h"
 #include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
@@ -36,6 +36,8 @@
 #include "Utilities/Anticheat/AnticheatUtilities.h"
 #include "Utilities/Strings/StringUtilities.h"
 #include "Dependencies/Milk/MilkThread.h"
+
+#include "Features/ReplayEditor/Editor.h"
 
 DWORD WINAPI Initialize();
 void InitializeMaple();
@@ -144,7 +146,6 @@ void InitializeMaple()
         AudioEngine::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();
-        GarbageCollector::Get().Initialize();
         Obfuscated::Initialize();
         GameField::Initialize();
         Player::Initialize();
@@ -154,6 +155,9 @@ void InitializeMaple()
         StreamingManager::Initialize();
         DiscordRPC::Initialize();
         GLControl::Initialize();
+        BeatmapManager::Get().Initialize();
+
+        ReplayEditor::Editor::Initialize();
 
         Memory::EndInitialize();
 
