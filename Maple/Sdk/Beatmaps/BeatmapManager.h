@@ -5,12 +5,12 @@
 
 class BeatmapManager : public Singleton<BeatmapManager>
 {
-	typedef void(__fastcall* fnLoad)(void* beatmapPointer);
+	typedef void(__fastcall* fnSetCurrent)(uintptr_t beatmapPointer);
 	typedef uintptr_t(__fastcall* fnGetBeatmapByChecksum)(CLRString* beatmapChecksum);
 public:
 	explicit BeatmapManager(SingletonLock);
 
 	void Initialize();
 	uintptr_t GetBeatmapByChecksum(std::wstring beatmapChecksum);
-	void Load(void* beatmapPointer);
+	void SetCurrent(uintptr_t beatmapPointer);
 };

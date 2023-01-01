@@ -129,7 +129,13 @@ void InitializeMaple()
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
         bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
-        bool bypassSucceeded = Milk::Get().DoBypass();
+        bool bypassSucceeded = false;
+
+#ifdef NO_BYPASS
+        bypassSucceeded = true;
+#else
+        bypassSucceeded = Milk::Get().DoBypass();
+#endif
 
         if (!goodKnownAuthVersion || !bypassSucceeded)
             Config::Misc::ForceDisableScoreSubmission = true;

@@ -248,21 +248,24 @@ void HitObjectManager::Initialize()
 
 void HitObjectManager::CacheHitObjects()
 {
+	CacheHitObjects(GetInstance());
+}
+
+void HitObjectManager::CacheHitObjects(uintptr_t instance)
+{
 	HitObjects.clear();
-	
+
 	auto isAddressValid = [](uintptr_t address)
 	{
 		return address && *reinterpret_cast<int*>(address);
 	};
 
-	auto getHitObjectListItemsAddress = []()
+	auto getHitObjectListItemsAddress = [instance]()
 	{
-		const uintptr_t instance = GetInstance();
-
 		return instance ? *reinterpret_cast<uintptr_t*>(*reinterpret_cast<uintptr_t*>(instance + HITOBJECTMANAGER_HITOBJECTS_OFFSET) + 0x4) : 0u;
 	};
 
-	const int hitObjectsCount = GetHitObjectsCount();
+	const int hitObjectsCount = GetHitObjectsCount(instance);
 	for (int i = 0; i < hitObjectsCount; i++)
 	{
 		const uintptr_t hitObjectListItemsAddress = getHitObjectListItemsAddress();
@@ -558,7 +561,12 @@ int HitObjectManager::GetHitObjectsCount()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET) : 0.f;
+	return GetHitObjectsCount(hitObjectManagerInstance);
+}
+
+int HitObjectManager::GetHitObjectsCount(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET) : 0.f;
 }
 
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)

@@ -70,6 +70,7 @@ public:
 	static void Initialize();
 
 	static void CacheHitObjects();
+	static void CacheHitObjects(uintptr_t instance);
 	static HitObject GetHitObject(int index);
 
 	static uintptr_t GetInstance();
@@ -100,6 +101,7 @@ public:
 	static void SetStackOffset(float value);
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
+	static int GetHitObjectsCount(uintptr_t instance);
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 
 	// Replay Editor

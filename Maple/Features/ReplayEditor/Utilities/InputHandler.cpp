@@ -5,6 +5,9 @@ void ReplayEditor::Editor::HandleSelectionDrag()
 	selectedFrames.clear();
 	int allFrames = Editor::selectedReplay.ReplayFrames.size() - 1;
 
+	if (allFrames < 0)
+		return;
+
 	int countOne = Editor::currentFrame > Config::ReplayEditor::FrameCount ? Config::ReplayEditor::FrameCount : Editor::currentFrame;
 	int countTwo = allFrames - Editor::currentFrame > Config::ReplayEditor::FrameCount ? Config::ReplayEditor::FrameCount : allFrames - Editor::currentFrame;
 

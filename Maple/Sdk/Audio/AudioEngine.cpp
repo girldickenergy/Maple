@@ -40,6 +40,7 @@ void AudioEngine::Initialize()
 	// Replay Editor
 	Memory::AddObject(xorstr_("AudioEngine::TogglePause"), xorstr_("55 8B EC 80 3D ?? ?? ?? ?? 00 74 32 83"));
 	Memory::AddObject(xorstr_("AudioEngine::SeekTo"), xorstr_("55 8B EC 57 56 50 8b F1 8B FA 39 35"));
+	Memory::AddObject(xorstr_("AudioEngine::LoadAudio"), xorstr_("55 8B EC 57 56 53 83 EC 14 33 C0 89 45 E0 89 45 E4 89 45 E8 89 45 EC 8B F1 8B DA 8B CE BA"));
 
 	STR_ENCRYPT_END
 	VM_FISH_RED_END
@@ -78,9 +79,9 @@ float AudioEngine::GetModFrequency(float currentFrequency)
 	return currentFrequency;
 }
 
-void AudioEngine::TogglePause()
+bool AudioEngine::TogglePause()
 {
-	reinterpret_cast<fnTogglePause>(Memory::Objects[xorstr_("AudioEngine::TogglePause")])();
+	return reinterpret_cast<fnTogglePause>(Memory::Objects[xorstr_("AudioEngine::TogglePause")])();
 }
 
 void AudioEngine::SetCurrentPlaybackRate(double rate)
@@ -91,4 +92,9 @@ void AudioEngine::SetCurrentPlaybackRate(double rate)
 void AudioEngine::SeekTo(int milliseconds, bool allowExceedingRange, bool force)
 {
 	reinterpret_cast<fnSeekTo>(Memory::Objects[xorstr_("AudioEngine::SeekTo")])(milliseconds, allowExceedingRange, force);
+}
+
+bool AudioEngine::LoadAudio(uintptr_t beatmapPointer, bool requireId3, bool quick, bool unloadPrevious, bool loop)
+{
+	return reinterpret_cast<fnLoadAudio>(Memory::Objects[xorstr_("AudioEngine::LoadAudio")])(beatmapPointer, requireId3, quick, unloadPrevious, loop);
 }

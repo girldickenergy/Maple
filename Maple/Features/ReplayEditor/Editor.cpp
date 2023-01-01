@@ -59,6 +59,7 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	Logger::Log(LogSeverity::Debug, "Beatmap Pointer: %X", beatmapPointer);
 
 	bmap = Beatmap(beatmapPointer);
+	bmap.Update();
 
 	HitObjectManager::SetBeatmap(customHomInstance, beatmapPointer, selectedReplay.Mods);
 	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::SetBeatmap");
@@ -71,7 +72,12 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 
 	Drawables.clear();
 	hitObjects.clear();
-	for (auto& object : HitObjectManager::HitObjects)
+
+	HitObjectManager::CacheHitObjects(customHomInstance);
+	hitObjects = HitObjectManager::HitObjects;
+	HitObjectManager::HitObjects.clear();
+	
+	for (auto& object : hitObjects)
 		if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
 			object.Position = Vector2(object.Position.X, 384 - object.Position.Y);
 	clickTimeline.SetHitObjects(&hitObjects);
@@ -91,11 +97,17 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	                                          &Time, &Editor::currentFrame, &hitObjects);
 	eventTimeline.ParseEvents();
 
-	Logger::Log(LogSeverity::Debug, "Reached before BeatmapManager::Get().Load()");
-	Logger::Log(LogSeverity::Debug, "Pointers: VOID %X | UINT %X", reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()), bmap.GetBeatmapOsuPointer());
-	BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
+	Logger::Log(LogSeverity::Debug, "Reached before BeatmapManager::Get().SetCurrent()");
+	//BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
+
+	BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
+	/*Logger::Log(LogSeverity::Debug, "Reached after BeatmapManager::Get().SetCurrent()");
+	AudioEngine::LoadAudio(bmap.GetBeatmapOsuPointer(), false, false, true, false);
+	Logger::Log(LogSeverity::Debug, "Reached after BAudioEngine::LoadAudio()");
+
 	Logger::Log(LogSeverity::Debug, "Reached until after BeatmapManager::Get().Load()");
 	AudioEngine::TogglePause();
+	Logger::Log(LogSeverity::Debug, "Reached until after AudioEngine::TogglePause()");*/
 }
 
 void Editor::DrawSelectedFrames(ImDrawList* drawList)
