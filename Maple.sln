@@ -7,12 +7,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Maple", "Maple\Maple.vcxpro
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug (No Bypass)|x64 = Debug (No Bypass)|x64
+		Debug (No Bypass)|x86 = Debug (No Bypass)|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug (No Bypass)|x64.ActiveCfg = Debug (No Bypass)|x64
+		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug (No Bypass)|x64.Build.0 = Debug (No Bypass)|x64
+		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug (No Bypass)|x86.ActiveCfg = Debug (No Bypass)|Win32
+		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug (No Bypass)|x86.Build.0 = Debug (No Bypass)|Win32
 		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug|x64.ActiveCfg = Debug|x64
 		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug|x64.Build.0 = Debug|x64
 		{FBB2EC8F-6D7D-476F-9401-E2A7BF166D63}.Debug|x86.ActiveCfg = Debug|Win32
