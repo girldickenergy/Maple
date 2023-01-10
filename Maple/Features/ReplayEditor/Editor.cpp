@@ -243,7 +243,7 @@ void Editor::Render()
 					selectedReplay.ReplayFrames.erase(selectedReplay.ReplayFrames.begin() + idx);
 
 				// click timeline
-				clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, nullptr);
+				clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr);
 				clickTimeline.ParseClicks();
 
 				// click overlay
@@ -264,7 +264,8 @@ void Editor::Render()
 		ImGui::SetCursorPos(ImVec2(183 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		Widgets::Button("Export", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
 		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		if (Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
+			IsOpen = false;
 		ImGui::SetCursorPos(ImVec2(355 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button("Options", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 			optionsOpen = !optionsOpen;

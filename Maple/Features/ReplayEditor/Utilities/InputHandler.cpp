@@ -369,7 +369,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 
 		keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::K1));
 
-		keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::M1));
+		//keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::M1));
 
 		frame.OsuKeys = keys;
 
@@ -381,7 +381,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 
 		Editor::eventTimeline.ParseEvents();
 
-		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, &hitObjects);
+		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();
 
 		Editor::ForceUpdateCursorPosition();
@@ -394,7 +394,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 
 		keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::K2));
 
-		keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::M2));
+		//keys = static_cast<OsuKeys>(static_cast<int>(keys) ^ static_cast<int>(OsuKeys::M2));
 
 		frame.OsuKeys = keys;
 
@@ -406,7 +406,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			
 		Editor::eventTimeline.ParseEvents();
 
-		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, &hitObjects);
+		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();
 
 		Editor::ForceUpdateCursorPosition();

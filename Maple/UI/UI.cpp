@@ -32,6 +32,10 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(oWndProc, nCode, wParam, lParam);
 
 	MSG* pMsg = reinterpret_cast<MSG*>(lParam);
+	
+	if (ReplayEditor::Editor::IsOpen)
+		ReplayEditor::Editor::HandleInputs(nCode, wParam, lParam);
+
 	pMsg->wParam = mapLeftRightKeys(pMsg->wParam, pMsg->lParam);
 
 	if (wParam == PM_REMOVE)
@@ -52,9 +56,6 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
-	
-	if (ReplayEditor::Editor::IsOpen)
-		ReplayEditor::Editor::HandleInputs(nCode, wParam, lParam);
 
 	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 	{

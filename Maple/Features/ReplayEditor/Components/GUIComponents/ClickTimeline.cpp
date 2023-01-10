@@ -4,7 +4,7 @@
 ReplayEditor::ClickTimeline::ClickTimeline()
 { }
 
-ReplayEditor::ClickTimeline::ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2* _clientBounds, std::vector<HitObject>* _hitObjects)
+ReplayEditor::ClickTimeline::ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects)
 {
 	timer = _timer;
 	drawList = _drawList;
@@ -15,7 +15,7 @@ ReplayEditor::ClickTimeline::ClickTimeline(int* _timer, ImDrawList* _drawList, R
 
 int ReplayEditor::ClickTimeline::TimeToX(int time)
 {
-	auto width = static_cast<float>(clientBounds->X);
+	auto width = static_cast<float>(clientBounds.X);
 	auto msPerScreen = (width * 2) * Config::ReplayEditor::TimelineResolution;
 	auto pixelsPerMs = width / msPerScreen;
 
@@ -31,11 +31,11 @@ int ReplayEditor::ClickTimeline::XToTime(int x)
 	//var relativeTime = inputXPosition * msPerPixel; // or `/ pixelsPerMs`, whichever one you have
 	//var absTime = currentTime + relativeTime;
 
-	auto width = static_cast<float>(clientBounds->X);
+	auto width = static_cast<float>(clientBounds.X);
 	auto msPerScreen = (width * 2) * Config::ReplayEditor::TimelineResolution;
 	auto pixelsPerMs = width / msPerScreen;
 
-	auto relativeTime = (x - clientBounds->X / 2) / pixelsPerMs;
+	auto relativeTime = (x - clientBounds.X / 2) / pixelsPerMs;
 
 	return static_cast<int>(*timer + relativeTime);
 }
@@ -113,7 +113,7 @@ void ReplayEditor::ClickTimeline::ParseClicks()
 
 void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
 {
-	float clickTimelineHeight = PERC(clientBounds->Y, 4.f) * StyleProvider::Scale;
+	float clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
 
 	static bool secondCall = false;
 
@@ -127,7 +127,7 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
 		{
 			auto& click = clicks[i];
 			auto var = TimeToX(click._startTime);
-			if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds->X * 2) && var < clientBounds->X)
+			if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds.X * 2) && var < clientBounds.X)
 				if (click._keys == OsuKeys::K1)
 				{
 					if (i > 0)
@@ -145,9 +145,9 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
 						nextClick = clicks[i + intermediary];
 					}
 
-					Vector2 clickTopLeft = Vector2((clientBounds->X / 2) + var, clientBounds->Y - clickTimelineHeight);
-					Vector2 clickBottomRight = Vector2((clientBounds->X / 2) + ((static_cast<float>(click._duration) / 2) /
-						Config::ReplayEditor::TimelineResolution) + var, clientBounds->Y - (clickTimelineHeight / 2));
+					Vector2 clickTopLeft = Vector2((clientBounds.X / 2) + var, clientBounds.Y - clickTimelineHeight);
+					Vector2 clickBottomRight = Vector2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) /
+						Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y - (clickTimelineHeight / 2));
 					if (_mousePos.X >= clickTopLeft.X && _mousePos.X <= clickBottomRight.X &&
 						_mousePos.Y >= clickTopLeft.Y && _mousePos.Y <= clickBottomRight.Y)
 					{
@@ -202,9 +202,9 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
 				//ImVec2((clientBounds->Width / 2) + var, clientBounds->Height - (clickTimelineHeight / 2)),
 				//	ImVec2((clientBounds->Width / 2) + ((static_cast<float>(click.duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds->Height)
 
-				Vector2 clickTopLeft = Vector2((clientBounds->X / 2) + var, clientBounds->Y - (clickTimelineHeight / 2));
-				Vector2 clickBottomRight = Vector2((clientBounds->X / 2) + ((static_cast<float>(click._duration) / 2) /
-					Config::ReplayEditor::TimelineResolution) + var, clientBounds->Y);
+				Vector2 clickTopLeft = Vector2((clientBounds.X / 2) + var, clientBounds.Y - (clickTimelineHeight / 2));
+				Vector2 clickBottomRight = Vector2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) /
+					Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y);
 				if (_mousePos.X >= clickTopLeft.X && _mousePos.X <= clickBottomRight.X &&
 					_mousePos.Y >= clickTopLeft.Y && _mousePos.Y <= clickBottomRight.Y)
 				{
@@ -302,33 +302,33 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
 
 void ReplayEditor::ClickTimeline::Draw()
 {
-	float clickTimelineHeight = PERC(clientBounds->Y, 4.f) * StyleProvider::Scale;
-	drawList->AddRectFilled(ImVec2(0, clientBounds->Y - clickTimelineHeight), ImVec2(clientBounds->X, clientBounds->Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(71.f), COL(71.f), COL(71.f), 1.f)));
+	float clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
+	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight), ImVec2(clientBounds.X, clientBounds.Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(71.f), COL(71.f), COL(71.f), 1.f)));
 
-	ClickTimelineLocation = std::make_pair(Vector2(0, clientBounds->Y - clickTimelineHeight), Vector2(clientBounds->X, clientBounds->Y));
+	ClickTimelineLocation = std::make_pair(Vector2(0, clientBounds.Y - clickTimelineHeight), Vector2(clientBounds.X, clientBounds.Y));
 
 	// The click timeline should have twice resolution! i.e: it's 1920 wide, so the time resolution should be 1920*2 ms, or 1920 in either direction.
 	if (hitObjects == nullptr) return;
 
 	for (auto& click : clicks) {
 		auto var = TimeToX(click._startTime);
-		if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds->X * 2) && var < clientBounds->X)
+		if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds.X * 2) && var < clientBounds.X)
 			if (click._keys == OsuKeys::K1)
-				drawList->AddRectFilled(ImVec2((clientBounds->X / 2) /* - (click.duration / 2)*/ + var, clientBounds->Y - clickTimelineHeight),
-					ImVec2((clientBounds->X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds->Y - (clickTimelineHeight / 2)), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(232.f), COL(93.f), COL(155.f), 1.0f)), 8.f);
+				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) /* - (click.duration / 2)*/ + var, clientBounds.Y - clickTimelineHeight),
+					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y - (clickTimelineHeight / 2)), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(232.f), COL(93.f), COL(155.f), 1.0f)), 8.f);
 			else if (click._keys == OsuKeys::K2)
-				drawList->AddRectFilled(ImVec2((clientBounds->X / 2) /* - (click.duration / 2)*/ + var, clientBounds->Y - (clickTimelineHeight / 2)),
-					ImVec2((clientBounds->X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds->Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(223.f), COL(148.f), COL(86.f), 1.0f)), 8.f);
+				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) /* - (click.duration / 2)*/ + var, clientBounds.Y - (clickTimelineHeight / 2)),
+					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(223.f), COL(148.f), COL(86.f), 1.0f)), 8.f);
 	}
 
 	for (auto& ho : *hitObjects) {
 		auto var = TimeToX(ho.StartTime);
-		if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds->X * 2) && var < clientBounds->X)
-			drawList->AddRectFilled(ImVec2((clientBounds->X / 2) + var, clientBounds->Y - clickTimelineHeight),
-				ImVec2((clientBounds->X / 2) + 2 + var, clientBounds->Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(150.f), COL(150.f), COL(150.f), 1.0f)), 4.f);
+		if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds.X * 2) && var < clientBounds.X)
+			drawList->AddRectFilled(ImVec2((clientBounds.X / 2) + var, clientBounds.Y - clickTimelineHeight),
+				ImVec2((clientBounds.X / 2) + 2 + var, clientBounds.Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(150.f), COL(150.f), COL(150.f), 1.0f)), 4.f);
 	}
 
 	// White tracer in the middle to indicate relative current position
-	drawList->AddRectFilled(ImVec2((clientBounds->X / 2) - 2, clientBounds->Y - clickTimelineHeight),
-		ImVec2((clientBounds->X / 2) + 2, clientBounds->Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f)), 8.f);
+	drawList->AddRectFilled(ImVec2((clientBounds.X / 2) - 2, clientBounds.Y - clickTimelineHeight),
+		ImVec2((clientBounds.X / 2) + 2, clientBounds.Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f)), 8.f);
 }

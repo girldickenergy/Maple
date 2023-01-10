@@ -22,7 +22,7 @@ namespace ReplayEditor
 		int* timer;
 		ImDrawList* drawList;
 		Replay* replay;
-		Vector2* clientBounds;
+		Vector2 clientBounds;
 		std::vector<HitObject>* hitObjects;
 		int TimeToX(int time);
 		int XToTime(int x);
@@ -32,7 +32,7 @@ namespace ReplayEditor
 		bool IsInit;
 		std::pair<Vector2, Vector2> ClickTimelineLocation;
 		ClickTimeline();
-		ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2* _clientBounds, std::vector<HitObject>* _hitObjects);
+		ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
 		void ParseClicks();
 		void HandleMouse(Vector2 _mousePos, bool _released);
