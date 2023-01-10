@@ -53,12 +53,12 @@ namespace ReplayEditor
 		bool TestHit(HitObject ho, ReplayFrame frame, int hoIndex);
 	public:
 		ImDrawList* drawList;
-		Vector2* clientBounds;
+		Vector2 clientBounds;
 		int XToTime(int x);
 		std::pair<Vector2, Vector2> EventTimelineLocation;
 		bool IsInit;
 		EventTimeline();
-		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2* _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance);
+		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
 		void ParseEvents(std::vector<ReplayFrame> _replayFrames = std::vector<ReplayFrame>(), bool _otherMode = false);
 		void Draw();

@@ -2,21 +2,23 @@
 
 ReplayEditor::EventType ReplayEditor::EventTimeline::GetHitRange(int delta)
 {
-	if (delta <= HitObjectManager::GetHitWindow300(homInstance)) return ThreeHundred;
-	if (delta <= HitObjectManager::GetHitWindow100(homInstance)) return OneHundred;
-	if (delta <= HitObjectManager::GetHitWindow50(homInstance))  return Fifty;
+	if (delta <= HitObjectManager::GetHitWindow300(homInstance)) return EventType::ThreeHundred;
+	if (delta <= HitObjectManager::GetHitWindow100(homInstance)) return EventType::OneHundred;
+	if (delta <= HitObjectManager::GetHitWindow50(homInstance))  return EventType::Fifty;
 
-	return Miss;
+	return EventType::Miss;
 }
 
 int ReplayEditor::EventTimeline::TimeToX(int time)
 {
-	return static_cast<int>((static_cast<float>(time) / replay->ReplayLength) * clientBounds->X);
+	return static_cast<int>((static_cast<float>(time) / replay->ReplayLength) * clientBounds.X);
 }
 
 int ReplayEditor::EventTimeline::XToTime(int x)
 {
-	return static_cast<int>((static_cast<float>(x) / clientBounds->X) * replay->ReplayLength);
+	if (clientBounds.X < 0)
+		return 0;
+	return static_cast<int>((static_cast<float>(x) / clientBounds.X) * replay->ReplayLength);
 }
 
 ReplayEditor::EventType ReplayEditor::EventTimeline::TestTimeMiss(HitObject ho, ReplayFrame frame, int hoIndex)
@@ -76,7 +78,7 @@ bool ReplayEditor::EventTimeline::TestHit(HitObject ho, ReplayFrame frame, int h
 ReplayEditor::EventTimeline::EventTimeline()
 { }
 
-ReplayEditor::EventTimeline::EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2* _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance)
+ReplayEditor::EventTimeline::EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance)
 {
 	timer = _timer;
 	drawList = _drawList;
@@ -148,30 +150,30 @@ void ReplayEditor::EventTimeline::ParseEvents(std::vector<ReplayFrame> _replayFr
 			}
 		}
 	}
-	
-	for(auto& ho : *hitObjects) 
+
+	for (auto& ho : *hitObjects)
 		if (!ho.IsHit && !ho.IsType(HitObjectType::Spinner))
 			events.emplace_back(ho.StartTime, EventType::Miss);
 		else if (ho.IsType(HitObjectType::Spinner))
 			events.emplace_back(ho.StartTime, EventType::ThreeHundred);
-			
+
 	IsInit = true;
 }
 
 void ReplayEditor::EventTimeline::Draw()
 {
-	float eventTimelineHeight = (PERC(clientBounds->Y, 3.f) * StyleProvider::Scale) - 2;
-	float clickTimelineHeight = PERC(clientBounds->Y, 4.f) * StyleProvider::Scale;
-	
-	// Upper border 
-	drawList->AddRectFilled(ImVec2(0, clientBounds->Y - clickTimelineHeight - eventTimelineHeight - 2), ImVec2(clientBounds->X, clientBounds->Y - clickTimelineHeight - eventTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
+	float eventTimelineHeight = (PERC(clientBounds.Y, 3.f) * StyleProvider::Scale) - 2;
+	float clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
 
-	drawList->AddRectFilled(ImVec2(0, clientBounds->Y - clickTimelineHeight - eventTimelineHeight), ImVec2(clientBounds->X, clientBounds->Y - clickTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(71.f), COL(71.f), COL(71.f), 1.f)));
+	// Upper border 
+	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight - eventTimelineHeight - 2), ImVec2(clientBounds.X, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
+
+	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImVec2(clientBounds.X, clientBounds.Y - clickTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(71.f), COL(71.f), COL(71.f), 1.f)));
 
 	// Under border
-	drawList->AddRectFilled(ImVec2(0, clientBounds->Y - clickTimelineHeight - 2), ImVec2(clientBounds->X, clientBounds->Y - clickTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
+	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight - 2), ImVec2(clientBounds.X, clientBounds.Y - clickTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
 
-	EventTimelineLocation = std::make_pair(Vector2(0, clientBounds->Y - clickTimelineHeight - eventTimelineHeight), Vector2(clientBounds->X, clientBounds->Y - clickTimelineHeight));
+	EventTimelineLocation = std::make_pair(Vector2(0, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), Vector2(clientBounds.X, clientBounds.Y - clickTimelineHeight));
 
 	// The click timeline should have twice resolution! i.e: it's 1920 wide, so the time resolution should be 1920*2 ms, or 1920 in either direction.
 	if (hitObjects == nullptr) return;
@@ -183,22 +185,22 @@ void ReplayEditor::EventTimeline::Draw()
 			ImU32 col;
 			switch (e.eventType)
 			{
-				case EventType::Miss:
-					col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(0.f), COL(0.f), 1.f));
-					break;
-				case EventType::Fifty:
-					col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(0.f), COL(255.f), 1.f));
-					break;
-				case EventType::OneHundred:
-					col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), 1.f));
-					break;
+			case EventType::Miss:
+				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(0.f), COL(0.f), 1.f));
+				break;
+			case EventType::Fifty:
+				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(0.f), COL(255.f), 1.f));
+				break;
+			case EventType::OneHundred:
+				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), 1.f));
+				break;
 			}
-			drawList->AddRectFilled(ImVec2(x - .5f, clientBounds->Y - clickTimelineHeight - eventTimelineHeight), ImVec2(x + .5f, clientBounds->Y - clickTimelineHeight - 2), col);
+			drawList->AddRectFilled(ImVec2(x - .5f, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImVec2(x + .5f, clientBounds.Y - clickTimelineHeight - 2), col);
 		}
 	}
 
 	int timeX = EventTimeline::TimeToX(*timer);
-	drawList->AddRect(ImVec2(timeX - 2.f, clientBounds->Y - clickTimelineHeight - eventTimelineHeight), ImVec2(timeX + 2.f, clientBounds->Y - clickTimelineHeight - 2), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 0.5f)));
+	drawList->AddRect(ImVec2(timeX - 2.f, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImVec2(timeX + 2.f, clientBounds.Y - clickTimelineHeight - 2), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 0.5f)));
 }
 
 void ReplayEditor::EventTimeline::SetOverallDifficulty(int _od)

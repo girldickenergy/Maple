@@ -105,7 +105,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			Time = eventTimeline.XToTime(xPos);
 			if (Editor::EditorState != EditorState::Playing)
 				Editor::ForceUpdateCursorPosition();
-			AudioEngine::SeekTo(Time, false, false);
+			//AudioEngine::SeekTo(Time, false, false);
 		}
 
 		// Check if click position is within ClickTimeline coordinates.
@@ -242,7 +242,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		mouseY = (int)((short)HIWORD(pMsg->lParam));
 		if (isLeftMouseDown && Editor::EditorState != EditorState::Playing)
 		{
-			Vector2 clientBounds = GameBase::GetClientSize();
+			/*Vector2 clientBounds = GameBase::GetClientSize();
 			Dragging = true;
 			auto xPos = (int)((short)LOWORD(pMsg->lParam));
 			auto yPos = (int)((short)HIWORD(pMsg->lParam));
@@ -270,7 +270,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 				dragArea = std::make_pair(realFirstPoint, realSecondPoint);
 			}
 			else
-				dragArea = std::make_pair(Vector2(0, 0), Vector2(0, 0));
+				dragArea = std::make_pair(Vector2(0, 0), Vector2(0, 0));*/
 		}
 		if (isLeftMouseDown && clickWithinClickTimeline)
 		{
@@ -279,6 +279,11 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 	}
 	if (pMsg->message == WM_MOUSEWHEEL && lastMessage != WM_MOUSEWHEEL)
 	{
+		if (selectedReplay.ReplayFrames.empty())
+		{
+			lastMessage = pMsg->message;
+			return;
+		}
 		MSLLHOOKSTRUCT* mouselparam = (MSLLHOOKSTRUCT*)lParam;
 		short zDelta = HIWORD(mouselparam->mouseData);
 		if (isShiftDown)
@@ -302,7 +307,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			}
 
 			Time = ho.StartTime;
-			AudioEngine::SeekTo(Time, false, false);
+			//AudioEngine::SeekTo(Time, false, false);
 			if (Editor::EditorState != EditorState::Playing)
 				Editor::ForceUpdateCursorPosition();
 		}
@@ -312,7 +317,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			else
 				Time = clickTimeline.GetClick(GetClickState::Backward);
 
-			AudioEngine::SeekTo(Time, false, false);
+			//AudioEngine::SeekTo(Time, false, false);
 			if (Editor::EditorState != EditorState::Playing)
 				Editor::ForceUpdateCursorPosition();
 		}
@@ -323,7 +328,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			if (zDelta < 0)
 				if (currentFrame > 0)
 					Time = selectedReplay.ReplayFrames[currentFrame - 1].Time;
-			AudioEngine::SeekTo(Time, false, false);
+			//AudioEngine::SeekTo(Time, false, false);
 			if (Editor::EditorState != EditorState::Playing)
 				Editor::ForceUpdateCursorPosition();
 		}
@@ -345,7 +350,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		if (IsEditing)
 		{
 			// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-			Vector2* clientBounds = eventTimeline.clientBounds;
+			Vector2 clientBounds = eventTimeline.clientBounds;
 			ImDrawList* drawList = eventTimeline.drawList;
 			Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 				clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
@@ -369,14 +374,14 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		frame.OsuKeys = keys;
 
 		// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-		Vector2* clientBounds = eventTimeline.clientBounds;
+		Vector2 clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
 
 		Editor::eventTimeline.ParseEvents();
 
-		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
+		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();
 
 		Editor::ForceUpdateCursorPosition();
@@ -394,14 +399,14 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		frame.OsuKeys = keys;
 
 		// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-		Vector2* clientBounds = eventTimeline.clientBounds;
+		Vector2 clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
 			
 		Editor::eventTimeline.ParseEvents();
 
-		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
+		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();
 
 		Editor::ForceUpdateCursorPosition();
@@ -415,7 +420,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 
 		Editor::EditorState == EditorState::Playing ? Editor::Pause() : Editor::Play();
 
-		AudioEngine::TogglePause();
+		//AudioEngine::TogglePause();
 	}
 
 	lastMessage = pMsg->message;

@@ -113,5 +113,7 @@ Replay ReplayDecoder::Decode(std::istream* filestream)
     else if (replay.Version >= 20121008)
         replay.OnlineId = (long)reader.ReadInt32();
 
+    replay.ReplayLength = replay.ReplayFrames.back().Time;
+
 	return replay;
 }

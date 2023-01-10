@@ -65,10 +65,13 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::SetBeatmap");
 	HitObjectManager::Load(customHomInstance, true, 0);
 	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::Load");
-	HitObjectManager::UpdateSlidersAll(customHomInstance, false);
-	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateSlidersAll");
-	HitObjectManager::UpdateStacking(customHomInstance, 0, -1);
-	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateStacking");
+	// UpdateStacking gets called in ApplyStacking, same with UpdateSlidersAll
+
+	/*HitObjectManager::UpdateSlidersAll(customHomInstance, false);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateSlidersAll");*/
+
+	/*HitObjectManager::UpdateStacking(customHomInstance, 0, -1);
+	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::UpdateStacking");*/
 
 	Drawables.clear();
 	hitObjects.clear();
@@ -101,13 +104,10 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	//BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
 
 	BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
-	/*Logger::Log(LogSeverity::Debug, "Reached after BeatmapManager::Get().SetCurrent()");
-	AudioEngine::LoadAudio(bmap.GetBeatmapOsuPointer(), false, false, true, false);
-	Logger::Log(LogSeverity::Debug, "Reached after BAudioEngine::LoadAudio()");
+	Logger::Log(LogSeverity::Debug, "Reached after BeatmapManager::Get().SetCurrent()");
 
-	Logger::Log(LogSeverity::Debug, "Reached until after BeatmapManager::Get().Load()");
-	AudioEngine::TogglePause();
-	Logger::Log(LogSeverity::Debug, "Reached until after AudioEngine::TogglePause()");*/
+	/*AudioEngine::LoadAudio(bmap.GetBeatmapOsuPointer(), false, false, true, false);
+	Logger::Log(LogSeverity::Debug, "Reached after AudioEngine::LoadAudio()");*/
 }
 
 void Editor::DrawSelectedFrames(ImDrawList* drawList)
@@ -250,7 +250,7 @@ void Editor::Render()
 				clickOverlay = ClickOverlay::ClickOverlay(&Time, &clickTimeline.clicks, drawList, &clientBounds);
 
 				// event timeline
-				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, &clientBounds, nullptr, 0, 0, customHomInstance);
+				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr, 0, 0, customHomInstance);
 				// PARSE EVENTS AFTER BEATMAP LOADING XDDD
 
 				//bm

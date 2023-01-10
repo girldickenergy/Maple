@@ -175,6 +175,9 @@ bool Milk::DoBypass()
 
 bool Milk::CheckFunction(uintptr_t function)
 {
+#ifdef NO_BYPASS
+	return true;
+#endif
 	return !(function >= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) && function <= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) + _firstCRC->functionSize);
 }
 

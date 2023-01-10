@@ -17,6 +17,7 @@
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 
 #include "../../Features/ReplayEditor/Editor.h"
+#include "../../Sdk/Memory.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -343,6 +344,22 @@ void MainMenu::Render()
 
                     const std::string selectedReplayText = std::string(xorstr_("Selected replay: ")) + ReplayBot::GetReplayString();
                     ImGui::Text(selectedReplayText.c_str());
+                }
+                Widgets::EndPanel();
+
+                Widgets::BeginPanel(xorstr_("Replay Editor"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(1, 1)));
+                {
+                    bool jitted = Memory::Objects[xorstr_("RulesetOsu::CreateHitObjectManager")] != 0x00000000;
+                    if (jitted)
+                    {
+                        if (Widgets::Button(xorstr_("Open Replay Editor")))
+                        {
+                            ReplayEditor::Editor::IsOpen = true;
+                        }
+                    }else
+                    {
+                        ImGui::Text("Please start one beatmap before using the Replay Editor");
+                    }
                 }
                 Widgets::EndPanel();
             }
