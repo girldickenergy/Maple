@@ -9,6 +9,8 @@
 #include "../../UI/StyleProvider.h"
 #include "../../UI/Widgets/Widgets.h"
 
+#include "../ReplayBot/ReplayBot.h"
+
 #include <algorithm>
 #include <iostream>
 #include <ranges>
@@ -265,7 +267,10 @@ void Editor::Render()
 		Widgets::Button("Export", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
 		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
+		{
 			IsOpen = false;
+			ReplayBot::LoadFromReplayEditor(selectedReplay);
+		}
 		ImGui::SetCursorPos(ImVec2(355 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button("Options", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 			optionsOpen = !optionsOpen;
