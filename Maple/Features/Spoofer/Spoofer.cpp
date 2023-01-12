@@ -12,10 +12,11 @@
 #include "../../Storage/StorageConfig.h"
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Utilities/Crypto/CryptoUtilities.h"
-#include "../../SDK/Online/BanchoClient.h"
 #include "../../Utilities/Security/xorstr.hpp"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 #include "../../Utilities/Strings/StringUtilities.h"
+#include "../../SDK/Memory.h"
+#include "../../Logging/Logger.h"
 
 std::string Spoofer::getRandomUninstallID()
 {
@@ -150,8 +151,9 @@ void Spoofer::Load()
 		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoUtilities::GetMD5Hash(currentAdapters) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID2) + L":";
 	}
 
-	BanchoClient::InitializePrivate();
-
+	if (!Vanilla::SetCLRString(Memory::Objects[xorstr_("GameBase::ClientHash")], GetClientHash()))
+		Logger::Log(LogSeverity::Error, xorstr_("Failed to handle GC of ClientHash!"));
+		
 	LoadedProfile = SelectedProfile;
 
 	StorageConfig::DefaultProfile = Profiles[LoadedProfile];

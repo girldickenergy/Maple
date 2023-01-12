@@ -125,9 +125,6 @@
     <ClCompile Include="Features\Spoofer\Spoofer.cpp">
       <Filter>Features\Spoofer</Filter>
     </ClCompile>
-    <ClCompile Include="SDK\Online\BanchoClient.cpp">
-      <Filter>SDK\Online</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Osu\GameField.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
@@ -898,9 +895,6 @@
     <Filter Include="Utilities\Crypto">
       <UniqueIdentifier>{617221f2-a342-41d5-8ffc-eb968296b99c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SDK\Online">
-      <UniqueIdentifier>{bf7214fc-76d1-4255-8aa2-58863613439b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Features\ReplayBot">
       <UniqueIdentifier>{b76f0c25-a7fd-4bd1-9fda-f7afc839ff20}</UniqueIdentifier>
     </Filter>
@@ -1241,9 +1235,6 @@
     </ClInclude>
     <ClInclude Include="Features\Spoofer\Spoofer.h">
       <Filter>Features\Spoofer</Filter>
-    </ClInclude>
-    <ClInclude Include="SDK\Online\BanchoClient.h">
-      <Filter>SDK\Online</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h">
       <Filter>Dependencies\OsuDataTypes\Math</Filter>

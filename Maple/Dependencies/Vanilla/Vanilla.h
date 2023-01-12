@@ -23,6 +23,8 @@ class Vanilla
 	typedef CLRString* (__cdecl* fnAllocateCLRString)(const wchar_t* pwsz);
 	static inline fnAllocateCLRString allocateCLRString;
 
+	static inline uintptr_t setCLRStringAddress;
+
 	static inline bool usingCLR = false;
 	static inline fnJITCallback jitCallback = nullptr;
 public:
@@ -34,6 +36,14 @@ public:
 	static void AddRelocation(std::reference_wrapper<std::uintptr_t> relocation);
 	static void RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation);
 	static CLRString* AllocateCLRString(const wchar_t* pwsz);
+
+	/**
+	 * \brief Sets the value of a specified string field and its GC flag.
+	 * \param address Address of a string field.
+	 * \param string A string value to set.
+	 * \return True if the GC flag has been set, false otherwise.
+	 */
+	static bool SetCLRString(uintptr_t address, CLRString* string);
 
 	static bool CheckAddressInModule(uintptr_t address, const std::string& moduleName);
 };

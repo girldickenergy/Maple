@@ -57,6 +57,10 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 			return VanillaResult::CLRStringFailure;
 
 		allocateCLRString = static_cast<fnAllocateCLRString>(allocateCLRStringAddress);
+
+		setCLRStringAddress = VanillaPatternScanner::FindPatternInModule("89 02 81 F8", "clr.dll");
+		if (!setCLRStringAddress)
+			return VanillaResult::CLRStringFailure;
 	}
 
 	return VanillaResult::Success;
@@ -111,6 +115,24 @@ CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
 		return allocateCLRString(pwsz);
 
 	return nullptr;
+}
+
+bool Vanilla::SetCLRString(uintptr_t address, CLRString* string)
+{
+	uintptr_t clrStringCheckValue = *reinterpret_cast<uintptr_t*>(setCLRStringAddress + 0x4);
+	uint8_t clrStringShiftCount = *reinterpret_cast<uint8_t*>(setCLRStringAddress + 0xC);
+	int clrStringOffset = *reinterpret_cast<int*>(setCLRStringAddress + 0x10);
+
+	*reinterpret_cast<CLRString**>(address) = string;
+
+	if (reinterpret_cast<uintptr_t>(string) < clrStringCheckValue)
+		return false;
+
+	const uintptr_t flagAddress = (address >> clrStringShiftCount) + clrStringOffset;
+	if (*reinterpret_cast<uint8_t*>(flagAddress) != 0xFF)
+		*reinterpret_cast<uint8_t*>(flagAddress) = 0xFF;
+
+	return true;
 }
 
 bool Vanilla::CheckAddressInModule(uintptr_t address, const std::string& moduleName)

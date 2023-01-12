@@ -388,7 +388,6 @@
     <ClCompile Include="SDK\Input\InputManager.cpp" />
     <ClCompile Include="SDK\Memory.cpp" />
     <ClCompile Include="SDK\Mods\ModManager.cpp" />
-    <ClCompile Include="SDK\Online\BanchoClient.cpp" />
     <ClCompile Include="SDK\Osu\GameBase.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
     <ClCompile Include="SDK\Player\HitObject.cpp" />
@@ -706,7 +705,6 @@
     <ClInclude Include="SDK\Input\InputManager.h" />
     <ClInclude Include="SDK\Memory.h" />
     <ClInclude Include="SDK\Mods\ModManager.h" />
-    <ClInclude Include="SDK\Online\BanchoClient.h" />
     <ClInclude Include="SDK\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Player\HitObject.h" />

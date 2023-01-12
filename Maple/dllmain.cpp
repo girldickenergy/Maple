@@ -23,7 +23,6 @@
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
-#include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
 #include "SDK/Player/HitObjectManager.h"
@@ -138,7 +137,6 @@ void InitializeMaple()
         Memory::StartInitialize();
 
         GameBase::Initialize();
-        BanchoClient::Initialize();
         ErrorSubmission::Initialize();
         AudioEngine::Initialize();
         InputManager::Initialize();
@@ -179,13 +177,12 @@ void WaitForCriticalSDKToInitialize()
 
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
-    uintptr_t initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
 
     VM_FISH_RED_END
     STR_ENCRYPT_END
 
     unsigned int retries = 0;
-    while (!clientHash || !updateTiming || !initializePrivate)
+    while (!clientHash || !updateTiming)
     {
         VM_FISH_RED_START
         STR_ENCRYPT_START
@@ -201,7 +198,6 @@ void WaitForCriticalSDKToInitialize()
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
         updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
-        initializePrivate = Memory::Objects[xorstr_("BanchoClient::InitializePrivate")];
 
         Sleep(1000);
 
