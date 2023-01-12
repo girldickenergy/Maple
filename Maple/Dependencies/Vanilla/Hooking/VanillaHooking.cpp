@@ -84,31 +84,34 @@ uintptr_t VanillaHooking::installTrampoline(uintptr_t functionAddress, const std
 	return trampolineAddress;
 }
 
-uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue)
+uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue, bool safe)
 {
 	const uintptr_t trampolineAddress = installTrampoline(functionAddress, functionPrologue);
-	
+
 	DWORD oldProtect;
-	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), detourBytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
+	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), safe ? safeDetourBytes.size() : detourBytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
 
-	for (unsigned int i = 0; i < detourBytes.size(); i++)
-		*reinterpret_cast<uint8_t*>(functionAddress + i) = detourBytes[i];
+	for (unsigned int i = 0; i < (safe ? safeDetourBytes.size() : detourBytes.size()); i++)
+		*reinterpret_cast<uint8_t*>(functionAddress + i) = safe ? safeDetourBytes[i] : detourBytes[i];
 
-	*reinterpret_cast<uintptr_t*>(functionAddress + detourAddressOffset) = detourAddress;
+	if (safe)
+		*reinterpret_cast<intptr_t*>(functionAddress + safeDetourAddressOffset) = static_cast<intptr_t>(detourAddress) - static_cast<intptr_t>(functionAddress) - 0x5;
+	else
+		*reinterpret_cast<uintptr_t*>(functionAddress + detourAddressOffset) = detourAddress;
 
-	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), detourBytes.size(), oldProtect, &oldProtect);
+	VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), safe ? safeDetourBytes.size() : detourBytes.size(), oldProtect, &oldProtect);
 
 	return trampolineAddress;
 }
 
-VanillaResult VanillaHooking::InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction)
+VanillaResult VanillaHooking::InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction, bool safe)
 {
 	if (findHook(name))
 		return VanillaResult::HookAlreadyInstalled;
-	
-	const std::vector<uint8_t> functionPrologue = getFunctionPrologue(functionAddress, detourBytes.size());
 
-	const uintptr_t trampolineAddress = installInlineHook(functionAddress, detourAddress, functionPrologue);
+	const std::vector<uint8_t> functionPrologue = getFunctionPrologue(functionAddress, safe ? safeDetourBytes.size() : detourBytes.size());
+
+	const uintptr_t trampolineAddress = installInlineHook(functionAddress, detourAddress, functionPrologue, safe);
 
 	*originalFunction = trampolineAddress;
 
