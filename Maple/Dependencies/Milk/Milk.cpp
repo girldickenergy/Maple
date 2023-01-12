@@ -118,7 +118,7 @@ uintptr_t Milk::findFirstCRCAddress()
 
 	STR_ENCRYPT_START
 
-	auto pattern = xorstr_("5D C3 CC 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55 8B EC");
+	auto pattern = xorstr_("55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55");
 
 	STR_ENCRYPT_END
 
@@ -127,7 +127,7 @@ uintptr_t Milk::findFirstCRCAddress()
 		if (region.BaseAddress < _authStubBaseAddress)
 			continue;
 
-		uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 7);
+		uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 4);
 
 		if (result > _authStubBaseAddress)
 			return result;
@@ -207,7 +207,7 @@ bool Milk::prepare()
 	Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
 	Logger::Log(LogSeverity::Debug, std::to_string(_firstCRC->functionSize).c_str());
 
-	if (_firstCRC->functionSize < 5 || _firstCRC->functionSize > 1000)
+	if (_firstCRC->functionSize < 1 || _firstCRC->functionSize > 2000)
 		return false;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
