@@ -61,7 +61,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction) == VanillaResult::Success)
+			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Safe) == VanillaResult::Success)
 				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), it->second.Name.c_str());
 			else
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), it->second.Name.c_str());
@@ -163,7 +163,7 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 	VM_FISH_RED_END
 }
 
-void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction)
+void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 {
 	VM_FISH_RED_START
 	STR_ENCRYPT_START
@@ -177,7 +177,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction) == VanillaResult::Success)
+		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, safe) == VanillaResult::Success)
 			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name.c_str());
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name.c_str());
@@ -194,7 +194,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 	{
 		Logger::Log(LogSeverity::Debug, xorstr_("Failed to hook %s. Adding it to the queue for dynamic hooking."), name.c_str());
 
-		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction);
+		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, safe);
 	}
 
 	STR_ENCRYPT_END
