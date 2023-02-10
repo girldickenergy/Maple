@@ -10,6 +10,8 @@
 #include <ThemidaSDK.h>
 #include <Hooking/VanillaHooking.h>
 
+#include "crc.h"
+
 #pragma optimize("", off)
 
 Milk::Milk(singletonLock)
@@ -138,23 +140,33 @@ uintptr_t Milk::findFirstCRCAddress()
 	VM_LION_BLACK_END
 }
 
-bool Milk::doCRCBypass()
+bool Milk::doCRCBypass(uintptr_t address)
 {
 	VM_LION_BLACK_START
 
-	if (_firstCRC == nullptr)
-		return false;
+	CRC* currentCRCStruct = _firstCRC;
+	while (currentCRCStruct)
+	{
+		if (address >= reinterpret_cast<uintptr_t>(currentCRCStruct->functionPointer) && address <= reinterpret_cast<uintptr_t>(currentCRCStruct->functionPointer) + currentCRCStruct->functionSize)
+		{
+			CryptoPP::CRC32 crc;
+			byte digest[CryptoPP::CRC32::DIGESTSIZE];
+			crc.CalculateDigest(digest, static_cast<byte*>(currentCRCStruct->functionPointer), currentCRCStruct->functionSize);
 
-	_firstCRC->nextEntry = nullptr;
-	if (_firstCRC->nextEntry != nullptr)
-		return false;
+			currentCRCStruct->checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
 
-	return true;
+			return true;
+		}
+
+		currentCRCStruct = currentCRCStruct->nextEntry;
+	}
+
+	return false;
 
 	VM_LION_BLACK_END
 }
 
-bool Milk::DoBypass()
+bool Milk::DoBypass(uintptr_t address)
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
@@ -162,20 +174,13 @@ bool Milk::DoBypass()
 	if (!preparationSuccess)
 		return false;
 
-	if (!doCRCBypass())
+	if (!doCRCBypass(address))
 		return false;
-
-	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] Success!"));
 
 	return true;
 
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
-}
-
-bool Milk::CheckFunction(uintptr_t function)
-{
-	return !(function >= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) && function <= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) + _firstCRC->functionSize);
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)

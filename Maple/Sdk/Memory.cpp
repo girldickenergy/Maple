@@ -36,16 +36,18 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (!Milk::Get().CheckFunction(objectAddress))
-			{
-				Config::Misc::ForceDisableScoreSubmission = true;
-				Config::Misc::BypassFailed = true;
-			}
-
 			if (VanillaPatcher::InstallPatch(it->second.Name, it->second.Pattern, objectAddress, it->second.ScanSize, it->second.Offset, it->second.Patch) == VanillaResult::Success)
 				Logger::Log(LogSeverity::Info, xorstr_("Patched %s dynamically!"), it->second.Name.c_str());
 			else
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), it->second.Name.c_str());
+
+			if (!Milk::Get().DoBypass(objectAddress))
+			{
+				Config::Misc::ForceDisableScoreSubmission = true;
+				Config::Misc::BypassFailed = true;
+
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
+			}
 
 			it = pendingPatches.erase(it);
 		}
@@ -59,16 +61,18 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (!Milk::Get().CheckFunction(objectAddress))
-			{
-				Config::Misc::ForceDisableScoreSubmission = true;
-				Config::Misc::BypassFailed = true;
-			}
-
 			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction) == VanillaResult::Success)
 				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), it->second.Name.c_str());
 			else
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), it->second.Name.c_str());
+
+			if (!Milk::Get().DoBypass(objectAddress))
+			{
+				Config::Misc::ForceDisableScoreSubmission = true;
+				Config::Misc::BypassFailed = true;
+
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
+			}
 
 			it = pendingHooks.erase(it);
 		}
@@ -135,16 +139,18 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (!Milk::Get().CheckFunction(objectAddress))
-		{
-			Config::Misc::ForceDisableScoreSubmission = true;
-			Config::Misc::BypassFailed = true;
-		}
-
 		if (VanillaPatcher::InstallPatch(name, pattern, objectAddress, scanSize, offset, patch) == VanillaResult::Success)
 			Logger::Log(LogSeverity::Info, xorstr_("Patched %s!"), name.c_str());
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name.c_str());
+
+		if (!Milk::Get().DoBypass(objectAddress))
+		{
+			Config::Misc::ForceDisableScoreSubmission = true;
+			Config::Misc::BypassFailed = true;
+
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
+		}
 	}
 	else
 	{
@@ -171,16 +177,18 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (!Milk::Get().CheckFunction(objectAddress))
-		{
-			Config::Misc::ForceDisableScoreSubmission = true;
-			Config::Misc::BypassFailed = true;
-		}
-
 		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction) == VanillaResult::Success)
 			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name.c_str());
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name.c_str());
+
+		if (!Milk::Get().DoBypass(objectAddress))
+		{
+			Config::Misc::ForceDisableScoreSubmission = true;
+			Config::Misc::BypassFailed = true;
+
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
+		}
 	}
 	else
 	{
