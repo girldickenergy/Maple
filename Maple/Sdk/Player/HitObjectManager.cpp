@@ -113,7 +113,8 @@ void HitObjectManager::spoofVisuals()
 	VM_SHARK_BLACK_END
 
 	spoofPreEmpt();
-	
+	spoofMods();
+
 	if (Config::Visuals::CSChanger::Enabled && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::CatchTheBeat))
 	{
 		const float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CSChanger::CS - 5.f) / 5.f));
@@ -126,10 +127,14 @@ void HitObjectManager::spoofVisuals()
 		SetGamefieldSpriteRatio(spriteRatio);
 		SetStackOffset(hitObjectRadius / 10.f);
 	}
+}
 
+void HitObjectManager::spoofMods()
+{
 	if (Config::Visuals::Removers::HiddenRemoverEnabled)
 	{
 		Mods mods = GetActiveMods();
+		originalMods = mods;
 
 		if (ModManager::CheckActive(Mods::Hidden))
 			mods = (mods & ~Mods::Hidden);
@@ -154,6 +159,14 @@ void HitObjectManager::spoofPreEmpt()
 		SetPreEmpt(preEmpt);
 		SetPreEmptSliderComplete(preEmpt * 2 / 3);
 	}
+}
+
+void HitObjectManager::restoreMods()
+{
+	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
+		return;
+
+	SetActiveMods(originalMods);
 }
 
 void HitObjectManager::restorePreEmpt()
@@ -239,6 +252,12 @@ void HitObjectManager::Initialize()
 
 	STR_ENCRYPT_END
 	VM_FISH_RED_END
+}
+
+void HitObjectManager::RestoreVisuals()
+{
+	restorePreEmpt();
+	restoreMods();
 }
 
 void HitObjectManager::CacheHitObjects()

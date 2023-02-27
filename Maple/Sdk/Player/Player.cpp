@@ -20,7 +20,8 @@
 void Player::initializeFeatures()
 {
 	MainMenu::Hide();
-	
+
+	HitObjectManager::RestoreVisuals();
 	HitObjectManager::CacheHitObjects();
 
 	Enlighten::Initialize();

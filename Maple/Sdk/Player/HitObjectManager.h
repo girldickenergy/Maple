@@ -40,8 +40,11 @@ class HitObjectManager
 
 	static inline int originalPreEmpt;
 	static inline int originalPreEmptSliderComplete;
+	static inline Mods originalMods;
 	static void spoofVisuals();
+	static void spoofMods();
 	static void spoofPreEmpt();
+	static void restoreMods();
 	static void restorePreEmpt();
 	
 	typedef void(__fastcall* fnParse)(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits);
@@ -61,6 +64,8 @@ class HitObjectManager
 	static void __fastcall addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex);
 public:
 	static void Initialize();
+
+	static void RestoreVisuals();
 
 	static void CacheHitObjects();
 	static HitObject GetHitObject(int index);
