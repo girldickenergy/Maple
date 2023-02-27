@@ -1,6 +1,5 @@
 #include "VanillaPatternScanner.h"
 
-#include <iostream>
 #include <vector>
 
 #include "Utilities/MemoryUtilities.h"
@@ -24,7 +23,7 @@ uint8_t VanillaPatternScanner::stichByte(char a, char b)
     return charToByte(a) << 4 | charToByte(b);
 }
 
-uintptr_t VanillaPatternScanner::FindPatternInRange(const std::string& pattern, uintptr_t begin, unsigned int size, unsigned int offset, unsigned int readCount)
+uintptr_t VanillaPatternScanner::FindPatternInRange(const std::string& pattern, uintptr_t begin, unsigned int size, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
     std::vector<uint8_t> sig;
     for (unsigned int i = 0u; i < pattern.size(); i++)
@@ -57,8 +56,13 @@ uintptr_t VanillaPatternScanner::FindPatternInRange(const std::string& pattern, 
         if (found)
         {
             uintptr_t result = mem + offset;
-	        for (unsigned int i = 0; i < readCount; i++)
-				result = *reinterpret_cast<uintptr_t*>(result);
+            for (unsigned int i = 0; i < readCount; i++)
+            {
+                if (i == readCount - 1 && resolveRelativeAddress)
+                    result = static_cast<intptr_t>(result) + sizeof(intptr_t) + *reinterpret_cast<intptr_t*>(result);
+                else
+					result = *reinterpret_cast<uintptr_t*>(result);
+            }
 			
 			return result;
         }
@@ -67,14 +71,14 @@ uintptr_t VanillaPatternScanner::FindPatternInRange(const std::string& pattern, 
     return 0u;
 }
 
-uintptr_t VanillaPatternScanner::FindPatternInModule(const std::string& pattern, const std::string& moduleName, unsigned int offset, unsigned int readCount)
+uintptr_t VanillaPatternScanner::FindPatternInModule(const std::string& pattern, const std::string& moduleName, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
     const HMODULE module = GetModuleHandleA(moduleName.c_str());
 
-    return FindPatternInRange(pattern, reinterpret_cast<uintptr_t>(module), MemoryUtilities::GetModuleSize(module), offset, readCount);
+    return FindPatternInRange(pattern, reinterpret_cast<uintptr_t>(module), MemoryUtilities::GetModuleSize(module), offset, readCount, resolveRelativeAddress);
 }
 
-uintptr_t VanillaPatternScanner::FindPattern(const std::string& pattern, unsigned int offset, unsigned int readCount)
+uintptr_t VanillaPatternScanner::FindPattern(const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
     MEMORY_BASIC_INFORMATION32 mbi;
     LPCVOID address = nullptr;
@@ -82,7 +86,7 @@ uintptr_t VanillaPatternScanner::FindPattern(const std::string& pattern, unsigne
     while (VirtualQueryEx(GetCurrentProcess(), address, reinterpret_cast<PMEMORY_BASIC_INFORMATION>(&mbi), sizeof mbi) != 0)
     {
         if (mbi.State == MEM_COMMIT && mbi.Protect != PAGE_NOACCESS && !(mbi.Protect & PAGE_GUARD) && (mbi.Protect & PAGE_EXECUTE_READWRITE))
-	        if (const uintptr_t result = FindPatternInRange(pattern, mbi.BaseAddress, mbi.RegionSize, offset, readCount))
+	        if (const uintptr_t result = FindPatternInRange(pattern, mbi.BaseAddress, mbi.RegionSize, offset, readCount, resolveRelativeAddress))
                 return result;
 
         address = reinterpret_cast<LPCVOID>(mbi.BaseAddress + mbi.RegionSize);

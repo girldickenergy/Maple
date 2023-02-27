@@ -10,12 +10,14 @@ struct MaplePattern
 	std::string Pattern;
 	unsigned int Offset;
 	unsigned int ReadCount;
+	bool ResolveRelativeAddress;
 
-	MaplePattern(const std::string& pattern, unsigned int offset, unsigned int readCount)
+	MaplePattern(const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 	{
 		Pattern = pattern;
 		Offset = offset;
 		ReadCount = readCount;
+		ResolveRelativeAddress = resolveRelativeAddress;
 	}
 
 	MaplePattern() = default;
@@ -75,7 +77,7 @@ public:
 	static void StartInitialize();
 	static void EndInitialize();
 
-	static void AddObject(const std::string& name, const std::string& pattern, unsigned int offset = 0, unsigned int readCount = 0);
+	static void AddObject(const std::string& name, const std::string& pattern, unsigned int offset = 0, unsigned int readCount = 0, bool resolveRelativeAddress = false);
 	static void AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch);
 	static void AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe = false);
 };

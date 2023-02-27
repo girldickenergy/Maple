@@ -78,7 +78,7 @@ void Score::Initialize()
 	VM_FISH_RED_START
 	STR_ENCRYPT_START
 
-	Memory::AddObject(xorstr_("Score::Submit"), xorstr_("E9 ?? ?? ?? ?? 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"));
+	Memory::AddObject(xorstr_("Score::Submit"), xorstr_("E9 ?? ?? ?? ?? 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"), 1, 1, true);
 	Memory::AddHook(xorstr_("Score::Submit"), xorstr_("Score::Submit"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit), true);
 
 	STR_ENCRYPT_END

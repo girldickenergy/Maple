@@ -19,7 +19,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 	for (auto it = pendingObjects.cbegin(); it != pendingObjects.cend();)
 	{
-		if (const uintptr_t scanResult = VanillaPatternScanner::FindPatternInRange(it->second.Pattern, address, size, it->second.Offset, it->second.ReadCount))
+		if (const uintptr_t scanResult = VanillaPatternScanner::FindPatternInRange(it->second.Pattern, address, size, it->second.Offset, it->second.ReadCount, it->second.ResolveRelativeAddress))
 		{
 			Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved dynamically!"), it->first.c_str());
 			Objects[it->first] = scanResult;
@@ -96,7 +96,7 @@ void Memory::EndInitialize()
 	initialized = true;
 }
 
-void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount)
+void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
 	VM_FISH_RED_START
 	STR_ENCRYPT_START
@@ -108,7 +108,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 		Communication::IntegritySignature3 -= 0x1;
 	}
 	
-	if (const uintptr_t scanResult = VanillaPatternScanner::FindPattern(pattern, offset, readCount))
+	if (const uintptr_t scanResult = VanillaPatternScanner::FindPattern(pattern, offset, readCount, resolveRelativeAddress))
 	{
 		Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved!"), name.c_str());
 
@@ -118,7 +118,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 	{
 		Logger::Log(LogSeverity::Debug, xorstr_("Failed to resolve %s. Adding it to the queue for dynamic resolution."), name.c_str());
 
-		pendingObjects[name] = MaplePattern(pattern, offset, readCount);
+		pendingObjects[name] = MaplePattern(pattern, offset, readCount, resolveRelativeAddress);
 	}
 
 	STR_ENCRYPT_END
