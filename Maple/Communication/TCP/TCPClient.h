@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <winsock2.h>
 #include <string>
 #include <vector>
@@ -10,6 +11,8 @@ class TCPClient
 	static inline unsigned int constexpr BUFFER_LENGTH = 8192;
 	static inline unsigned int constexpr PACKET_HEADER_SIZE = 8;
 	static inline unsigned int constexpr PACKET_HEADER_SIGNATURE = 0xdeadbeef;
+
+	static inline std::mutex sendMutex;
 
 	bool connected = false;
 	SOCKET m_socket;

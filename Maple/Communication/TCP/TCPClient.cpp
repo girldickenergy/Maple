@@ -137,6 +137,8 @@ void TCPClient::Disconnect()
 
 void TCPClient::Send(const std::vector<unsigned char>& data)
 {
+    std::unique_lock lock(sendMutex);
+
     unsigned char header[PACKET_HEADER_SIZE];
     *reinterpret_cast<unsigned int*>(header) = PACKET_HEADER_SIGNATURE;
     *reinterpret_cast<int*>(header + sizeof(unsigned int)) = data.size();
