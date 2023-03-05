@@ -9,11 +9,9 @@ class AnticheatUtilities
 	{
 		"284c1dc8a524e46fbe7a7cf846d3d9b1"
 	};
-	
+public:
 	static std::string GetAnticheatChecksum();
 	static std::vector<uint8_t> GetAnticheatBytes();
 	static std::vector<uint8_t> GetGameBytes();
-
-public:
 	static bool IsRunningGoodKnownVersion();
 };
