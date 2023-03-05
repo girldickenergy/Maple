@@ -119,19 +119,19 @@ void InitializeMaple()
 
     Logger::Log(LogSeverity::Info, xorstr_("Initialization started."));
 
+    bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
+    bool milkPrepared = Milk::Get().Prepare();
+
+    if (!goodKnownAuthVersion || !milkPrepared)
+        Config::Misc::ForceDisableScoreSubmission = true;
+
+    if (goodKnownAuthVersion && !milkPrepared)
+        Config::Misc::BypassFailed = true;
+
     VanillaResult vanillaResult = Vanilla::Initialize(true);
     if (vanillaResult == VanillaResult::Success)
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
-
-        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
-        bool bypassSucceeded = Milk::Get().DoBypass();
-
-        if (!goodKnownAuthVersion || !bypassSucceeded)
-            Config::Misc::ForceDisableScoreSubmission = true;
-
-        if (goodKnownAuthVersion && !bypassSucceeded)
-            Config::Misc::BypassFailed = true;
 
         //initializing SDK
         Memory::StartInitialize();

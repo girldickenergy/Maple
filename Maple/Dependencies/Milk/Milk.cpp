@@ -24,9 +24,6 @@ Milk::Milk(singletonLock)
 	_firstCRC = nullptr;
 	preparationSuccess = false;
 
-	if (prepare())
-		preparationSuccess = true;
-
 	VM_FISH_RED_END
 }
 
@@ -140,7 +137,7 @@ uintptr_t Milk::findFirstCRCAddress()
 	VM_LION_BLACK_END
 }
 
-bool Milk::doCRCBypass(uintptr_t address)
+void Milk::doCRCBypass(uintptr_t address)
 {
 	VM_LION_BLACK_START
 
@@ -155,18 +152,16 @@ bool Milk::doCRCBypass(uintptr_t address)
 
 			currentCRCStruct->checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
 
-			return true;
+			return;
 		}
 
 		currentCRCStruct = currentCRCStruct->nextEntry;
 	}
 
-	return false;
-
 	VM_LION_BLACK_END
 }
 
-bool Milk::DoBypass(uintptr_t address)
+bool Milk::DoCRCBypass(uintptr_t address)
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
@@ -174,8 +169,7 @@ bool Milk::DoBypass(uintptr_t address)
 	if (!preparationSuccess)
 		return false;
 
-	if (!doCRCBypass(address))
-		return false;
+	doCRCBypass(address);
 
 	return true;
 
@@ -189,7 +183,7 @@ void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunctio
 	_copiedJITVtable[index] = detour;
 }
 
-bool Milk::prepare()
+bool Milk::Prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
@@ -255,6 +249,8 @@ bool Milk::prepare()
 		return false;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SBFH OK"));
+
+	preparationSuccess = true;
 
 	return true;
 

@@ -54,15 +54,15 @@ class Milk : public Singleton<Milk>
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();
 
-	bool prepare();
 	/**
 	 * \brief Bypasses the detection vector where functions would be checked against CRC32.
 	 */
-	bool doCRCBypass(uintptr_t address);
+	void doCRCBypass(uintptr_t address);
 public:
 	Milk(singletonLock);
 	~Milk();
 
-	bool DoBypass(uintptr_t address);
+	bool Prepare();
+	bool DoCRCBypass(uintptr_t address);
 	void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
 };

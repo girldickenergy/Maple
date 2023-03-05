@@ -41,7 +41,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			else
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), it->second.Name.c_str());
 
-			if (!Milk::Get().DoBypass(objectAddress))
+			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				Config::Misc::ForceDisableScoreSubmission = true;
 				Config::Misc::BypassFailed = true;
@@ -66,7 +66,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			else
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), it->second.Name.c_str());
 
-			if (!Milk::Get().DoBypass(objectAddress))
+			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				Config::Misc::ForceDisableScoreSubmission = true;
 				Config::Misc::BypassFailed = true;
@@ -144,7 +144,7 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name.c_str());
 
-		if (!Milk::Get().DoBypass(objectAddress))
+		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			Config::Misc::ForceDisableScoreSubmission = true;
 			Config::Misc::BypassFailed = true;
@@ -182,7 +182,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name.c_str());
 
-		if (!Milk::Get().DoBypass(objectAddress))
+		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			Config::Misc::ForceDisableScoreSubmission = true;
 			Config::Misc::BypassFailed = true;
