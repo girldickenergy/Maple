@@ -82,6 +82,23 @@ std::vector<unsigned char> CryptoProvider::XOR(const std::vector<unsigned char>&
     return result;
 }
 
+std::string CryptoProvider::Base64Encode(const std::vector<unsigned char>& data)
+{
+    VM_FISH_RED_START
+
+    std::string encoded;
+
+    VectorSource ss(data, true,
+        new Base64Encoder(
+            new StringSink(encoded), false
+        )
+    );
+
+    VM_FISH_RED_END
+
+    return encoded;
+}
+
 std::vector<unsigned char> CryptoProvider::Base64Decode(const std::string& encoded)
 {
     VM_FISH_RED_START

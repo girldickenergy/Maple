@@ -18,6 +18,7 @@ class Communication
 	static void pingThread();
 	static void heartbeatThread();
 	static void checkerThread();
+	static void sendAuthStreamStageTwo();
 
 	static void onReceive(const std::vector<unsigned char>& data);
 	static void onDisconnect();
@@ -29,6 +30,7 @@ public:
 
 	static bool Connect();
 	static void Disconnect();
+	static void SendAnticheat();
 
 	static bool GetIsConnected();
 	static bool GetIsHandshakeSucceeded();

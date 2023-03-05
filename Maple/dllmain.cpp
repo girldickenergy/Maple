@@ -92,6 +92,8 @@ DWORD WINAPI Initialize()
     while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Sleep(500);
 
+    auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(Communication::SendAnticheat));
+
     InitializeMaple();
 
     STR_ENCRYPT_END

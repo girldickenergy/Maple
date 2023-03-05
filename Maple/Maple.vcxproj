@@ -161,8 +161,11 @@
   <ItemGroup>
     <ClCompile Include="Communication\Communication.cpp" />
     <ClCompile Include="Communication\Crypto\CryptoProvider.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\AuthStreamStageOneRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Requests\AuthStreamStageTwoRequest.cpp" />
     <ClCompile Include="Communication\Packets\Requests\HandshakeRequest.cpp" />
     <ClCompile Include="Communication\Packets\Requests\HeartbeatRequest.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\AuthStreamStageOneResponse.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
     <ClCompile Include="Communication\TCP\TCPClient.cpp" />
@@ -413,8 +416,11 @@
     <ClInclude Include="Communication\Communication.h" />
     <ClInclude Include="Communication\Crypto\CryptoProvider.h" />
     <ClInclude Include="Communication\Packets\PacketType.h" />
+    <ClInclude Include="Communication\Packets\Requests\AuthStreamStageOneRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\AuthStreamStageTwoRequest.h" />
     <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h" />
     <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h" />
+    <ClInclude Include="Communication\Packets\Responses\AuthStreamStageOneResponse.h" />
     <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h" />
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
     <ClInclude Include="Communication\TCP\TCPClient.h" />

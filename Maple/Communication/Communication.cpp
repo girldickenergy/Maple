@@ -15,6 +15,10 @@
 #include "Packets/Responses/HeartbeatResponse.h"
 
 #include "../Dependencies/Milk/MilkThread.h"
+#include "Packets/Requests/AuthStreamStageOneRequest.h"
+#include "../Utilities/Anticheat/AnticheatUtilities.h"
+#include "Packets/Requests/AuthStreamStageTwoRequest.h"
+#include "Packets/Responses/AuthStreamStageOneResponse.h"
 
 #pragma optimize("", off)
 static inline MilkThread* pingMilkThread;
@@ -129,6 +133,16 @@ void Communication::heartbeatThread()
 	}
 }
 
+void Communication::sendAuthStreamStageTwo()
+{
+	VM_SHARK_BLACK_START
+
+	AuthStreamStageTwoRequest authStreamStageTwoRequest = AuthStreamStageTwoRequest(user->GetUsername(), AnticheatUtilities::GetAnticheatChecksum(), AnticheatUtilities::GetAnticheatBytes(), AnticheatUtilities::GetGameBytes());
+	tcpClient.Send(authStreamStageTwoRequest.Serialize());
+
+	VM_SHARK_BLACK_END
+}
+
 void Communication::onReceive(const std::vector<unsigned char>& data)
 {
 	VM_SHARK_BLACK_START
@@ -220,6 +234,13 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 			break;
 		case PacketType::Ping:
 			break;
+		case PacketType::AuthStreamStageOne:
+		{
+			AuthStreamStageOneResponse authStreamStageOneResponse = AuthStreamStageOneResponse::Deserialize(payload);
+
+			if (authStreamStageOneResponse.GetShouldSend())
+				auto authStreamStageTwoThread = MilkThread(reinterpret_cast<uintptr_t>(sendAuthStreamStageTwo));
+		}
 		default:
 		{
 			VM_SHARK_BLACK_START
@@ -291,6 +312,16 @@ void Communication::Disconnect()
 	connected = false;
 	
 	tcpClient.Disconnect();
+
+	VM_SHARK_BLACK_END
+}
+
+void Communication::SendAnticheat()
+{
+	VM_SHARK_BLACK_START
+
+	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
+	tcpClient.Send(authStreamStageOneRequest.Serialize());
 
 	VM_SHARK_BLACK_END
 }

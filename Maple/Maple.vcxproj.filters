@@ -746,6 +746,15 @@
     <ClCompile Include="Dependencies\Milk\Milk.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\AuthStreamStageOneRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Requests\AuthStreamStageTwoRequest.cpp">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\AuthStreamStageOneResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1943,6 +1952,15 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Milk\Milk.h">
       <Filter>Dependencies\Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\AuthStreamStageOneRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\AuthStreamStageTwoRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\AuthStreamStageOneResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
