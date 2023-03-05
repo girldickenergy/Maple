@@ -179,12 +179,13 @@ void WaitForCriticalSDKToInitialize()
 
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+    uintptr_t submit = Memory::Objects[xorstr_("Score::Submit")];
 
     VM_FISH_RED_END
     STR_ENCRYPT_END
 
     unsigned int retries = 0;
-    while (!clientHash || !updateTiming)
+    while (!clientHash || !updateTiming || !submit)
     {
         VM_FISH_RED_START
         STR_ENCRYPT_START
@@ -200,6 +201,7 @@ void WaitForCriticalSDKToInitialize()
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
         updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+        submit = Memory::Objects[xorstr_("Score::Submit")];
 
         Sleep(1000);
 
