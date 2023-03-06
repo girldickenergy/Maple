@@ -18,27 +18,42 @@ void TCPClient::receiveThread()
             return;
         }
 
-        if (!isReceiving && *reinterpret_cast<unsigned int*>(buffer) == PACKET_HEADER_SIGNATURE)
+		receive(buffer, bytesReceived);
+    }
+}
+
+void TCPClient::receive(char* buffer, int bytesReceived)
+{
+    if (!isReceiving && *reinterpret_cast<unsigned int*>(buffer) == PACKET_HEADER_SIGNATURE)
+    {
+        isReceiving = true;
+        receiveStreamLength = *reinterpret_cast<int*>(buffer + sizeof(unsigned int)) + PACKET_HEADER_SIZE;
+        receiveStreamRemainingLength = receiveStreamLength;
+    }
+
+    receiveStreamRemainingLength -= (std::min)(bytesReceived, receiveStreamLength);
+    receiveStreamData.insert(receiveStreamData.end(), buffer, buffer + (std::min)(bytesReceived, receiveStreamLength));
+
+    if (receiveStreamRemainingLength == 0)
+    {
+        receiveStreamData.erase(receiveStreamData.begin(), receiveStreamData.begin() + PACKET_HEADER_SIZE);
+
+        if (receiveCallback)
+            receiveCallback(receiveStreamData);
+
+        const int remainingBufferLength = bytesReceived - receiveStreamLength;
+
+        receiveStreamLength = 0;
+        receiveStreamRemainingLength = 0;
+        isReceiving = false;
+        receiveStreamData.clear();
+
+        if (remainingBufferLength > 0)
         {
-            isReceiving = true;
-            receiveStreamLength = *reinterpret_cast<int*>(buffer + sizeof(unsigned int)) + PACKET_HEADER_SIZE;
-            receiveStreamRemainingLength = receiveStreamLength;
-        }
+			char remainingBuffer[BUFFER_LENGTH];
+			std::copy(buffer + bytesReceived - remainingBufferLength, buffer + bytesReceived, remainingBuffer);
 
-        receiveStreamRemainingLength -= bytesReceived;
-        receiveStreamData.insert(receiveStreamData.end(), buffer, buffer + bytesReceived);
-
-        if (receiveStreamRemainingLength == 0)
-        {
-            receiveStreamData.erase(receiveStreamData.begin(), receiveStreamData.begin() + PACKET_HEADER_SIZE);
-
-            if (receiveCallback)
-                receiveCallback(receiveStreamData);
-
-            receiveStreamLength = 0;
-            receiveStreamRemainingLength = 0;
-            isReceiving = false;
-            receiveStreamData.clear();
+			receive(remainingBuffer, remainingBufferLength);
         }
     }
 }

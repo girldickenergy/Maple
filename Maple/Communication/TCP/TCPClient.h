@@ -30,6 +30,7 @@ class TCPClient
 	int receiveStreamRemainingLength;
 
 	void receiveThread();
+	void receive(char* buffer, int bytesReceived);
 public:
 	TCPClient() = default;
 	TCPClient(fn_receiveCallback receiveCallback, fn_disconnectedCallback disconnectedCallback);

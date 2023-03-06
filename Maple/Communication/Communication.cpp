@@ -30,11 +30,15 @@ void Communication::pingThread()
 	//pingMilkThread->CleanCodeCave();
 	//delete pingMilkThread;
 
-	pingThreadLaunched = true;
-
 	while (true)
 	{
 		VM_SHARK_BLACK_START
+
+		while (!heartbeatThreadLaunched)
+			Sleep(100);
+
+		if (!pingThreadLaunched)
+			pingThreadLaunched = true;
 
 		if (!connected || !handshakeSucceeded || !heartbeatThreadLaunched || !Security::CheckIfThreadIsAlive(ThreadCheckerHandle))
 		{
@@ -81,12 +85,13 @@ void Communication::heartbeatThread()
 	//heartbeatMilkThread->CleanCodeCave();
 	//delete heartbeatMilkThread;
 
-	heartbeatThreadLaunched = true;
-
 	while (true)
 	{
 		VM_SHARK_BLACK_START
 		STR_ENCRYPT_START
+
+		if (!heartbeatThreadLaunched)
+			heartbeatThreadLaunched = true;
 
 		int codeIntegrityVar = 0x671863E2;
 		CHECK_CODE_INTEGRITY(codeIntegrityVar, 0x40CD69D0)
@@ -236,15 +241,20 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 			break;
 		case PacketType::AuthStreamStageOne:
 		{
+			VM_SHARK_BLACK_START
+
 			AuthStreamStageOneResponse authStreamStageOneResponse = AuthStreamStageOneResponse::Deserialize(payload);
 
 			if (authStreamStageOneResponse.GetShouldSend())
 				auto authStreamStageTwoThread = MilkThread(reinterpret_cast<uintptr_t>(sendAuthStreamStageTwo));
+
+			VM_SHARK_BLACK_END
 		}
+			break;
 		default:
 		{
 			VM_SHARK_BLACK_START
-
+				
 			IntegritySignature1 -= 0x1;
 			IntegritySignature2 -= 0x1;
 			IntegritySignature3 -= 0x1;
@@ -258,7 +268,7 @@ void Communication::onDisconnect()
 {
 	VM_SHARK_BLACK_START
 	STR_ENCRYPT_START
-
+	
 	IntegritySignature1 -= 0x1;
 	IntegritySignature2 -= 0x1;
 	IntegritySignature3 -= 0x1;
