@@ -7,12 +7,12 @@
 
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
+#include "xorstr.hpp"
 
 #include "../../Storage/Storage.h"
 #include "../../Storage/StorageConfig.h"
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Utilities/Crypto/CryptoUtilities.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 #include "../../Utilities/Strings/StringUtilities.h"
 #include "../../SDK/Memory.h"

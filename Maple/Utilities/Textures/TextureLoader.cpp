@@ -70,7 +70,7 @@ void* TextureLoader::LoadTextureFromURLOGL3(const std::string& url)
 	{
 		std::string readBuffer;
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -117,7 +117,7 @@ void* TextureLoader::LoadTextureFromURLD3D9(IDirect3DDevice9* d3d9Device, const 
 	{
 		std::string readBuffer;
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);

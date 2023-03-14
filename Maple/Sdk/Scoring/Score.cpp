@@ -1,13 +1,13 @@
 #include "Score.h"
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
 #include "../../Config/Config.h"
 #include "../Player/Player.h"
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../Osu/GameBase.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../Communication/Communication.h"
@@ -22,16 +22,17 @@ void Score::spoofPlayDuration()
 	*reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET) = playEndTime - scaledDuration;
 }
 
-#pragma optimize("", off)
-int Score::handleScoreSubmission()
+void __fastcall Score::submitHook(uintptr_t instance)
 {
+	scoreInstance = instance;
+
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
 	Player::ResetAnticheatFlag();
 
 	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
-		return 0;
+		return;
 
 	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
 	{
@@ -39,38 +40,16 @@ int Score::handleScoreSubmission()
 
 		ScoreSubmissionDialog::Show();
 
-		return 0;
+		return;
 	}
 
 	if (Config::Misc::ScoreSubmissionType == 2 && Player::GetIsRetrying() && Config::Misc::PromptBehaviorOnRetry == 1)
-		return 0;
+		return;
 
 	if (Config::Timewarp::Enabled)
 		spoofPlayDuration();
 
-	return 1;
-}
-#pragma optimize("", on)
-
-void __declspec(naked) Score::submitHook(uintptr_t instance)
-{
-	__asm
-	{
-		mov [scoreInstance], ecx
-
-		pushad
-		pushfd
-		call handleScoreSubmission
-		cmp eax, 0
-		je skipSubmission
-		popfd
-		popad
-		jmp oSubmit
-		skipSubmission:
-		popfd
-		popad
-		ret
-	}
+	[[clang::musttail]] return oSubmit(instance);
 }
 
 void Score::Initialize()

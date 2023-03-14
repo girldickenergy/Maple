@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "HitObjectManager.h"
 #include "../Memory.h"
@@ -12,63 +13,31 @@
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Config/Config.h"
-#include "../../Utilities/Security/xorstr.hpp"
-
-#include "../../Utilities/Security/Security.h"
 #include "../../Logging/Logger.h"
 
-void Player::initializeFeatures()
+int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 {
-	MainMenu::Hide();
+	if (success)
+	{
+		MainMenu::Hide();
 
-	HitObjectManager::RestoreVisuals();
-	HitObjectManager::CacheHitObjects();
+		HitObjectManager::RestoreVisuals();
+		HitObjectManager::CacheHitObjects();
 
-	Enlighten::Initialize();
-	Timewarp::Initialize();
-	Relax::Initialize();
-	AimAssist::Initialize();
-	ReplayBot::Initialize();
+		Enlighten::Initialize();
+		Timewarp::Initialize();
+		Relax::Initialize();
+		AimAssist::Initialize();
+		ReplayBot::Initialize();
+	}
+
+	[[clang::musttail]] return oOnLoadComplete(instance, success);
 }
 
-int __declspec(naked) Player::onLoadCompleteHook(uintptr_t instance, bool success)
+void __fastcall Player::updateFlashlightHook(uintptr_t instance)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		cmp edx, 0
-		je orig
-		call initializeFeatures
-		orig:
-		popfd
-		popad
-		jmp oOnLoadComplete
-	}
-}
-
-void __declspec(naked) Player::updateFlashlightHook(uintptr_t instance)
-{
-	__asm
-	{
-		pushad
-		pushfd
-		cmp [Config::Visuals::Removers::FlashlightRemoverEnabled], 0x0
-		je orig
-		call GameBase::GetMode
-		cmp eax, 0x2
-		jne orig
-		call GetIsReplayMode
-		cmp al, 0x0
-		jne orig
-		popfd
-		popad
-		ret
-		orig:
-		popfd
-		popad
-		jmp oUpdateFlashlight
-	}
+	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || GetIsReplayMode())
+		[[clang::musttail]] return oUpdateFlashlight(instance);
 }
 
 void Player::Initialize()

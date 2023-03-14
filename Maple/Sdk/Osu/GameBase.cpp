@@ -3,9 +3,9 @@
 #include "ThemidaSDK.h"
 
 #include "Vanilla.h"
+#include "xorstr.hpp"
 #include "Utilities/MemoryUtilities.h"
 #include "Math/sRectangle.h"
-#include "../../Utilities/Security/xorstr.hpp"
 
 #include "../Memory.h"
 #include "../Helpers/Obfuscated.h"

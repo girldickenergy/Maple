@@ -56,56 +56,56 @@ public:
 		return true;
 	}
 
-    static __forceinline void CorruptMemory()
-    {
-        int mem = 0x000a1000 + (std::rand() % (0x100b2000 - 0x000a1000 + 1));
-        int count = 0x00abcdef + (std::rand() % (0xfafdfa0f - 0x00abcdef + 1));
+	static __forceinline void CorruptMemory()
+	{
+		int mem = 0x000a1000 + (std::rand() % (0x100b2000 - 0x000a1000 + 1));
+		int count = 0x00abcdef + (std::rand() % (0xfafdfa0f - 0x00abcdef + 1));
 		int addition = 0x000000ff + (std::rand() % (0xff000000 - 0x000000ff + 1));
 
-        for (int i = 0x00000000; i < count; i += addition)
-        {
-            unsigned char byte = std::rand() % 255;
-            *(reinterpret_cast<char*>(mem + i)) = byte;
-        }
+		for (int i = 0x00000000; i < count; i += addition)
+		{
+			unsigned char byte = std::rand() % 255;
+			*(reinterpret_cast<char*>(mem + i)) = byte;
+		}
 
-        // If after this we for some reason haven't thrown SOME kind of exception, we do now.
-        _asm
-        {
-            __emit 0xF3;
-            __emit 0x64;
-            __emit 0xCC;
-        }
-    }
+		// If after this we for some reason haven't thrown SOME kind of exception, we do now.
+		_asm
+		{
+			__emit 0xF3;
+			__emit 0x64;
+			__emit 0xCC;
+		}
+	}
 
-    static __forceinline uintptr_t HdnGetProcAddress(void* hModule, const wchar_t* wAPIName)
-    {
+	static __forceinline uintptr_t HdnGetProcAddress(void* hModule, const wchar_t* wAPIName)
+	{
 #if defined( _WIN32 )   
-        unsigned char* lpBase = reinterpret_cast<unsigned char*>(hModule);
-        IMAGE_DOS_HEADER* idhDosHeader = reinterpret_cast<IMAGE_DOS_HEADER*>(lpBase);
-        if (idhDosHeader->e_magic == 0x5A4D)
-        {
+		unsigned char* lpBase = reinterpret_cast<unsigned char*>(hModule);
+		IMAGE_DOS_HEADER* idhDosHeader = reinterpret_cast<IMAGE_DOS_HEADER*>(lpBase);
+		if (idhDosHeader->e_magic == 0x5A4D)
+		{
 #if defined( _M_IX86 )  
-            IMAGE_NT_HEADERS32* inhNtHeader = reinterpret_cast<IMAGE_NT_HEADERS32*>(lpBase + idhDosHeader->e_lfanew);
+			IMAGE_NT_HEADERS32* inhNtHeader = reinterpret_cast<IMAGE_NT_HEADERS32*>(lpBase + idhDosHeader->e_lfanew);
 #elif defined( _M_AMD64 )  
-            IMAGE_NT_HEADERS64* inhNtHeader = reinterpret_cast<IMAGE_NT_HEADERS64*>(lpBase + idhDosHeader->e_lfanew);
+			IMAGE_NT_HEADERS64* inhNtHeader = reinterpret_cast<IMAGE_NT_HEADERS64*>(lpBase + idhDosHeader->e_lfanew);
 #endif  
-            if (inhNtHeader->Signature == 0x4550)
-            {
-                IMAGE_EXPORT_DIRECTORY* iedExportDirectory = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(lpBase + inhNtHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
-                for (register unsigned int uiIter = 0; uiIter < iedExportDirectory->NumberOfNames; ++uiIter)
-                {
-                    char* szNames = reinterpret_cast<char*>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfNames)[uiIter]);
-                    if (wcscmp(wAPIName, (wchar_t*)GetWC(szNames)) == 0)
-                    {
-                        unsigned short usOrdinal = reinterpret_cast<unsigned short*>(lpBase + iedExportDirectory->AddressOfNameOrdinals)[uiIter];
-                        return reinterpret_cast<uintptr_t>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfFunctions)[usOrdinal]);
-                    }
-                }
-            }
-        }
+			if (inhNtHeader->Signature == 0x4550)
+			{
+				IMAGE_EXPORT_DIRECTORY* iedExportDirectory = reinterpret_cast<IMAGE_EXPORT_DIRECTORY*>(lpBase + inhNtHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+				for (unsigned int uiIter = 0; uiIter < iedExportDirectory->NumberOfNames; ++uiIter)
+				{
+					char* szNames = reinterpret_cast<char*>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfNames)[uiIter]);
+					if (wcscmp(wAPIName, (wchar_t*)GetWC(szNames)) == 0)
+					{
+						unsigned short usOrdinal = reinterpret_cast<unsigned short*>(lpBase + iedExportDirectory->AddressOfNameOrdinals)[uiIter];
+						return reinterpret_cast<uintptr_t>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfFunctions)[usOrdinal]);
+					}
+				}
+			}
+		}
 #endif  
-        return 0;
-    }
+		return 0;
+	}
 
 	static __forceinline HMODULE WINAPI GetModuleW(_In_opt_ LPCWSTR lpModuleName)
 	{
@@ -231,7 +231,7 @@ public:
 		DWORD ModuleNameLength = (DWORD)strlen(lpModuleName) + 1;
 
 		DWORD NewBufferSize = sizeof(wchar_t) * ModuleNameLength;
-		wchar_t* W_ModuleName = (wchar_t*)alloca(NewBufferSize);
+		wchar_t* W_ModuleName = (wchar_t*)_alloca(NewBufferSize);
 		for (DWORD i = 0; i < ModuleNameLength; i++)
 			W_ModuleName[i] = lpModuleName[i];
 

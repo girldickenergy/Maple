@@ -6,8 +6,7 @@
 #include "hex.h"
 #include "md5.h"
 #include "ThemidaSDK.h"
-
-#include "../Security/xorstr.hpp"
+#include "xorstr.hpp"
 
 std::string AnticheatUtilities::GetAnticheatChecksum()
 {
@@ -80,5 +79,5 @@ std::vector<uint8_t> AnticheatUtilities::GetGameBytes()
 
 bool AnticheatUtilities::IsRunningGoodKnownVersion()
 {
-    return std::ranges::find(goodKnownChecksums, GetAnticheatChecksum()) != goodKnownChecksums.end();
+    return std::find(goodKnownChecksums.begin(), goodKnownChecksums.end(), GetAnticheatChecksum()) != goodKnownChecksums.end();
 }

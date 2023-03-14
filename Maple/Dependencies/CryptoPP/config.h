@@ -19,6 +19,8 @@
 #ifndef CRYPTOPP_CONFIG_H
 #define CRYPTOPP_CONFIG_H
 
+#define CRYPTOPP_DISABLE_ASM 1
+
 #include "config_align.h"
 #include "config_asm.h"
 #include "config_cpu.h"

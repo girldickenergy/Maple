@@ -84,12 +84,6 @@ secure_string GetControlFieldData(const secure_string& line);
 // Returns 0 if a match, non-0 otherwise
 int CompareNoCase(const secure_string& first, const secure_string& second);
 
-// Returns a string converted to lower-case
-secure_string ToLower(const secure_string& str);
-
-// Returns a string converted to upper-case
-secure_string ToUpper(const secure_string& str);
-
 // Base64 Encode
 void PEM_Base64Encode(BufferedTransformation& source, BufferedTransformation& dest);
 
@@ -186,7 +180,6 @@ extern const secure_string PROC_TYPE_ENC;
 extern const secure_string ENCRYPTED;
 extern const secure_string DEK_INFO;
 extern const secure_string CONTENT_DOMAIN;
-extern const secure_string COMMENT;
 
 NAMESPACE_END  // PEM
 NAMESPACE_END  // CryptoPP

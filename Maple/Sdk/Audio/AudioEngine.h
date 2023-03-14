@@ -1,13 +1,10 @@
 #pragma once
 
 #include <cstdint>
-#include <mutex>
 
 class AudioEngine
 {
 	static inline constexpr int AUDIO_STATE_OFFSET = 0x30;
-
-	static inline std::mutex mutex;
 
 	typedef void(__stdcall* fnSetCurrentPlaybackRate)(double rate);
 	static inline fnSetCurrentPlaybackRate oSetCurrentPlaybackRate;

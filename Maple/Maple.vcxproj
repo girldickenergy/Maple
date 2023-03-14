@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fbb2ec8f-6d7d-476f-9401-e2a7bf166d63}</ProjectGuid>
+    <ProjectGuid>{7e7d7977-cabf-4bf7-a9d5-6f91a658bfb7}</ProjectGuid>
     <RootNamespace>Maple</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -29,13 +29,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -71,36 +71,29 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,11 +102,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,7 +115,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -174,188 +168,6 @@
     <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
     <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\3way.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\adler32.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\algebra.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\algparam.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\allocate.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\arc4.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\aria.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ariatab.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\aria_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\asn.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\authenc.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\badcert.cxx" />
-    <ClCompile Include="Dependencies\CryptoPP\base32.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\base64.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\basecode.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\bfinit.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\blake2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\blake2b_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\blake2s_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\blowfish.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\blumshub.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\camellia.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cast.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\casts.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cbcmac.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ccm.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\chacha.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\chachapoly.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\chacha_avx.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\chacha_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cham.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cham_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\channels.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cmac.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cpu.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\crc.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\crc_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\cryptlib.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\darn.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\default.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\des.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\dessp.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\dh.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\dh2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\dll.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\donna_32.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\donna_64.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\donna_sse.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\dsa.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\eax.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ec2n.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\eccrypto.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ecp.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\elgamal.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\emsa2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\eprecomp.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\esign.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\files.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\filters.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\fips140.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\fipsalgt.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gcm.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gcm_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gf256.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gf2n.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gf2n_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gf2_32.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gfpcrypt.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gost.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\gzip.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hc128.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hc256.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hex.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hight.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hmac.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\hrtimer.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ida.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\idea.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\integer.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\iterhash.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\kalyna.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\kalynatab.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\keccak.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\keccak_core.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\keccak_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lea.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lea_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh256.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh256_avx.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh256_sse.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh512.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh512_avx.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\lsh512_sse.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\luc.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\mars.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\marss.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\md2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\md4.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\md5.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\misc.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\modes.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\mqueue.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\mqv.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\nbtheory.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\neon_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\oaep.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\osrng.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\padlkrng.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\panama.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pch.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pem_common.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pem_read.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pem_write.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pkcspad.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\poly1305.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\polynomi.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ppc_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pssr.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\pubkey.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\queue.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rabbit.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rabin.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\randpool.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rc2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rc5.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rc6.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rdrand.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rdtables.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rijndael.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rijndael_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ripemd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rng.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rsa.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\rw.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\safer.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\salsa.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\scrypt.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\seal.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\seed.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\serpent.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sha.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sha3.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\shacal2.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\shacal2_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\shake.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\shark.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sharkbox.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sha_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\simeck.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\simon.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\simon128_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\simple.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\skipjack.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sm3.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sm4.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sm4_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sosemanuk.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\speck.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\speck128_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\square.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\squaretb.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\sse_simd.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\strciphr.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\tea.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\tftables.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\threefish.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\tiger.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\tigertab.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\ttmac.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\tweetnacl.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\twofish.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\vmac.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\wake.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\whrlpool.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\x509cert.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\xed25519.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\xtr.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\xtrcrypt.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\xts.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\zdeflate.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\zinflate.cpp" />
-    <ClCompile Include="Dependencies\CryptoPP\zlib.cpp" />
     <ClCompile Include="Dependencies\gl3w\GL\gl3w.c" />
     <ClCompile Include="Dependencies\hde32\hde32.c" />
     <ClCompile Include="Dependencies\ImGui\imgui.cpp" />
@@ -450,6 +262,7 @@
     <ClInclude Include="Dependencies\CryptoPP\base32.h" />
     <ClInclude Include="Dependencies\CryptoPP\base64.h" />
     <ClInclude Include="Dependencies\CryptoPP\basecode.h" />
+    <ClInclude Include="Dependencies\CryptoPP\bench.h" />
     <ClInclude Include="Dependencies\CryptoPP\blake2.h" />
     <ClInclude Include="Dependencies\CryptoPP\blowfish.h" />
     <ClInclude Include="Dependencies\CryptoPP\blumshub.h" />
@@ -614,11 +427,11 @@
     <ClInclude Include="Dependencies\CryptoPP\ttmac.h" />
     <ClInclude Include="Dependencies\CryptoPP\tweetnacl.h" />
     <ClInclude Include="Dependencies\CryptoPP\twofish.h" />
+    <ClInclude Include="Dependencies\CryptoPP\validate.h" />
     <ClInclude Include="Dependencies\CryptoPP\vmac.h" />
     <ClInclude Include="Dependencies\CryptoPP\wake.h" />
     <ClInclude Include="Dependencies\CryptoPP\whrlpool.h" />
     <ClInclude Include="Dependencies\CryptoPP\words.h" />
-    <ClInclude Include="Dependencies\CryptoPP\x509cert.h" />
     <ClInclude Include="Dependencies\CryptoPP\xed25519.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtr.h" />
     <ClInclude Include="Dependencies\CryptoPP\xtrcrypt.h" />
@@ -676,6 +489,7 @@
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Mods.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\OsuModes.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\PlayModes.h" />
+    <ClInclude Include="Dependencies\Singleton\Singleton.h" />
     <ClInclude Include="Dependencies\stb\stb.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h" />
@@ -694,6 +508,7 @@
     <ClInclude Include="Dependencies\Vanilla\Utilities\MemoryUtilities.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
+    <ClInclude Include="Dependencies\xorstr\xorstr.hpp" />
     <ClInclude Include="Features\AimAssist\AimAssist.h" />
     <ClInclude Include="Features\Enlighten\Enlighten.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
@@ -733,23 +548,16 @@
     <ClInclude Include="UI\Windows\MainMenu.h" />
     <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h" />
     <ClInclude Include="Utilities\Anticheat\AnticheatUtilities.h" />
-    <ClInclude Include="Utilities\Architecture\Singleton.hpp" />
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h" />
     <ClInclude Include="Utilities\Crypto\CryptoUtilities.h" />
     <ClInclude Include="Utilities\Security\Security.h" />
-    <ClInclude Include="Utilities\Security\xorstr.hpp" />
     <ClInclude Include="Utilities\Strings\StringUtilities.h" />
     <ClInclude Include="Utilities\Textures\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dependencies\CryptoPP\aes_armv4.S" />
-    <None Include="Dependencies\CryptoPP\rdrand.asm" />
-    <None Include="Dependencies\CryptoPP\rdseed.asm" />
-    <None Include="Dependencies\CryptoPP\sha1_armv4.S" />
-    <None Include="Dependencies\CryptoPP\sha256_armv4.S" />
-    <None Include="Dependencies\CryptoPP\sha512_armv4.S" />
-    <None Include="Dependencies\CryptoPP\x64dll.asm" />
-    <None Include="Dependencies\CryptoPP\x64masm.asm" />
+    <Library Include="Dependencies\DirectX\d3dx9.lib" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Dependencies\DirectX\d3dx9math.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

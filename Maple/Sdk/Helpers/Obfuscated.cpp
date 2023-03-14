@@ -1,11 +1,11 @@
 #include "Obfuscated.h"
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
 #include "../Osu/GameBase.h"
 #include "../../Features/Spoofer/Spoofer.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
 CLRString* __fastcall Obfuscated::getStringValueHook(uintptr_t instance)
@@ -19,19 +19,21 @@ CLRString* __fastcall Obfuscated::getStringValueHook(uintptr_t instance)
 	if (instance == GameBase::GetUniqueCheckInstance())
 		return Spoofer::GetUniqueCheck();
 
-	return oGetStringValue(instance);
+	[[clang::musttail]] return oGetStringValue(instance);
 }
 
 void __fastcall Obfuscated::setStringValueHook(uintptr_t instance, CLRString* value)
 {
 	if (instance == GameBase::GetUniqueIDInstance())
-		oSetStringValue(instance, Spoofer::GetUniqueID());
-	else if (instance == GameBase::GetUniqueID2Instance())
-		oSetStringValue(instance, Spoofer::GetUniqueID2());
-	else if (instance == GameBase::GetUniqueCheckInstance())
-		oSetStringValue(instance, Spoofer::GetUniqueCheck());
-	else
-		oSetStringValue(instance, value);
+		[[clang::musttail]] return oSetStringValue(instance, Spoofer::GetUniqueID());
+
+	if (instance == GameBase::GetUniqueID2Instance())
+		[[clang::musttail]] return oSetStringValue(instance, Spoofer::GetUniqueID2());
+
+	if (instance == GameBase::GetUniqueCheckInstance())
+		[[clang::musttail]] return oSetStringValue(instance, Spoofer::GetUniqueCheck());
+	
+	[[clang::musttail]] return oSetStringValue(instance, value);
 }
 
 void Obfuscated::Initialize()

@@ -1,7 +1,7 @@
 #include "AudioEngine.h"
 
 #include "ThemidaSDK.h"
-#include "Vanilla.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
 #include "../Mods/ModManager.h"
@@ -9,13 +9,10 @@
 #include "../Player/Player.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../Osu/GameBase.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
 void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 {
-	std::unique_lock lock(mutex);
-
 	if (Config::Timewarp::Enabled && GameBase::GetMode() == OsuModes::Play && Player::GetInstance() && !Player::GetIsReplayMode())
 	{
 		rate = Timewarp::GetRate();
@@ -24,7 +21,7 @@ void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 	}
 	else GameBase::SetTickrate(1000.0 / 60.0);
 
-	oSetCurrentPlaybackRate(rate);
+	[[clang::musttail]] return oSetCurrentPlaybackRate(rate);
 }
 
 void AudioEngine::Initialize()

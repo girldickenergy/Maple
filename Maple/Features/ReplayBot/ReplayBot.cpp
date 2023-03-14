@@ -2,6 +2,7 @@
 
 #define NOMINMAX
 #include <cmath>
+#include <algorithm>
 
 #include "Decoders/ReplayDecoder.h"
 

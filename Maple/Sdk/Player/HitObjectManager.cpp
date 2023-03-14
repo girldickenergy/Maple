@@ -7,6 +7,7 @@
 #include "ThemidaSDK.h"
 
 #include "Player.h"
+#include "xorstr.hpp"
 #include "../Helpers/Obfuscated.h"
 #include "Math/Vector2.h"
 #include "Osu/HitObjects/HitObjectType.h"
@@ -17,7 +18,6 @@
 #include "../Osu/GameField.h"
 #include "../Mods/ModManager.h"
 #include "../../Features/Timewarp/Timewarp.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/Security.h"
@@ -67,7 +67,7 @@ void HitObjectManager::spoofVisuals()
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		const std::uniform_int_distribution<> behaviorRNG(1, 8);
+		std::uniform_int_distribution<> behaviorRNG(1, 8);
 
 		const int behavior = behaviorRNG(gen);
 
@@ -181,56 +181,32 @@ void HitObjectManager::restorePreEmpt()
 	}
 }
 
-void __declspec(naked) HitObjectManager::parseHook(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits)
+void __fastcall HitObjectManager::parseHook(uintptr_t instance, int sectionsToParse, bool updateChecksum, bool applyParsingLimits)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		call spoofVisuals
-		popfd
-		popad
-		jmp oParse
-	}
+	spoofVisuals();
+
+	[[clang::musttail]] return oParse(instance, sectionsToParse, updateChecksum, applyParsingLimits);
 }
 
-void __declspec(naked) HitObjectManager::updateStackingHook(uintptr_t instance, int startIndex, int endIndex)
+void __fastcall HitObjectManager::updateStackingHook(uintptr_t instance, int startIndex, int endIndex)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		call restorePreEmpt
-		popfd
-		popad
-		jmp oUpdateStacking
-	}
+	restorePreEmpt();
+
+	[[clang::musttail]] return oUpdateStacking(instance, startIndex, endIndex);
 }
 
-void __declspec(naked) HitObjectManager::applyOldStackingHook(uintptr_t instance)
+void __fastcall HitObjectManager::applyOldStackingHook(uintptr_t instance)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		call restorePreEmpt
-		popfd
-		popad
-		jmp oApplyOldStacking
-	}
+	restorePreEmpt();
+
+	[[clang::musttail]] return oApplyOldStacking(instance);
 }
 
-void __declspec(naked) HitObjectManager::addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex)
+void __fastcall HitObjectManager::addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		call spoofPreEmpt
-		popfd
-		popad
-		jmp oAddFollowPoints
-	}
+	spoofPreEmpt();
+
+	[[clang::musttail]] return oAddFollowPoints(instance, startIndex, endIndex);
 }
 
 void HitObjectManager::Initialize()

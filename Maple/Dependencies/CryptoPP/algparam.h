@@ -316,7 +316,7 @@ public:
 #if defined(CRYPTOPP_CXX17_UNCAUGHT_EXCEPTIONS)
 		if (std::uncaught_exceptions() == 0)
 #elif defined(CRYPTOPP_CXX98_UNCAUGHT_EXCEPTION)
-		if (std::uncaught_exception() == false)
+		if (std::uncaught_exceptions() == false)
 #else
 		try
 #endif

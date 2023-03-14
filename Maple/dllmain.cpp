@@ -1,9 +1,10 @@
-#include <clocale>
+﻿#include <clocale>
 #include <WinSock2.h>
 
 #include "curl.h"
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
+#include "xorstr.hpp"
 #include "Communication/Communication.h"
 #include "Hooking/VanillaHooking.h"
 
@@ -12,7 +13,6 @@
 #include "Config/Config.h"
 #include "Dependencies/Milk/Milk.h"
 
-#include "Utilities/Security/xorstr.hpp"
 #include "Utilities/Security/Security.h"
 
 #include "SDK/Memory.h"
@@ -52,7 +52,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         data = lpReserved;
         initializeThread = new MilkThread(reinterpret_cast<uintptr_t>(Initialize));
     }
-        
+
     return TRUE;
 }
 
@@ -72,7 +72,7 @@ DWORD WINAPI Initialize()
     initializeThread->CleanCodeCave();
     delete initializeThread;
 
-	auto data_addr = data;
+    auto data_addr = data;
 
     int protectionVar = 0x501938CA;
     CHECK_PROTECTION(protectionVar, 0x9CCC379)

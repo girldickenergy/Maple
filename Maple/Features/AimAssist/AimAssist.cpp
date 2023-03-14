@@ -1,9 +1,9 @@
 #include "AimAssist.h"
 
-#include <intrin.h>
-
 #define NOMINMAX
 #include <cmath>
+#include <algorithm>
+#include <xmmintrin.h>
 
 #include "../../SDK/Input/InputManager.h"
 #include "../../Config/Config.h"
@@ -14,7 +14,7 @@
 #include "../../SDK/Osu/GameBase.h"
 #include "../../UI/StyleProvider.h"
 
-static auto __forceinline calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
+/*static auto __forceinline calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
 	return _mm_min_ps(
 		_mm_max_ps(
 			_mm_mul_ps(
@@ -46,7 +46,7 @@ static auto __forceinline calc_interpolant(const Vector2& window_size, float dis
 				_mm_load_ps(&displacement), _mm_div_ps(_mm_min_ps(_mm_load_ps(&window_size.X), _mm_load_ps(&window_size.Y)), _mm_set_ps1(2.f)))),
 			_mm_load_ps(&strength)))
 		.m128_f32[0];
-}
+}*/
 
 Vector2 AimAssist::algorithmv1(Vector2 pos)
 {
@@ -96,7 +96,7 @@ Vector2 AimAssist::algorithmv1(Vector2 pos)
 
 Vector2 AimAssist::algorithmv2(Vector2 pos)
 {
-	const int time = AudioEngine::GetTime();
+	/*const int time = AudioEngine::GetTime();
 
 	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
@@ -115,7 +115,7 @@ Vector2 AimAssist::algorithmv2(Vector2 pos)
 		}
 		else
 			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * Config::AimAssist::Algorithmv2::Power));
-	}
+	}*/
 
 	return pos + InputManager::GetAccumulatedOffset();
 }

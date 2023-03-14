@@ -4,8 +4,8 @@
 #include <fstream>
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../Storage/Storage.h"
 #include "../Storage/StorageConfig.h"
 #include "../Utilities/Clipboard/ClipboardUtilities.h"

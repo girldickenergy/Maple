@@ -1,7 +1,7 @@
 #pragma once
 #include "Structs/CRC.h"
 #include "MilkMemory.h"
-#include "../../Utilities/Architecture/Singleton.hpp"
+#include "Singleton.h"
 
 struct v7fix
 {
@@ -48,8 +48,6 @@ class Milk : public Singleton<Milk>
 	static inline struct v10fix v10 = {};
 	using fnSomeBassFunc = int(__stdcall*)(int handle);
 	static inline fnSomeBassFunc oSomeBassFunc;
-	static void someBassFuncHook();
-	static int __stdcall spoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 
 	uintptr_t findAuthStub();
 	uintptr_t findFirstCRCAddress();
@@ -65,4 +63,6 @@ public:
 	bool Prepare();
 	bool DoCRCBypass(uintptr_t address);
 	void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
+	
+	static int __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };

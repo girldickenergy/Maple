@@ -32,7 +32,7 @@ VanillaResult VanillaPatcher::InstallPatch(const std::string& name, const std::s
 
 VanillaResult VanillaPatcher::UninstallPatch(const std::string& name)
 {
-	if (!patches.contains(name))
+	if (patches.contains(name))
 		return VanillaResult::PatchNotInstalled;
 
 	const VanillaPatch patch = patches[name];

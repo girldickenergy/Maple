@@ -1,13 +1,13 @@
 #include "ScoreSubmissionDialog.h"
 
 #include "imgui.h"
+#include "xorstr.hpp"
 #include "Math/Vector2.h"
 
 #include "../StyleProvider.h"
 #include "../Widgets/Widgets.h"
 #include "../../SDK/Scoring/Score.h"
 #include "../../SDK/Osu/GameBase.h"
-#include "../../Utilities/Security/xorstr.hpp"
 
 void ScoreSubmissionDialog::Render()
 {

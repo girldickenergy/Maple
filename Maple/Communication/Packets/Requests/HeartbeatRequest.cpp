@@ -2,9 +2,9 @@
 
 #include "ThemidaSDK.h"
 #include "json.hpp"
+#include "xorstr.hpp"
 
 #include "../../Crypto/CryptoProvider.h"
-#include "../../../Utilities/Security/xorstr.hpp"
 #include "../../../Utilities/Strings/StringUtilities.h"
 #include "../PacketType.h"
 

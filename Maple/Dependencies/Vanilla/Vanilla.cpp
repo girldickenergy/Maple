@@ -4,7 +4,7 @@
 #include "Patching/VanillaPatcher.h"
 #include "PatternScanning/VanillaPatternScanner.h"
 #include "Utilities/MemoryUtilities.h"
-#include "../Milk/Milk.h"
+#include "Milk.h"
 
 int __stdcall Vanilla::compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
 {

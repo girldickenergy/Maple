@@ -1,9 +1,9 @@
 #include "ModManager.h"
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
 void ModManager::Initialize()

@@ -2,11 +2,11 @@
 
 #include "json.hpp"
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../PacketType.h"
 #include "../../Crypto/CryptoProvider.h"
 #include "../../../Utilities/Strings/StringUtilities.h"
-#include "../../../Utilities/Security/xorstr.hpp"
 
 #pragma optimize("", off)
 std::vector<unsigned char> HandshakeRequest::Serialize()

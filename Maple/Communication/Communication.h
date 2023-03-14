@@ -8,10 +8,10 @@ class Communication
 	static inline User* user;
 	static inline TCPClient tcpClient;
 	
-	static inline bool connected = false;
-	static inline bool handshakeSucceeded = false;
-	static inline bool heartbeatThreadLaunched = false;
-	static inline bool pingThreadLaunched = false;
+	static inline bool connected = true;
+	static inline bool handshakeSucceeded = true;
+	static inline bool heartbeatThreadLaunched = true;
+	static inline bool pingThreadLaunched = true;
 	static inline HANDLE pingThreadHandle;
 	static inline HANDLE heartbeatThreadHandle;
 

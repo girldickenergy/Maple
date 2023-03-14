@@ -11,6 +11,7 @@
 #include "Hooking/VanillaHooking.h"
 
 #include "StyleProvider.h"
+#include "xorstr.hpp"
 #include "../Logging/Logger.h"
 #include "../SDK/GL/GLControl.h"
 #include "../Storage/StorageConfig.h"
@@ -21,7 +22,6 @@
 #include "../Features/Enlighten/Enlighten.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Relax/Relax.h"
-#include "../Utilities/Security/xorstr.hpp"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -78,8 +78,8 @@ BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
 	if (!initialized)
 		initialize(WindowFromDC(hdc));
 
-	if (!Spoofer::Initialized)
-		Spoofer::Initialize();
+	//if (!Spoofer::Initialized)
+	//	Spoofer::Initialize();
 	
 	render();
 
@@ -99,8 +99,8 @@ int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSour
 		initialize(d3dPresentParameters.hDeviceWindow, d3dDevice);
 	}
 
-	if (!Spoofer::Initialized)
-		Spoofer::Initialize();
+	//if (!Spoofer::Initialized)
+	//	Spoofer::Initialize();
 
 	render();
 

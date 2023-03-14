@@ -6,8 +6,8 @@
 
 #include "ThemidaSDK.h"
 
-#include "../Utilities/Security/xorstr.hpp"
 #include "StorageConfig.h"
+#include "xorstr.hpp"
 
 void Storage::loadStorageConfig()
 {

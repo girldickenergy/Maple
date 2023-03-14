@@ -1,16 +1,16 @@
 #include "Milk.h"
 
 #include <intrin.h>
+#include <xorstr.hpp>
 
 #include "../Vanilla/PatternScanning/VanillaPatternScanner.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Logging/Logger.h"
-#include "../../Utilities/Security/Security.h"
-#include "../../SDK/Audio/AudioEngine.h"
+
 #include <ThemidaSDK.h>
 #include <Hooking/VanillaHooking.h>
 
 #include "crc.h"
+#include "../../SDK/Audio/AudioEngine.h"
 
 #pragma optimize("", off)
 
@@ -39,7 +39,7 @@ uintptr_t __stdcall Milk::getJitHook()
 	const uint32_t STUB_SIZE = 0x7F5000;
 	const uint32_t BUFFER = 0x1000;
 
-	auto retAddress = reinterpret_cast<uintptr_t>(_ReturnAddress());
+	auto retAddress = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
 	bool isAuthCall = retAddress > Get()._authStubBaseAddress && retAddress < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
 
 	if (isAuthCall)
@@ -48,7 +48,7 @@ uintptr_t __stdcall Milk::getJitHook()
 	return oGetJit();
 }
 
-void _declspec(naked) Milk::someBassFuncHook()
+void _declspec(naked) someBassFuncHook()
 {
 	_asm
 	{
@@ -60,41 +60,10 @@ void _declspec(naked) Milk::someBassFuncHook()
 		push eax
 		mov ecx, dword ptr[ebp + 8]
 		push ecx
-		call spoofPlaybackRate
+		call Milk::SpoofPlaybackRate
 		pop ebp
 		retn 4
 	}
-}
-
-int __stdcall Milk::spoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
-{
-	auto val = oSomeBassFunc(handle);
-
-	const uint32_t STUB_SIZE = 0x7F5000;
-	const uint32_t BUFFER = 0x1000;
-
-	bool isAuthCall = ret > Get()._authStubBaseAddress && ret < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
-
-	if (isAuthCall)
-	{
-		auto var_ptr = (v8fix**)(ebp + 0x40);
-
-		v8.v7 = &v7;
-		v7.speed = AudioEngine::GetModTempo(); // fix speed
-
-		*var_ptr = &v8;
-
-		auto freq = ((v10fix*)val)->v9->freq; // get current frequency
-
-		_InterlockedExchangeAdd((volatile unsigned __int32*)(val + 164), 0xFFFFFFFF);
-
-		v10.v9 = &v9;
-		v9.freq = AudioEngine::GetModFrequency(freq); // fix freq
-
-		return (int)(&v10);
-	}
-
-	return val;
 }
 
 uintptr_t Milk::findAuthStub()
@@ -256,4 +225,35 @@ bool Milk::Prepare()
 
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
+}
+
+int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
+{
+	auto val = oSomeBassFunc(handle);
+
+	const uint32_t STUB_SIZE = 0x7F5000;
+	const uint32_t BUFFER = 0x1000;
+
+	bool isAuthCall = ret > Get()._authStubBaseAddress && ret < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
+
+	if (isAuthCall)
+	{
+		auto var_ptr = (v8fix**)(ebp + 0x40);
+
+		v8.v7 = &v7;
+		v7.speed = AudioEngine::GetModTempo(); // fix speed
+
+		*var_ptr = &v8;
+
+		auto freq = ((v10fix*)val)->v9->freq; // get current frequency
+
+		_InterlockedExchangeAdd((volatile unsigned __int32*)(val + 164), 0xFFFFFFFF);
+
+		v10.v9 = &v9;
+		v9.freq = AudioEngine::GetModFrequency(freq); // fix freq
+
+		return (int)(&v10);
+	}
+
+	return val;
 }

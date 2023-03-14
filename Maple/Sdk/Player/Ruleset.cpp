@@ -3,106 +3,30 @@
 #include "ThemidaSDK.h"
 
 #include "Player.h"
+#include "xorstr.hpp"
 #include "../Memory.h"
 #include "../Osu/GameBase.h"
 #include "../../Config/Config.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
-void __declspec(naked) Ruleset::loadFlashlightHook(uintptr_t instance)
+void __fastcall Ruleset::loadFlashlightHook(uintptr_t instance)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		cmp[Config::Visuals::Removers::FlashlightRemoverEnabled], 0x0
-		je orig
-		call GameBase::GetMode
-		cmp eax, 0x2
-		jne orig
-		call Player::GetIsReplayMode
-		cmp al, 0x0
-		jne orig
-		popfd
-		popad
-		ret
-		orig:
-		popfd
-		popad
-		jmp oLoadFlashlight
-	}
+	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+		[[clang::musttail]] return oLoadFlashlight(instance);
 }
 
-void __declspec(naked) Ruleset::loadManiaFlashlightHook(uintptr_t instance)
+void __fastcall Ruleset::loadManiaFlashlightHook(uintptr_t instance)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		cmp[Config::Visuals::Removers::FlashlightRemoverEnabled], 0x0
-		je orig
-		call GameBase::GetMode
-		cmp eax, 0x2
-		jne orig
-		call Player::GetIsReplayMode
-		cmp al, 0x0
-		jne orig
-		popfd
-		popad
-		ret
-		orig:
-		popfd
-		popad
-		jmp oLoadManiaFlashlight
-	}
+	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+		[[clang::musttail]] return oLoadManiaFlashlight(instance);
 }
 
-int __declspec(naked) Ruleset::hasHiddenSpritesHook(uintptr_t instance)
+int __fastcall Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 {
-	__asm
-	{
-		push ecx
-		push edx
-		push ebx
-		push esp
-		push ebp
-		push esi
-		push edi
-		pushfd
+	if (!Config::Visuals::Removers::HiddenRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+		[[clang::musttail]] return oHasHiddenSprites(instance);
 
-		cmp[Config::Visuals::Removers::HiddenRemoverEnabled], 0x0
-		je orig
-		call GameBase::GetMode
-		cmp eax, 0x2
-		jne orig
-		call Player::GetIsReplayMode
-		cmp al, 0x0
-		jne orig
-
-		popfd
-		pop edi
-		pop esi
-		pop ebp
-		add esp, 0x4
-		pop ebx
-		pop edx
-		pop ecx
-
-		mov eax, 0x0
-		ret
-
-		orig:
-		popfd
-		pop edi
-		pop esi
-		pop ebp
-		add esp, 0x4
-		pop ebx
-		pop edx
-		pop ecx
-
-		jmp oHasHiddenSprites
-	}
+	return FALSE;
 }
 
 void Ruleset::Initialize()

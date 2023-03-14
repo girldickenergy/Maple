@@ -2,9 +2,9 @@
 
 #include "ThemidaSDK.h"
 #include "json.hpp"
+#include "xorstr.hpp"
 #include "../../Crypto/CryptoProvider.h"
 #include "../../../Utilities/Strings/StringUtilities.h"
-#include "../../../Utilities/Security/xorstr.hpp"
 
 HeartbeatResponse::HeartbeatResponse(HeartbeatResult result)
 {

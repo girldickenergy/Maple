@@ -3,7 +3,7 @@
 #include <ThemidaSDK.h> 
 #include <json.hpp> 
 
-#include "../../../Utilities/Security/xorstr.hpp" 
+#include "xorstr.hpp"
 #include "../../Crypto/CryptoProvider.h" 
 #include "../PacketType.h" 
 #include "../../../Utilities/Strings/StringUtilities.h" 

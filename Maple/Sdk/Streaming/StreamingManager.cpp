@@ -1,48 +1,22 @@
 #include "StreamingManager.h"
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
 #include "../../Config/Config.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
-void __declspec(naked) StreamingManager::pushNewFrameHook(uintptr_t frame)
+void __fastcall StreamingManager::pushNewFrameHook(uintptr_t frame)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		cmp [Config::Misc::DisableSpectators], 0x1
-		jne orig
-		popfd
-		popad
-		ret
-		orig:
-		popfd
-		popad
-		jmp oPushNewFrame
-	}
+	if (!Config::Misc::DisableSpectators)
+		[[clang::musttail]] return oPushNewFrame(frame);
 }
 
-void __declspec(naked) StreamingManager::purgeFramesHook(int action, uintptr_t extra)
+void __fastcall StreamingManager::purgeFramesHook(int action, uintptr_t extra)
 {
-	__asm
-	{
-		pushad
-		pushfd
-		cmp [Config::Misc::DisableSpectators], 0x1
-		jne orig
-		cmp ecx, 0x6
-		jne orig
-		popfd
-		popad
-		ret
-		orig:
-		popfd
-		popad
-		jmp oPurgeFrames
-	}
+	if (!Config::Misc::DisableSpectators || action != 6)
+		[[clang::musttail]] return oPurgeFrames(action, extra);
 }
 
 void StreamingManager::Initialize()

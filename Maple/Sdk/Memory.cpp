@@ -2,11 +2,11 @@
 
 #include "ThemidaSDK.h"
 #include "Vanilla.h"
+#include "xorstr.hpp"
 #include "Hooking/VanillaHooking.h"
 #include "Patching/VanillaPatcher.h"
 #include "PatternScanning/VanillaPatternScanner.h"
 
-#include "../Utilities/Security/xorstr.hpp"
 #include "../Logging/Logger.h"
 #include "../Communication/Communication.h"
 #include "../Utilities/Security/Security.h"
@@ -149,7 +149,7 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 			Config::Misc::ForceDisableScoreSubmission = true;
 			Config::Misc::BypassFailed = true;
 
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
 		}
 	}
 	else
@@ -187,7 +187,7 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 			Config::Misc::ForceDisableScoreSubmission = true;
 			Config::Misc::BypassFailed = true;
 
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
 		}
 	}
 	else

@@ -5,8 +5,7 @@
 #include "osrng.h"
 #include "pem.h"
 #include "ThemidaSDK.h"
-
-#include "../../Utilities/Security/xorstr.hpp"
+#include "xorstr.hpp"
 
 using namespace CryptoPP;
 

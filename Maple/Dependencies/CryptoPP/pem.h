@@ -18,13 +18,18 @@
 #include "pubkey.h"
 #include "eccrypto.h"
 #include "gfpcrypt.h"
-#include "x509cert.h"
-#include "elgamal.h"
+#include "integer.h"
 #include "rsa.h"
 #include "dsa.h"
-#include "asn.h"
+#include "elgamal.h"
 
 NAMESPACE_BEGIN(CryptoPP)
+
+/// \brief X.509 Certificate
+struct X509Certificate
+{
+    // Not implemented
+};
 
 /// \brief Get the next PEM object
 /// \param src the source BufferedTransformation
@@ -350,7 +355,7 @@ void PEM_Save(BufferedTransformation& bt, const DSA::PrivateKey& key);
 /// \param password pointer to the password buffer
 /// \param length the size of the password buffer
 /// \details The algorithm should be a value like <tt>AES-128-CBC</tt>. See
-///  <tt>pem_read.cpp</tt> and <tt>pem_write.cpp</tt> for the values that are
+//   <tt>pem_read.cpp</tt> and <tt>pem_write.cpp</tt> for the values that are
 ///  recognized.
 /// \throws Exception on failure
 void PEM_Save(BufferedTransformation& bt, const DSA::PrivateKey& key,
@@ -407,7 +412,7 @@ void PEM_Save(BufferedTransformation& bt, const DL_PrivateKey_EC<ECP>& key);
 ///  <tt>pem_read.cpp</tt> and <tt>pem_write.cpp</tt> for the values that are
 ///  recognized.
 /// \details The "named curve" (i.e., the OID of secp256k1) is used rather
-///  than the domain parameters. This is because RFC 5915 specifies the format.
+//   than the domain parameters. This is because RFC 5915 specifies the format.
 ///  In addition, OpenSSL cannot load and utilize an EC key with a non-named
 ///  curve into a server.
 /// \throws Exception on failure

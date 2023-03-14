@@ -3,10 +3,10 @@
 #include <random>
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../Utilities/Security/Security.h"
 #include "../Logging/Logger.h"
-#include "../Utilities/Security/xorstr.hpp"
 #include "Crypto/CryptoProvider.h"
 #include "Packets/PacketType.h"
 #include "Packets/Requests/HandshakeRequest.h"

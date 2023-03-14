@@ -10,8 +10,6 @@ class Player
 	static inline constexpr int PLAY_MODE_OFFSET = 0x114;
 	static inline constexpr int REPLAY_MODE_OFFSET = 0x17B;
 
-	static void initializeFeatures();
-
 	typedef int(__fastcall* fnOnLoadComplete)(uintptr_t instance, bool success);
 	static inline fnOnLoadComplete oOnLoadComplete;
 	static int __fastcall onLoadCompleteHook(uintptr_t instance, bool success);

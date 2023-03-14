@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "imgui.h"
+#include "xorstr.hpp"
 
 #include "../StyleProvider.h"
 #include "../Widgets/Widgets.h"
@@ -13,7 +14,6 @@
 #include "../../Features/Spoofer/Spoofer.h"
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 
 bool backgroundImageDialogInitialized = false;

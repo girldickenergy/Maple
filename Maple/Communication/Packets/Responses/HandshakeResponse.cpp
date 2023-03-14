@@ -2,10 +2,10 @@
 
 #include "json.hpp"
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../../Crypto/CryptoProvider.h"
 #include "../../../Utilities/Strings/StringUtilities.h"
-#include "../../../Utilities/Security/xorstr.hpp"
 
 HandshakeResponse::HandshakeResponse(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
 {

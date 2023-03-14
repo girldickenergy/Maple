@@ -7,8 +7,8 @@
 
 #include <ThemidaSDK.h>
 
+#include "xorstr.hpp"
 #include "../Config/Config.h"
-#include "../Utilities/Security/xorstr.hpp"
 #include "../Storage/Storage.h"
 #include "../Utilities/Crypto/CryptoUtilities.h"
 
@@ -122,9 +122,9 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 	{
 		char buffer[1024];
 		va_list args;
-		va_start(args, format);
+		__builtin_va_start(args, format);
 		vsprintf_s(buffer, format, args);
-		va_end(args);
+		__builtin_va_end(args);
 
 		createLogEntry(severity, std::string(buffer));
 	}

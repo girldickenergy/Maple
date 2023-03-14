@@ -3,6 +3,7 @@
 #define NOMINMAX
 
 #include "ThemidaSDK.h"
+#include "xorstr.hpp"
 
 #include "../Memory.h"
 #include "../Player/Player.h"
@@ -11,7 +12,6 @@
 #include "../../Config/Config.h"
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
-#include "../../Utilities/Security/xorstr.hpp"
 #include "../../Communication/Communication.h"
 
 inline float roundoff(float val)
@@ -53,7 +53,7 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 	cursorPosition = newPosition;
 	lastCursorPosition = pos;
 	
-	oSetMousePosition(newPosition);
+	[[clang::musttail]] return oSetMousePosition(newPosition);
 }
 
 void __fastcall InputManager::mouseViaKeyboardControlsHook()
