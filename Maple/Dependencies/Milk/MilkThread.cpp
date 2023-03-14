@@ -10,6 +10,7 @@ MilkThread::MilkThread(uintptr_t function, bool lazy)
 {
 	VM_FISH_RED_START
 
+	_codeCavePrepared = false;
 	_milkMemory = MilkMemory();
 	_function = function;
 
