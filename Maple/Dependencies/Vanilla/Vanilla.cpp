@@ -43,7 +43,17 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 	
 	if (usingCLR)
 	{
+
+#ifdef NO_BYPASS
+		void* compileMethodAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 83 E4 F8 83 EC 1C 53 8B 5D 10", "clrjit.dll"));
+		if (!compileMethodAddress)
+			return VanillaResult::JITFailure;
+
+		if (VanillaHooking::InstallHook("JITHook", reinterpret_cast<uintptr_t>(compileMethodAddress), reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod)) != VanillaResult::Success)
+			return VanillaResult::JITFailure;
+#else
 		Milk::Get().HookJITVtable(0, reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod));
+#endif
 
 		void* relocateAddressAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 57 8B 7D 08 8B 0F 3B 0D", "clr.dll"));
 		if (!relocateAddressAddress)

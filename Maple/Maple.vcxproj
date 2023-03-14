@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug (No Bypass)|Win32">
+      <Configuration>Debug (No Bypass)</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug (No Bypass)|x64">
+      <Configuration>Debug (No Bypass)</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -32,6 +40,12 @@
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -40,6 +54,12 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -60,10 +80,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -71,6 +97,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -83,6 +113,24 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;NO_BYPASS;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -119,6 +167,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>

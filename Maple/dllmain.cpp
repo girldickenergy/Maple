@@ -1,4 +1,4 @@
-﻿#include <clocale>
+#include <clocale>
 #include <WinSock2.h>
 
 #include "curl.h"
@@ -185,7 +185,11 @@ void WaitForCriticalSDKToInitialize()
     STR_ENCRYPT_END
 
     unsigned int retries = 0;
+#ifdef NO_BYPASS
+    while (!clientHash || !updateTiming/*||!submit*/)
+#else
     while (!clientHash || !updateTiming || !submit)
+#endif
     {
         VM_FISH_RED_START
         STR_ENCRYPT_START

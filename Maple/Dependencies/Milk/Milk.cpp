@@ -135,6 +135,10 @@ bool Milk::DoCRCBypass(uintptr_t address)
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
 
+#ifdef NO_BYPASS
+		return true;
+#endif
+
 	if (!preparationSuccess)
 		return false;
 
@@ -156,6 +160,10 @@ bool Milk::Prepare()
 {
 	VM_LION_BLACK_START
 	STR_ENCRYPT_START
+
+#ifdef NO_BYPASS
+		return true;
+#endif
 
 	_authStubBaseAddress = findAuthStub();
 	if (!_authStubBaseAddress)
