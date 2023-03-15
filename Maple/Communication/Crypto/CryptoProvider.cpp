@@ -9,7 +9,7 @@
 
 using namespace CryptoPP;
 
-CryptoProvider::CryptoProvider()
+[[clang::optnone]] CryptoProvider::CryptoProvider()
 {
     VM_FISH_RED_START
     STR_ENCRYPT_START
