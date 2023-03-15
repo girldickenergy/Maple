@@ -3,7 +3,6 @@
 #define NOMINMAX
 #include <cmath>
 #include <algorithm>
-#include <xmmintrin.h>
 
 #include "../../SDK/Input/InputManager.h"
 #include "../../Config/Config.h"
@@ -14,39 +13,17 @@
 #include "../../SDK/Osu/GameBase.h"
 #include "../../UI/StyleProvider.h"
 
-/*static auto __forceinline calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
-	return _mm_min_ps(
-		_mm_max_ps(
-			_mm_mul_ps(
-				_mm_add_ps(
-					_mm_div_ps(_mm_sub_ps(_mm_load_ps(&begin), _mm_load_ps(&hit_window_50)), _mm_mul_ps(_mm_load_ps(&pre_empt), _mm_set_ps1(3.f))),
-					_mm_set_ps1(1.f)),
-				_mm_load_ps(&magnitude)),
-			_mm_set_ps1(0.f)),
-		_mm_set_ps1(max))
-		.m128_f32[0];
+float calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
+	return std::min(std::max(((begin - hit_window_50) / (pre_empt * 3.0f) + 1.0f) * magnitude, 1.0f), max);
 }
 
-static auto __forceinline point_in_radius(const Vector2& point, const Vector2& anchor, float radius) {
-	return _mm_sqrt_ps(_mm_add_ps(
-		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.X), _mm_load_ps(&point.X)), _mm_set_ps1(2.f)),
-		_mm_pow_ps(_mm_sub_ps(_mm_load_ps(&anchor.Y), _mm_load_ps(&point.Y)), _mm_set_ps1(2.f))))
-		.m128_f32[0] <= radius;
+bool point_in_radius(const Vector2& point, const Vector2& anchor, float radius) {
+	return std::sqrt(std::pow(anchor.X - point.X, 2.0f) + std::pow(anchor.Y - point.Y, 2.0f)) <= radius;
 }
 
-static auto __forceinline _mm_abs_ps(__m128 _A) {
-	return _mm_andnot_ps(_mm_set1_ps(-0.0f), _A);
+float calc_interpolant(const Vector2& window_size, float displacement, float strength) {
+	return std::min(1.0f, std::abs(displacement / (std::min(window_size.X, window_size.Y) / 2.0f)) * strength);
 }
-
-static auto __forceinline calc_interpolant(const Vector2& window_size, float displacement, float strength) {
-	return _mm_min_ps(
-		_mm_set_ps1(1.f),
-		_mm_mul_ps(
-			_mm_abs_ps(_mm_div_ps(
-				_mm_load_ps(&displacement), _mm_div_ps(_mm_min_ps(_mm_load_ps(&window_size.X), _mm_load_ps(&window_size.Y)), _mm_set_ps1(2.f)))),
-			_mm_load_ps(&strength)))
-		.m128_f32[0];
-}*/
 
 Vector2 AimAssist::algorithmv1(Vector2 pos)
 {
@@ -96,7 +73,7 @@ Vector2 AimAssist::algorithmv1(Vector2 pos)
 
 Vector2 AimAssist::algorithmv2(Vector2 pos)
 {
-	/*const int time = AudioEngine::GetTime();
+	const int time = AudioEngine::GetTime();
 
 	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
@@ -115,7 +92,7 @@ Vector2 AimAssist::algorithmv2(Vector2 pos)
 		}
 		else
 			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * Config::AimAssist::Algorithmv2::Power));
-	}*/
+	}
 
 	return pos + InputManager::GetAccumulatedOffset();
 }
