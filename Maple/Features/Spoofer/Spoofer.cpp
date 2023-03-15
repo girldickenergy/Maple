@@ -1,6 +1,5 @@
 #include "Spoofer.h"
 
-#include <combaseapi.h>
 #include <time.h>
 #include <filesystem>
 #include <fstream>
@@ -352,7 +351,7 @@ void Spoofer::Create()
 	Load();
 }
 
-CLRString* __fastcall Spoofer::GetClientHash()
+[[clang::optnone]] CLRString* Spoofer::GetClientHash()
 {
 	return Vanilla::AllocateCLRString(currentClientHash.c_str());
 }

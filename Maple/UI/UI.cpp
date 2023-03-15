@@ -78,8 +78,8 @@ BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
 	if (!initialized)
 		initialize(WindowFromDC(hdc));
 
-	//if (!Spoofer::Initialized)
-	//	Spoofer::Initialize();
+	if (!Spoofer::Initialized)
+		Spoofer::Initialize();
 	
 	render();
 
@@ -99,8 +99,8 @@ int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSour
 		initialize(d3dPresentParameters.hDeviceWindow, d3dDevice);
 	}
 
-	//if (!Spoofer::Initialized)
-	//	Spoofer::Initialize();
+	if (!Spoofer::Initialized)
+		Spoofer::Initialize();
 
 	render();
 

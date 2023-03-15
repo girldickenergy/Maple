@@ -40,7 +40,7 @@ public:
 	static void Rename();
 	static void Create();
 
-	static CLRString* __fastcall GetClientHash();
+	static CLRString* GetClientHash();
 	static CLRString* GetUniqueID();
 	static CLRString* GetUniqueID2();
 	static CLRString* GetUniqueCheck();
