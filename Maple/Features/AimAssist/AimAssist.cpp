@@ -14,7 +14,7 @@
 #include "../../UI/StyleProvider.h"
 
 float calc_fov_scale(float t, float begin, float hit_window_50, float pre_empt, float magnitude = 1.4f, float max = 2.5f) {
-	return std::min(std::max(((begin - hit_window_50) / (pre_empt * 3.0f) + 1.0f) * magnitude, 1.0f), max);
+	return std::min(std::max(((begin - hit_window_50) / (pre_empt * 3.0f) + 1.0f) * magnitude, .0f), max);
 }
 
 bool point_in_radius(const Vector2& point, const Vector2& anchor, float radius) {
