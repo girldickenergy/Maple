@@ -4,24 +4,16 @@
 
 #include "rsa.h"
 #include "secblock.h"
+#include "../Singleton/Singleton.h"
 
-class CryptoProvider
+class CryptoProvider : public Singleton<CryptoProvider>
 {
 	std::string xorKey;
 	CryptoPP::RSA::PrivateKey rsaPrivateKey;
 	CryptoPP::SecByteBlock aesKeyBlock;
 	CryptoPP::SecByteBlock aesIVBlock;
-
-	static inline CryptoProvider* instance = nullptr;
-	CryptoProvider();
 public:
-	static CryptoProvider* GetInstance()
-	{
-		if (!instance)
-			instance = new CryptoProvider();
-
-		return instance;
-	}
+	CryptoProvider(singletonLock);
 
 	void InitializeAES(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv);
 

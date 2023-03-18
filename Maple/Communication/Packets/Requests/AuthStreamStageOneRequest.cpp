@@ -21,7 +21,7 @@ std::vector<unsigned char> AuthStreamStageOneRequest::Serialize()
 	nlohmann::json jsonPayload;
 	jsonPayload[xorstr_("a")] = checksum;
 
-	std::vector payload(CryptoProvider::GetInstance()->AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
+	std::vector payload(CryptoProvider::Get().AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
 
 	std::vector<unsigned char> packet;
 	packet.push_back(static_cast<unsigned char>(PacketType::AuthStreamStageOne));

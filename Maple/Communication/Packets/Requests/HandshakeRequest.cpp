@@ -20,7 +20,7 @@ std::vector<unsigned char> HandshakeRequest::Serialize()
 	nlohmann::json jsonPayload;
 	jsonPayload[xorstr_("Epoch")] = epoch;
 
-	std::vector payload(CryptoProvider::GetInstance()->XOR(StringUtilities::StringToByteArray(jsonPayload.dump())));
+	std::vector payload(CryptoProvider::Get().XOR(StringUtilities::StringToByteArray(jsonPayload.dump())));
 
 	std::vector<unsigned char> packet;
 	packet.push_back(static_cast<unsigned char>(PacketType::Handshake));

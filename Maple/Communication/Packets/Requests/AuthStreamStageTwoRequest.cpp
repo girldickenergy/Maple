@@ -24,10 +24,10 @@ std::vector<unsigned char> AuthStreamStageTwoRequest::Serialize()
 	nlohmann::json jsonPayload;
 	jsonPayload[xorstr_("a")] = username;
 	jsonPayload[xorstr_("b")] = checksum;
-	jsonPayload[xorstr_("c")] = CryptoProvider::GetInstance()->Base64Encode(authBytes);
-	jsonPayload[xorstr_("d")] = CryptoProvider::GetInstance()->Base64Encode(osuBytes);
+	jsonPayload[xorstr_("c")] = CryptoProvider::Get().Base64Encode(authBytes);
+	jsonPayload[xorstr_("d")] = CryptoProvider::Get().Base64Encode(osuBytes);
 
-	std::vector payload(CryptoProvider::GetInstance()->AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
+	std::vector payload(CryptoProvider::Get().AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
 
 	std::vector<unsigned char> packet;
 	packet.push_back(static_cast<unsigned char>(PacketType::AuthStreamStageTwo));

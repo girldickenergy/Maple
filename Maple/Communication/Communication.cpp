@@ -203,7 +203,7 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 
 			HandshakeResponse handshakeResponse = HandshakeResponse::Deserialize(payload);
 
-			CryptoProvider::GetInstance()->InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
+			CryptoProvider::Get().InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
 
 			handshakeSucceeded = true;
 			

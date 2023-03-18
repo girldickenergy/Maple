@@ -29,9 +29,9 @@ HandshakeResponse HandshakeResponse::Deserialize(const std::vector<unsigned char
 	VM_SHARK_BLACK_START
 	STR_ENCRYPT_START
 
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::GetInstance()->RSADecrypt(payload)));
+	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().RSADecrypt(payload)));
 
-	HandshakeResponse response = HandshakeResponse(CryptoProvider::GetInstance()->Base64Decode(jsonPayload[xorstr_("Key")]), CryptoProvider::GetInstance()->Base64Decode(jsonPayload[xorstr_("IV")]));
+	HandshakeResponse response = HandshakeResponse(CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("Key")]), CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("IV")]));
 
 	STR_ENCRYPT_END
 	VM_SHARK_BLACK_END

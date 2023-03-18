@@ -22,7 +22,7 @@ HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char
 	VM_SHARK_BLACK_START
 	STR_ENCRYPT_START
 
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::GetInstance()->AESDecrypt(payload)));
+	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().AESDecrypt(payload)));
 
 	HeartbeatResponse response = HeartbeatResponse(jsonPayload[xorstr_("Result")]);
 

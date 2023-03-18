@@ -21,7 +21,7 @@ AuthStreamStageOneResponse AuthStreamStageOneResponse::Deserialize(const std::ve
 	VM_SHARK_BLACK_START
 	STR_ENCRYPT_START
 
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::GetInstance()->AESDecrypt(payload)));
+	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().AESDecrypt(payload)));
 
 	AuthStreamStageOneResponse response = AuthStreamStageOneResponse(jsonPayload[xorstr_("a")]);
 

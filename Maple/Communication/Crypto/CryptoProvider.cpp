@@ -7,9 +7,7 @@
 #include "ThemidaSDK.h"
 #include "xorstr.hpp"
 
-using namespace CryptoPP;
-
-[[clang::optnone]] CryptoProvider::CryptoProvider()
+[[clang::optnone]] CryptoProvider::CryptoProvider(singletonLock)
 {
     VM_FISH_RED_START
     STR_ENCRYPT_START
@@ -56,8 +54,8 @@ void CryptoProvider::InitializeAES(const std::vector<unsigned char>& key, const 
 {
     VM_FISH_RED_START
 
-    aesKeyBlock = SecByteBlock((&key[0]), key.size());
-    aesIVBlock = SecByteBlock((&iv[0]), iv.size());
+    aesKeyBlock = CryptoPP::SecByteBlock((&key[0]), key.size());
+    aesIVBlock = CryptoPP::SecByteBlock((&iv[0]), iv.size());
 
     VM_FISH_RED_END
 }
@@ -87,9 +85,9 @@ std::string CryptoProvider::Base64Encode(const std::vector<unsigned char>& data)
 
     std::string encoded;
 
-    VectorSource ss(data, true,
-        new Base64Encoder(
-            new StringSink(encoded), false
+    CryptoPP::VectorSource ss(data, true,
+        new CryptoPP::Base64Encoder(
+            new CryptoPP::StringSink(encoded), false
         )
     );
 
@@ -104,9 +102,9 @@ std::vector<unsigned char> CryptoProvider::Base64Decode(const std::string& encod
 
     std::vector<unsigned char> decoded;
 
-    StringSource ss(encoded, true,
-        new Base64Decoder(
-            new VectorSink(decoded)
+    CryptoPP::StringSource ss(encoded, true,
+        new CryptoPP::Base64Decoder(
+            new CryptoPP::VectorSink(decoded)
         )
     );
 
@@ -143,7 +141,7 @@ std::vector<unsigned char> CryptoProvider::AESEncrypt(const std::vector<unsigned
     if (aesIVBlock.empty() || aesIVBlock.size() <= 0)
         return {};
 
-    AutoSeededRandomPool prng;
+    CryptoPP::AutoSeededRandomPool prng;
 
     std::vector<unsigned char> cipher;
 
@@ -169,7 +167,7 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
     if (aesIVBlock.empty() || aesIVBlock.size() <= 0)
         return {};
 
-    AutoSeededRandomPool prng;
+    CryptoPP::AutoSeededRandomPool prng;
 
     std::vector<unsigned char> recovered;
 
@@ -179,18 +177,18 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
     {
         VM_FISH_RED_START
 
-        CBC_Mode<AES>::Decryption d;
+        CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption d;
         d.SetKeyWithIV(aesKeyBlock, aesKeyBlock.size(), aesIVBlock);
 
-        VectorSource s(ciphertext, true,
-            new StreamTransformationFilter(d,
-                new VectorSink(recovered)
+        CryptoPP::VectorSource s(ciphertext, true,
+            new CryptoPP::StreamTransformationFilter(d,
+                new CryptoPP::VectorSink(recovered)
             )
         );
 
         VM_FISH_RED_END
     }
-    catch (Exception& e)
+    catch (CryptoPP::Exception& e)
     {
         return {};
     }
