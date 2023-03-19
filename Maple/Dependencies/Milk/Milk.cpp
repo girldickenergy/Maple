@@ -136,6 +136,8 @@ bool Milk::DoCRCBypass(uintptr_t address)
 	STR_ENCRYPT_START
 
 #ifdef NO_BYPASS
+		STR_ENCRYPT_END
+		VM_LION_BLACK_END
 		return true;
 #endif
 
@@ -162,6 +164,8 @@ bool Milk::Prepare()
 	STR_ENCRYPT_START
 
 #ifdef NO_BYPASS
+		STR_ENCRYPT_END
+		VM_LION_BLACK_END
 		return true;
 #endif
 
