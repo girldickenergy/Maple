@@ -1,7 +1,6 @@
 #include "MilkMemory.h"
 
 #include <ThemidaSDK.h>
-#pragma optimize("", off)
 
 MilkMemory::MilkMemory()
 {
@@ -48,18 +47,21 @@ std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 		buffer[i] = *address;
 	}
 
-	return buffer;
 	VM_LION_BLACK_END
+
+	return buffer;
 }
 
 std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 {
 	VM_LION_BLACK_START
-	return &_memoryRegions;
+	auto ret = &_memoryRegions;
 	VM_LION_BLACK_END
+
+	return ret;
 }
 
-uint32_t* MilkMemory::FindCodeCave()
+[[clang::optnone]] uint32_t* MilkMemory::FindCodeCave()
 {
 	VM_LION_BLACK_START
 	for(auto const& region : _memoryRegions)
@@ -90,6 +92,7 @@ uint32_t* MilkMemory::FindCodeCave()
 		}
 	}
 
-	return nullptr;
 	VM_LION_BLACK_END
+
+	return nullptr;
 }

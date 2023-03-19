@@ -1,10 +1,7 @@
 #include "MilkThread.h"
 
 #include <string>
-#include "WinUser.h"
 #include <ThemidaSDK.h>
-
-#pragma optimize("", off)
 
 MilkThread::MilkThread(uintptr_t function, bool lazy)
 {
@@ -63,7 +60,7 @@ void MilkThread::CleanCodeCave()
 	VM_LION_BLACK_END
 }
 
-HANDLE MilkThread::Start()
+[[clang::optnone]] HANDLE MilkThread::Start()
 {
 	VM_LION_BLACK_START
 
@@ -73,10 +70,12 @@ HANDLE MilkThread::Start()
 	if (!_codeCavePrepared)
 		prepareCodeCave();
 
-	return CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
+	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
 
 	VM_LION_BLACK_END
+
+	return ret;
 }
 
 void MilkThread::SetFunctionPointer(uintptr_t function)

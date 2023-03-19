@@ -20,12 +20,11 @@
 #include "Packets/Requests/AuthStreamStageTwoRequest.h"
 #include "Packets/Responses/AuthStreamStageOneResponse.h"
 
-#pragma optimize("", off)
 static inline MilkThread* pingMilkThread;
 static inline MilkThread* heartbeatMilkThread;
 static inline MilkThread* checkerMilkThread;
 
-void Communication::pingThread()
+[[clang::optnone]] void Communication::pingThread()
 {
 	//pingMilkThread->CleanCodeCave();
 	//delete pingMilkThread;
@@ -55,7 +54,7 @@ void Communication::pingThread()
 	}
 }
 
-void Communication::checkerThread()
+[[clang::optnone]] void Communication::checkerThread()
 {
 	//checkerMilkThread->CleanCodeCave();
 	//delete checkerMilkThread;
@@ -340,36 +339,44 @@ bool Communication::GetIsConnected()
 {
 	VM_SHARK_BLACK_START
 
-	return connected;
+	bool ret = connected;
 
 	VM_SHARK_BLACK_END
+
+	return ret;
 }
 
 bool Communication::GetIsHandshakeSucceeded()
 {
 	VM_SHARK_BLACK_START
 
-	return handshakeSucceeded;
+	bool ret = handshakeSucceeded;
 
 	VM_SHARK_BLACK_END
+
+	return ret;
 }
 
 bool Communication::GetIsHeartbeatThreadLaunched()
 {
 	VM_SHARK_BLACK_START
 
-	return heartbeatThreadLaunched;
+	bool ret = heartbeatThreadLaunched;
 
 	VM_SHARK_BLACK_END
+
+	return ret;
 }
 
 User* Communication::GetUser()
 {
 	VM_SHARK_BLACK_START
 
-	return user;
+	User* ret = user;
 
 	VM_SHARK_BLACK_END
+
+	return ret;
 }
 
 void Communication::SetUser(User* user)
@@ -381,4 +388,3 @@ void Communication::SetUser(User* user)
 
 	VM_SHARK_BLACK_END
 }
-#pragma optimize("", on)

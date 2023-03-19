@@ -8,7 +8,6 @@
 #include "../../Crypto/CryptoProvider.h"
 #include "../../../Utilities/Strings/StringUtilities.h"
 
-#pragma optimize("", off)
 std::vector<unsigned char> HandshakeRequest::Serialize()
 {
 	VM_SHARK_BLACK_START
@@ -31,4 +30,3 @@ std::vector<unsigned char> HandshakeRequest::Serialize()
 
 	return packet;
 }
-#pragma optimize("", on)

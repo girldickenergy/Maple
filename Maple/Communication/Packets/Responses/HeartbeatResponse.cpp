@@ -16,7 +16,6 @@ HeartbeatResult HeartbeatResponse::GetResult()
 	return result;
 }
 
-#pragma optimize("", off)
 HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char>& payload)
 {
 	VM_SHARK_BLACK_START
@@ -31,4 +30,3 @@ HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char
 
 	return response;
 }
-#pragma optimize("", on)

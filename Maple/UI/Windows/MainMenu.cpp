@@ -43,7 +43,6 @@ void MainMenu::updateBackground()
         backgroundTexture = TextureLoader::LoadTextureFromFileD3D9(UI::D3D9Device, Config::Visuals::UI::MenuBackground);
 }
 
-#pragma optimize("", off)
 void MainMenu::Render()
 {
     if (!isVisible)
@@ -754,7 +753,6 @@ void MainMenu::Render()
         ImGui::PopFont();
     }
 }
-#pragma optimize("", on)
 
 void MainMenu::Show()
 {

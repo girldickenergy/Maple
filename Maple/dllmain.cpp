@@ -64,7 +64,7 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-DWORD WINAPI Initialize()
+[[clang::optnone]] DWORD WINAPI Initialize()
 {
     VM_SHARK_BLACK_START
     STR_ENCRYPT_START

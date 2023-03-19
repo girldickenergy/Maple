@@ -12,7 +12,7 @@
 #include "crc.h"
 #include "../../SDK/Audio/AudioEngine.h"
 
-#pragma optimize("", off)
+#pragma clang optimize off
 
 Milk::Milk(singletonLock)
 {
@@ -74,9 +74,9 @@ uintptr_t Milk::findAuthStub()
 		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
 			return region.BaseAddress;
 
-	return 0;
-
 	VM_LION_BLACK_END
+
+	return 0;
 }
 
 // ReSharper disable once CppInconsistentNaming
@@ -101,9 +101,9 @@ uintptr_t Milk::findFirstCRCAddress()
 			return result;
 	}
 
-	return 0;
-
 	VM_LION_BLACK_END
+
+	return 0;
 }
 
 void Milk::doCRCBypass(uintptr_t address)
@@ -144,10 +144,10 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
 	doCRCBypass(address);
 
-	return true;
-
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
+
+	return true;
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
@@ -229,10 +229,10 @@ bool Milk::Prepare()
 
 	preparationSuccess = true;
 
-	return true;
-
 	STR_ENCRYPT_END
 	VM_LION_BLACK_END
+
+	return true;
 }
 
 int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
@@ -265,3 +265,5 @@ int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
 
 	return val;
 }
+
+#pragma clang optimize on

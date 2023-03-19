@@ -8,7 +8,6 @@
 #include "../../../Utilities/Strings/StringUtilities.h"
 #include "../PacketType.h"
 
-#pragma optimize("", off)
 HeartbeatRequest::HeartbeatRequest(const std::string& sessionToken)
 {
 	this->sessionToken = sessionToken;
@@ -37,4 +36,3 @@ std::vector<unsigned char> HeartbeatRequest::Serialize()
 
 	return packet;
 }
-#pragma optimize("", on)
