@@ -28,89 +28,12 @@ void HitObjectManager::spoofVisuals()
 	if (GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
 		return;
 
-	VM_SHARK_BLACK_START
-
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
 	{
 		Communication::IntegritySignature1 -= 0x1;
 		Communication::IntegritySignature2 -= 0x1;
 		Communication::IntegritySignature3 -= 0x1;
 	}
-
-	int codeIntegrityVar = 0x671863E2;
-	CHECK_CODE_INTEGRITY(codeIntegrityVar, 0x40CD69D0)
-	if (codeIntegrityVar != 0x40CD69D0)
-	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
-	}
-
-	int debuggerVar = 0xD0A7E6;
-	CHECK_DEBUGGER(debuggerVar, 0x3E839EE3)
-	if (debuggerVar != 0x3E839EE3)
-	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
-	}
-
-	if (Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead)
-	{
-		if (!reportedIntegrityViolation)
-		{
-			int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to execute initialization routine at 0x%X"), randomAddress);
-
-			reportedIntegrityViolation = true;
-		}
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> behaviorRNG(1, 8);
-
-		const int behavior = behaviorRNG(gen);
-
-		if (behavior == 1)
-		{
-			Config::Relax::Enabled = true;
-			Config::Relax::Timing::TargetUnstableRate = 0;
-			Config::Relax::Blatant::UseLowestPossibleHoldTimes = true;
-		}
-		else if (behavior == 2)
-		{
-			Config::AimAssist::Enabled = true;
-			Config::AimAssist::Algorithmv1::Strength = 1.f;
-			Config::AimAssist::Algorithmv2::Power = 1.f;
-			Config::AimAssist::Algorithmv3::Power = 2.f;
-		}
-		else if (behavior == 3)
-		{
-			Config::Timewarp::Enabled = true;
-			Config::Timewarp::Type = 0;
-			Config::Timewarp::Rate = 300;
-		}
-		else if (behavior == 4)
-		{
-			Config::Visuals::ARChanger::Enabled = true;
-			Config::Visuals::ARChanger::AR = 12;
-		}
-		else if (behavior == 5)
-		{
-			Config::Visuals::CSChanger::Enabled = true;
-			Config::Visuals::CSChanger::CS = 10;
-		}
-		else if (behavior == 6)
-		{
-			int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
-			int errorCode = 4101;
-			Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
-
-			Security::CorruptMemory();
-		}
-	}
-
-	VM_SHARK_BLACK_END
 
 	spoofPreEmpt();
 	spoofMods();

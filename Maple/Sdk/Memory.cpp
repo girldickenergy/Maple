@@ -84,6 +84,8 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 	if (initialized && pendingObjects.empty() && pendingPatches.empty() && pendingHooks.empty())
 		Vanilla::RemoveJITCallback();
+
+	lock.unlock();
 }
 
 void Memory::StartInitialize()

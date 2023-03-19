@@ -66,23 +66,15 @@ struct UserData
 
 [[clang::optnone]] DWORD WINAPI Initialize()
 {
-    VM_SHARK_BLACK_START
-    STR_ENCRYPT_START
-
     initializeThread->CleanCodeCave();
     delete initializeThread;
 
     auto data_addr = data;
 
-    int protectionVar = 0x501938CA;
-    CHECK_PROTECTION(protectionVar, 0x9CCC379)
-    if (protectionVar != 0x9CCC379)
-        Security::CorruptMemory();
-
     if (!data_addr)
         Security::CorruptMemory();
 
-    UserData userData = *static_cast<UserData*>(data_addr);
+    VM_FISH_WHITE_START
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 
     memset(data_addr, 0x0, sizeof(UserData));
@@ -96,9 +88,7 @@ struct UserData
 
     InitializeMaple();
 
-    STR_ENCRYPT_END
-    VM_SHARK_BLACK_END
-
+    VM_FISH_WHITE_END
     return 0;
 }
 
