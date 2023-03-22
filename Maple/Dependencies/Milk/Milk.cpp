@@ -98,7 +98,7 @@ uintptr_t Milk::findFirstCRCAddress()
 		uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 4);
 
 		if (result > _authStubBaseAddress)
-			return result;
+			return *(uintptr_t*)result + 4;
 	}
 
 	VM_LION_BLACK_END
@@ -181,7 +181,7 @@ bool Milk::Prepare()
 
 	Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC != 0x00000000"));
 
-	_firstCRC = **reinterpret_cast<CRC***>(_firstCRCAddress);
+	_firstCRC = *reinterpret_cast<CRC**>(_firstCRCAddress);
 
 	Logger::Log(LogSeverity::Debug, _firstCRC->className);
 	Logger::Log(LogSeverity::Debug, _firstCRC->functionName);

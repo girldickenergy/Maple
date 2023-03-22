@@ -4,7 +4,7 @@
 
 class Ruleset
 {
-	static inline constexpr int INSTANCE_OFFSET = 0x60;
+	static inline constexpr int INSTANCE_OFFSET = 0x68;
 	static inline constexpr int BASEMOVEMENTSPEED_OFFSET = 0xB8;
 
 	typedef void(__fastcall* fnLoadFlashlight)(uintptr_t instance);

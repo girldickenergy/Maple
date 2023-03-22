@@ -9,7 +9,7 @@ class HitObjectManager
 {
 	static inline std::vector<HitObject> hitObjects;
 
-	static inline constexpr int HITOBJECTMANAGER_INSTANCE_OFFSET = 0x40;
+	static inline constexpr int HITOBJECTMANAGER_INSTANCE_OFFSET = 0x48;
 
 	static inline constexpr int HITOBJECTMANAGER_PREEMPT_OFFSET = 0x1C;
 	static inline constexpr int HITOBJECTMANAGER_PREEMPTSLIDERCOMPLETE_OFFSET = 0x80;
