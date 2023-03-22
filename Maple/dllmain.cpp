@@ -2,7 +2,7 @@
 #include <WinSock2.h>
 
 #include "curl.h"
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
 #include "Communication/Communication.h"
@@ -74,7 +74,8 @@ struct UserData
     if (!data_addr)
         Security::CorruptMemory();
 
-    VM_FISH_WHITE_START
+    VIRTUALIZER_FISH_WHITE_START
+    UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 
     memset(data_addr, 0x0, sizeof(UserData));
@@ -88,15 +89,14 @@ struct UserData
 
     InitializeMaple();
 
-    VM_FISH_WHITE_END
+    VIRTUALIZER_FISH_WHITE_END
     return 0;
 }
 
 void InitializeMaple()
 {
-    VM_FISH_RED_START
-    STR_ENCRYPT_START
-
+    VIRTUALIZER_FISH_RED_START
+    
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
@@ -158,22 +158,19 @@ void InitializeMaple()
         Security::CorruptMemory();
     }
 
-    VM_FISH_RED_END
-    STR_ENCRYPT_END
-}
+    VIRTUALIZER_FISH_RED_END
+    }
 
 void WaitForCriticalSDKToInitialize()
 {
-    VM_FISH_RED_START
-    STR_ENCRYPT_START
-
+    VIRTUALIZER_FISH_RED_START
+    
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
     uintptr_t submit = Memory::Objects[xorstr_("Score::Submit")];
 
-    VM_FISH_RED_END
-    STR_ENCRYPT_END
-
+    VIRTUALIZER_FISH_RED_END
+    
     unsigned int retries = 0;
 #ifdef NO_BYPASS
     while (!clientHash || !updateTiming/*||!submit*/)
@@ -181,9 +178,8 @@ void WaitForCriticalSDKToInitialize()
     while (!clientHash || !updateTiming || !submit)
 #endif
     {
-        VM_FISH_RED_START
-        STR_ENCRYPT_START
-
+        VIRTUALIZER_FISH_RED_START
+        
         if (retries >= 30)
         {
             Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
@@ -199,7 +195,6 @@ void WaitForCriticalSDKToInitialize()
 
         Sleep(1000);
 
-        VM_FISH_RED_END
-        STR_ENCRYPT_END
-    }
+        VIRTUALIZER_FISH_RED_END
+            }
 }

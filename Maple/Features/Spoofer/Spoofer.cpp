@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
 
@@ -179,8 +179,7 @@ void Spoofer::Delete()
 
 void Spoofer::Import()
 {
-	STR_ENCRYPT_START
-
+	
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	const std::string encodedProfileData = ClipboardUtilities::Read();
@@ -234,13 +233,11 @@ void Spoofer::Import()
 
 	Load();
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Spoofer::Export()
 {
-	STR_ENCRYPT_START
-
+	
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
@@ -256,8 +253,7 @@ void Spoofer::Export()
 
 	ClipboardUtilities::Write(encodedProfileData);
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Spoofer::Rename()
 {

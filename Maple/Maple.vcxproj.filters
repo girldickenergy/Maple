@@ -241,9 +241,6 @@
     <Filter Include="Dependencies\stb">
       <UniqueIdentifier>{afbd64ff-f673-43f4-b989-121c21299c80}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dependencies\ThemidaSDK">
-      <UniqueIdentifier>{2ca469bf-390f-43f5-b404-7ba7aec46ffd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dependencies\OsuDataTypes">
       <UniqueIdentifier>{b085bbc1-6c7b-41f5-9b8d-60b1ccdb0332}</UniqueIdentifier>
     </Filter>
@@ -435,6 +432,9 @@
     </Filter>
     <Filter Include="UI\Visualisations\SnowVisualisation">
       <UniqueIdentifier>{5ee92018-da81-4310-8acb-e17c01dc971c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\VirtualizerSDK">
+      <UniqueIdentifier>{2ca469bf-390f-43f5-b404-7ba7aec46ffd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1131,27 +1131,6 @@
     <ClInclude Include="Dependencies\stb\stb_image.h">
       <Filter>Dependencies\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_BorlandC_inline.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_GNU_inline.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_ICL_inline.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_LCC_inline.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_VC_inline.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ThemidaSDK\ThemidaSDK.h">
-      <Filter>Dependencies\ThemidaSDK</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Mods.h">
       <Filter>Dependencies\OsuDataTypes\Osu</Filter>
     </ClInclude>
@@ -1421,6 +1400,42 @@
     </ClInclude>
     <ClInclude Include="UI\Windows\ScoreSubmissionDialog.h">
       <Filter>UI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_GNU_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_ICL_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_LCC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_VC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_GNU_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_ICL_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_LCC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_VC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_BorlandC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_BorlandC_inline.h">
+      <Filter>Dependencies\VirtualizerSDK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

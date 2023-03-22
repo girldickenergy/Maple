@@ -6,7 +6,7 @@
 #include "../Vanilla/PatternScanning/VanillaPatternScanner.h"
 #include "../../Logging/Logger.h"
 
-#include <ThemidaSDK.h>
+#include <VirtualizerSDK.h>
 #include <Hooking/VanillaHooking.h>
 
 #include "crc.h"
@@ -16,7 +16,7 @@
 
 Milk::Milk(singletonLock)
 {
-	VM_FISH_RED_START
+	VIRTUALIZER_FISH_RED_START
 
 	_milkMemory = MilkMemory();
 	_authStubBaseAddress = 0x00000000;
@@ -24,14 +24,14 @@ Milk::Milk(singletonLock)
 	_firstCRC = nullptr;
 	preparationSuccess = false;
 
-	VM_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 Milk::~Milk()
 {
-	VM_FISH_RED_START
+	VIRTUALIZER_FISH_RED_START
 	_milkMemory.~MilkMemory();
-	VM_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t __stdcall Milk::getJitHook()
@@ -68,13 +68,13 @@ void _declspec(naked) someBassFuncHook()
 
 uintptr_t Milk::findAuthStub()
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	for (const auto& region : *_milkMemory.GetMemoryRegions())
 		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
 			return region.BaseAddress;
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 
 	return 0;
 }
@@ -82,14 +82,12 @@ uintptr_t Milk::findAuthStub()
 // ReSharper disable once CppInconsistentNaming
 uintptr_t Milk::findFirstCRCAddress()
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
-	STR_ENCRYPT_START
-
+	
 	auto pattern = xorstr_("55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55");
 
-	STR_ENCRYPT_END
-
+	
 	for (const auto& region : *_milkMemory.GetMemoryRegions())
 	{
 		if (region.BaseAddress < _authStubBaseAddress)
@@ -101,14 +99,14 @@ uintptr_t Milk::findFirstCRCAddress()
 			return *(uintptr_t*)result + 4;
 	}
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 
 	return 0;
 }
 
 void Milk::doCRCBypass(uintptr_t address)
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	CRC* currentCRCStruct = _firstCRC;
 	while (currentCRCStruct)
@@ -127,17 +125,15 @@ void Milk::doCRCBypass(uintptr_t address)
 		currentCRCStruct = currentCRCStruct->nextEntry;
 	}
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 }
 
 bool Milk::DoCRCBypass(uintptr_t address)
 {
-	VM_LION_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_LION_BLACK_START
+	
 #ifdef NO_BYPASS
-		STR_ENCRYPT_END
-		VM_LION_BLACK_END
+				VIRTUALIZER_LION_BLACK_END
 		return true;
 #endif
 
@@ -146,8 +142,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
 	doCRCBypass(address);
 
-	STR_ENCRYPT_END
-	VM_LION_BLACK_END
+		VIRTUALIZER_LION_BLACK_END
 
 	return true;
 }
@@ -160,12 +155,10 @@ void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunctio
 
 bool Milk::Prepare()
 {
-	VM_LION_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_LION_BLACK_START
+	
 #ifdef NO_BYPASS
-		STR_ENCRYPT_END
-		VM_LION_BLACK_END
+				VIRTUALIZER_LION_BLACK_END
 		return true;
 #endif
 
@@ -233,8 +226,7 @@ bool Milk::Prepare()
 
 	preparationSuccess = true;
 
-	STR_ENCRYPT_END
-	VM_LION_BLACK_END
+		VIRTUALIZER_LION_BLACK_END
 
 	return true;
 }

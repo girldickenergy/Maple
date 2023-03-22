@@ -4,15 +4,14 @@
 #include <filesystem>
 #include <fstream>
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 
 #include "StorageConfig.h"
 #include "xorstr.hpp"
 
 void Storage::loadStorageConfig()
 {
-    STR_ENCRYPT_START
-		
+    		
     StorageConfig::DefaultConfig = xorstr_("default");
     StorageConfig::DefaultProfile = xorstr_("none");
     StorageConfig::ShowMenuAfterInjection = true;
@@ -47,13 +46,11 @@ void Storage::loadStorageConfig()
 
     configFile.close();
 
-    STR_ENCRYPT_END
-}
+    }
 
 void Storage::Initialize(const std::string& uniqueName)
 {
-    STR_ENCRYPT_START
-
+    
     char* val;
     size_t len;
     errno_t err = _dupenv_s(&val, &len, xorstr_("APPDATA"));
@@ -69,8 +66,7 @@ void Storage::Initialize(const std::string& uniqueName)
 
     loadStorageConfig();
 
-    STR_ENCRYPT_END
-}
+    }
 
 bool Storage::IsSameFileName(const std::string& a, const std::string& b)
 {
@@ -96,8 +92,7 @@ void Storage::EnsureDirectoryExists(const std::string& directory)
 
 void Storage::SaveStorageConfig()
 {
-    STR_ENCRYPT_START
-		
+    		
     EnsureDirectoryExists(StorageDirectory);
 
     std::ofstream ofs;
@@ -110,5 +105,4 @@ void Storage::SaveStorageConfig()
 
     ofs.close();
 
-    STR_ENCRYPT_END
-}
+    }

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <ThemidaSDK.h>
+#include <VirtualizerSDK.h>
 
 #include "xorstr.hpp"
 #include "../Config/Config.h"
@@ -26,8 +26,7 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
-	STR_ENCRYPT_START
-		
+			
 	if (Config::Misc::Logging::DisableLogging)
 		return;
 
@@ -88,14 +87,12 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
 	
-	STR_ENCRYPT_END
-}
+	}
 
 void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole, LPCWSTR consoleTitle)
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	shouldEncrypt = encrypt;
 		
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
@@ -112,9 +109,8 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 	clearLogFile();
 	
-	VM_FISH_RED_END
-	STR_ENCRYPT_END
-}
+	VIRTUALIZER_FISH_RED_END
+	}
 
 void Logger::Log(LogSeverity severity, const char* format, ...)
 {
@@ -132,8 +128,7 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 
 void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 {
-	STR_ENCRYPT_START
-
+	
 	if (!result)
 	{
 		char buffer[1024];
@@ -149,5 +144,4 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
 	}
 	
-	STR_ENCRYPT_END
-}
+	}

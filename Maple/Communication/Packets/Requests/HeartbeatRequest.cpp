@@ -1,6 +1,6 @@
 #include "HeartbeatRequest.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "json.hpp"
 #include "xorstr.hpp"
 
@@ -15,9 +15,8 @@ HeartbeatRequest::HeartbeatRequest(const std::string& sessionToken)
 
 std::vector<unsigned char> HeartbeatRequest::Serialize()
 {
-	VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_SHARK_BLACK_START
+	
 	std::time_t epoch;
 	std::time(&epoch);
 
@@ -31,8 +30,7 @@ std::vector<unsigned char> HeartbeatRequest::Serialize()
 	packet.push_back(static_cast<unsigned char>(PacketType::Heartbeat));
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
-	STR_ENCRYPT_END
-	VM_SHARK_BLACK_END
+		VIRTUALIZER_SHARK_BLACK_END
 
 	return packet;
 }

@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "HitObjectManager.h"
@@ -42,9 +42,8 @@ void __fastcall Player::updateFlashlightHook(uintptr_t instance)
 
 void Player::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("Player::Instance"), xorstr_("80 3D ?? ?? ?? ?? 00 75 26 A1 ?? ?? ?? ?? 85 C0 74 0C"), 0xA, 1);
 	Memory::AddObject(xorstr_("Player::Retrying"), xorstr_("8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00"), 0xA, 1);
 	Memory::AddObject(xorstr_("Player::Failed"), xorstr_("8B 15 ?? ?? ?? ?? 89 90 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 74 57 80 3D"), 0xE, 1);
@@ -77,8 +76,7 @@ void Player::Initialize()
 	Memory::AddObject(xorstr_("Player::UpdateFlashlight"), xorstr_("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 60 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));
 	Memory::AddHook(xorstr_("Player::UpdateFlashlight"), xorstr_("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t Player::GetInstance()

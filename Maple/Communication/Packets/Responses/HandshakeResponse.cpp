@@ -1,7 +1,7 @@
 #include "HandshakeResponse.h"
 
 #include "json.hpp"
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../../Crypto/CryptoProvider.h"
@@ -25,15 +25,13 @@ const std::vector<unsigned char>& HandshakeResponse::GetIV()
 
 HandshakeResponse HandshakeResponse::Deserialize(const std::vector<unsigned char>& payload)
 {
-	VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_SHARK_BLACK_START
+	
 	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().RSADecrypt(payload)));
 
 	HandshakeResponse response = HandshakeResponse(CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("Key")]), CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("IV")]));
 
-	STR_ENCRYPT_END
-	VM_SHARK_BLACK_END
+		VIRTUALIZER_SHARK_BLACK_END
 
 	return response;
 }

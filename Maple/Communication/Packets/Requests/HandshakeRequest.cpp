@@ -1,7 +1,7 @@
 #include "HandshakeRequest.h"
 
 #include "json.hpp"
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../PacketType.h"
@@ -10,9 +10,8 @@
 
 std::vector<unsigned char> HandshakeRequest::Serialize()
 {
-	VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_SHARK_BLACK_START
+	
 	std::time_t epoch;
 	std::time(&epoch);
 
@@ -25,8 +24,7 @@ std::vector<unsigned char> HandshakeRequest::Serialize()
 	packet.push_back(static_cast<unsigned char>(PacketType::Handshake));
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
-	STR_ENCRYPT_END
-	VM_SHARK_BLACK_END
+		VIRTUALIZER_SHARK_BLACK_END
 
 	return packet;
 }

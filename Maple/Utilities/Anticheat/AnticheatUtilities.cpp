@@ -5,13 +5,12 @@
 #include "files.h"
 #include "hex.h"
 #include "md5.h"
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 std::string AnticheatUtilities::GetAnticheatChecksum()
 {
-    STR_ENCRYPT_START
-	
+    	
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
     const std::string::size_type pos = std::string(buffer).find_last_of(xorstr_("\\/"));
@@ -24,15 +23,13 @@ std::string AnticheatUtilities::GetAnticheatChecksum()
 
     std::transform(checksum.begin(), checksum.end(), checksum.begin(), ::tolower);
 
-    STR_ENCRYPT_END
-
+    
     return checksum;
 }
 
 std::vector<uint8_t> AnticheatUtilities::GetAnticheatBytes()
 {
-    STR_ENCRYPT_START
-
+    
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
     const std::string::size_type pos = std::string(buffer).find_last_of(xorstr_("\\/"));
@@ -49,15 +46,13 @@ std::vector<uint8_t> AnticheatUtilities::GetAnticheatBytes()
 
     file.close();
 
-    STR_ENCRYPT_END
-
+    
     return bytes;
 }
 
 std::vector<uint8_t> AnticheatUtilities::GetGameBytes()
 {
-    STR_ENCRYPT_START
-
+    
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
     const std::string osuFilePath = std::string(buffer);
@@ -72,8 +67,7 @@ std::vector<uint8_t> AnticheatUtilities::GetGameBytes()
 
     file.close();
 
-    STR_ENCRYPT_END
-
+    
     return bytes;
 }
 

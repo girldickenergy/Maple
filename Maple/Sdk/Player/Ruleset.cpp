@@ -1,6 +1,6 @@
 #include "Ruleset.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 
 #include "Player.h"
 #include "xorstr.hpp"
@@ -31,9 +31,8 @@ int __fastcall Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 
 void Ruleset::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("Ruleset::IncreaseScoreHit"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 F0 83 7D F0 00 75 0A"));
 	Memory::AddPatch(xorstr_("Ruleset::IncreaseScoreHit_HackCheck"), xorstr_("Ruleset::IncreaseScoreHit"), xorstr_("80 78 7C 00 0F 84"), 0x1D36, 0x5, { 0x8D });
 
@@ -46,8 +45,7 @@ void Ruleset::Initialize()
 	Memory::AddObject(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("55 8B EC 56 A1 ?? ?? ?? ?? 85 C0 74 24 8B 50 1C 8B 4A 04 8B 72 08 FF 72 0C 8B D6"));
 	Memory::AddHook(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t Ruleset::GetInstance()

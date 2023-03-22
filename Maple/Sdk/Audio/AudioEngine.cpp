@@ -1,6 +1,6 @@
 #include "AudioEngine.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Memory.h"
@@ -26,16 +26,14 @@ void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 
 void AudioEngine::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("AudioEngine::Time"), xorstr_("D9 58 2C 8B 3D ?? ?? ?? ?? 8B 1D"), 0xB, 1);
 
 	Memory::AddObject(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 0F 94 C2 0F B6 D2 8B CE"));
 	Memory::AddHook(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 int AudioEngine::GetTime()

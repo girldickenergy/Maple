@@ -1,6 +1,6 @@
 #include "AuthStreamStageTwoRequest.h" 
 
-#include <ThemidaSDK.h> 
+#include <VirtualizerSDK.h> 
 #include <json.hpp> 
 
 #include "xorstr.hpp"
@@ -18,9 +18,8 @@ AuthStreamStageTwoRequest::AuthStreamStageTwoRequest(const std::string& username
 
 std::vector<unsigned char> AuthStreamStageTwoRequest::Serialize()
 {
-	VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_SHARK_BLACK_START
+	
 	nlohmann::json jsonPayload;
 	jsonPayload[xorstr_("a")] = username;
 	jsonPayload[xorstr_("b")] = checksum;
@@ -33,8 +32,7 @@ std::vector<unsigned char> AuthStreamStageTwoRequest::Serialize()
 	packet.push_back(static_cast<unsigned char>(PacketType::AuthStreamStageTwo));
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
-	STR_ENCRYPT_END
-	VM_SHARK_BLACK_END
+		VIRTUALIZER_SHARK_BLACK_END
 
 	return packet;
 }

@@ -2,7 +2,7 @@
 
 #define NOMINMAX
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Memory.h"
@@ -105,9 +105,8 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 
 void InputManager::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("MouseManager::SetMousePosition"), xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"));
 	Memory::AddObject(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"));
 
@@ -125,8 +124,7 @@ void InputManager::Initialize()
 	Memory::AddHook(xorstr_("MouseManager::SetMousePosition"), xorstr_("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
 	Memory::AddHook(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 Vector2 InputManager::GetCursorPosition()

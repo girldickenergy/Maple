@@ -1,6 +1,6 @@
 #include "UI.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "GL/gl3w.h"
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -260,8 +260,7 @@ void UI::render()
 
 void UI::Initialize()
 {
-	STR_ENCRYPT_START
-
+	
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA(xorstr_("user32.dll")), xorstr_("GetKeyboardState"));
 	if (VanillaHooking::InstallHook(xorstr_("User32::GetKeyboardState"), reinterpret_cast<uintptr_t>(pGetKeyboardState), reinterpret_cast<uintptr_t>(getKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState), true) == VanillaResult::Success)
 		Logger::Log(LogSeverity::Info, xorstr_("Hooked User32::GetKeyboardState"));
@@ -288,5 +287,4 @@ void UI::Initialize()
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
 	}
 
-	STR_ENCRYPT_END
-}
+	}

@@ -1,6 +1,6 @@
 #include "GameField.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Memory.h"
@@ -8,13 +8,11 @@
 
 void GameField::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("GameField::Instance"), xorstr_("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? A1"), 0xB, 1);
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t GameField::GetInstance()

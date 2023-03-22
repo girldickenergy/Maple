@@ -1,6 +1,6 @@
 #include "Memory.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
 #include "Hooking/VanillaHooking.h"
@@ -100,9 +100,8 @@ void Memory::EndInitialize()
 
 void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
 		Communication::IntegritySignature1 -= 0x1;
@@ -123,15 +122,13 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 		pendingObjects[name] = MaplePattern(pattern, offset, readCount, resolveRelativeAddress);
 	}
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 void Memory::AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
 		Communication::IntegritySignature1 -= 0x1;
@@ -161,15 +158,13 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 		pendingPatches[objectName] = MaplePatch(name, pattern, scanSize, offset, patch);
 	}
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
 		Communication::IntegritySignature1 -= 0x1;
@@ -199,6 +194,5 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, safe);
 	}
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }

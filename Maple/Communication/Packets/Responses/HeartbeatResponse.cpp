@@ -1,6 +1,6 @@
 #include "HeartbeatResponse.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "json.hpp"
 #include "xorstr.hpp"
 #include "../../Crypto/CryptoProvider.h"
@@ -18,15 +18,13 @@ HeartbeatResult HeartbeatResponse::GetResult()
 
 HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char>& payload)
 {
-	VM_SHARK_BLACK_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_SHARK_BLACK_START
+	
 	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().AESDecrypt(payload)));
 
 	HeartbeatResponse response = HeartbeatResponse(jsonPayload[xorstr_("Result")]);
 
-	STR_ENCRYPT_END
-	VM_SHARK_BLACK_END
+		VIRTUALIZER_SHARK_BLACK_END
 
 	return response;
 }

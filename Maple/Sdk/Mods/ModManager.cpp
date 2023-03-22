@@ -1,6 +1,6 @@
 #include "ModManager.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Memory.h"
@@ -8,13 +8,11 @@
 
 void ModManager::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("ModManager::ModStatus"), xorstr_("53 8B F1 A1 ?? ?? ?? ?? 25 ?? ?? ?? ?? 85 C0 0F 9F C0 0F B6 C0 8B F8 80 3D"), 0x4, 1);
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 Mods ModManager::GetActiveMods()

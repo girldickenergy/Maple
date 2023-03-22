@@ -4,14 +4,13 @@
 #include "modes.h"
 #include "osrng.h"
 #include "pem.h"
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 [[clang::optnone]] CryptoProvider::CryptoProvider(singletonLock)
 {
-    VM_FISH_RED_START
-    STR_ENCRYPT_START
-    xorKey = xorstr_("xjCFQ58Pqd8KPNHp");
+    VIRTUALIZER_FISH_RED_START
+        xorKey = xorstr_("xjCFQ58Pqd8KPNHp");
 
     const std::string rsaPrivateKeyStr =
         xorstr_("-----BEGIN PRIVATE KEY-----\n"
@@ -46,23 +45,22 @@
     CryptoPP::StringSource source(rsaPrivateKeyStr, true);
     CryptoPP::PEM_Load(source, rsaPrivateKey);
 
-    STR_ENCRYPT_END
-    VM_FISH_RED_END
+        VIRTUALIZER_FISH_RED_END
 }
 
 void CryptoProvider::InitializeAES(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     aesKeyBlock = CryptoPP::SecByteBlock((&key[0]), key.size());
     aesIVBlock = CryptoPP::SecByteBlock((&iv[0]), iv.size());
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 }
 
 std::vector<unsigned char> CryptoProvider::XOR(const std::vector<unsigned char>& data)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     std::vector<unsigned char> result = data;
 
@@ -74,14 +72,14 @@ std::vector<unsigned char> CryptoProvider::XOR(const std::vector<unsigned char>&
         j = (++j < xorKey.length() ? j : 0);
     }
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     return result;
 }
 
 std::string CryptoProvider::Base64Encode(const std::vector<unsigned char>& data)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     std::string encoded;
 
@@ -91,14 +89,14 @@ std::string CryptoProvider::Base64Encode(const std::vector<unsigned char>& data)
         )
     );
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     return encoded;
 }
 
 std::vector<unsigned char> CryptoProvider::Base64Decode(const std::string& encoded)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     std::vector<unsigned char> decoded;
 
@@ -108,14 +106,14 @@ std::vector<unsigned char> CryptoProvider::Base64Decode(const std::string& encod
         )
     );
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     return decoded;
 }
 
 std::vector<unsigned char> CryptoProvider::RSADecrypt(const std::vector<unsigned char>& ciphertext)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     CryptoPP::AutoSeededRandomPool rng;
 
@@ -126,14 +124,14 @@ std::vector<unsigned char> CryptoProvider::RSADecrypt(const std::vector<unsigned
 
     auto result = decryptor.Decrypt(rng, ciphertext.data(), ciphertext.size(), recovered);
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     return std::vector(recovered.begin(), recovered.begin() + result.messageLength);
 }
 
 std::vector<unsigned char> CryptoProvider::AESEncrypt(const std::vector<unsigned char>& cleartext)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     if (aesKeyBlock.empty() || aesKeyBlock.size() <= 0)
         return {};
@@ -152,14 +150,14 @@ std::vector<unsigned char> CryptoProvider::AESEncrypt(const std::vector<unsigned
     stfEncryptor.Put(reinterpret_cast<const unsigned char*>(&cleartext[0]), cleartext.size());
     stfEncryptor.MessageEnd();
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     return cipher;
 }
 
 std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned char>& ciphertext)
 {
-    VM_FISH_RED_START
+    VIRTUALIZER_FISH_RED_START
 
     if (aesKeyBlock.empty() || aesKeyBlock.size() <= 0)
         return {};
@@ -171,11 +169,11 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
 
     std::vector<unsigned char> recovered;
 
-    VM_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 
     try
     {
-        VM_FISH_RED_START
+        VIRTUALIZER_FISH_RED_START
 
         CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption d;
         d.SetKeyWithIV(aesKeyBlock, aesKeyBlock.size(), aesIVBlock);
@@ -186,7 +184,7 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
             )
         );
 
-        VM_FISH_RED_END
+        VIRTUALIZER_FISH_RED_END
     }
     catch (CryptoPP::Exception& e)
     {

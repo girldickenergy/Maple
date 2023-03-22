@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Storage/Storage.h"
@@ -32,8 +32,7 @@ ImVec4 Config::parseImVec4(std::string vec)
 
 void Config::loadDefaults()
 {
-	STR_ENCRYPT_START
-
+	
 	Relax::Enabled = false;
 	Relax::ToggleKey = VK_RCONTROL;
 	Relax::PrimaryKey = 1;
@@ -106,8 +105,7 @@ void Config::loadDefaults()
 	Misc::DiscordRichPresenceSpoofer::HideSpectateButton = false;
 	Misc::DiscordRichPresenceSpoofer::HideMatchButton = false;
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Config::refresh()
 {
@@ -137,8 +135,7 @@ void Config::Initialize()
 
 void Config::Load()
 {
-	STR_ENCRYPT_START
-
+	
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 	loadDefaults(); //load default config first to ensure that old configs are fully initialized
 
@@ -313,13 +310,11 @@ void Config::Load()
 
 	file.close();
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Config::Save()
 {
-	STR_ENCRYPT_START
-
+	
 	if (CurrentConfig == 0)
 		return;
 
@@ -406,8 +401,7 @@ void Config::Save()
 
 	ofs.close();
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Config::Delete()
 {
@@ -429,8 +423,7 @@ void Config::Delete()
 
 void Config::Import()
 {
-	STR_ENCRYPT_START
-
+	
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	const std::string encodedConfigData = ClipboardUtilities::Read();
@@ -484,13 +477,11 @@ void Config::Import()
 
 	Load();
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Config::Export()
 {
-	STR_ENCRYPT_START
-	
+		
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	if (CurrentConfig == 0)
@@ -506,8 +497,7 @@ void Config::Export()
 
 	ClipboardUtilities::Write(encodedConfigData);
 
-	STR_ENCRYPT_END
-}
+	}
 
 void Config::Rename()
 {

@@ -1,6 +1,6 @@
 #include "Obfuscated.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "xorstr.hpp"
 
 #include "../Memory.h"
@@ -38,17 +38,15 @@ void __fastcall Obfuscated::setStringValueHook(uintptr_t instance, CLRString* va
 
 void Obfuscated::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("ObfuscatedString::GetValue"), xorstr_("55 8B EC 57 56 53 83 EC 08 8B F1 8B 7E 08 8B 5E 04 8B 46 0C 89 45 F0 8B 0E 8B 41 20 8B 00 8B 40 0C 85 C0 75 0A"));
 	Memory::AddObject(xorstr_("ObfuscatedString::SetValue"), xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 EC 8B F1 8B 0E E8 ?? ?? ?? ?? 8B 08 39 09 FF 15 ?? ?? ?? ?? 89 46 0C 8B 7E 08 8B 46 0C 89 45 F0 8B 0E"));
 
 	Memory::AddHook(xorstr_("ObfuscatedString::GetValue"), xorstr_("ObfuscatedString::GetValue"), reinterpret_cast<uintptr_t>(getStringValueHook), reinterpret_cast<uintptr_t*>(&oGetStringValue));
 	Memory::AddHook(xorstr_("ObfuscatedString::SetValue"), xorstr_("ObfuscatedString::SetValue"), reinterpret_cast<uintptr_t>(setStringValueHook), reinterpret_cast<uintptr_t*>(&oSetStringValue));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 CLRString* Obfuscated::GetString(uintptr_t instance)

@@ -4,7 +4,7 @@
 
 #include <random>
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 
 #include "Player.h"
 #include "xorstr.hpp"
@@ -134,9 +134,8 @@ void __fastcall HitObjectManager::addFollowPointsHook(uintptr_t instance, int st
 
 void HitObjectManager::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("HitObjectManager::Parse"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 89 55 DC 33 D2 89 55 B0 0F B6 45 0C 85 C0 74 10 8B 85"));
 	Memory::AddHook(xorstr_("HitObjectManager::Parse"), xorstr_("HitObjectManager::Parse"), reinterpret_cast<uintptr_t>(parseHook), reinterpret_cast<uintptr_t*>(&oParse));
 
@@ -149,8 +148,7 @@ void HitObjectManager::Initialize()
 	Memory::AddObject(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10 8B 85 ?? ?? ?? ?? 8B 80"));
 	Memory::AddHook(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("HitObjectManager::AddFollowPoints"), reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }
 
 void HitObjectManager::RestoreVisuals()

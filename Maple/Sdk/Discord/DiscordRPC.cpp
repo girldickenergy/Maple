@@ -1,6 +1,6 @@
 #include "DiscordRPC.h"
 
-#include "ThemidaSDK.h"
+#include "VirtualizerSDK.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
 
@@ -64,9 +64,8 @@ void __fastcall DiscordRPC::setSpectateSecretHook(void* instance, CLRString* str
 
 void DiscordRPC::Initialize()
 {
-	VM_FISH_RED_START
-	STR_ENCRYPT_START
-
+	VIRTUALIZER_FISH_RED_START
+	
 	Memory::AddObject(xorstr_("DiscordRPC::UpdateStatus"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 55 DC 8B F1 8B 4E 08 8B 15 ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? 8B 46 08 8B 40 10"));
 	Memory::AddHook(xorstr_("DiscordRPC::UpdateStatus"), xorstr_("DiscordRPC::UpdateStatus"), reinterpret_cast<uintptr_t>(updateStatusHook), reinterpret_cast<uintptr_t*>(&oUpdateStatus));
 
@@ -85,6 +84,5 @@ void DiscordRPC::Initialize()
 	Memory::AddObject(xorstr_("DiscordRPC::SetSpectateSecret"), xorstr_("39 09 FF 15 ?? ?? ?? ?? 8B C8 33 D2 39 09 FF 15 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 8B CE FF 15 ?? ?? ?? ?? EB 3F 89 85 ?? ?? ?? ?? 89 45 D8"), 0x10, 2);
 	Memory::AddHook(xorstr_("DiscordRPC::SetSpectateSecret"), xorstr_("DiscordRPC::SetSpectateSecret"), reinterpret_cast<uintptr_t>(setSpectateSecretHook), reinterpret_cast<uintptr_t*>(&oSetSpectateSecret));
 
-	STR_ENCRYPT_END
-	VM_FISH_RED_END
+		VIRTUALIZER_FISH_RED_END
 }

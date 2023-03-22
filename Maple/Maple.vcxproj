@@ -97,16 +97,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
-    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,7 +124,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
@@ -143,7 +143,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -166,7 +166,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;cryptlib.lib;libcurl_a.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -558,13 +558,6 @@
     <ClInclude Include="Dependencies\Singleton\Singleton.h" />
     <ClInclude Include="Dependencies\stb\stb.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_BorlandC_inline.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_GNU_inline.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_ICL_inline.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_LCC_inline.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\SecureEngineCustomVMs_VC_inline.h" />
-    <ClInclude Include="Dependencies\ThemidaSDK\ThemidaSDK.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\VanillaHooking.h" />
@@ -574,6 +567,18 @@
     <ClInclude Include="Dependencies\Vanilla\Utilities\MemoryUtilities.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_BorlandC_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_BorlandC_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_GNU_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_ICL_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_LCC_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_VC_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_GNU_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_ICL_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_LCC_inline.h" />
+    <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_VC_inline.h" />
     <ClInclude Include="Dependencies\xorstr\xorstr.hpp" />
     <ClInclude Include="Features\AimAssist\AimAssist.h" />
     <ClInclude Include="Features\Enlighten\Enlighten.h" />

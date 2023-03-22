@@ -1,11 +1,11 @@
 #include "MilkThread.h"
 
 #include <string>
-#include <ThemidaSDK.h>
+#include <VirtualizerSDK.h>
 
 MilkThread::MilkThread(uintptr_t function, bool lazy)
 {
-	VM_FISH_RED_START
+	VIRTUALIZER_FISH_RED_START
 
 	_codeCavePrepared = false;
 	_milkMemory = MilkMemory();
@@ -16,22 +16,22 @@ MilkThread::MilkThread(uintptr_t function, bool lazy)
 	if (!lazy)
 		Start();
 
-	VM_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 MilkThread::~MilkThread()
 {
-	VM_FISH_RED_START
+	VIRTUALIZER_FISH_RED_START
 	_codeCaveLocation = nullptr;
 	_codeCavePrepared = false;
 	_function = NULL;
 	_milkMemory.~MilkMemory();
-	VM_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 void MilkThread::prepareCodeCave()
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -42,12 +42,12 @@ void MilkThread::prepareCodeCave()
 
 	_codeCavePrepared = true;
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 }
 
 void MilkThread::CleanCodeCave()
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -57,12 +57,12 @@ void MilkThread::CleanCodeCave()
 
 	_codeCavePrepared = false;
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 }
 
 [[clang::optnone]] HANDLE MilkThread::Start()
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
@@ -73,17 +73,17 @@ void MilkThread::CleanCodeCave()
 	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 
 	return ret;
 }
 
 void MilkThread::SetFunctionPointer(uintptr_t function)
 {
-	VM_LION_BLACK_START
+	VIRTUALIZER_LION_BLACK_START
 
 	_function = function;
 	CleanCodeCave();
 
-	VM_LION_BLACK_END
+	VIRTUALIZER_LION_BLACK_END
 }
