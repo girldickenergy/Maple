@@ -242,7 +242,7 @@ int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
 
 	if (isAuthCall)
 	{
-		auto var_ptr = (v8fix**)(ebp + 0x40);
+		auto var_ptr = (v8fix**)(ebp - 0x28);
 
 		v8.v7 = &v7;
 		v7.speed = AudioEngine::GetModTempo(); // fix speed

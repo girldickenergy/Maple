@@ -8,7 +8,7 @@ MilkMemory::MilkMemory()
 	_memoryRegions = std::vector<MemoryRegion>();
 	cacheMemoryRegions();
 
-	CODE_CAVE_SEARCH_OFFSET = reinterpret_cast<uintptr_t>(GetModuleHandleA("kernel32.dll"));
+	CODE_CAVE_SEARCH_OFFSET = reinterpret_cast<uintptr_t>(GetModuleHandleA("kernel32.dll")) - 0x10000000;
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -66,9 +66,9 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 	VIRTUALIZER_LION_BLACK_START
 	for(auto const& region : _memoryRegions)
 	{
-		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE_READ &&
-			region.Type == MEM_IMAGE && region.RegionSize >= CODE_CAVE_MINIMUM_REGIONSIZE &&
-			region.AllocationProtect != PAGE_READONLY && region.BaseAddress >= CODE_CAVE_SEARCH_OFFSET)
+		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READWRITE) &&
+			(region.Type & MEM_IMAGE) && region.RegionSize >= CODE_CAVE_MINIMUM_REGIONSIZE &&
+			!(region.AllocationProtect & PAGE_READONLY) && region.BaseAddress >= CODE_CAVE_SEARCH_OFFSET)
 		{
 			uint32_t readingAddress = region.BaseAddress;
 			while (readingAddress < region.BaseAddress + region.RegionSize)
