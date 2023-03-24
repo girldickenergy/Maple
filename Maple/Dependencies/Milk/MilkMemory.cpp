@@ -27,12 +27,39 @@ void MilkMemory::cacheMemoryRegions()
 
 	MEMORY_BASIC_INFORMATION32 mbi{};
 	LPVOID address = nullptr;
+	bool currentRegionCFG = false;
 	while (VirtualQuery(address, reinterpret_cast<PMEMORY_BASIC_INFORMATION>(&mbi), sizeof mbi) != 0)
 	{
-		if (mbi.Protect >= PAGE_READONLY && mbi.Protect <= PAGE_EXECUTE_WRITECOPY)
-			_memoryRegions.emplace_back(mbi);
-
 		address = reinterpret_cast<LPVOID>(mbi.BaseAddress + mbi.RegionSize);
+		if (mbi.BaseAddress == NULL)
+			continue;
+
+		// Search for only PE Headers in memory
+		if (mbi.AllocationProtect == PAGE_EXECUTE_WRITECOPY &&
+			mbi.State == MEM_COMMIT &&
+			mbi.Protect == PAGE_READONLY &&
+			mbi.Type == MEM_IMAGE &&
+			mbi.RegionSize == 0x1000)
+		{
+			PIMAGE_DOS_HEADER dosHeader = reinterpret_cast<PIMAGE_DOS_HEADER>(mbi.BaseAddress);
+			if (dosHeader->e_magic != 0x5a4d)
+				continue;
+			PIMAGE_NT_HEADERS ntHeaders = reinterpret_cast<PIMAGE_NT_HEADERS>(mbi.BaseAddress + dosHeader->e_lfanew);
+
+			// The current region has CFG enabled and therefore should not be checked for code caves.
+			if (ntHeaders->OptionalHeader.DllCharacteristics & IMAGE_DLLCHARACTERISTICS_GUARD_CF)
+				currentRegionCFG = true;
+		}
+
+		if (currentRegionCFG)
+		{
+			// If we've found empty space within loaded modules, reset status.
+			if (mbi.State == MEM_FREE && mbi.Protect == PAGE_NOACCESS)
+				currentRegionCFG = false;
+		}
+		else
+			if (mbi.Protect >= PAGE_READONLY && mbi.Protect <= PAGE_EXECUTE_WRITECOPY)
+				_memoryRegions.emplace_back(mbi);
 	}
 	VIRTUALIZER_LION_BLACK_END
 }
@@ -66,7 +93,7 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 	VIRTUALIZER_LION_BLACK_START
 	for(auto const& region : _memoryRegions)
 	{
-		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READWRITE) &&
+		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
 			(region.Type & MEM_IMAGE) && region.RegionSize >= CODE_CAVE_MINIMUM_REGIONSIZE &&
 			!(region.AllocationProtect & PAGE_READONLY) && region.BaseAddress >= CODE_CAVE_SEARCH_OFFSET)
 		{
