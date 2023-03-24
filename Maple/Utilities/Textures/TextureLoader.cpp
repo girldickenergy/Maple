@@ -5,6 +5,7 @@
 
 #include "d3dx9tex.h"
 #pragma comment(lib, "D3dx9")
+#define STBI_ONLY_PNG
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "GL/gl3w.h"
