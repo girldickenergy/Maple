@@ -95,7 +95,7 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 	{
 		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
 			(region.Type & MEM_IMAGE) && region.RegionSize >= CODE_CAVE_MINIMUM_REGIONSIZE &&
-			!(region.AllocationProtect & PAGE_READONLY) && region.BaseAddress >= CODE_CAVE_SEARCH_OFFSET)
+			!(region.AllocationProtect & PAGE_READONLY))
 		{
 			uint32_t readingAddress = region.BaseAddress;
 			while (readingAddress < region.BaseAddress + region.RegionSize)
