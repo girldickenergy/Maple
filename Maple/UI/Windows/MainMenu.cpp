@@ -195,12 +195,14 @@ void MainMenu::Render()
                     Widgets::Checkbox(xorstr_("Enabled"), &Config::Relax::Enabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("All hit objects will be automatically tapped by Maple."));
                     Widgets::Hotkey(xorstr_("Toggle key"), &Config::Relax::ToggleKey); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Allows you to toggle relax mid gameplay."));
                    
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* keys[] = { "M1", "K1", "M2", "K2" };
-                    Widgets::Combo("Primary key", &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
-                    Widgets::Combo("Secondary key", &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
-                    VIRTUALIZER_TIGER_LITE_END
-
+                    const auto m1 = std::string(xorstr_("M1"));
+                    const auto k1 = std::string(xorstr_("K1"));
+                    const auto m2 = std::string(xorstr_("M2"));
+                    const auto k2 = std::string(xorstr_("K2"));
+                    const char* keys[] = { m1.c_str(), k1.c_str(), m2.c_str(), k2.c_str() };
+                    Widgets::Combo(xorstr_("Primary key"), &Config::Relax::PrimaryKey, keys, IM_ARRAYSIZE(keys));
+                    Widgets::Combo(xorstr_("Secondary key"), &Config::Relax::SecondaryKey, keys, IM_ARRAYSIZE(keys));
+                    
                     Widgets::SliderInt(xorstr_("Alternate BPM"), &Config::Relax::AlternateBPM, 0, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("A BPM at which relax will start alternating."));
                     Widgets::Checkbox(xorstr_("Slider alternation override"), &Config::Relax::SliderAlternationOverride); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Changes the way how alternation of sliders is handled.\nIt is recommended to enable this option on techno maps."));
                 }
@@ -253,10 +255,11 @@ void MainMenu::Render()
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &Config::AimAssist::Enabled);
 
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* algorithms[] = { "v1", "v2", "v3" };
-                    Widgets::Combo("Algorithm", &Config::AimAssist::Algorithm, algorithms, IM_ARRAYSIZE(algorithms));
-                    VIRTUALIZER_TIGER_LITE_END
+                    const auto v1 = std::string(xorstr_("v1"));
+                    const auto v2 = std::string(xorstr_("v2"));
+                    const auto v3 = std::string(xorstr_("v3"));
+                    const char* algorithms[] = { v1.c_str(), v2.c_str(), v3.c_str() };
+                    Widgets::Combo(xorstr_("Algorithm"), &Config::AimAssist::Algorithm, algorithms, IM_ARRAYSIZE(algorithms));
 
                     if (Config::AimAssist::Algorithm == 0)
                     {
@@ -292,11 +295,11 @@ void MainMenu::Render()
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &Config::Timewarp::Enabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Slows down or speeds up the game."));
                    
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* types[] = { "Rate", "Multiplier" };
-                    Widgets::Combo("Type", &Config::Timewarp::Type, types, IM_ARRAYSIZE(types));
-                    VIRTUALIZER_TIGER_LITE_END
-
+                    const auto rate = std::string(xorstr_("Rate"));
+                    const auto multiplier = std::string(xorstr_("Multiplier"));
+                    const char* types[] = { rate.c_str(), multiplier.c_str() };
+                    Widgets::Combo(xorstr_("Type"), &Config::Timewarp::Type, types, IM_ARRAYSIZE(types));
+                    
                     if (Config::Timewarp::Type == 0)
                     {
                         Widgets::SliderInt(xorstr_("Rate"), &Config::Timewarp::Rate, 25, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_AlwaysClamp); ImGui::SameLine(); Widgets::Tooltip(xorstr_("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime."));
@@ -386,11 +389,14 @@ void MainMenu::Render()
                 {
                     Widgets::Checkbox(xorstr_("Snow"), &Config::Visuals::UI::Snow);
 
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* scales[] = { "50%", "75%", "100%", "125%", "150%" };
-                    if (Widgets::Combo("Menu scale", &Config::Visuals::UI::MenuScale, scales, IM_ARRAYSIZE(scales)))
+                    const auto fifty = std::string(xorstr_("50%"));
+                    const auto seventyfive = std::string(xorstr_("75%"));
+                    const auto hundred = std::string(xorstr_("100%"));
+                    const auto hundredtwentyfive = std::string(xorstr_("125%"));
+                    const auto hundredfifty = std::string(xorstr_("150%"));
+                    const char* scales[] = { fifty.c_str(), seventyfive.c_str(), hundred.c_str(), hundredtwentyfive.c_str(), hundredfifty.c_str()};
+                    if (Widgets::Combo(xorstr_("Menu scale"), &Config::Visuals::UI::MenuScale, scales, IM_ARRAYSIZE(scales)))
                         StyleProvider::UpdateScale();
-                    VIRTUALIZER_TIGER_LITE_END
 
                     ImGui::Spacing();
 
@@ -451,15 +457,13 @@ void MainMenu::Render()
 
                     const float buttonWidth = (ImGui::GetWindowWidth() * 0.5f - style.ItemSpacing.x) / 2;
 
-                    VIRTUALIZER_TIGER_LITE_START
-                    Widgets::Combo("Profiles", &Spoofer::SelectedProfile, [](void* vec, int idx, const char** out_text)
+                    Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, [](void* vec, int idx, const char** out_text)
                         {
                             auto& vector = *static_cast<std::vector<std::string>*>(vec);
                             if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
                             *out_text = vector.at(idx).c_str();
                             return true;
                         }, reinterpret_cast<void*>(&Spoofer::Profiles), Spoofer::Profiles.size());
-                    VIRTUALIZER_TIGER_LITE_END
 
                     ImGui::Text(xorstr_("Current profile: %s"), Spoofer::Profiles[Spoofer::LoadedProfile].c_str());
 
@@ -543,15 +547,18 @@ void MainMenu::Render()
             {
                 Widgets::BeginPanel(xorstr_("Misc"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(Config::Misc::ScoreSubmissionType == 2 ? 5 : 4)));
                 {
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* scoreSubmissionTypes[] = { "Allow", "Disallow", "Prompt" };
+                    const auto allow = std::string(xorstr_("Allow"));
+                    const auto disallow = std::string(xorstr_("Disallow"));
+                    const auto prompt = std::string(xorstr_("Prompt"));
+                    const char* scoreSubmissionTypes[] = { allow.c_str(), disallow.c_str(), prompt.c_str() };
                     Widgets::Combo("Score submission", &Config::Misc::ScoreSubmissionType, scoreSubmissionTypes, IM_ARRAYSIZE(scoreSubmissionTypes)); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Specifies score submission behavior.\n\nAllow: all scores will be sent to osu! servers.\nDisallow: your scores won't be sent to osu! servers.\nPrompt: before submitting a score Maple will ask you whether or not you really want to submit it."));
                     if (Config::Misc::ScoreSubmissionType == 2)
                     {
-                        const char* promptBehaviors[] = { "Submit", "Don't submit" };
+                        const auto submit = std::string(xorstr_("Submit"));
+                        const auto dontSubmit = std::string(xorstr_("Don't submit"));
+                        const char* promptBehaviors[] = { submit.c_str(), dontSubmit.c_str() };
 						Widgets::Combo("Behavior on retry", &Config::Misc::PromptBehaviorOnRetry, promptBehaviors, IM_ARRAYSIZE(promptBehaviors)); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Specifies what Maple should do with your score when you retry a map."));
                     }
-                    VIRTUALIZER_TIGER_LITE_END
 					
                     Widgets::Checkbox(xorstr_("Disable spectators"), &Config::Misc::DisableSpectators); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Spectators will keep buffering infinitely."));
 
@@ -590,10 +597,12 @@ void MainMenu::Render()
 
                     Widgets::Checkbox(xorstr_("Custom play mode"), &Config::Misc::DiscordRichPresenceSpoofer::CustomPlayModeEnabled);
 
-                    VIRTUALIZER_TIGER_LITE_START
-                    const char* playModes[] = { "osu!", "osu!taiko", "osu!catch", "osu!mania" };
-                    Widgets::Combo("Play mode", &Config::Misc::DiscordRichPresenceSpoofer::CustomPlayMode, playModes, IM_ARRAYSIZE(playModes));
-                    VIRTUALIZER_TIGER_LITE_END
+                    const auto osu = std::string(xorstr_("osu!"));
+                    const auto osuTaiko = std::string(xorstr_("osu!taiko"));
+                    const auto osuCatch = std::string(xorstr_("osu!catch"));
+                    const auto osuMania = std::string(xorstr_("osu!mania"));
+                    const char* playModes[] = { osu.c_str(), osuTaiko.c_str(), osuCatch.c_str(), osuMania.c_str()};
+                    Widgets::Combo(xorstr_("Play mode"), &Config::Misc::DiscordRichPresenceSpoofer::CustomPlayMode, playModes, IM_ARRAYSIZE(playModes));
 
                     Widgets::Checkbox(xorstr_("Custom state"), &Config::Misc::DiscordRichPresenceSpoofer::CustomStateEnabled);
                     ImGui::InputText(xorstr_("State"), Config::Misc::DiscordRichPresenceSpoofer::CustomState, 128);
@@ -614,15 +623,13 @@ void MainMenu::Render()
                     const bool currentConfigIsDefault = Config::CurrentConfig == 0;
 
                     const float buttonWidth = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
-                    VIRTUALIZER_TIGER_LITE_START
-                    Widgets::Combo("Config", &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
+                    Widgets::Combo(xorstr_("Config"), &Config::CurrentConfig, [](void* vec, int idx, const char** out_text)
                         {
                             auto& vector = *static_cast<std::vector<std::string>*>(vec);
                             if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
                             *out_text = vector.at(idx).c_str();
                             return true;
                         }, reinterpret_cast<void*>(&Config::Configs), Config::Configs.size());
-                    VIRTUALIZER_TIGER_LITE_END
 
                     if (Widgets::Button(xorstr_("Load"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                     {
