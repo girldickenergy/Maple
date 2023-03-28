@@ -201,6 +201,7 @@ DWORD WINAPI Initialize()
 
     VIRTUALIZER_FISH_WHITE_START
     [[clang::noinline]] AddVectoredExceptionHandler(false, pVectoredExceptionHandler);
+    UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 
     memset(data_addr, 0x0, sizeof(UserData));
