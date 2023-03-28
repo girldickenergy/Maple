@@ -70,7 +70,7 @@ BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 		return false;
 	
-	return oGetKeyboardState(arr);
+	[[clang::musttail]] return oGetKeyboardState(arr);
 }
 
 BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
@@ -80,10 +80,10 @@ BOOL __stdcall UI::wglSwapBuffersHook(HDC hdc)
 
 	if (!Spoofer::Initialized)
 		Spoofer::Initialize();
-	
+
 	render();
 
-	return oWglSwapBuffers(hdc);
+	[[clang::musttail]] return oWglSwapBuffers(hdc);
 }
 
 int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion, DWORD dwFlags)
@@ -104,7 +104,7 @@ int __stdcall UI::presentHook(IDirect3DSwapChain9* pSwapChain, const RECT* pSour
 
 	render();
 
-	return oPresent(pSwapChain, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
+	[[clang::musttail]] return oPresent(pSwapChain, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion, dwFlags);
 }
 
 void UI::enableRaw()

@@ -26,13 +26,21 @@ void __fastcall Score::submitHook(uintptr_t instance)
 {
 	scoreInstance = instance;
 
+	Logger::Log(LogSeverity::Debug, xorstr_("A"));
+
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
+	Logger::Log(LogSeverity::Debug, xorstr_("A.A"));
+
 	Player::ResetAnticheatFlag();
+
+	Logger::Log(LogSeverity::Debug, xorstr_("A.B"));
 
 	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
 		return;
+
+	Logger::Log(LogSeverity::Debug, xorstr_("B"));
 
 	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
 	{
@@ -40,15 +48,22 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 		ScoreSubmissionDialog::Show();
 
+		Logger::Log(LogSeverity::Debug, xorstr_("B.A"));
+
 		return;
 	}
+
+	Logger::Log(LogSeverity::Debug, xorstr_("C"));
 
 	if (Config::Misc::ScoreSubmissionType == 2 && Player::GetIsRetrying() && Config::Misc::PromptBehaviorOnRetry == 1)
 		return;
 
+	Logger::Log(LogSeverity::Debug, xorstr_("D"));
+
 	if (Config::Timewarp::Enabled)
 		spoofPlayDuration();
 
+	Logger::Log(LogSeverity::Debug, xorstr_("E"));
 	[[clang::musttail]] return oSubmit(instance);
 }
 

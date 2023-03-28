@@ -100,7 +100,7 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 		}
 	}
 
-	oMouseViaKeyboardControls();
+	return oMouseViaKeyboardControls();
 }
 
 void InputManager::Initialize()
