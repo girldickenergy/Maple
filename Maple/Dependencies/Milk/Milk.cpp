@@ -45,7 +45,7 @@ uintptr_t __stdcall Milk::getJitHook()
 	if (isAuthCall)
 		return reinterpret_cast<uintptr_t>(&_originalJITVtable);
 
-	return oGetJit();
+	[[clang::musttail]] return oGetJit();
 }
 
 void _declspec(naked) someBassFuncHook()

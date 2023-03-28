@@ -34,7 +34,7 @@ void __stdcall Vanilla::relocateAddressHook(uint8_t** block)
 		}
 	}
 
-	oRelocateAddress(block);
+	return oRelocateAddress(block);
 }
 
 VanillaResult Vanilla::Initialize(bool useCLR)

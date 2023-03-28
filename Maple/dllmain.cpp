@@ -64,7 +64,7 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-[[clang::optnone]] DWORD WINAPI Initialize()
+DWORD WINAPI Initialize()
 {
     initializeThread->CleanCodeCave();
     delete initializeThread;

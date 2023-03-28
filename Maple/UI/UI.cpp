@@ -260,7 +260,6 @@ void UI::render()
 
 void UI::Initialize()
 {
-	
 	void* pGetKeyboardState = GetProcAddress(GetModuleHandleA(xorstr_("user32.dll")), xorstr_("GetKeyboardState"));
 	if (VanillaHooking::InstallHook(xorstr_("User32::GetKeyboardState"), reinterpret_cast<uintptr_t>(pGetKeyboardState), reinterpret_cast<uintptr_t>(getKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState), true) == VanillaResult::Success)
 		Logger::Log(LogSeverity::Info, xorstr_("Hooked User32::GetKeyboardState"));
@@ -286,5 +285,4 @@ void UI::Initialize()
 		else
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook OpenGL32::wglSwapBuffers"));
 	}
-
-	}
+}
