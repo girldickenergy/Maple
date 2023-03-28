@@ -31,7 +31,7 @@ MilkThread::~MilkThread()
 
 void MilkThread::prepareCodeCave()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_BLACK_START
 
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -42,7 +42,7 @@ void MilkThread::prepareCodeCave()
 
 	_codeCavePrepared = true;
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_BLACK_END
 }
 
 void MilkThread::CleanCodeCave()
@@ -60,9 +60,9 @@ void MilkThread::CleanCodeCave()
 	VIRTUALIZER_LION_BLACK_END
 }
 
-[[clang::optnone]] HANDLE MilkThread::Start()
+HANDLE MilkThread::Start()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_BLACK_START
 
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
@@ -73,7 +73,7 @@ void MilkThread::CleanCodeCave()
 	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_BLACK_END
 
 	return ret;
 }

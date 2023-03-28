@@ -22,7 +22,7 @@ MilkMemory::~MilkMemory()
 
 void MilkMemory::cacheMemoryRegions()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_WHITE_START
 	_memoryRegions.clear();
 
 	MEMORY_BASIC_INFORMATION32 mbi{};
@@ -63,12 +63,12 @@ void MilkMemory::cacheMemoryRegions()
 			if (mbi.Protect >= PAGE_READONLY && mbi.Protect <= PAGE_EXECUTE_WRITECOPY)
 				_memoryRegions.emplace_back(mbi);
 	}
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_WHITE_END
 }
 
 std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_LITE_START
 	auto buffer = std::vector<uint8_t>(size);
 	for(SIZE_T i = 0; i < size; i++)
 	{
@@ -76,7 +76,7 @@ std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 		buffer[i] = *address;
 	}
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_LITE_END
 
 	return buffer;
 }
@@ -90,9 +90,9 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 	return ret;
 }
 
-[[clang::optnone]] uint32_t* MilkMemory::FindCodeCave()
+uint32_t* MilkMemory::FindCodeCave()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_DOLPHIN_WHITE_START
 	for(auto const& region : _memoryRegions)
 	{
 		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
@@ -121,7 +121,7 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 		}
 	}
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_DOLPHIN_WHITE_END
 
 	return nullptr;
 }

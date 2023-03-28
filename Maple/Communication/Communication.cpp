@@ -195,7 +195,7 @@ void Communication::onDisconnect()
 
 bool Communication::Connect()
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_WHITE_START
 	
 	if (connected)
 	{
@@ -218,7 +218,7 @@ bool Communication::Connect()
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	tcpClient.Send(handshakeRequest.Serialize());
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_WHITE_END
 
 	return true;
 }

@@ -106,7 +106,7 @@ uintptr_t Milk::findFirstCRCAddress()
 
 void Milk::doCRCBypass(uintptr_t address)
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_BLACK_START
 
 	CRC* currentCRCStruct = _firstCRC;
 	while (currentCRCStruct)
@@ -125,15 +125,15 @@ void Milk::doCRCBypass(uintptr_t address)
 		currentCRCStruct = currentCRCStruct->nextEntry;
 	}
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_BLACK_END
 }
 
 bool Milk::DoCRCBypass(uintptr_t address)
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_BLACK_START
 	
 #ifdef NO_BYPASS
-				VIRTUALIZER_LION_BLACK_END
+		VIRTUALIZER_TIGER_BLACK_END
 		return true;
 #endif
 
@@ -142,7 +142,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
 	doCRCBypass(address);
 
-		VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_BLACK_END
 
 	return true;
 }
@@ -158,7 +158,7 @@ bool Milk::Prepare()
 	VIRTUALIZER_LION_BLACK_START
 	
 #ifdef NO_BYPASS
-				VIRTUALIZER_LION_BLACK_END
+		VIRTUALIZER_LION_BLACK_END
 		return true;
 #endif
 

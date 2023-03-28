@@ -100,7 +100,7 @@ void Memory::EndInitialize()
 
 void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_LITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -122,12 +122,12 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 		pendingObjects[name] = MaplePattern(pattern, offset, readCount, resolveRelativeAddress);
 	}
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_LITE_END
 }
 
 void Memory::AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_LITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -158,12 +158,12 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 		pendingPatches[objectName] = MaplePatch(name, pattern, scanSize, offset, patch);
 	}
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_LITE_END
 }
 
 void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_LITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -194,5 +194,5 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, safe);
 	}
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_LITE_END
 }

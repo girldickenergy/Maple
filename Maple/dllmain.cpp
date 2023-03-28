@@ -82,8 +82,18 @@ DWORD WINAPI Initialize()
 
     Communication::Connect();
 
+    int retries = 0;
     while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
+    {
+        if (retries >= 50)
+        {
+            Logger::Log(LogSeverity::Error, xorstr_("Maple has encountered a forged stack franme exception! Error code: %i"), 0xb00bb00b);
+
+            Security::CorruptMemory();
+        }
+        retries++;
         Sleep(500);
+    }
 
     auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(Communication::SendAnticheat));
 

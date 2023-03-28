@@ -5,6 +5,7 @@
 #include "PatternScanning/VanillaPatternScanner.h"
 #include "Utilities/MemoryUtilities.h"
 #include "Milk.h"
+#include <xorstr.hpp>
 
 int __stdcall Vanilla::compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
 {
@@ -55,20 +56,20 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 		Milk::Get().HookJITVtable(0, reinterpret_cast<uintptr_t>(compileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod));
 #endif
 
-		void* relocateAddressAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 57 8B 7D 08 8B 0F 3B 0D", "clr.dll"));
+		void* relocateAddressAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule(xorstr_("55 8B EC 57 8B 7D 08 8B 0F 3B 0D"), xorstr_("clr.dll")));
 		if (!relocateAddressAddress)
 			return VanillaResult::RelocateFailure;
 
-		if (VanillaHooking::InstallHook("RelocateAddressHook", reinterpret_cast<uintptr_t>(relocateAddressAddress), reinterpret_cast<uintptr_t>(relocateAddressHook), reinterpret_cast<uintptr_t*>(&oRelocateAddress)) != VanillaResult::Success)
+		if (VanillaHooking::InstallHook(xorstr_("RelocateAddressHook"), reinterpret_cast<uintptr_t>(relocateAddressAddress), reinterpret_cast<uintptr_t>(relocateAddressHook), reinterpret_cast<uintptr_t*>(&oRelocateAddress)) != VanillaResult::Success)
 			return VanillaResult::RelocateFailure;
 
-		void* allocateCLRStringAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("53 8B D9 56 57 85 DB 0F", "clr.dll"));
+		void* allocateCLRStringAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule(xorstr_("53 8B D9 56 57 85 DB 0F"), xorstr_("clr.dll")));
 		if (!allocateCLRStringAddress)
 			return VanillaResult::CLRStringFailure;
 
 		allocateCLRString = static_cast<fnAllocateCLRString>(allocateCLRStringAddress);
 
-		setCLRStringAddress = VanillaPatternScanner::FindPatternInModule("89 02 81 F8", "clr.dll");
+		setCLRStringAddress = VanillaPatternScanner::FindPatternInModule(xorstr_("89 02 81 F8"), xorstr_("clr.dll"));
 		if (!setCLRStringAddress)
 			return VanillaResult::CLRStringFailure;
 	}
@@ -119,7 +120,7 @@ void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation
 	}
 }
 
-[[clang::optnone]] CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
+CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
 {
 	if (usingCLR)
 		return allocateCLRString(pwsz);
