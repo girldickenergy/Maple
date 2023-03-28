@@ -66,24 +66,23 @@ struct UserData
     char DiscordAvatarHash[33];
 };
 
-LONG __stdcall pVectoredExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo)
+[[clang::optnone]] LONG __stdcall pVectoredExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo)
 {
     if (ExceptionInfo->ExceptionRecord->ExceptionCode != EXCEPTION_ACCESS_VIOLATION)
         return EXCEPTION_CONTINUE_SEARCH;
 
-    VIRTUALIZER_FISH_WHITE_START
     DWORD exceptionCode = ExceptionInfo->ExceptionRecord->ExceptionCode;
     PVOID exceptionAddress = ExceptionInfo->ExceptionRecord->ExceptionAddress;
 
     auto ctx = ExceptionInfo->ContextRecord;
 
-    const char* exceptionMessageFormat = "Maple has encountered a crash!\n\nExceptionCode: 0x%08X ExceptionAddress: %p\nEAX: 0x%08X ECX: 0x%08X EDX: 0x%08X EBX: 0x%08X ESP: 0x%08X EBP: 0x%08X ESI: 0x%08X EDI: 0x%08X EIP: 0x%08X\n\nModules: \n%s\n\nFrame: \n%s\n\n";
-
-    auto moduleMap = std::map<std::string, std::vector<MEMORY_BASIC_INFORMATION32>>();
+    const char* exceptionMessageFormat = std::string(xorstr_("Maple has encountered a crash!\n\nExceptionCode: 0x%08X ExceptionAddress: %p\nEAX: 0x%08X ECX: 0x%08X EDX: 0x%08X EBX: 0x%08X ESP: 0x%08X EBP: 0x%08X ESI: 0x%08X EDI: 0x%08X EIP: 0x%08X\n\nModules: \n%s\n\nFrame: \n%s\n\n")).c_str();
 
     MEMORY_BASIC_INFORMATION32 mbi{};
+
     LPVOID address = nullptr;
     bool foundHeader = false;
+    auto moduleMap = std::map<std::string, std::vector<MEMORY_BASIC_INFORMATION32>>();
 
     auto currentModule = std::vector<MEMORY_BASIC_INFORMATION32>();
     std::string moduleName = "";
@@ -128,7 +127,8 @@ LONG __stdcall pVectoredExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo)
         }
     }
 
-    const char* moduleFormat = "%s loaded at 0x%08X (size 0x%08X)\n";
+    const char* moduleFormat = std::string(xorstr_("%s loaded at 0x%08X (size 0x%08X)\n")).c_str();
+    
     char moduleBuffer[2048];
     std::ostringstream modules;
 
@@ -150,7 +150,8 @@ LONG __stdcall pVectoredExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo)
     PVOID callers[MAX_CALLERS];
     int count = CaptureStackBackTrace(0, MAX_CALLERS, callers, nullptr);
 
-    const char* frameFormat = "0x%08X called from 0x%08X (%s)\n";
+    const char* frameFormat = std::string(xorstr_("0x%08X called from 0x%08X (%s)\n")).c_str();
+    
     char frameBuffer[2048];
     std::ostringstream stackFrame;
     for (int i = 0; i < count; i++) {
@@ -185,8 +186,9 @@ LONG __stdcall pVectoredExceptionHandler(EXCEPTION_POINTERS* ExceptionInfo)
         ctx->Eip, modules.str().c_str(), stackFrame.str().c_str());
     [[clang::noinline]] Logger::WriteCrashReport(std::string(crashReportBuffer, stringLength));
     MessageBoxA(nullptr, xorstr_("Maple has encountered a crash and has created a crash report in the config directory!"), nullptr, MB_OK | MB_ICONERROR | MB_TOPMOST);
+    
     ExitProcess(0xB00BB00B);
-    VIRTUALIZER_FISH_WHITE_END
+    return EXCEPTION_CONTINUE_SEARCH;
 }
 
 DWORD WINAPI Initialize()
@@ -196,11 +198,11 @@ DWORD WINAPI Initialize()
 
     auto data_addr = data;
 
+    VIRTUALIZER_FISH_WHITE_START
+    [[clang::noinline]] AddVectoredExceptionHandler(false, pVectoredExceptionHandler);
     if (!data_addr)
         Security::CorruptMemory();
 
-    VIRTUALIZER_FISH_WHITE_START
-    [[clang::noinline]] AddVectoredExceptionHandler(false, pVectoredExceptionHandler);
     UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
 

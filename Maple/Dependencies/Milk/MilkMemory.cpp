@@ -22,7 +22,7 @@ MilkMemory::~MilkMemory()
 
 void MilkMemory::cacheMemoryRegions()
 {
-	VIRTUALIZER_TIGER_WHITE_START
+	VIRTUALIZER_TIGER_LITE_START
 	_memoryRegions.clear();
 
 	MEMORY_BASIC_INFORMATION32 mbi{};
@@ -63,7 +63,7 @@ void MilkMemory::cacheMemoryRegions()
 			if (mbi.Protect >= PAGE_READONLY && mbi.Protect <= PAGE_EXECUTE_WRITECOPY)
 				_memoryRegions.emplace_back(mbi);
 	}
-	VIRTUALIZER_TIGER_WHITE_END
+	VIRTUALIZER_TIGER_LITE_END
 }
 
 std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
