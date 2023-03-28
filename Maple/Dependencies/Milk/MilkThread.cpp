@@ -14,7 +14,7 @@ MilkThread::MilkThread(uintptr_t function, bool lazy)
 	_codeCaveLocation = _milkMemory.FindCodeCave();
 
 	if (!lazy)
-		Start();
+		[[clang::noinline]] Start();
 
 	VIRTUALIZER_FISH_RED_END
 }
@@ -62,15 +62,16 @@ void MilkThread::CleanCodeCave()
 
 HANDLE MilkThread::Start()
 {
+	VIRTUALIZER_LION_BLACK_START
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
 
 	if (!_codeCavePrepared)
-		prepareCodeCave();
+		[[clang::noinline]] prepareCodeCave();
 
 	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
-
+	VIRTUALIZER_LION_BLACK_END
 	return ret;
 }
 

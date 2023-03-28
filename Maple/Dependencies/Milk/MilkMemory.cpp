@@ -92,6 +92,7 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 
 uint32_t* MilkMemory::FindCodeCave()
 {
+	VIRTUALIZER_TIGER_LITE_START
 	for(auto const& region : _memoryRegions)
 	{
 		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
@@ -101,7 +102,8 @@ uint32_t* MilkMemory::FindCodeCave()
 			uint32_t readingAddress = region.BaseAddress;
 			while (readingAddress < region.BaseAddress + region.RegionSize)
 			{
-				auto memoryBuffer = ReadMemory(readingAddress, 1024);
+				std::vector<uint8_t> memoryBuffer;
+				[[clang::noinline]] memoryBuffer = ReadMemory(readingAddress, 1024);
 
 				int occurrences = 0;
 				for (size_t i = 0; i < memoryBuffer.size(); i++)
@@ -119,6 +121,6 @@ uint32_t* MilkMemory::FindCodeCave()
 			}
 		}
 	}
-
+	VIRTUALIZER_TIGER_LITE_END
 	return nullptr;
 }
