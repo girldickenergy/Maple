@@ -62,8 +62,6 @@ void MilkThread::CleanCodeCave()
 
 HANDLE MilkThread::Start()
 {
-	VIRTUALIZER_TIGER_BLACK_START
-
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
 
@@ -72,8 +70,6 @@ HANDLE MilkThread::Start()
 
 	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
-
-	VIRTUALIZER_TIGER_BLACK_END
 
 	return ret;
 }

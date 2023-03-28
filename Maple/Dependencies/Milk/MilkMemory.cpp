@@ -92,7 +92,6 @@ std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 
 uint32_t* MilkMemory::FindCodeCave()
 {
-	VIRTUALIZER_DOLPHIN_WHITE_START
 	for(auto const& region : _memoryRegions)
 	{
 		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
@@ -120,8 +119,6 @@ uint32_t* MilkMemory::FindCodeCave()
 			}
 		}
 	}
-
-	VIRTUALIZER_DOLPHIN_WHITE_END
 
 	return nullptr;
 }
