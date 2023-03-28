@@ -26,7 +26,7 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
-			
+
 	if (Config::Misc::Logging::DisableLogging)
 		return;
 
@@ -86,16 +86,17 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
 	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
-	
-	}
+
+}
 
 void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole, LPCWSTR consoleTitle)
 {
 	VIRTUALIZER_FISH_RED_START
-	
-	shouldEncrypt = encrypt;
-		
+
+		shouldEncrypt = encrypt;
+
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
+	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crashreport.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
@@ -108,9 +109,22 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 	}
 
 	clearLogFile();
-	
+
 	VIRTUALIZER_FISH_RED_END
-	}
+}
+
+void Logger::WriteCrashReport(std::string crashReport)
+{
+	std::fstream cr;
+	cr.open(crashReportFilePath, std::ios_base::out | std::ios_base::trunc);
+	cr.close();
+
+	std::fstream logFile;
+	logFile.open(crashReportFilePath, std::ios_base::out | std::ios_base::app);
+	logFile << "Please send this log in the #bug-reports channel in the Discord!\n\n";
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport.c_str(), xorstr_("vD5KJvfDRKZEaR9I")));
+	logFile.close();
+}
 
 void Logger::Log(LogSeverity severity, const char* format, ...)
 {
@@ -128,7 +142,7 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 
 void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 {
-	
+
 	if (!result)
 	{
 		char buffer[1024];
@@ -143,5 +157,5 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 		if (throwIfFalse)
 			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
 	}
-	
-	}
+
+}
