@@ -184,10 +184,12 @@ struct UserData
     int stringLength = sprintf(crashReportBuffer, exceptionMessageFormat, exceptionCode, exceptionAddress,
         ctx->Eax, ctx->Ecx, ctx->Edx, ctx->Ebx, ctx->Esp, ctx->Ebp, ctx->Esi, ctx->Edi,
         ctx->Eip, modules.str().c_str(), stackFrame.str().c_str());
+
     [[clang::noinline]] Logger::WriteCrashReport(std::string(crashReportBuffer, stringLength));
-    MessageBoxA(nullptr, xorstr_("Maple has encountered a crash and has created a crash report in the config directory!"), nullptr, MB_OK | MB_ICONERROR | MB_TOPMOST);
+    MessageBoxA(nullptr, xorstr_("Maple has encountered a crash and has created a crash report, please send it to us!\nYou can access this crash report next time you load Maple by navigating into the 'Misc' tab, then into the 'Logging' section and clicking 'Copy crash report to clipboard'."), nullptr, MB_OK | MB_ICONERROR | MB_TOPMOST);
     
     ExitProcess(0xB00BB00B);
+
     return EXCEPTION_CONTINUE_SEARCH;
 }
 

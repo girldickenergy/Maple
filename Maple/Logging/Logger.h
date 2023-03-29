@@ -13,6 +13,7 @@ class Logger
 	static inline LogSeverity scope;
 	static inline std::filesystem::path logFilePath;
 	static inline std::filesystem::path crashReportFilePath;
+	static inline std::string previousRuntimeLogData;
 
 	static void clearLogFile();
 	static void createLogEntry(LogSeverity severity, std::string message);
@@ -21,4 +22,7 @@ public:
 	static void WriteCrashReport(std::string crashReport);
 	static void Log(LogSeverity severity, const char* format, ...);
 	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);
+	static std::string GetPreviousRuntimeLogData();
+	static std::string GetRuntimeLogData();
+	static std::string GetCrashReportData();
 };

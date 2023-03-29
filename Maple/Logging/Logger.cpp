@@ -8,12 +8,20 @@
 #include <VirtualizerSDK.h>
 
 #include "xorstr.hpp"
-#include "../Config/Config.h"
 #include "../Storage/Storage.h"
 #include "../Utilities/Crypto/CryptoUtilities.h"
 
 void Logger::clearLogFile()
 {
+	if (exists(logFilePath))
+	{
+		std::ifstream ifs(logFilePath);
+		const std::string logData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+		ifs.close();
+
+		previousRuntimeLogData = logData;
+	}
+
 	if (logFilePath.empty())
 		return;
 
@@ -26,10 +34,6 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
 {
-
-	if (Config::Misc::Logging::DisableLogging)
-		return;
-
 	std::ostringstream entry;
 
 	auto time = std::time(nullptr);
@@ -40,36 +44,36 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	switch (severity)
 	{
-	case LogSeverity::Debug:
-		if (consoleHandle)
-			SetConsoleTextAttribute(consoleHandle, 8);
+		case LogSeverity::Debug:
+			if (consoleHandle)
+				SetConsoleTextAttribute(consoleHandle, 8);
 
-		entry << xorstr_("[DEBUG] ");
-		break;
-	case LogSeverity::Warning:
-		if (consoleHandle)
-			SetConsoleTextAttribute(consoleHandle, 6);
+			entry << xorstr_("[DEBUG] ");
+			break;
+		case LogSeverity::Warning:
+			if (consoleHandle)
+				SetConsoleTextAttribute(consoleHandle, 6);
 
-		entry << xorstr_("[WARNING] ");
-		break;
-	case LogSeverity::Error:
-		if (consoleHandle)
-			SetConsoleTextAttribute(consoleHandle, 4);
+			entry << xorstr_("[WARNING] ");
+			break;
+		case LogSeverity::Error:
+			if (consoleHandle)
+				SetConsoleTextAttribute(consoleHandle, 4);
 
-		entry << xorstr_("[ERROR] ");
-		break;
-	case LogSeverity::Assert:
-		if (consoleHandle)
-			SetConsoleTextAttribute(consoleHandle, 5);
+			entry << xorstr_("[ERROR] ");
+			break;
+		case LogSeverity::Assert:
+			if (consoleHandle)
+				SetConsoleTextAttribute(consoleHandle, 5);
 
-		entry << xorstr_("[ASSERT FAIL] ");
-		break;
-	default:
-		if (consoleHandle)
-			SetConsoleTextAttribute(consoleHandle, 7);
+			entry << xorstr_("[ASSERT FAIL] ");
+			break;
+		default:
+			if (consoleHandle)
+				SetConsoleTextAttribute(consoleHandle, 7);
 
-		entry << xorstr_("[INFO] ");
-		break;
+			entry << xorstr_("[INFO] ");
+			break;
 	}
 
 	entry << message;
@@ -86,14 +90,13 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
 	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
-
 }
 
 void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole, LPCWSTR consoleTitle)
 {
 	VIRTUALIZER_FISH_RED_START
 
-		shouldEncrypt = encrypt;
+	shouldEncrypt = encrypt;
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
 	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crashreport.log");
@@ -121,7 +124,6 @@ void Logger::WriteCrashReport(std::string crashReport)
 
 	std::fstream logFile;
 	logFile.open(crashReportFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << "Please send this log in the #bug-reports channel in the Discord!\n\n";
 	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport.c_str(), xorstr_("vD5KJvfDRKZEaR9I")));
 	logFile.close();
 }
@@ -142,7 +144,6 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 
 void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 {
-
 	if (!result)
 	{
 		char buffer[1024];
@@ -157,5 +158,33 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 		if (throwIfFalse)
 			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
 	}
+}
 
+std::string Logger::GetPreviousRuntimeLogData()
+{
+	return previousRuntimeLogData;
+}
+
+std::string Logger::GetRuntimeLogData()
+{
+	if (!exists(logFilePath))
+		return {};
+
+	std::ifstream ifs(logFilePath);
+	std::string logData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	return logData;
+}
+
+std::string Logger::GetCrashReportData()
+{
+	if (!exists(crashReportFilePath))
+		return {};
+
+	std::ifstream ifs(crashReportFilePath);
+	std::string crashData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	return crashData;
 }

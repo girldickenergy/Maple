@@ -146,11 +146,6 @@ public:
 		static inline bool BypassFailed = false;
 		static inline bool DisableSpectators;
 
-		struct Logging
-		{
-			static inline bool DisableLogging;
-		};
-
 		struct DiscordRichPresenceSpoofer
 		{
 			static inline bool Enabled;

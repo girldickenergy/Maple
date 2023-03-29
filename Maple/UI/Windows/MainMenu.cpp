@@ -15,8 +15,7 @@
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
-
-#include <VirtualizerSDK.h>
+#include "../../Logging/Logger.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -574,17 +573,16 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(2)));
+                Widgets::BeginPanel(xorstr_("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    Widgets::Checkbox(xorstr_("Disable logging"), &Config::Misc::Logging::DisableLogging); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Disables Maple's log output to both console and runtime.log file."));
-                    if (Widgets::Button(xorstr_("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
-                    {
-                        std::ifstream ifs(Storage::LogsDirectory + xorstr_("\\runtime.log"));
-                        const std::string logData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-                        ifs.close();
+                    if (Widgets::Button(xorstr_("Copy previous runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        ClipboardUtilities::Write(Logger::GetPreviousRuntimeLogData());
 
-                        ClipboardUtilities::Write(logData);
-                    }
+                    if (Widgets::Button(xorstr_("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        ClipboardUtilities::Write(Logger::GetRuntimeLogData());
+
+                    if (Widgets::Button(xorstr_("Copy crash report to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                        ClipboardUtilities::Write(Logger::GetCrashReportData());
                 }
                 Widgets::EndPanel();
 

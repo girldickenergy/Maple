@@ -92,7 +92,6 @@ void Config::loadDefaults()
 	Misc::ScoreSubmissionType = 0;
 	Misc::PromptBehaviorOnRetry = 0;
 	Misc::DisableSpectators = false;
-	Misc::Logging::DisableLogging = false;
 	Misc::DiscordRichPresenceSpoofer::Enabled = false;
 	Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled = false;
 	strcpy_s(Misc::DiscordRichPresenceSpoofer::CustomLargeImageText, xorstr_("peppy (rank #18,267,309)"));
@@ -282,8 +281,6 @@ void Config::Load()
 			Misc::PromptBehaviorOnRetry = std::stoi(value);
 		if (variable == xorstr_("Misc_DisableSpectators"))
 			Misc::DisableSpectators = value == xorstr_("1");
-		if (variable == xorstr_("Misc_Logging_DisableLogging"))
-			Misc::Logging::DisableLogging = value == xorstr_("1");
 		if (variable == xorstr_("Misc_DiscordRichPresenceSpoofer_Enabled"))
 			Misc::DiscordRichPresenceSpoofer::Enabled = value == xorstr_("1");
 		if (variable == xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled"))
@@ -386,7 +383,6 @@ void Config::Save()
 	ofs << xorstr_("Misc_ScoreSubmissionType=") << Misc::ScoreSubmissionType << std::endl;
 	ofs << xorstr_("Misc_PromptBehaviorOnRetry=") << Misc::PromptBehaviorOnRetry << std::endl;
 	ofs << xorstr_("Misc_DisableSpectators=") << Misc::DisableSpectators << std::endl;
-	ofs << xorstr_("Misc_Logging_DisableLogging=") << Misc::Logging::DisableLogging << std::endl;
 	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_Enabled=") << Misc::DiscordRichPresenceSpoofer::Enabled << std::endl;
 	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled << std::endl;
 	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageText=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageText << std::endl;
