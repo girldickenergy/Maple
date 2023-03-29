@@ -19,7 +19,7 @@ class Logger
 	static void createLogEntry(LogSeverity severity, std::string message);
 public:
 	static void Initialize(LogSeverity scope = LogSeverity::None, bool encrypt = false, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
-	static void WriteCrashReport(std::string crashReport);
+	static void WriteCrashReport(const std::string& crashReport);
 	static void Log(LogSeverity severity, const char* format, ...);
 	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);
 	static std::string GetPreviousRuntimeLogData();

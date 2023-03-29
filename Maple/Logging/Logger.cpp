@@ -116,15 +116,11 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 	VIRTUALIZER_FISH_RED_END
 }
 
-void Logger::WriteCrashReport(std::string crashReport)
+void Logger::WriteCrashReport(const std::string& crashReport)
 {
-	std::fstream cr;
-	cr.open(crashReportFilePath, std::ios_base::out | std::ios_base::trunc);
-	cr.close();
-
 	std::fstream logFile;
-	logFile.open(crashReportFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport.c_str(), xorstr_("vD5KJvfDRKZEaR9I")));
+	logFile.open(crashReportFilePath, std::ios_base::out | std::ios_base::trunc);
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("vD5KJvfDRKZEaR9I")));
 	logFile.close();
 }
 
