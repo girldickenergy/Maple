@@ -120,7 +120,7 @@ void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation
 	}
 }
 
-CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
+[[clang::optnone]] CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
 {
 	if (usingCLR)
 		return allocateCLRString(pwsz);
