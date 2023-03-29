@@ -288,6 +288,7 @@
     <ClCompile Include="Utilities\Anticheat\AnticheatUtilities.cpp" />
     <ClCompile Include="Utilities\Clipboard\ClipboardUtilities.cpp" />
     <ClCompile Include="Utilities\Crypto\CryptoUtilities.cpp" />
+    <ClCompile Include="Utilities\Exceptions\ExceptionHandler.cpp" />
     <ClCompile Include="Utilities\Strings\StringUtilities.cpp" />
     <ClCompile Include="Utilities\Textures\TextureLoader.cpp" />
   </ItemGroup>
@@ -622,6 +623,7 @@
     <ClInclude Include="Utilities\Anticheat\AnticheatUtilities.h" />
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h" />
     <ClInclude Include="Utilities\Crypto\CryptoUtilities.h" />
+    <ClInclude Include="Utilities\Exceptions\ExceptionHandler.h" />
     <ClInclude Include="Utilities\Security\Security.h" />
     <ClInclude Include="Utilities\Strings\StringUtilities.h" />
     <ClInclude Include="Utilities\Textures\TextureLoader.h" />

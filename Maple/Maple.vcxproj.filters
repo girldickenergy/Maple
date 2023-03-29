@@ -209,6 +209,9 @@
     <ClCompile Include="UI\Windows\MainMenu.cpp">
       <Filter>UI\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities\Exceptions\ExceptionHandler.cpp">
+      <Filter>Utilities\Exceptions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -435,6 +438,9 @@
     </Filter>
     <Filter Include="Dependencies\VirtualizerSDK">
       <UniqueIdentifier>{2ca469bf-390f-43f5-b404-7ba7aec46ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Exceptions">
+      <UniqueIdentifier>{7c99958d-252f-4938-a052-43347cd4945f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1436,6 +1442,9 @@
     </ClInclude>
     <ClInclude Include="Dependencies\VirtualizerSDK\VirtualizerSDK_CustomVMs_BorlandC_inline.h">
       <Filter>Dependencies\VirtualizerSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Exceptions\ExceptionHandler.h">
+      <Filter>Utilities\Exceptions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
