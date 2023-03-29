@@ -575,13 +575,13 @@ void MainMenu::Render()
 
                 Widgets::BeginPanel(xorstr_("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
                 {
-                    if (Widgets::Button(xorstr_("Copy previous runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    if (Widgets::Button(xorstr_("Copy previous runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
                         ClipboardUtilities::Write(Logger::GetPreviousRuntimeLogData());
 
-                    if (Widgets::Button(xorstr_("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    if (Widgets::Button(xorstr_("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
                         ClipboardUtilities::Write(Logger::GetRuntimeLogData());
 
-                    if (Widgets::Button(xorstr_("Copy crash report to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
+                    if (Widgets::Button(xorstr_("Copy crash report to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
                         ClipboardUtilities::Write(Logger::GetCrashReportData());
                 }
                 Widgets::EndPanel();
