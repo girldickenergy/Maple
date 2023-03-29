@@ -103,8 +103,6 @@ DWORD WINAPI Initialize()
 
     InitializeMaple();
 
-    *(int*)(0) = 1337;
-
     VIRTUALIZER_FISH_WHITE_END
 
     return 0;
