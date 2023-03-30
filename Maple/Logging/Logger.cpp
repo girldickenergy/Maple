@@ -25,11 +25,18 @@ void Logger::clearLogFile()
 	if (logFilePath.empty())
 		return;
 
+	if (performanceReportFilePath.empty())
+		return;
+
 	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
 	logFile.close();
+
+	std::fstream performanceReportFile;
+	performanceReportFile.open(performanceReportFilePath, std::ios_base::out | std::ios_base::trunc);
+	performanceReportFile.close();
 }
 
 void Logger::createLogEntry(LogSeverity severity, std::string message)
@@ -100,6 +107,7 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
 	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crashreport.log");
+	Logger::performanceReportFilePath = Storage::LogsDirectory + xorstr_("\\performancereport.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
@@ -154,6 +162,56 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 		if (throwIfFalse)
 			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
 	}
+}
+
+void Logger::StartPerformanceCounter(std::string guid)
+{
+	auto time = std::time(nullptr);
+	tm timeStruct{};
+	localtime_s(&timeStruct, &time);
+	performanceReportMap.emplace(std::make_pair(guid, std::make_pair(timeStruct, timeStruct)));
+}
+
+void Logger::StopPerformanceCounter(std::string guid)
+{
+	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
+	// Find index
+	for (auto& pr : performanceReportMap)
+	{
+		if (pr.first == guid)
+		{
+			performanceReport = pr;
+			break;
+		}
+	}
+
+	if (performanceReport.first == "")
+		return;
+
+	auto time = std::time(nullptr);
+	tm timeStruct{};
+	localtime_s(&timeStruct, &time);
+	performanceReport.second = std::make_pair(std::get<0>(performanceReport.second), timeStruct);
+
+	// Write to file
+	if (performanceReportFilePath.empty())
+		return;
+
+	std::string lineToWrite;
+	std::ostringstream entry;
+
+	entry << xorstr_("Performance Counter finished! ") << guid << xorstr_(" Start: ") <<
+		std::put_time(&std::get<0>(performanceReport.second), xorstr_("%c")) << xorstr_(" End: ") << std::put_time(&std::get<1>(performanceReport.second), xorstr_("%c"));
+
+	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
+
+	std::fstream logFile;
+	logFile.open(performanceReportFilePath, std::ios_base::out | std::ios_base::app);
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
+	logFile.close();
+
+	// Remove from performanceReportMap
+	performanceReportMap.erase(guid);
 }
 
 std::string Logger::GetPreviousRuntimeLogData()

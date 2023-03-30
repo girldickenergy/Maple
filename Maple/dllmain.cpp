@@ -73,7 +73,7 @@ DWORD WINAPI Initialize()
     auto data_addr = data;
 
     VIRTUALIZER_FISH_WHITE_START
-
+    Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
     ExceptionHandler::Setup();
 
     if (!data_addr)
@@ -81,27 +81,27 @@ DWORD WINAPI Initialize()
 
     UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
+    
+    // Initialize this a bit earlier just so we can log more data earlier.
+    Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
+
+#ifdef _DEBUG
+    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
+#else
+    Logger::Initialize(LogSeverity::All, true);
+#endif
 
     memset(data_addr, 0x0, sizeof(UserData));
 
     Communication::Connect();
 
-    int retries = 0;
     while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
-    {
-        if (retries >= 50)
-        {
-            Logger::Log(LogSeverity::Error, xorstr_("Maple has encountered a forged stack franme exception! Error code: %i"), 0xb00bb00b);
-
-            Security::CorruptMemory();
-        }
-        retries++;
         Sleep(500);
-    }
 
     auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(Communication::SendAnticheat));
 
     InitializeMaple();
+    Logger::StopPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
 
     VIRTUALIZER_FISH_WHITE_END
 
@@ -115,14 +115,7 @@ void InitializeMaple()
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
-    Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
     Config::Initialize();
-
-#ifdef _DEBUG
-    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
-#else
-    Logger::Initialize(LogSeverity::All, true);
-#endif
 
     Logger::Log(LogSeverity::Info, xorstr_("Initialization started."));
 

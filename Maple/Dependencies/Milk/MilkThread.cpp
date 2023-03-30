@@ -31,7 +31,7 @@ MilkThread::~MilkThread()
 
 void MilkThread::prepareCodeCave()
 {
-	VIRTUALIZER_TIGER_BLACK_START
+	VIRTUALIZER_TIGER_LITE_START
 
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -42,7 +42,7 @@ void MilkThread::prepareCodeCave()
 
 	_codeCavePrepared = true;
 
-	VIRTUALIZER_TIGER_BLACK_END
+	VIRTUALIZER_TIGER_LITE_END
 }
 
 void MilkThread::CleanCodeCave()
