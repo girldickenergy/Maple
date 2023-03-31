@@ -26,8 +26,8 @@ public:
 	static void WriteCrashReport(const std::string& crashReport);
 	static void Log(LogSeverity severity, const char* format, ...);
 	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);
-	static void StartPerformanceCounter(std::string guid);
-	static void StopPerformanceCounter(std::string guid);
+	static void StartPerformanceCounter(const std::string& guid);
+	static void StopPerformanceCounter(const std::string& guid);
 	static std::string GetPreviousRuntimeLogData();
 	static std::string GetRuntimeLogData();
 	static std::string GetCrashReportData();

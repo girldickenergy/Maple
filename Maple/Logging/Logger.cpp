@@ -25,14 +25,14 @@ void Logger::clearLogFile()
 	if (logFilePath.empty())
 		return;
 
-	if (performanceReportFilePath.empty())
-		return;
-
 	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
 	logFile.close();
+
+	if (performanceReportFilePath.empty())
+		return;
 
 	std::fstream performanceReportFile;
 	performanceReportFile.open(performanceReportFilePath, std::ios_base::out | std::ios_base::trunc);
@@ -106,8 +106,8 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 	shouldEncrypt = encrypt;
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
-	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crashreport.log");
-	Logger::performanceReportFilePath = Storage::LogsDirectory + xorstr_("\\performancereport.log");
+	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
+	Logger::performanceReportFilePath = Storage::LogsDirectory + xorstr_("\\performance.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
@@ -164,7 +164,7 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 	}
 }
 
-void Logger::StartPerformanceCounter(std::string guid)
+void Logger::StartPerformanceCounter(const std::string& guid)
 {
 	auto time = std::time(nullptr);
 	tm timeStruct{};
@@ -172,7 +172,7 @@ void Logger::StartPerformanceCounter(std::string guid)
 	performanceReportMap.emplace(std::make_pair(guid, std::make_pair(timeStruct, timeStruct)));
 }
 
-void Logger::StopPerformanceCounter(std::string guid)
+void Logger::StopPerformanceCounter(const std::string& guid)
 {
 	VIRTUALIZER_MUTATE_ONLY_START
 	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
@@ -186,7 +186,7 @@ void Logger::StopPerformanceCounter(std::string guid)
 		}
 	}
 
-	if (performanceReport.first == "")
+	if (performanceReport.first.empty())
 		return;
 
 	auto time = std::time(nullptr);

@@ -102,7 +102,7 @@
 
     [[clang::noinline]] Logger::WriteCrashReport(crashReport.str());
 
-    MessageBoxA(nullptr, xorstr_("Maple has encountered a crash and created a crash report, please send it to us!\nYou can access this crash report next time you load Maple by navigating into the 'Misc' tab, then into the 'Logging' section and clicking 'Copy crash report to clipboard'."), nullptr, MB_OK | MB_ICONERROR | MB_TOPMOST);
+    MessageBoxA(nullptr, xorstr_("Maple has encountered a crash and created a crash log, please send it to us!\nYou can access this crash log next time you load Maple by navigating into the 'Misc' tab, then into the 'Logging' section and clicking 'Copy crash report to clipboard'."), nullptr, MB_OK | MB_ICONERROR | MB_TOPMOST);
 
     ExitProcess(0xB00BB00B);
 
