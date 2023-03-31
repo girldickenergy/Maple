@@ -13,11 +13,11 @@ class Logger
 	static inline HANDLE consoleHandle = nullptr;
 	static inline LogSeverity scope;
 	static inline std::filesystem::path logFilePath;
-	static inline std::filesystem::path crashReportFilePath;
-	static inline std::filesystem::path performanceReportFilePath;
+	static inline std::filesystem::path crashLogFilePath;
+	static inline std::filesystem::path performanceLogFilePath;
 	static inline std::string previousRuntimeLogData;
 
-	static inline std::map<std::string, std::tuple<tm, tm>> performanceReportMap;
+	static inline std::map<std::string, std::tuple<tm, tm>> performanceLogMap;
 
 	static void clearLogFile();
 	static void createLogEntry(LogSeverity severity, std::string message);
@@ -30,5 +30,6 @@ public:
 	static void StopPerformanceCounter(const std::string& guid);
 	static std::string GetPreviousRuntimeLogData();
 	static std::string GetRuntimeLogData();
-	static std::string GetCrashReportData();
+	static std::string GetCrashLogData();
+	static std::string GetPerformanceLogData();
 };

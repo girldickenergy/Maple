@@ -31,11 +31,11 @@ void Logger::clearLogFile()
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
 	logFile.close();
 
-	if (performanceReportFilePath.empty())
+	if (performanceLogFilePath.empty())
 		return;
 
 	std::fstream performanceReportFile;
-	performanceReportFile.open(performanceReportFilePath, std::ios_base::out | std::ios_base::trunc);
+	performanceReportFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::trunc);
 	performanceReportFile.close();
 }
 
@@ -106,8 +106,8 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 	shouldEncrypt = encrypt;
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
-	Logger::crashReportFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
-	Logger::performanceReportFilePath = Storage::LogsDirectory + xorstr_("\\performance.log");
+	Logger::crashLogFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
+	Logger::performanceLogFilePath = Storage::LogsDirectory + xorstr_("\\performance.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
@@ -127,7 +127,7 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 void Logger::WriteCrashReport(const std::string& crashReport)
 {
 	std::fstream logFile;
-	logFile.open(crashReportFilePath, std::ios_base::out | std::ios_base::trunc);
+	logFile.open(crashLogFilePath, std::ios_base::out | std::ios_base::trunc);
 	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("vD5KJvfDRKZEaR9I")));
 	logFile.close();
 }
@@ -169,7 +169,7 @@ void Logger::StartPerformanceCounter(const std::string& guid)
 	auto time = std::time(nullptr);
 	tm timeStruct{};
 	localtime_s(&timeStruct, &time);
-	performanceReportMap.emplace(std::make_pair(guid, std::make_pair(timeStruct, timeStruct)));
+	performanceLogMap.emplace(std::make_pair(guid, std::make_pair(timeStruct, timeStruct)));
 }
 
 void Logger::StopPerformanceCounter(const std::string& guid)
@@ -177,7 +177,7 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 	VIRTUALIZER_MUTATE_ONLY_START
 	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
 	// Find index
-	for (auto& pr : performanceReportMap)
+	for (auto& pr : performanceLogMap)
 	{
 		if (pr.first == guid)
 		{
@@ -195,7 +195,7 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 	performanceReport.second = std::make_pair(std::get<0>(performanceReport.second), timeStruct);
 
 	// Write to file
-	if (performanceReportFilePath.empty())
+	if (performanceLogFilePath.empty())
 		return;
 
 	std::string lineToWrite;
@@ -207,12 +207,12 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
 
 	std::fstream logFile;
-	logFile.open(performanceReportFilePath, std::ios_base::out | std::ios_base::app);
+	logFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::app);
 	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
 	logFile.close();
 
 	// Remove from performanceReportMap
-	performanceReportMap.erase(guid);
+	performanceLogMap.erase(guid);
 	VIRTUALIZER_MUTATE_ONLY_END
 }
 
@@ -233,14 +233,26 @@ std::string Logger::GetRuntimeLogData()
 	return logData;
 }
 
-std::string Logger::GetCrashReportData()
+std::string Logger::GetCrashLogData()
 {
-	if (!exists(crashReportFilePath))
+	if (!exists(crashLogFilePath))
 		return {};
 
-	std::ifstream ifs(crashReportFilePath);
+	std::ifstream ifs(crashLogFilePath);
 	std::string crashData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
 	return crashData;
+}
+
+std::string Logger::GetPerformanceLogData()
+{
+	if (!exists(performanceLogFilePath))
+		return {};
+
+	std::ifstream ifs(performanceLogFilePath);
+	std::string performanceData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+	ifs.close();
+
+	return performanceData;
 }

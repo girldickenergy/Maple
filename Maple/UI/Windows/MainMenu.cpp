@@ -581,8 +581,11 @@ void MainMenu::Render()
                     if (Widgets::Button(xorstr_("Copy runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
                         ClipboardUtilities::Write(Logger::GetRuntimeLogData());
 
-                    if (Widgets::Button(xorstr_("Copy crash report to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
-                        ClipboardUtilities::Write(Logger::GetCrashReportData());
+                    if (Widgets::Button(xorstr_("Copy crash log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
+                        ClipboardUtilities::Write(Logger::GetCrashLogData());
+
+                    if (Widgets::Button(xorstr_("Copy performance log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
+                        ClipboardUtilities::Write(Logger::GetPerformanceLogData());
                 }
                 Widgets::EndPanel();
 
