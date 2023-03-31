@@ -4,12 +4,10 @@
 
 MilkMemory::MilkMemory()
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_WHITE_START
 	_memoryRegions = std::vector<MemoryRegion>();
 	cacheMemoryRegions();
-
-	CODE_CAVE_SEARCH_OFFSET = reinterpret_cast<uintptr_t>(GetModuleHandleA("kernel32.dll")) - 0x10000000;
-	VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_WHITE_END
 }
 
 MilkMemory::~MilkMemory()
@@ -22,7 +20,7 @@ MilkMemory::~MilkMemory()
 
 void MilkMemory::cacheMemoryRegions()
 {
-	VIRTUALIZER_TIGER_LITE_START
+	VIRTUALIZER_MUTATE_ONLY_START
 	_memoryRegions.clear();
 
 	MEMORY_BASIC_INFORMATION32 mbi{};
@@ -63,12 +61,11 @@ void MilkMemory::cacheMemoryRegions()
 			if (mbi.Protect >= PAGE_READONLY && mbi.Protect <= PAGE_EXECUTE_WRITECOPY)
 				_memoryRegions.emplace_back(mbi);
 	}
-	VIRTUALIZER_TIGER_LITE_END
+	VIRTUALIZER_MUTATE_ONLY_END
 }
 
 std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 {
-	VIRTUALIZER_TIGER_LITE_START
 	auto buffer = std::vector<uint8_t>(size);
 	for(SIZE_T i = 0; i < size; i++)
 	{
@@ -76,23 +73,21 @@ std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 		buffer[i] = *address;
 	}
 
-	VIRTUALIZER_TIGER_LITE_END
-
 	return buffer;
 }
 
 std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_LITE_START
 	auto ret = &_memoryRegions;
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_LITE_END
 
 	return ret;
 }
 
 uint32_t* MilkMemory::FindCodeCave()
 {
-	VIRTUALIZER_TIGER_LITE_START
+	VIRTUALIZER_MUTATE_ONLY_START
 	for(auto const& region : _memoryRegions)
 	{
 		if ((region.State & MEM_COMMIT) && (region.Protect & PAGE_EXECUTE_READ) &&
@@ -103,7 +98,7 @@ uint32_t* MilkMemory::FindCodeCave()
 			while (readingAddress < region.BaseAddress + region.RegionSize)
 			{
 				std::vector<uint8_t> memoryBuffer;
-				[[clang::noinline]] memoryBuffer = ReadMemory(readingAddress, 1024);
+				memoryBuffer = ReadMemory(readingAddress, 1024);
 
 				int occurrences = 0;
 				for (size_t i = 0; i < memoryBuffer.size(); i++)
@@ -121,6 +116,6 @@ uint32_t* MilkMemory::FindCodeCave()
 			}
 		}
 	}
-	VIRTUALIZER_TIGER_LITE_END
+	VIRTUALIZER_MUTATE_ONLY_END
 	return nullptr;
 }

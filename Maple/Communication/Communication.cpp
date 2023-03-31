@@ -238,10 +238,12 @@ void Communication::Disconnect()
 [[clang::optnone]] void Communication::SendAnticheat()
 {
 	VIRTUALIZER_TIGER_LITE_START
+	Logger::StartPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 
 	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
 	tcpClient.Send(authStreamStageOneRequest.Serialize());
 
+	Logger::StopPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 	VIRTUALIZER_TIGER_LITE_END
 }
 

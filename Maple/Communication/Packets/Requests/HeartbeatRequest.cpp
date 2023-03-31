@@ -33,7 +33,7 @@ std::vector<unsigned char> HeartbeatRequest::Serialize()
 	packet.push_back(static_cast<unsigned char>(PacketType::Heartbeat));
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
-	Logger::StartPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
+	Logger::StopPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
 	VIRTUALIZER_TIGER_LITE_END
 
 	return packet;

@@ -174,6 +174,7 @@ void Logger::StartPerformanceCounter(std::string guid)
 
 void Logger::StopPerformanceCounter(std::string guid)
 {
+	VIRTUALIZER_MUTATE_ONLY_START
 	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
 	// Find index
 	for (auto& pr : performanceReportMap)
@@ -212,6 +213,7 @@ void Logger::StopPerformanceCounter(std::string guid)
 
 	// Remove from performanceReportMap
 	performanceReportMap.erase(guid);
+	VIRTUALIZER_MUTATE_ONLY_END
 }
 
 std::string Logger::GetPreviousRuntimeLogData()

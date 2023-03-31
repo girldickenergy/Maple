@@ -5,7 +5,7 @@
 
 MilkThread::MilkThread(uintptr_t function, bool lazy)
 {
-	VIRTUALIZER_FISH_RED_START
+	VIRTUALIZER_TIGER_WHITE_START
 
 	_codeCavePrepared = false;
 	_milkMemory = MilkMemory();
@@ -16,7 +16,7 @@ MilkThread::MilkThread(uintptr_t function, bool lazy)
 	if (!lazy)
 		[[clang::noinline]] Start();
 
-	VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_TIGER_WHITE_END
 }
 
 MilkThread::~MilkThread()
@@ -47,7 +47,7 @@ void MilkThread::prepareCodeCave()
 
 void MilkThread::CleanCodeCave()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_LITE_START
 
 	DWORD oldProtection;
 	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -57,12 +57,12 @@ void MilkThread::CleanCodeCave()
 
 	_codeCavePrepared = false;
 
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_LITE_END
 }
 
 HANDLE MilkThread::Start()
 {
-	VIRTUALIZER_LION_BLACK_START
+	VIRTUALIZER_TIGER_LITE_START
 	if (_codeCaveLocation == nullptr)
 		return nullptr; //TODO: error logging & crash osu!
 
@@ -71,7 +71,7 @@ HANDLE MilkThread::Start()
 
 	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
 		nullptr, NULL, nullptr);
-	VIRTUALIZER_LION_BLACK_END
+	VIRTUALIZER_TIGER_LITE_END
 	return ret;
 }
 
