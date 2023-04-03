@@ -62,45 +62,10 @@ void __fastcall InputManager::mouseViaKeyboardControlsHook()
 	{
 		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : Relax::Update();
 
-		const bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
-		const bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;
-		const bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
-		const bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
-
-		const uintptr_t leftButton1Address = Memory::Objects[xorstr_("InputManager::leftButton1")];
-		const uintptr_t leftButton1iAddress = Memory::Objects[xorstr_("InputManager::leftButton1i")];
-		const uintptr_t leftButton2Address = Memory::Objects[xorstr_("InputManager::leftButton2")];
-		const uintptr_t leftButton2iAddress = Memory::Objects[xorstr_("InputManager::leftButton2i")];
-		const uintptr_t rightButton1Address = Memory::Objects[xorstr_("InputManager::rightButton1")];
-		const uintptr_t rightButton1iAddress = Memory::Objects[xorstr_("InputManager::rightButton1i")];
-		const uintptr_t rightButton2Address = Memory::Objects[xorstr_("InputManager::rightButton2")];
-		const uintptr_t rightButton2iAddress = Memory::Objects[xorstr_("InputManager::rightButton2i")];
-		const uintptr_t leftButtonAddress = Memory::Objects[xorstr_("InputManager::leftButton")];
-		const uintptr_t rightButtonAddress = Memory::Objects[xorstr_("InputManager::rightButton")];
-
-		if (leftButton1Address && leftButton1iAddress && leftButton2Address && leftButton2iAddress && rightButton1Address && rightButton1iAddress && rightButton2Address && rightButton2iAddress && leftButtonAddress && rightButtonAddress)
-		{
-			*reinterpret_cast<bool*>(leftButton1iAddress) = (!*reinterpret_cast<bool*>(leftButton1Address) && (m1Pressed || k1Pressed));
-			*reinterpret_cast<bool*>(leftButton1Address) = m1Pressed || k1Pressed;
-
-			*reinterpret_cast<bool*>(leftButton2iAddress) = (!*reinterpret_cast<bool*>(leftButton2Address) && k1Pressed);
-			*reinterpret_cast<bool*>(leftButton2Address) = k1Pressed;
-
-			*reinterpret_cast<bool*>(rightButton1iAddress) = (!*reinterpret_cast<bool*>(rightButton1Address) && (m2Pressed || k2Pressed));
-			*reinterpret_cast<bool*>(rightButton1Address) = m2Pressed || k2Pressed;
-
-			*reinterpret_cast<bool*>(rightButton2iAddress) = (!*reinterpret_cast<bool*>(rightButton2Address) && k2Pressed);
-			*reinterpret_cast<bool*>(rightButton2Address) = k2Pressed;
-
-			if (*reinterpret_cast<bool*>(leftButton2iAddress) || *reinterpret_cast<bool*>(leftButton1iAddress))
-				*reinterpret_cast<int*>(leftButtonAddress) = 1;
-
-			if (*reinterpret_cast<bool*>(rightButton2iAddress) || *reinterpret_cast<bool*>(rightButton1iAddress))
-				*reinterpret_cast<int*>(rightButtonAddress) = 1;
-		}
+		SetKeyStates(keys);
 	}
 
-	return oMouseViaKeyboardControls();
+	[[clang::musttail]] return oMouseViaKeyboardControls();
 }
 
 void InputManager::Initialize()
@@ -124,7 +89,7 @@ void InputManager::Initialize()
 	Memory::AddHook(xorstr_("MouseManager::SetMousePosition"), xorstr_("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
 	Memory::AddHook(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 Vector2 InputManager::GetCursorPosition()
@@ -161,4 +126,44 @@ Vector2 InputManager::Resync(Vector2 displacement, Vector2 offset, float resyncF
 		: std::min(0.f, dpi.Y <= 0.f ? offset.Y - dpi.Y : offset.Y + dpi.Y);
 
 	return offset;
+}
+
+void InputManager::SetKeyStates(OsuKeys keys)
+{
+	const bool m1Pressed = (keys & OsuKeys::M1) > OsuKeys::None;
+	const bool k1Pressed = (keys & OsuKeys::K1) > OsuKeys::None;
+	const bool m2Pressed = (keys & OsuKeys::M2) > OsuKeys::None;
+	const bool k2Pressed = (keys & OsuKeys::K2) > OsuKeys::None;
+
+	const uintptr_t leftButton1Address = Memory::Objects[xorstr_("InputManager::leftButton1")];
+	const uintptr_t leftButton1iAddress = Memory::Objects[xorstr_("InputManager::leftButton1i")];
+	const uintptr_t leftButton2Address = Memory::Objects[xorstr_("InputManager::leftButton2")];
+	const uintptr_t leftButton2iAddress = Memory::Objects[xorstr_("InputManager::leftButton2i")];
+	const uintptr_t rightButton1Address = Memory::Objects[xorstr_("InputManager::rightButton1")];
+	const uintptr_t rightButton1iAddress = Memory::Objects[xorstr_("InputManager::rightButton1i")];
+	const uintptr_t rightButton2Address = Memory::Objects[xorstr_("InputManager::rightButton2")];
+	const uintptr_t rightButton2iAddress = Memory::Objects[xorstr_("InputManager::rightButton2i")];
+	const uintptr_t leftButtonAddress = Memory::Objects[xorstr_("InputManager::leftButton")];
+	const uintptr_t rightButtonAddress = Memory::Objects[xorstr_("InputManager::rightButton")];
+
+	if (leftButton1Address && leftButton1iAddress && leftButton2Address && leftButton2iAddress && rightButton1Address && rightButton1iAddress && rightButton2Address && rightButton2iAddress && leftButtonAddress && rightButtonAddress)
+	{
+		*reinterpret_cast<bool*>(leftButton1iAddress) = (!*reinterpret_cast<bool*>(leftButton1Address) && (m1Pressed || k1Pressed));
+		*reinterpret_cast<bool*>(leftButton1Address) = m1Pressed || k1Pressed;
+
+		*reinterpret_cast<bool*>(leftButton2iAddress) = (!*reinterpret_cast<bool*>(leftButton2Address) && k1Pressed);
+		*reinterpret_cast<bool*>(leftButton2Address) = k1Pressed;
+
+		*reinterpret_cast<bool*>(rightButton1iAddress) = (!*reinterpret_cast<bool*>(rightButton1Address) && (m2Pressed || k2Pressed));
+		*reinterpret_cast<bool*>(rightButton1Address) = m2Pressed || k2Pressed;
+
+		*reinterpret_cast<bool*>(rightButton2iAddress) = (!*reinterpret_cast<bool*>(rightButton2Address) && k2Pressed);
+		*reinterpret_cast<bool*>(rightButton2Address) = k2Pressed;
+
+		if (*reinterpret_cast<bool*>(leftButton2iAddress) || *reinterpret_cast<bool*>(leftButton1iAddress))
+			*reinterpret_cast<int*>(leftButtonAddress) = 1;
+
+		if (*reinterpret_cast<bool*>(rightButton2iAddress) || *reinterpret_cast<bool*>(rightButton1iAddress))
+			*reinterpret_cast<int*>(rightButtonAddress) = 1;
+	}
 }

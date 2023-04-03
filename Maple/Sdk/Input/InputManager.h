@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Vector2.h"
+#include "Osu/Keys/OsuKeys.h"
 
 class InputManager
 {
@@ -34,4 +35,5 @@ public:
 	static Vector2 GetAccumulatedOffset();
 	static void SetAccumulatedOffset(Vector2 value);
 	static Vector2 Resync(Vector2 displacement, Vector2 offset, float resyncFactor);
+	static void SetKeyStates(OsuKeys keys);
 };
