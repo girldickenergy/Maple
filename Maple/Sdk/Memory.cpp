@@ -12,6 +12,7 @@
 #include "../Utilities/Security/Security.h"
 #include "../Dependencies/Milk/Milk.h"
 #include "../Config/Config.h"
+#include "Scoring/Score.h"
 
 void Memory::jitCallback(uintptr_t address, unsigned int size)
 {
@@ -23,6 +24,34 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 		{
 			Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved dynamically!"), it->first.c_str());
 			Objects[it->first] = scanResult;
+
+			// special handling for submit hook. holy fuck.
+			if (it->first == xorstr_("Player::HandleScoreSubmission"))
+			{
+				if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
+				{
+					void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
+					Score::SetOriginal(submit);
+
+					int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
+					*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
+
+					Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
+
+					if (!Milk::Get().DoCRCBypass(scanResult))
+					{
+						Config::Misc::ForceDisableScoreSubmission = true;
+						Config::Misc::BypassFailed = true;
+
+						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->first.c_str());
+					}
+				}
+				else
+				{
+					Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s. Score::Submit!"));
+					Security::CorruptMemory();
+				}
+			}
 
 			it = pendingObjects.erase(it);
 		}
@@ -114,6 +143,34 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 		Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved!"), name.c_str());
 
 		Objects[name] = scanResult;
+
+		// special handling for submit hook. holy fuck.
+		if (name == xorstr_("Player::HandleScoreSubmission"))
+		{
+			if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
+			{
+				void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
+				Score::SetOriginal(submit);
+
+				int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
+				*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
+
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
+
+				if (!Milk::Get().DoCRCBypass(scanResult))
+				{
+					Config::Misc::ForceDisableScoreSubmission = true;
+					Config::Misc::BypassFailed = true;
+
+					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name.c_str());
+				}
+			}
+			else
+			{
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s. Score::Submit!"));
+				Security::CorruptMemory();
+			}
+		}
 	}
 	else
 	{

@@ -69,12 +69,17 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 void Score::Initialize()
 {
-	VIRTUALIZER_FISH_RED_START
-	
-	Memory::AddObject(xorstr_("Score::Submit"), xorstr_("E9 ?? ?? ?? ?? 53 8B F1 83 BE ?? ?? ?? ?? 00 7E 05 5B 5E 5F"), 1, 1, true);
-	Memory::AddHook(xorstr_("Score::Submit"), xorstr_("Score::Submit"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit), true);
 
-	VIRTUALIZER_FISH_RED_END
+}
+
+void* Score::GetHook()
+{
+	return submitHook;
+}
+
+void Score::SetOriginal(void* val)
+{
+	oSubmit = static_cast<fnSubmit>(val);
 }
 
 void Score::Submit()

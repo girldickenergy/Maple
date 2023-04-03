@@ -573,7 +573,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                Widgets::BeginPanel(xorstr_("Logging"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4)));
                 {
                     if (Widgets::Button(xorstr_("Copy previous runtime log to clipboard"), ImVec2(ImGui::GetWindowWidth() * 0.75f, ImGui::GetFrameHeight())))
                         ClipboardUtilities::Write(Logger::GetPreviousRuntimeLogData());

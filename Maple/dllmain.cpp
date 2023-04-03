@@ -182,7 +182,6 @@ void WaitForCriticalSDKToInitialize()
     
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
-    uintptr_t submit = Memory::Objects[xorstr_("Score::Submit")];
 
     VIRTUALIZER_FISH_RED_END
     
@@ -190,7 +189,7 @@ void WaitForCriticalSDKToInitialize()
 #ifdef NO_BYPASS
     while (!clientHash || !updateTiming/*||!submit*/)
 #else
-    while (!clientHash || !updateTiming || !submit)
+    while (!clientHash || !updateTiming)
 #endif
     {
         VIRTUALIZER_FISH_RED_START
