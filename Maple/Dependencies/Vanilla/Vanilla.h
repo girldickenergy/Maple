@@ -14,7 +14,6 @@ class Vanilla
 	static int __stdcall compileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
 
 	static inline std::mutex mutex;
-	static inline std::vector<std::reference_wrapper<std::uintptr_t>> relocations;
 
 	typedef void(__stdcall* fnRelocateAddress)(uint8_t** block);
 	static inline fnRelocateAddress oRelocateAddress;
@@ -28,6 +27,8 @@ class Vanilla
 	static inline bool usingCLR = false;
 	static inline fnJITCallback jitCallback = nullptr;
 public:
+	static inline std::vector<std::reference_wrapper<std::uintptr_t>> Relocations;
+
 	static VanillaResult Initialize(bool useCLR = false);
 	static void Shutdown();
 	

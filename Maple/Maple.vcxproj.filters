@@ -1446,6 +1446,57 @@
     <ClInclude Include="Utilities\Exceptions\ExceptionHandler.h">
       <Filter>Utilities\Exceptions</Filter>
     </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Editor.h">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\EditorGlobals.h">
+      <Filter>Features\ReplayEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickTimeline.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\EventTimeline.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\Click.h">
+      <Filter>Features\ReplayEditor\Components\GUIComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Drawable.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Drawing\DrawSlider.h">
+      <Filter>Features\ReplayEditor\Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Playfields\OsuPlayfield.h">
+      <Filter>Features\ReplayEditor\Playfields</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\clipper\clipper.hpp">
+      <Filter>Dependencies\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Beatmaps\Beatmap.h">
+      <Filter>SDK\Beatmaps</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Beatmaps\BeatmapManager.h">
+      <Filter>SDK\Beatmaps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\DirectX\d3dx9.lib">

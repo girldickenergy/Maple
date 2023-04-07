@@ -1,6 +1,7 @@
 #include "AimAssist.h"
 
 #define NOMINMAX
+#include <algorithm>
 #include <cmath>
 #include <algorithm>
 

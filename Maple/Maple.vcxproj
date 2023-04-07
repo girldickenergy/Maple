@@ -46,6 +46,12 @@
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -99,6 +105,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
@@ -107,6 +126,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,6 +167,23 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>opengl32.lib;cryptlib_dbg.lib;libcurl_a.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;NO_BYPASS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>opengl32.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -235,6 +276,7 @@
     <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
     <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp" />
+    <ClCompile Include="Dependencies\clipper\clipper.cpp" />
     <ClCompile Include="Dependencies\gl3w\GL\gl3w.c" />
     <ClCompile Include="Dependencies\hde32\hde32.c" />
     <ClCompile Include="Dependencies\ImGui\imgui.cpp" />
@@ -258,10 +300,25 @@
     <ClCompile Include="Features\Enlighten\Enlighten.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
     <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Drawable.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\ClickTimeline.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\EventTimeline.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Drawing\DrawSlider.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Editor.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Playfields\OsuPlayfield.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Utilities\InputHandler.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="SDK\Audio\AudioEngine.cpp" />
+    <ClCompile Include="Sdk\Beatmaps\Beatmap.cpp" />
+    <ClCompile Include="Sdk\Beatmaps\BeatmapManager.cpp" />
     <ClCompile Include="SDK\Discord\DiscordRPC.cpp" />
     <ClCompile Include="SDK\GL\GLControl.cpp" />
     <ClCompile Include="SDK\Graphics\SpriteManager.cpp" />
@@ -313,6 +370,7 @@
     <ClInclude Include="Dependencies\Chiyo\Replays\ReplayFrame.h" />
     <ClInclude Include="Dependencies\Chiyo\Serialization\SerializationReader.h" />
     <ClInclude Include="Dependencies\Chiyo\Utilities\ChiyoStringUtilities.h" />
+    <ClInclude Include="Dependencies\clipper\clipper.hpp" />
     <ClInclude Include="Dependencies\CryptoPP\3way.h" />
     <ClInclude Include="Dependencies\CryptoPP\adler32.h" />
     <ClInclude Include="Dependencies\CryptoPP\adv_simd.h" />
@@ -586,11 +644,27 @@
     <ClInclude Include="Features\Enlighten\Enlighten.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
     <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Drawable.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\Click.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\ClickTimeline.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\EventTimeline.h" />
+    <ClInclude Include="Features\ReplayEditor\Drawing\DrawSlider.h" />
+    <ClInclude Include="Features\ReplayEditor\Editor.h" />
+    <ClInclude Include="Features\ReplayEditor\EditorGlobals.h" />
+    <ClInclude Include="Features\ReplayEditor\Playfields\OsuPlayfield.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="Logging\LogSeverity.h" />
     <ClInclude Include="SDK\Audio\AudioEngine.h" />
+    <ClInclude Include="Sdk\Beatmaps\Beatmap.h" />
+    <ClInclude Include="Sdk\Beatmaps\BeatmapManager.h" />
     <ClInclude Include="SDK\Discord\DiscordRPC.h" />
     <ClInclude Include="SDK\GL\GLControl.h" />
     <ClInclude Include="SDK\Graphics\SpriteManager.h" />

@@ -21,6 +21,7 @@ public:
 
 	static void Initialize();
 	static void LoadReplay(std::string replayPath);
+	static void LoadFromReplayEditor(Replay replay);
 	static std::string GetReplayString();
 	static void Update();
 	static Vector2 GetCursorPosition();

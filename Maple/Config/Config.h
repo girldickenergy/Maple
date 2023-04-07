@@ -161,4 +161,13 @@ public:
 			static inline bool HideMatchButton;
 		};
 	};
+
+	struct ReplayEditor
+	{
+		static inline int FrameCount;
+		static inline bool ShowReplayFrames;
+		static inline float TimelineResolution;
+		static inline float PlaybackRate;
+		static inline int EditResyncTime;
+	};
 };

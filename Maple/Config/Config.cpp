@@ -89,6 +89,12 @@ void Config::loadDefaults()
 	Visuals::UI::ControlColour = ImColor(76, 76, 76, 255).Value;
 	Visuals::UI::TextColour = ImVec4(ImColor(255, 255, 255, 255));
 
+	ReplayEditor::ShowReplayFrames = true;
+	ReplayEditor::FrameCount = 20;
+	ReplayEditor::TimelineResolution = 1.f;
+	ReplayEditor::PlaybackRate = 1.0f;
+	ReplayEditor::EditResyncTime = 100;
+  
 	Misc::ScoreSubmissionType = 0;
 	Misc::PromptBehaviorOnRetry = 0;
 	Misc::DisableSpectators = false;

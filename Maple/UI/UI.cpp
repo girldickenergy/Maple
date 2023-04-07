@@ -23,6 +23,8 @@
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Relax/Relax.h"
 
+#include "../Features/ReplayEditor/Editor.h"
+
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -30,6 +32,10 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(oWndProc, nCode, wParam, lParam);
 
 	MSG* pMsg = reinterpret_cast<MSG*>(lParam);
+	
+	if (ReplayEditor::Editor::IsOpen)
+		ReplayEditor::Editor::HandleInputs(nCode, wParam, lParam);
+
 	pMsg->wParam = mapLeftRightKeys(pMsg->wParam, pMsg->lParam);
 
 	if (wParam == PM_REMOVE)
@@ -246,6 +252,9 @@ void UI::render()
 	
 	MainMenu::Render();
 	ScoreSubmissionDialog::Render();
+
+	if (ReplayEditor::Editor::IsOpen)
+		ReplayEditor::Editor::Render();
 
 	Enlighten::Render();
 	AimAssist::Render();

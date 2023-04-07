@@ -24,7 +24,7 @@ void __stdcall Vanilla::relocateAddressHook(uint8_t** block)
 	{
 		std::unique_lock lock(mutex);
 
-		for (auto& relocation : relocations)
+		for (auto& relocation : Relocations)
 		{
 			if (relocation == reinterpret_cast<uintptr_t>(*block))
 			{
@@ -46,7 +46,6 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 	
 	if (usingCLR)
 	{
-
 #ifdef NO_BYPASS
 		void* compileMethodAddress = reinterpret_cast<void*>(VanillaPatternScanner::FindPatternInModule("55 8B EC 83 E4 F8 83 EC 1C 53 8B 5D 10", "clrjit.dll"));
 		if (!compileMethodAddress)
@@ -104,7 +103,7 @@ void Vanilla::RemoveJITCallback()
 void Vanilla::AddRelocation(std::reference_wrapper<std::uintptr_t> relocation)
 {
 	if (usingCLR)
-		relocations.push_back(relocation);
+		Relocations.push_back(relocation);
 }
 
 void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation)
@@ -112,11 +111,11 @@ void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation
 	if (!usingCLR)
 		return;
 	
-	for (auto it = relocations.begin(); it != relocations.end(); ++it)
+	for (auto it = Relocations.begin(); it != Relocations.end(); ++it)
 	{
 		if (it->get() == relocation.get())
 		{
-			relocations.erase(it);
+			Relocations.erase(it);
 
 			return;
 		}

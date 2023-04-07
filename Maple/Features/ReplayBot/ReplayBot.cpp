@@ -25,6 +25,12 @@ void ReplayBot::LoadReplay(std::string replayPath)
 	replayLoaded = true;
 }
 
+void ReplayBot::LoadFromReplayEditor(Replay replay)
+{
+	currentReplay = replay;
+	replayLoaded = true;
+}
+
 std::string ReplayBot::GetReplayString()
 {
 	if (!replayLoaded)

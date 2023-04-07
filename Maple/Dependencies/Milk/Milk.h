@@ -57,7 +57,7 @@ class Milk : public Singleton<Milk>
 	 */
 	void doCRCBypass(uintptr_t address);
 public:
-	Milk(singletonLock);
+	Milk(SingletonLock);
 	~Milk();
 
 	bool Prepare();

@@ -35,6 +35,7 @@ void HitObjectManager::spoofVisuals()
 		Communication::IntegritySignature3 -= 0x1;
 	}
 
+
 	spoofPreEmpt();
 	spoofMods();
 
@@ -148,7 +149,13 @@ void HitObjectManager::Initialize()
 	Memory::AddObject(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10 8B 85 ?? ?? ?? ?? 8B 80"));
 	Memory::AddHook(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("HitObjectManager::AddFollowPoints"), reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
 
-		VIRTUALIZER_FISH_RED_END
+	// Replay Editor 
+	Memory::AddObject(xorstr_("HitObjectManager::Load"), xorstr_("55 8B EC 57 56 53 83 EC 74 8B F1 8D 7D 84 B9 1B"));
+	Memory::AddObject(xorstr_("HitObjectManager::SetBeatmap"), xorstr_("55 8B EC 57 56 8B F1 8B C2 8D 56 30"));
+	Memory::AddObject(xorstr_("HitObjectManager::UpdateStacking"), xorstr_("55 8B EC 57 56 53 81 EC 08 01 00 00 33 C0 89"));
+	Memory::AddObject(xorstr_("HitObjectManager::UpdateSlidersAll"), xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 83 79 48 00"));
+
+	VIRTUALIZER_FISH_RED_END
 }
 
 void HitObjectManager::RestoreVisuals()
@@ -159,21 +166,24 @@ void HitObjectManager::RestoreVisuals()
 
 void HitObjectManager::CacheHitObjects()
 {
-	hitObjects.clear();
-	
+	CacheHitObjects(GetInstance());
+}
+
+void HitObjectManager::CacheHitObjects(uintptr_t instance)
+{
+	HitObjects.clear();
+
 	auto isAddressValid = [](uintptr_t address)
 	{
 		return address && *reinterpret_cast<int*>(address);
 	};
 
-	auto getHitObjectListItemsAddress = []()
+	auto getHitObjectListItemsAddress = [instance]()
 	{
-		const uintptr_t instance = GetInstance();
-
 		return instance ? *reinterpret_cast<uintptr_t*>(*reinterpret_cast<uintptr_t*>(instance + HITOBJECTMANAGER_HITOBJECTS_OFFSET) + 0x4) : 0u;
 	};
 
-	const int hitObjectsCount = GetHitObjectsCount();
+	const int hitObjectsCount = GetHitObjectsCount(instance);
 	for (int i = 0; i < hitObjectsCount; i++)
 	{
 		const uintptr_t hitObjectListItemsAddress = getHitObjectListItemsAddress();
@@ -197,6 +207,7 @@ void HitObjectManager::CacheHitObjects()
 		const int endTime = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_ENDTIME_OFFSET);
 		const Vector2 position = *reinterpret_cast<Vector2*>(hitObjectAddress + HITOBJECT_POSITION_OFFSET);
 		const int segmentCount = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_SEGMENTCOUNT_OFFSET);
+		const int stackCount = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_STACKCOUNT_OFFSET);
 		const double spatialLength = *reinterpret_cast<double*>(hitObjectAddress + HITOBJECT_SPATIALLENGTH_OFFSET);
 
 		if ((type & HitObjectType::Slider) > HitObjectType::None)
@@ -284,15 +295,15 @@ void HitObjectManager::CacheHitObjects()
 					cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItemsAddress + 0x8 + 0x8 * j));
 			}
 
-			hitObjects.emplace_back(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
+			HitObjects.emplace_back(i, type, startTime, endTime, position, endPosition, segmentCount, stackCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
 		}
-		else hitObjects.emplace_back(type, startTime, endTime, position, position, segmentCount, spatialLength);
+		else HitObjects.emplace_back(i, type, startTime, endTime, position, position, segmentCount, stackCount, spatialLength);
 	}
 }
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
-	return hitObjects[(Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (index > (int)(hitObjects.size() / 2) ? (int)(hitObjects.size() / 2) : index) : index];
+	return HitObjects[(Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (index > (int)(HitObjects.size() / 2) ? (int)(HitObjects.size() / 2) : index) : index];
 }
 
 uintptr_t HitObjectManager::GetInstance()
@@ -306,10 +317,14 @@ int HitObjectManager::GetPreEmpt(bool original)
 {
 	if (original)
 		return originalPreEmpt;
-	
-	const uintptr_t hitObjectManagerInstance = GetInstance();
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_PREEMPT_OFFSET) : 0;
+	const uintptr_t hitObjectManagerInstance = GetInstance();
+	return GetPreEmpt(hitObjectManagerInstance);
+}
+
+int HitObjectManager::GetPreEmpt(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_PREEMPT_OFFSET) : 0;
 }
 
 void HitObjectManager::SetPreEmpt(int value)
@@ -347,22 +362,34 @@ void HitObjectManager::SetActiveMods(Mods value)
 int HitObjectManager::GetHitWindow50()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
+	return GetHitWindow50(hitObjectManagerInstance);
+}
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITWINDOW50_OFFSET) : 0;
+int HitObjectManager::GetHitWindow50(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_HITWINDOW50_OFFSET) : 0;
 }
 
 int HitObjectManager::GetHitWindow100()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
+	return GetHitWindow100(hitObjectManagerInstance);
+}
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITWINDOW100_OFFSET) : 0;
+int HitObjectManager::GetHitWindow100(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_HITWINDOW100_OFFSET) : 0;
 }
 
 int HitObjectManager::GetHitWindow300()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
+	return GetHitWindow300(hitObjectManagerInstance);
+}
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITWINDOW300_OFFSET) : 0;
+int HitObjectManager::GetHitWindow300(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_HITWINDOW300_OFFSET) : 0;
 }
 
 float HitObjectManager::GetSpriteDisplaySize()
@@ -381,8 +408,12 @@ void HitObjectManager::SetSpriteDisplaySize(float value)
 float HitObjectManager::GetHitObjectRadius()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
+	return GetHitObjectRadius(hitObjectManagerInstance);
+}
 
-	return hitObjectManagerInstance ? *reinterpret_cast<float*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITOBJECTRADIUS_OFFSET) : 0.f;
+float HitObjectManager::GetHitObjectRadius(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<float*>(instance + HITOBJECTMANAGER_HITOBJECTRADIUS_OFFSET) : 0.f;
 }
 
 void HitObjectManager::SetHitObjectRadius(float value)
@@ -448,7 +479,12 @@ int HitObjectManager::GetHitObjectsCount()
 {
 	const uintptr_t hitObjectManagerInstance = GetInstance();
 
-	return hitObjectManagerInstance ? *reinterpret_cast<int*>(hitObjectManagerInstance + HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET) : 0.f;
+	return GetHitObjectsCount(hitObjectManagerInstance);
+}
+
+int HitObjectManager::GetHitObjectsCount(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<int*>(instance + HITOBJECTMANAGER_HITOBJECTSCOUNT_OFFSET) : 0.f;
 }
 
 double HitObjectManager::MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods)
@@ -462,4 +498,24 @@ double HitObjectManager::MapDifficultyRange(double difficulty, double min, doubl
 		return mid - (mid - min) * (5. - difficulty) / 5.;
 
 	return mid;
+}
+
+bool HitObjectManager::Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits)
+{
+	return reinterpret_cast<fnLoad>(Memory::Objects["HitObjectManager::Load"])(instance, processHeaders, applyParsingLimits);
+}
+
+void HitObjectManager::SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods)
+{
+	return reinterpret_cast<fnSetBeatmap>(Memory::Objects["HitObjectManager::SetBeatmap"])(instance, beatmap, mods);
+}
+
+void HitObjectManager::UpdateStacking(uintptr_t instance, int startIndex, int endIndex)
+{
+	return reinterpret_cast<fnUpdateStacking>(Memory::Objects["HitObjectManager::UpdateStacking"])(instance, startIndex, endIndex);
+}
+
+void HitObjectManager::UpdateSlidersAll(uintptr_t instance, bool force)
+{
+	return reinterpret_cast<fnUpdateSlidersAll>(Memory::Objects["HitObjectManager::UpdateSlidersAll"])(instance, force);
 }

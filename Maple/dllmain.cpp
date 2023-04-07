@@ -23,6 +23,8 @@
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
+#include "SDK/Beatmaps/BeatmapManager.h"
+#include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
 #include "SDK/Player/HitObjectManager.h"
@@ -35,6 +37,8 @@
 #include "Utilities/Strings/StringUtilities.h"
 #include "Dependencies/Milk/MilkThread.h"
 #include "Utilities/Exceptions/ExceptionHandler.h"
+
+#include "Features/ReplayEditor/Editor.h"
 
 DWORD WINAPI Initialize();
 void InitializeMaple();
@@ -138,6 +142,21 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
+        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
+        bool bypassSucceeded = false;
+
+#ifdef NO_BYPASS
+        bypassSucceeded = true;
+#else
+        bypassSucceeded = Milk::Get().DoBypass();
+#endif
+
+        if (!goodKnownAuthVersion || !bypassSucceeded)
+            Config::Misc::ForceDisableScoreSubmission = true;
+
+        if (goodKnownAuthVersion && !bypassSucceeded)
+            Config::Misc::BypassFailed = true;
+
         //initializing SDK
         Memory::StartInitialize();
 
@@ -155,6 +174,9 @@ void InitializeMaple()
         StreamingManager::Initialize();
         DiscordRPC::Initialize();
         GLControl::Initialize();
+        BeatmapManager::Get().Initialize();
+
+        ReplayEditor::Editor::Initialize();
 
         Memory::EndInitialize();
 

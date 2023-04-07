@@ -31,6 +31,7 @@ class HitObjectManager
 	static inline constexpr int HITOBJECT_ENDTIME_OFFSET = 0x14;
 	static inline constexpr int HITOBJECT_POSITION_OFFSET = 0x38;
 	static inline constexpr int HITOBJECT_SEGMENTCOUNT_OFFSET = 0x20;
+	static inline constexpr int HITOBJECT_STACKCOUNT_OFFSET = 0x2C;
 	static inline constexpr int HITOBJECT_SPATIALLENGTH_OFFSET = 0x8;
 
 	static inline constexpr int SLIDEROSU_ENDPOSITION_OFFSET = 0x11C;
@@ -62,27 +63,41 @@ class HitObjectManager
 	typedef void(__fastcall* fnAddFollowPoints)(uintptr_t instance, int startIndex, int endIndex);
 	static inline fnAddFollowPoints oAddFollowPoints;
 	static void __fastcall addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex);
+
+	// Replay editor
+	typedef bool (__fastcall* fnLoad)(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
+	typedef void(__fastcall* fnSetBeatmap)(uintptr_t instance, uintptr_t beatmap, Mods mods);
+	typedef void(__fastcall* fnUpdateStacking)(uintptr_t instance, int startIndex, int endIndex);
+	typedef void(__fastcall* fnUpdateSlidersAll)(uintptr_t instance, bool force);
 public:
+	static inline std::vector<HitObject> HitObjects;
+
 	static void Initialize();
 
 	static void RestoreVisuals();
 
 	static void CacheHitObjects();
+	static void CacheHitObjects(uintptr_t instance);
 	static HitObject GetHitObject(int index);
 
 	static uintptr_t GetInstance();
 	static int GetPreEmpt(bool original = false);
+	static int GetPreEmpt(uintptr_t instance);
 	static void SetPreEmpt(int value);
 	static int GetPreEmptSliderComplete();
 	static void SetPreEmptSliderComplete(int value);
 	static Mods GetActiveMods();
 	static void SetActiveMods(Mods value);
 	static int GetHitWindow50();
+	static int GetHitWindow50(uintptr_t instance);
 	static int GetHitWindow100();
+	static int GetHitWindow100(uintptr_t instance);
 	static int GetHitWindow300();
+	static int GetHitWindow300(uintptr_t instance);
 	static float GetSpriteDisplaySize();
 	static void SetSpriteDisplaySize(float value);
 	static float GetHitObjectRadius();
+	static float GetHitObjectRadius(uintptr_t instance);
 	static void SetHitObjectRadius(float value);
 	static float GetSpriteRatio();
 	static void SetSpriteRatio(float value);
@@ -93,5 +108,12 @@ public:
 	static void SetStackOffset(float value);
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
+	static int GetHitObjectsCount(uintptr_t instance);
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
+
+	// Replay Editor
+	static bool Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
+	static void SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods);
+	static void UpdateStacking(uintptr_t instance, int startIndex, int endIndex);
+	static void UpdateSlidersAll(uintptr_t instance, bool force);
 };

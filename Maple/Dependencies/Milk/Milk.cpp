@@ -14,7 +14,7 @@
 
 #pragma clang optimize off
 
-Milk::Milk(singletonLock)
+Milk::Milk(SingletonLock)
 {
 	VIRTUALIZER_FISH_RED_START
 
@@ -145,6 +145,14 @@ bool Milk::DoCRCBypass(uintptr_t address)
 	VIRTUALIZER_TIGER_BLACK_END
 
 	return true;
+}
+
+bool Milk::CheckFunction(uintptr_t function)
+{
+#ifdef NO_BYPASS
+	return true;
+#endif
+	return !(function >= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) && function <= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) + _firstCRC->functionSize);
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
