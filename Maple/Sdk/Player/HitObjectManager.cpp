@@ -502,20 +502,20 @@ double HitObjectManager::MapDifficultyRange(double difficulty, double min, doubl
 
 bool HitObjectManager::Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits)
 {
-	return reinterpret_cast<fnLoad>(Memory::Objects["HitObjectManager::Load"])(instance, processHeaders, applyParsingLimits);
+	return reinterpret_cast<fnLoad>(Memory::Objects[xorstr_("HitObjectManager::Load")])(instance, processHeaders, applyParsingLimits);
 }
 
 void HitObjectManager::SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods)
 {
-	return reinterpret_cast<fnSetBeatmap>(Memory::Objects["HitObjectManager::SetBeatmap"])(instance, beatmap, mods);
+	return reinterpret_cast<fnSetBeatmap>(Memory::Objects[xorstr_("HitObjectManager::SetBeatmap")])(instance, beatmap, mods);
 }
 
 void HitObjectManager::UpdateStacking(uintptr_t instance, int startIndex, int endIndex)
 {
-	return reinterpret_cast<fnUpdateStacking>(Memory::Objects["HitObjectManager::UpdateStacking"])(instance, startIndex, endIndex);
+	return reinterpret_cast<fnUpdateStacking>(Memory::Objects[xorstr_("HitObjectManager::UpdateStacking")])(instance, startIndex, endIndex);
 }
 
 void HitObjectManager::UpdateSlidersAll(uintptr_t instance, bool force)
 {
-	return reinterpret_cast<fnUpdateSlidersAll>(Memory::Objects["HitObjectManager::UpdateSlidersAll"])(instance, force);
+	return reinterpret_cast<fnUpdateSlidersAll>(Memory::Objects[xorstr_("HitObjectManager::UpdateSlidersAll")])(instance, force);
 }
