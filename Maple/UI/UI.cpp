@@ -57,7 +57,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
 	{
 		if (pMsg->message == WM_CHAR)
 			pMsg->message = WM_NULL;
