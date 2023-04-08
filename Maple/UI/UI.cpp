@@ -53,7 +53,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 			pMsg->message = WM_NULL;
 			MainMenu::Hide();
 		}
-		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
@@ -73,7 +73,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 {
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
 		return false;
 	
 	[[clang::musttail]] return oGetKeyboardState(arr);
@@ -228,9 +228,9 @@ void UI::initialize(HWND window, IDirect3DDevice9* d3d9Device)
 
 void UI::render()
 {
-	if ((MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()) && !rawInputDisabled)
+	if ((MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen) && !rawInputDisabled)
 		disableRaw();
-	else if (!MainMenu::GetIsVisible() && !ScoreSubmissionDialog::GetIsVisible() && rawInputDisabled)
+	else if (!MainMenu::GetIsVisible() && !ScoreSubmissionDialog::GetIsVisible() && !ReplayEditor::Editor::IsOpen && rawInputDisabled)
 		enableRaw();
 
 	if (Renderer == Renderer::OGL3)
@@ -242,12 +242,12 @@ void UI::render()
 	ImGui::NewFrame();
 
 	ImGuiIO& io = ImGui::GetIO();
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
 		io.MouseDrawCursor = true;
 	else
 		io.MouseDrawCursor = false;
 
-	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()))
+	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen))
 		SnowVisualisation::Render();
 	
 	MainMenu::Render();
