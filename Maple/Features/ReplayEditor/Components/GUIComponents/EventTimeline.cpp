@@ -189,7 +189,7 @@ void ReplayEditor::EventTimeline::Draw()
 				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(0.f), COL(0.f), 1.f));
 				break;
 			case EventType::Fifty:
-				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(0.f), COL(255.f), 1.f));
+				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(230.f), COL(170.f), 1.f));
 				break;
 			case EventType::OneHundred:
 				col = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), 1.f));

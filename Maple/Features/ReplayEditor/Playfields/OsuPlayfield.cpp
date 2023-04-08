@@ -127,8 +127,8 @@ void ReplayEditor::OsuPlayfield::RenderDrawables()
 						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(0.f), COL(0.f), hitObjectOsu.GetOpacity()));
 					if (currentHitObject.Is100)
 						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), hitObjectOsu.GetOpacity()));
-					if (currentHitObject.Is50)
-						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(0.f), COL(255.f), hitObjectOsu.GetOpacity()));
+					if (currentHitObject.Is50) //255, 230, 170
+						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(230.f), COL(170.f), hitObjectOsu.GetOpacity()));
 					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * hitObjectOsu.GetScale(),
 						color, 0, 4.20f);
 				}
@@ -149,7 +149,7 @@ void ReplayEditor::OsuPlayfield::RenderDrawables()
 					if (currentHitObject.Is100)
 						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), approachCircle.GetOpacity()));
 					if (currentHitObject.Is50)
-						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(0.f), COL(255.f), approachCircle.GetOpacity()));
+						color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(230.f), COL(170.f), approachCircle.GetOpacity()));
 					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * approachCircle.GetScale(),
 						color, 0, 4.20f);
 				}
