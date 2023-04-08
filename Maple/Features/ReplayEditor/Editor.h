@@ -29,7 +29,7 @@
 #include "EditorGlobals.h"
 #include "../../Sdk/Audio/AudioEngine.h"
 
-#include "../../Utilities/Architecture/Singleton.hpp"
+#include "Singleton.h"
 
 namespace ReplayEditor
 {
@@ -75,12 +75,12 @@ namespace ReplayEditor
 
 		static inline ImDrawList* drawList;
 
-		static inline OsuPlayfield osuPlayfield = OsuPlayfield::OsuPlayfield();
+		static inline OsuPlayfield osuPlayfield = OsuPlayfield();
 
-		static inline OsuCursor osuCursor = OsuCursor::OsuCursor();
-		static inline ClickTimeline clickTimeline = ClickTimeline::ClickTimeline();
-		static inline EventTimeline eventTimeline = EventTimeline::EventTimeline();
-		static inline ClickOverlay clickOverlay = ClickOverlay::ClickOverlay();
+		static inline OsuCursor osuCursor = OsuCursor();
+		static inline ClickTimeline clickTimeline = ClickTimeline();
+		static inline EventTimeline eventTimeline = EventTimeline();
+		static inline ClickOverlay clickOverlay = ClickOverlay();
 
 		static inline int Time = -1;
 		static inline EditorState EditorState = EditorState::Initializing;
@@ -105,7 +105,7 @@ namespace ReplayEditor
 
 		static void ForceUpdateCursorPosition();
 	public:
-		Editor(SingletonLock);
+		Editor(singletonLock);
 		static inline bool IsOpen = false;
 		static void HandleInputs(int nCode, WPARAM wParam, LPARAM lParam);
 		static void Initialize();

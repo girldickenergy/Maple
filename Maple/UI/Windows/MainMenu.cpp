@@ -151,7 +151,7 @@ void MainMenu::Render()
                         currentTab = currentTab == 6 ? -1 : 6;
 
                     if (Widgets::Tab(xorstr_("Config"), StyleProvider::ConfigIconTexture, currentTab == 7, ImGuiSelectableFlags_SpanAllColumns, tabSize))
-                        ReplayEditor::Editor::IsOpen = true;/*currentTab = currentTab == 7 ? -1 : 7;*/
+                        currentTab = currentTab == 7 ? -1 : 7;
 
                    /* if (Widgets::Tab(xorstr_("Replay Editor"), StyleProvider::ReplaysIconTexture, currentTab == 8, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                 		ReplayEditor::Editor::IsOpen = true;*/
@@ -373,7 +373,7 @@ void MainMenu::Render()
                         }
                     }else
                     {
-                        ImGui::Text("Please start one beatmap before using the Replay Editor");
+                        ImGui::Text(xorstr_("Please start one beatmap before using the Replay Editor"));
                     }
                 }
                 Widgets::EndPanel();

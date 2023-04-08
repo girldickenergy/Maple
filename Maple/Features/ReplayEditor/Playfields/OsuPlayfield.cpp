@@ -169,7 +169,7 @@ ReplayEditor::OsuPlayfield::OsuPlayfield()
 	_timer = nullptr;
 	_hitObjects = nullptr;
 	_currentFrame = nullptr;
-	_osuCursor = OsuCursor::OsuCursor();
+	_osuCursor = OsuCursor();
 	_drawables = std::vector<std::any>();
 }
 
@@ -184,7 +184,7 @@ ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, B
 	_hitObjects = hitObjects;
 	_currentFrame = currentFrame;
 	_clientBounds = GameBase::GetClientSize();
-	_osuCursor = OsuCursor::OsuCursor(_currentFrame, _replay, _drawList);
+	_osuCursor = OsuCursor(_currentFrame, _replay, _drawList);
 	_drawables = std::vector<std::any>();
 
 	CalculatePlayareaCoordinates();

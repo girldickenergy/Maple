@@ -1,9 +1,9 @@
 #include "BeatmapManager.h"
 
 #include "../Memory.h"
-#include "../../Utilities/Security/xorstr.hpp"
+#include <xorstr.hpp>
 
-BeatmapManager::BeatmapManager(SingletonLock)
+BeatmapManager::BeatmapManager(singletonLock)
 { }
 
 void BeatmapManager::Initialize()

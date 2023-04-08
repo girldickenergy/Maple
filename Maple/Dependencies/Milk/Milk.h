@@ -57,12 +57,12 @@ class Milk : public Singleton<Milk>
 	 */
 	void doCRCBypass(uintptr_t address);
 public:
-	Milk(SingletonLock);
+	Milk(singletonLock);
 	~Milk();
 
 	bool Prepare();
 	bool DoCRCBypass(uintptr_t address);
 	void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
-	
+
 	static int __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };

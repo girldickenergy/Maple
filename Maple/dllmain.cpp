@@ -23,10 +23,9 @@
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
 #include "SDK/Mods/ModManager.h"
-#include "SDK/Beatmaps/BeatmapManager.h"
-#include "SDK/Online/BanchoClient.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
+#include "SDK/Beatmaps/BeatmapManager.h"
 #include "SDK/Player/HitObjectManager.h"
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
@@ -77,7 +76,7 @@ DWORD WINAPI Initialize()
     auto data_addr = data;
 
     VIRTUALIZER_TIGER_LITE_START
-    Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
+        Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
     ExceptionHandler::Setup();
 
     if (!data_addr)
@@ -85,7 +84,7 @@ DWORD WINAPI Initialize()
 
     UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
-    
+
     // Initialize this a bit earlier just so we can log more data earlier.
     Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
 
@@ -113,14 +112,14 @@ DWORD WINAPI Initialize()
 
     VIRTUALIZER_TIGER_LITE_END
 
-    return 0;
+        return 0;
 }
 
 void InitializeMaple()
 {
     VIRTUALIZER_FISH_RED_START
-    Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
-    
+        Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
+
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
@@ -142,21 +141,6 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
-        bool goodKnownAuthVersion = AnticheatUtilities::IsRunningGoodKnownVersion();
-        bool bypassSucceeded = false;
-
-#ifdef NO_BYPASS
-        bypassSucceeded = true;
-#else
-        bypassSucceeded = Milk::Get().DoBypass();
-#endif
-
-        if (!goodKnownAuthVersion || !bypassSucceeded)
-            Config::Misc::ForceDisableScoreSubmission = true;
-
-        if (goodKnownAuthVersion && !bypassSucceeded)
-            Config::Misc::BypassFailed = true;
-
         //initializing SDK
         Memory::StartInitialize();
 
@@ -170,11 +154,11 @@ void InitializeMaple()
         Player::Initialize();
         Ruleset::Initialize();
         HitObjectManager::Initialize();
+        BeatmapManager::Get().Initialize();
         Score::Initialize();
         StreamingManager::Initialize();
         DiscordRPC::Initialize();
         GLControl::Initialize();
-        BeatmapManager::Get().Initialize();
 
         ReplayEditor::Editor::Initialize();
 
@@ -195,19 +179,19 @@ void InitializeMaple()
     Logger::StopPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
 
     VIRTUALIZER_FISH_RED_END
-    }
+}
 
 void WaitForCriticalSDKToInitialize()
 {
     VIRTUALIZER_FISH_RED_START
-    Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
-    
+        Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
+
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
 
     VIRTUALIZER_FISH_RED_END
-    
-    unsigned int retries = 0;
+
+        unsigned int retries = 0;
 #ifdef NO_BYPASS
     while (!clientHash || !updateTiming/*||!submit*/)
 #else
@@ -215,19 +199,18 @@ void WaitForCriticalSDKToInitialize()
 #endif
     {
         VIRTUALIZER_FISH_RED_START
-        
-        if (retries >= 30)
-        {
-            Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
 
-            Security::CorruptMemory();
-        }
+            if (retries >= 30)
+            {
+                Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
+
+                Security::CorruptMemory();
+            }
 
         retries++;
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
         updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
-        submit = Memory::Objects[xorstr_("Score::Submit")];
 
         Sleep(1000);
 

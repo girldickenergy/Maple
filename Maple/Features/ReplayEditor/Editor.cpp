@@ -23,6 +23,7 @@
 
 #include "../../Logging/Logger.h"
 
+#include <xorstr.hpp>
 using namespace ReplayEditor;
 
 inline bool init = false;
@@ -43,7 +44,6 @@ void Editor::CreateHitObjectManager()
 
 		customHomInstance = Ruleset::CreateHitObjectManager(NULL);
 		Vanilla::AddRelocation(std::ref(customHomInstance));
-		Logger::Log(LogSeverity::Debug, "HOM Instance Pointer: %X", customHomInstance);
 		customHomPlayMode = selectedReplay.PlayMode;
 	}
 	break;
@@ -58,15 +58,11 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(converter.from_bytes(selectedReplay.BeatmapHash));
 
-	Logger::Log(LogSeverity::Debug, "Beatmap Pointer: %X", beatmapPointer);
-
 	bmap = Beatmap(beatmapPointer);
 	bmap.Update();
 
 	HitObjectManager::SetBeatmap(customHomInstance, beatmapPointer, selectedReplay.Mods);
-	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::SetBeatmap");
 	HitObjectManager::Load(customHomInstance, true, 0);
-	Logger::Log(LogSeverity::Debug, "Reached after HitObjectManager::Load");
 	// UpdateStacking gets called in ApplyStacking, same with UpdateSlidersAll
 
 	/*HitObjectManager::UpdateSlidersAll(customHomInstance, false);
@@ -91,22 +87,18 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
 		cs = std::min(10.f, cs * 1.3f);
 
-	Logger::Log(LogSeverity::Debug, "Reached before eventTimeline.SetHomInstance");
 	eventTimeline.SetHomInstance(customHomInstance);
 	eventTimeline.SetHitObjects(&hitObjects);
 	eventTimeline.SetCircleSize(cs);
 	eventTimeline.SetOverallDifficulty(bmap.GetOverallDifficulty());
-	Logger::Log(LogSeverity::Debug, "after before eventTimeline.SetOverallDifficulty");
 
 	osuPlayfield = OsuPlayfield(drawList, &Editor::selectedReplay, &Editor::bmap, customHomInstance,
 	                                          &Time, &Editor::currentFrame, &hitObjects);
 	eventTimeline.ParseEvents();
 
-	Logger::Log(LogSeverity::Debug, "Reached before BeatmapManager::Get().SetCurrent()");
 	//BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
 
 	BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
-	Logger::Log(LogSeverity::Debug, "Reached after BeatmapManager::Get().SetCurrent()");
 
 	/*AudioEngine::LoadAudio(bmap.GetBeatmapOsuPointer(), false, false, true, false);
 	Logger::Log(LogSeverity::Debug, "Reached after AudioEngine::LoadAudio()");*/
@@ -155,7 +147,7 @@ void Editor::ForceUpdateCursorPosition()
 	}
 }
 
-Editor::Editor(SingletonLock)
+Editor::Editor(singletonLock)
 {
 }
 
@@ -172,7 +164,7 @@ void Editor::Render()
 
 	ImGui::SetNextWindowSize(ImVec2(clientBounds.X, clientBounds.Y));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::Begin("re", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
+	ImGui::Begin(xorstr_("re"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
 		| ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground);
 	{
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -197,13 +189,13 @@ void Editor::Render()
 
 		ImGui::SetCursorPos(ImVec2(11 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		{
-			if (Widgets::Button("Load", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
+			if (Widgets::Button(xorstr_("Load"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 			{
 				Pause();
 				if (!fileDialogInitialized)
 				{
-					fileDialog.SetTitle("Select osu! replay");
-					fileDialog.SetTypeFilters({ ".osr" });
+					fileDialog.SetTitle(xorstr_("Select osu! replay"));
+					fileDialog.SetTypeFilters({ xorstr_(".osr")});
 
 					fileDialogInitialized = true;
 				}
@@ -249,7 +241,7 @@ void Editor::Render()
 				clickTimeline.ParseClicks();
 
 				// click overlay
-				clickOverlay = ClickOverlay::ClickOverlay(&Time, &clickTimeline.clicks, drawList, &clientBounds);
+				clickOverlay = ClickOverlay(&Time, &clickTimeline.clicks, drawList, &clientBounds);
 
 				// event timeline
 				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr, 0, 0, customHomInstance);
@@ -262,38 +254,38 @@ void Editor::Render()
 		}
 
 		ImGui::SetCursorPos(ImVec2(97 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		Widgets::Button("Save", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		Widgets::Button(xorstr_("Save"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
 		ImGui::SetCursorPos(ImVec2(183 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		Widgets::Button("Export", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
+		Widgets::Button(xorstr_("Export"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2));
 		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		if (Widgets::Button("Exit", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
+		if (Widgets::Button(xorstr_("Exit"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 		{
 			IsOpen = false;
 			ReplayBot::LoadFromReplayEditor(selectedReplay);
 		}
 		ImGui::SetCursorPos(ImVec2(355 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		if (Widgets::Button("Options", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
+		if (Widgets::Button(xorstr_("Options"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 			optionsOpen = !optionsOpen;
 		/*ImGui::SetCursorPos(ImVec2(441 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button("Tools", ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 			Editor::toolsOpen = !Editor::toolsOpen;*/
 		ImGui::SetCursorPos(ImVec2(750 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
-		ImGui::Text("In development, not representative of the final product.");
+		ImGui::Text(xorstr_("In development, not representative of the final product."));
 
 		ImVec2 OptionsSize = ImVec2(((clientBounds.X * 35.5f) / 100.f) * 0.8f, Widgets::CalcPanelHeight(6)) * StyleProvider::Scale;
 		ImGui::SetCursorPos(ImVec2(355 - (OptionsSize.x / 2), topBarHeight) * StyleProvider::Scale);
 		if (optionsOpen)
 		{
-			Widgets::BeginPanel("Options", OptionsSize);
+			Widgets::BeginPanel(xorstr_("Options"), OptionsSize);
 			{
-				Widgets::Checkbox("Show Replay Frames", &Config::ReplayEditor::ShowReplayFrames);
-				Widgets::SliderInt("Frame Count", &Config::ReplayEditor::FrameCount, 5, 50, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput);
-				Widgets::SliderFloat("Timeline Resolution", &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, 0.1f, 1, "%.1f", ImGuiSliderFlags_ClampOnInput);
-				if (Widgets::SliderFloat("Playback rate", &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, 0.1f, 1, "%.1f", ImGuiSliderFlags_ClampOnInput))
+				Widgets::Checkbox(xorstr_("Show Replay Frames"), &Config::ReplayEditor::ShowReplayFrames);
+				Widgets::SliderInt(xorstr_("Frame Count"), &Config::ReplayEditor::FrameCount, 5, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+				Widgets::SliderFloat(xorstr_("Timeline Resolution"), &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput);
+				if (Widgets::SliderFloat(xorstr_("Playback rate"), &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput))
 				{
-					AudioEngine::SetCurrentPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
+					//AudioEngine::SetCurrentPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
 				}
-				Widgets::SliderInt("Edit Resync Time", &Config::ReplayEditor::EditResyncTime, 50, 500, 1, 10, "%d", ImGuiSliderFlags_ClampOnInput);
+				Widgets::SliderInt(xorstr_("Edit Resync Time"), &Config::ReplayEditor::EditResyncTime, 50, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
 #if _DEBUG
 				if (Widgets::Button("Debug Tools"))
 					Editor::debugToolsOpen = !Editor::debugToolsOpen;

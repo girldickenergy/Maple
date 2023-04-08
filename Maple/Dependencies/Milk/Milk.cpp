@@ -14,11 +14,11 @@
 
 #pragma clang optimize off
 
-Milk::Milk(SingletonLock)
+Milk::Milk(singletonLock)
 {
 	VIRTUALIZER_FISH_RED_START
 
-	_milkMemory = MilkMemory();
+		_milkMemory = MilkMemory();
 	_authStubBaseAddress = 0x00000000;
 	_firstCRCAddress = 0x00000000;
 	_firstCRC = nullptr;
@@ -30,7 +30,7 @@ Milk::Milk(SingletonLock)
 Milk::~Milk()
 {
 	VIRTUALIZER_FISH_RED_START
-	_milkMemory.~MilkMemory();
+		_milkMemory.~MilkMemory();
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -70,13 +70,13 @@ uintptr_t Milk::findAuthStub()
 {
 	VIRTUALIZER_LION_BLACK_START
 
-	for (const auto& region : *_milkMemory.GetMemoryRegions())
-		if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
-			return region.BaseAddress;
+		for (const auto& region : *_milkMemory.GetMemoryRegions())
+			if (region.State != MEM_FREE && region.Protect == PAGE_EXECUTE)
+				return region.BaseAddress;
 
 	VIRTUALIZER_LION_BLACK_END
 
-	return 0;
+		return 0;
 }
 
 // ReSharper disable once CppInconsistentNaming
@@ -84,10 +84,10 @@ uintptr_t Milk::findFirstCRCAddress()
 {
 	VIRTUALIZER_LION_BLACK_START
 
-	
-	auto pattern = xorstr_("55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55");
 
-	
+		auto pattern = xorstr_("55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 5D C3 CC 55");
+
+
 	for (const auto& region : *_milkMemory.GetMemoryRegions())
 	{
 		if (region.BaseAddress < _authStubBaseAddress)
@@ -101,14 +101,14 @@ uintptr_t Milk::findFirstCRCAddress()
 
 	VIRTUALIZER_LION_BLACK_END
 
-	return 0;
+		return 0;
 }
 
 void Milk::doCRCBypass(uintptr_t address)
 {
 	VIRTUALIZER_TIGER_BLACK_START
 
-	CRC* currentCRCStruct = _firstCRC;
+		CRC* currentCRCStruct = _firstCRC;
 	while (currentCRCStruct)
 	{
 		if (address >= reinterpret_cast<uintptr_t>(currentCRCStruct->functionPointer) && address <= reinterpret_cast<uintptr_t>(currentCRCStruct->functionPointer) + currentCRCStruct->functionSize)
@@ -131,7 +131,7 @@ void Milk::doCRCBypass(uintptr_t address)
 bool Milk::DoCRCBypass(uintptr_t address)
 {
 	VIRTUALIZER_TIGER_BLACK_START
-	
+
 #ifdef NO_BYPASS
 		VIRTUALIZER_TIGER_BLACK_END
 		return true;
@@ -144,15 +144,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
 	VIRTUALIZER_TIGER_BLACK_END
 
-	return true;
-}
-
-bool Milk::CheckFunction(uintptr_t function)
-{
-#ifdef NO_BYPASS
-	return true;
-#endif
-	return !(function >= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) && function <= reinterpret_cast<uintptr_t>(_firstCRC->functionPointer) + _firstCRC->functionSize);
+		return true;
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
@@ -164,7 +156,7 @@ void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunctio
 bool Milk::Prepare()
 {
 	VIRTUALIZER_LION_BLACK_START
-	
+
 #ifdef NO_BYPASS
 		VIRTUALIZER_LION_BLACK_END
 		return true;
@@ -238,7 +230,7 @@ bool Milk::Prepare()
 	Logger::StopPerformanceCounter(xorstr_("{99D6FB11-046C-4ACB-A269-92B179C3186A}"));
 	VIRTUALIZER_LION_BLACK_END
 
-	return true;
+		return true;
 }
 
 int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)

@@ -83,6 +83,9 @@ Vector2 HitObject::PositionAtTime(int time)
 
 HitObject::HitObject(int count, HitObjectType type, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, int stackCount, double spatialLength, std::vector<Vector2> sliderCurvePoints, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines, std::vector<double> cumulativeLengths)
 {
+	IsHit = false;
+	Is100 = false;
+	Is50 = false;
 	Count = count;
 	Type = type;
 	StartTime = startTime;
@@ -100,5 +103,8 @@ HitObject::HitObject(int count, HitObjectType type, int startTime, int endTime, 
 
 HitObject::HitObject()
 {
+	IsHit = false;
+	Is100 = false;
+	Is50 = false;
 	IsNull = true;
 }

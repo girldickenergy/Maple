@@ -46,12 +46,6 @@
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -105,19 +99,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\ThemidaSDK;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\JSON;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Maple\Dependencies\ThemidaSDK\lib;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
@@ -126,11 +107,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)Maple\Dependencies\CryptoPP;$(SolutionDir)Maple\Dependencies\DirectX;$(SolutionDir)Maple\Dependencies\curl;$(SolutionDir)Maple\Dependencies\gl3w;$(SolutionDir)Maple\Dependencies\hde32;$(SolutionDir)Maple\Dependencies\ImGui;$(SolutionDir)Maple\Dependencies\JSON;$(SolutionDir)Maple\Dependencies\stb;$(SolutionDir)Maple\Dependencies\VirtualizerSDK;$(SolutionDir)Maple\Dependencies\OsuDataTypes;$(SolutionDir)Maple\Dependencies\Chiyo;$(SolutionDir)Maple\Dependencies\xorstr;$(SolutionDir)Maple\Dependencies\Vanilla;$(SolutionDir)Maple\Dependencies\Milk;$(SolutionDir)Maple\Dependencies\Singleton;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Maple\Dependencies\CryptoPP\lib;$(SolutionDir)Maple\Dependencies\DirectX\lib;$(SolutionDir)Maple\Dependencies\curl\lib;$(LibraryPath)</LibraryPath>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -167,23 +143,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>opengl32.lib;cryptlib_dbg.lib;libcurl_a.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (No Bypass)|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;_DEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;NO_BYPASS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>opengl32.lib;libcurl_a.lib;SecureEngineSDK32.lib;Ws2_32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
