@@ -40,8 +40,6 @@ void Editor::CreateHitObjectManager()
 	{
 	case PlayModes::Osu:
 	{
-		typedef void* (__fastcall* fnCreateHom)(void*);
-
 		customHomInstance = Ruleset::CreateHitObjectManager(NULL);
 		Vanilla::AddRelocation(std::ref(customHomInstance));
 		customHomPlayMode = selectedReplay.PlayMode;
@@ -162,6 +160,8 @@ void Editor::Render()
 {
 	Vector2 clientBounds = GameBase::GetClientSize();
 
+	const ImGuiStyle& style = ImGui::GetStyle();
+
 	ImGui::SetNextWindowSize(ImVec2(clientBounds.X, clientBounds.Y));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::Begin(xorstr_("re"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
@@ -271,56 +271,9 @@ void Editor::Render()
 			Editor::toolsOpen = !Editor::toolsOpen;*/
 		ImGui::SetCursorPos(ImVec2(750 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		ImGui::Text(xorstr_("In development, not representative of the final product."));
-
-		ImVec2 OptionsSize = ImVec2(((clientBounds.X * 35.5f) / 100.f) * 0.8f, Widgets::CalcPanelHeight(6)) * StyleProvider::Scale;
-		ImGui::SetCursorPos(ImVec2(355 - (OptionsSize.x / 2), topBarHeight) * StyleProvider::Scale);
-		if (optionsOpen)
-		{
-			Widgets::BeginPanel(xorstr_("Options"), OptionsSize);
-			{
-				Widgets::Checkbox(xorstr_("Show Replay Frames"), &Config::ReplayEditor::ShowReplayFrames);
-				Widgets::SliderInt(xorstr_("Frame Count"), &Config::ReplayEditor::FrameCount, 5, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
-				Widgets::SliderFloat(xorstr_("Timeline Resolution"), &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput);
-				if (Widgets::SliderFloat(xorstr_("Playback rate"), &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput))
-				{
-					//AudioEngine::SetCurrentPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
-				}
-				Widgets::SliderInt(xorstr_("Edit Resync Time"), &Config::ReplayEditor::EditResyncTime, 50, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
-#if _DEBUG
-				if (Widgets::Button("Debug Tools"))
-					Editor::debugToolsOpen = !Editor::debugToolsOpen;
-#endif
-			}
-			Widgets::EndPanel();
-		}
-
-		/*ImVec2 ToolsSize = ImVec2(((clientBounds->Width * 25.5f) / 100.f) * 0.8f, Widgets::CalcPanelHeight(2)) * StyleProvider::Scale;
-		ImGui::SetCursorPos(ImVec2(441 - (ToolsSize.x / 2), topBarHeight) * StyleProvider::Scale);
-		if (Editor::toolsOpen)
-		{
-			Widgets::BeginPanel("Tools", ToolsSize);
-			{
-				Widgets::Button("");
-			}
-			Widgets::EndPanel();
-		}*/
-
+		//ImGui::SetCursorPos(ImVec2(355 - (OptionsSize.x / 2), topBarHeight) * StyleProvider::Scale);
+		
 #pragma endregion
-
-		/*ImGui::SetCursorPos(ImVec2(10, ((clientBounds->Height * 22.75f) / 100.f)) * StyleProvider::Scale);
-		ImVec2 ToolBoxSize = ImVec2(((clientBounds->Width * 15.5f) / 100.f) * 0.8f, Widgets::CalcPanelHeight(2)) * StyleProvider::Scale;
-		Widgets::BeginPanel("Toolbox", ToolBoxSize);
-		{
-			if (Widgets::Button("Select", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ((ToolBoxSize.y - 4.f) / 2.f) - ((((ToolBoxSize.y - 4.f) / 2.f) * 10.f) / 100.f))))
-			{
-				Editor::ToolsetState = ToolsetState::Select;
-			}
-			if (Widgets::Button("Keypress", ImVec2(ToolBoxSize.x - ((ToolBoxSize.x * 10.f) / 100.f), ((ToolBoxSize.y - 4.f) / 2.f) - ((((ToolBoxSize.y - 4.f) / 2.f) * 10.f) / 100.f))))
-			{
-
-			}
-		}
-		Widgets::EndPanel();*/
 
 		if (clickTimeline.IsInit)
 			clickTimeline.Draw();
@@ -332,6 +285,37 @@ void Editor::Render()
 			clickOverlay.Render();
 	}
 	ImGui::End();
+
+	if (optionsOpen)
+	{
+		ImGui::PushFont(StyleProvider::FontDefaultBold);
+		const ImVec2 panelHeaderLabelSize = ImGui::CalcTextSize(xorstr_("Options"));
+		const float panelHeaderHeight = panelHeaderLabelSize.y + StyleProvider::Padding.y * 2;
+		ImGui::PopFont();
+
+		ImGui::PushFont(StyleProvider::FontDefault);
+		const float panelContentHeight = Widgets::CalcPanelHeight(5, 1);
+		const ImVec2 windowSize = ImVec2(((clientBounds.X * 35.5f) / 100.f) * 0.8f, panelHeaderHeight + panelContentHeight) + StyleProvider::Padding * 2;
+
+		ImGui::SetNextWindowSize(windowSize);
+		ImGui::Begin(xorstr_("re_options"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+		{
+			const float optionsWidth = ImGui::GetWindowWidth();
+			Widgets::BeginPanel(xorstr_("Options"), ImVec2(optionsWidth, panelContentHeight));
+			{	
+				Widgets::Checkbox(xorstr_("Show Replay Frames"), &Config::ReplayEditor::ShowReplayFrames);
+				Widgets::SliderInt(xorstr_("Frame Count"), &Config::ReplayEditor::FrameCount, 5, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+				Widgets::SliderFloat(xorstr_("Timeline Resolution"), &Config::ReplayEditor::TimelineResolution, 0.25f, 2.f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput);
+				if (Widgets::SliderFloat(xorstr_("Playback rate"), &Config::ReplayEditor::PlaybackRate, 0.25f, 2.5f, 0.1f, 1, xorstr_("%.1f"), ImGuiSliderFlags_ClampOnInput))
+				{
+					//AudioEngine::SetCurrentPlaybackRate(Config::ReplayEditor::PlaybackRate * 100.f);
+				}
+				Widgets::SliderInt(xorstr_("Edit Resync Time"), &Config::ReplayEditor::EditResyncTime, 50, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+			}
+			Widgets::EndPanel();
+		}
+		ImGui::End();
+	}
 }
 
 void Editor::Pause()
