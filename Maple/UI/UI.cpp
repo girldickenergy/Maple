@@ -33,7 +33,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 	MSG* pMsg = reinterpret_cast<MSG*>(lParam);
 	
-	if (ReplayEditor::Editor::IsOpen)
+	if (ReplayEditor::Editor::GetIsVisible())
 		ReplayEditor::Editor::HandleInputs(nCode, wParam, lParam);
 
 	pMsg->wParam = mapLeftRightKeys(pMsg->wParam, pMsg->lParam);
@@ -53,11 +53,11 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 			pMsg->message = WM_NULL;
 			MainMenu::Hide();
 		}
-		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
+		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible())
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible())
 	{
 		if (pMsg->message == WM_CHAR)
 			pMsg->message = WM_NULL;
@@ -73,7 +73,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 {
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible())
 		return false;
 	
 	[[clang::musttail]] return oGetKeyboardState(arr);
@@ -228,9 +228,9 @@ void UI::initialize(HWND window, IDirect3DDevice9* d3d9Device)
 
 void UI::render()
 {
-	if ((MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen) && !rawInputDisabled)
+	if ((MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible()) && !rawInputDisabled)
 		disableRaw();
-	else if (!MainMenu::GetIsVisible() && !ScoreSubmissionDialog::GetIsVisible() && !ReplayEditor::Editor::IsOpen && rawInputDisabled)
+	else if (!MainMenu::GetIsVisible() && !ScoreSubmissionDialog::GetIsVisible() && !ReplayEditor::Editor::GetIsVisible() && rawInputDisabled)
 		enableRaw();
 
 	if (Renderer == Renderer::OGL3)
@@ -242,18 +242,18 @@ void UI::render()
 	ImGui::NewFrame();
 
 	ImGuiIO& io = ImGui::GetIO();
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen)
+	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible())
 		io.MouseDrawCursor = true;
 	else
 		io.MouseDrawCursor = false;
 
-	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::IsOpen))
+	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible() || ReplayEditor::Editor::GetIsVisible()))
 		SnowVisualisation::Render();
 	
 	MainMenu::Render();
 	ScoreSubmissionDialog::Render();
 
-	if (ReplayEditor::Editor::IsOpen)
+	if (ReplayEditor::Editor::GetIsVisible())
 		ReplayEditor::Editor::Render();
 
 	Enlighten::Render();

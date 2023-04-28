@@ -369,7 +369,7 @@ void MainMenu::Render()
                     {
                         if (Widgets::Button(xorstr_("Open Replay Editor")))
                         {
-                            ReplayEditor::Editor::IsOpen = true;
+                            ReplayEditor::Editor::ToggleVisibility();
                         }
                     }else
                     {
