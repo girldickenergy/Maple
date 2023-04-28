@@ -50,6 +50,8 @@ namespace ReplayEditor
 
 	class Editor : Singleton<Editor>
 	{
+		static inline bool isVisible = false;
+
 		static inline bool fileDialogInitialized = false;
 		static inline ImGui::FileBrowser fileDialog;
 		static inline char replayPath[256];
@@ -106,12 +108,14 @@ namespace ReplayEditor
 		static void ForceUpdateCursorPosition();
 	public:
 		Editor(singletonLock);
-		static inline bool IsOpen = false;
 		static void HandleInputs(int nCode, WPARAM wParam, LPARAM lParam);
 		static void Initialize();
 		static void Render();
 		static void Pause();
 		static void Play();
 		static void TimerThread();
+
+		static void ToggleVisibility();
+		static bool GetIsVisible();
 	};
 }

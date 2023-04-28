@@ -260,7 +260,7 @@ void Editor::Render()
 		ImGui::SetCursorPos(ImVec2(269 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button(xorstr_("Exit"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 		{
-			IsOpen = false;
+			isVisible = false;
 			ReplayBot::LoadFromReplayEditor(selectedReplay);
 		}
 		ImGui::SetCursorPos(ImVec2(355 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
@@ -372,4 +372,14 @@ void Editor::TimerThread()
 			}
 		}
 	}
+}
+
+void ReplayEditor::Editor::ToggleVisibility()
+{
+	isVisible = !isVisible;
+}
+
+bool ReplayEditor::Editor::GetIsVisible()
+{
+	return isVisible;
 }
