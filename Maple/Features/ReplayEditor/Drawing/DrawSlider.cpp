@@ -32,22 +32,19 @@ void ReplayEditor::DrawSlider::Render(SliderOsu* sliderOsu, ImDrawList* drawList
 {
 	if (sliderOsu->NeedsToDraw())
 	{
-		float sliderScale = circleSize * sliderOsu->GetScale();
-
 		sliderOsu->DoTransformations();
 
 		const std::vector<Vector2> points = sliderOsu->GetAllPoints();
+
+		ImVec4 color = ImGui::ColorConvertU32ToFloat4(sliderOsu->GetColor());
+		color.w = sliderOsu->GetOpacity();
 
 		for (int i = 0; i < points.size() - 1; i++)
 		{
 			const auto point1 = points[i];
 			const auto point2 = points[i + 1];
-			drawList->AddLine(ImVec2(point1.X, point1.Y), ImVec2(point2.X, point2.Y),
-				ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f),
-					sliderOsu->GetOpacity())), 4.f);
+			drawList->AddLine(ImVec2(point1.X, point1.Y), ImVec2(point2.X, point2.Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
 		}
-		drawList->AddLine(ImVec2(points.front().X, points.front().Y), ImVec2(points.back().X, points.back().Y),
-			ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f),
-				sliderOsu->GetOpacity())), 4.f);
+		drawList->AddLine(ImVec2(points.front().X, points.front().Y), ImVec2(points.back().X, points.back().Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
 	}
 }

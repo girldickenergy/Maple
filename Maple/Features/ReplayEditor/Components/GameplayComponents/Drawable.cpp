@@ -16,21 +16,6 @@ Drawable::Drawable(DrawableType drawableType, int* timer, Vector2 position, Tran
 	_index = index;
 }
 
-DrawableType Drawable::GetDrawableType()
-{
-	return _drawableType;
-}
-
-Vector2 Drawable::GetPosition()
-{
-	return _position;
-}
-
-std::vector<Transformation> Drawable::GetTransformations()
-{
-	return _transformations;
-}
-
 std::tuple<int, int> Drawable::GetDrawingTimes()
 {
 	int earliestStartTime = 0, latestEndTime = 0;
@@ -56,11 +41,6 @@ bool Drawable::NeedsToDraw()
 void Drawable::PushTransformation(Transformation transformation)
 {
 	_transformations.push_back(transformation);
-}
-
-int* Drawable::GetTimer()
-{
-	return _timer;
 }
 
 void Drawable::ApplyTransformation(Transformation transformation)
@@ -97,7 +77,6 @@ void Drawable::ApplyTransformation(Transformation transformation)
 
 void Drawable::DoTransformations()
 {
-	//if (NeedsToDraw) <-- We'll probably call this function in the UI thread anyways now that I think about it.
 	for (auto& transformation : _transformations)
 	{
 		if (transformation.GetTransformationType() != TransformationType::Empty)
@@ -118,4 +97,34 @@ float Drawable::GetScale()
 int ReplayEditor::Drawable::GetIndex()
 {
 	return _index;
+}
+
+DrawableType Drawable::GetDrawableType()
+{
+	return _drawableType;
+}
+
+Vector2 Drawable::GetPosition()
+{
+	return _position;
+}
+
+std::vector<Transformation> Drawable::GetTransformations()
+{
+	return _transformations;
+}
+
+int* Drawable::GetTimer()
+{
+	return _timer;
+}
+
+void Drawable::SetColor(ImU32 color)
+{
+	_color = color;
+}
+
+ImU32 Drawable::GetColor()
+{
+	return _color;
 }
