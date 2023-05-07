@@ -2,6 +2,7 @@
 #include <Math/Vector2.h>
 #include "Transformation.h"
 #include <vector>
+#include <imgui.h>
 
 namespace ReplayEditor
 {
@@ -44,6 +45,9 @@ namespace ReplayEditor
 
 		/// @brief The index of the drawable. May corelate to the HitObject index.
 		int _index;
+
+		/// @brief The color of the drawable.
+		ImU32 _color;
 	public:
 		/// @brief Constructs a non-gui drawable element for drawing on the screen.
 		/// @param drawableType An enum type specifying the drawable type.
@@ -52,18 +56,6 @@ namespace ReplayEditor
 		/// @param transformation The base transformation to apply to the drawable.
 		Drawable(DrawableType drawableType, int* timer, Vector2 position, Transformation transformation = Transformation(), int index = 0);
 
-		/// @brief Returns the type of the current drawable.
-		/// @return DrawableType
-		DrawableType GetDrawableType();
-
-		/// @brief Returns the playfield position of the current drawable.
-		/// @return Vector2
-		Vector2 GetPosition();
-
-		/// @brief Returns a vector of all added transformation of the current drawable.
-		/// @return std::vector Transformation
-		std::vector<Transformation> GetTransformations();
-
 		/// @brief Returns a tuple of two ints containing the start drawing time and the end drawing time of the current drawable.
 		/// @return std::tuple DrawingTimes
 		std::tuple<int, int> GetDrawingTimes();
@@ -71,10 +63,6 @@ namespace ReplayEditor
 		/// @brief Returns a value of 'true' when the drawable needs to be drawn on screen.
 		/// @return bool
 		bool NeedsToDraw();
-
-		/// @brief Returns the timer pointer which is passed from the editor instance.
-		/// @return int*
-		int* GetTimer();
 
 		/// @brief Adds a transformation (animation) onto the current drawable's transformation vector.
 		/// @param transformation New transformation (animation) to add
@@ -98,5 +86,29 @@ namespace ReplayEditor
 		/// @brief Returns the _index field
 		/// @return int Index
 		int GetIndex();
+
+		/// @brief Returns the type of the current drawable.
+		/// @return DrawableType
+		DrawableType GetDrawableType();
+
+		/// @brief Returns the playfield position of the current drawable.
+		/// @return Vector2
+		Vector2 GetPosition();
+
+		/// @brief Returns a vector of all added transformation of the current drawable.
+		/// @return std::vector Transformation
+		std::vector<Transformation> GetTransformations();
+
+		/// @brief Returns the timer pointer which is passed from the editor instance.
+		/// @return int*
+		int* GetTimer();
+
+		/// @brief Sets the color of the drawable.
+		/// @param color New color of the drawable.
+		void SetColor(ImU32 color);
+
+		/// @brief Returns the color of the drawable.
+		/// @return ImU32
+		ImU32 GetColor();
 	};
 }

@@ -74,5 +74,5 @@ EasingType ReplayEditor::Transformation::GetEasingType()
 
 void ReplayEditor::Transformation::SetEasingType(EasingType easingType)
 {
-	easingType = _easingType;
+	_easingType = easingType;
 }
