@@ -32,7 +32,9 @@ void ReplayEditor::DrawSlider::Render(SliderOsu* sliderOsu, ImDrawList* drawList
 {
 	if (sliderOsu->NeedsToDraw())
 	{
+		auto const& sliderBall = sliderOsu->GetSliderBall();
 		sliderOsu->DoTransformations();
+		sliderBall->DoTransformations();
 
 		const std::vector<Vector2> points = sliderOsu->GetAllPoints();
 
@@ -46,5 +48,10 @@ void ReplayEditor::DrawSlider::Render(SliderOsu* sliderOsu, ImDrawList* drawList
 			drawList->AddLine(ImVec2(point1.X, point1.Y), ImVec2(point2.X, point2.Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
 		}
 		drawList->AddLine(ImVec2(points.front().X, points.front().Y), ImVec2(points.back().X, points.back().Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
+
+		// Render the slider ball
+		auto position = sliderBall->GetPosition();
+		const auto playAreaPosition = EditorGlobals::ConvertToPlayArea(position);
+		drawList->AddCircle(ImVec2(playAreaPosition.X, playAreaPosition.Y), circleSize * sliderBall->GetScale(), ImGui::ColorConvertFloat4ToU32(color), 0, 4.f);
 	}
 }

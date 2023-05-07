@@ -217,6 +217,8 @@ void HitObjectManager::CacheHitObjects(uintptr_t instance)
 			std::vector<Vector2> sliderCurvePoints;
 			std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines;
 			std::vector<double> cumulativeLengths;
+			double velocity;
+			std::vector<int> sliderScoreTimingPoints;
 
 			const uintptr_t sliderCurvePointsAddress = *reinterpret_cast<uintptr_t*>(hitObjectAddress + SLIDEROSU_SLIDERCURVEPOINTS_OFFSET);
 			if (!isAddressValid(sliderCurvePointsAddress))
@@ -293,9 +295,32 @@ void HitObjectManager::CacheHitObjects(uintptr_t instance)
 
 				for (int j = 0; j < cumulativeLengthsCount; j++)
 					cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItemsAddress + 0x8 + 0x8 * j));
+
+				velocity = *reinterpret_cast<double*>(hitObjectAddress + SLIDEROSU_VELOCITY_OFFSET);
+
+				const uintptr_t sliderScoreTimingPointsAddress = *reinterpret_cast<uintptr_t*>(hitObjectAddress + SLIDEROSU_SLIDERSCORETIMINGPOINTS_OFFSET);
+				if (!isAddressValid(sliderScoreTimingPointsAddress))
+				{
+					i--;
+
+					continue;
+				}
+
+				const uintptr_t sliderScoreTimingPointsItemsAddress = *reinterpret_cast<uintptr_t*>(sliderScoreTimingPointsAddress + 0x4);
+				if (!isAddressValid(sliderScoreTimingPointsItemsAddress))
+				{
+					i--;
+
+					continue;
+				}
+
+				const int sliderScoreTimingPointsCount = *reinterpret_cast<int*>(sliderScoreTimingPointsAddress + 0xC);
+
+				for (int j = 0; j < sliderScoreTimingPointsCount; j++)
+					sliderScoreTimingPoints.emplace_back(*reinterpret_cast<double*>(sliderScoreTimingPointsItemsAddress + 0x8 + 0x4 * j));
 			}
 
-			HitObjects.emplace_back(i, type, startTime, endTime, position, endPosition, segmentCount, stackCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
+			HitObjects.emplace_back(i, type, startTime, endTime, position, endPosition, segmentCount, stackCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths, velocity, sliderScoreTimingPoints);
 		}
 		else HitObjects.emplace_back(i, type, startTime, endTime, position, position, segmentCount, stackCount, spatialLength);
 	}
