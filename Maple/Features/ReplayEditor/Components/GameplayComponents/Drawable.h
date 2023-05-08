@@ -13,6 +13,7 @@ namespace ReplayEditor
 		Drawable_ApproachCircle,
 		Drawable_HitObjectOsu,
 		Drawable_HitObjectSliderOsu,
+		Drawable_HitObjectSliderBallOsu,
 		Drawable_HitObjectSpinnerOsu,
 
 		/* catch the beat drawables */
