@@ -38,6 +38,8 @@ class HitObjectManager
 	static inline constexpr int SLIDEROSU_SLIDERCURVEPOINTS_OFFSET = 0xC0;
 	static inline constexpr int SLIDEROSU_SLIDERCURVESMOOTHLINES_OFFSET = 0xC4;
 	static inline constexpr int SLIDEROSU_CUMULATIVELENGTHS_OFFSET = 0xC8;
+	static inline constexpr int SLIDEROSU_VELOCITY_OFFSET = 0x9C;
+	static inline constexpr int SLIDEROSU_SLIDERSCORETIMINGPOINTS_OFFSET = 0xD8;
 
 	static inline int originalPreEmpt;
 	static inline int originalPreEmptSliderComplete;

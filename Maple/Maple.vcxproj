@@ -263,6 +263,7 @@
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.cpp" />
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.cpp" />
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderBallOsu.cpp" />
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.cpp" />
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.cpp" />
     <ClCompile Include="Features\ReplayEditor\Components\GUIComponents\ClickOverlay.cpp" />
@@ -607,6 +608,7 @@
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\ApproachCircle.h" />
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\HitObjectOsu.h" />
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuCursor.h" />
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderBallOsu.h" />
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderOsu.h" />
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Transformation.h" />
     <ClInclude Include="Features\ReplayEditor\Components\GUIComponents\Click.h" />
