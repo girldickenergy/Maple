@@ -263,6 +263,9 @@
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderBallOsu.cpp">
       <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderTickOsu.cpp">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1579,6 +1582,9 @@
       <Filter>Dependencies\clipper</Filter>
     </ClInclude>
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderBallOsu.h">
+      <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\Osu\SliderTickOsu.h">
       <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
     </ClInclude>
   </ItemGroup>

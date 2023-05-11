@@ -3,6 +3,8 @@
 #include "Math/Vector2.h"
 
 #include "SliderBallOsu.h"
+#include "SliderTickOsu.h"
+#include "../../../../../Sdk/Player/HitObject.h"
 
 namespace ReplayEditor
 {
@@ -20,8 +22,11 @@ namespace ReplayEditor
 		std::vector<double> cumulativeLengths;
 
 		ReplayEditor::SliderBallOsu* sliderBallOsu;
+		std::vector<ReplayEditor::SliderTickOsu*> sliderTicks;
+
+		HitObject* internalHitObject;
 	public:
-		SliderOsu(int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints = std::vector<Vector2>());
+		SliderOsu(HitObject* _internalHitObject, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints = std::vector<Vector2>());
 		void SetTime(int _time);
 		int GetTime();
 		void SetPreempt(int _preempt);
@@ -33,6 +38,8 @@ namespace ReplayEditor
 		std::vector<Vector2> GetAllPoints();
 
 		void InitializeSliderBall();
+		void InitializeSliderTicks();
 		ReplayEditor::SliderBallOsu* GetSliderBall();
+		std::vector<ReplayEditor::SliderTickOsu*> GetSliderTicks();
 	};
 }

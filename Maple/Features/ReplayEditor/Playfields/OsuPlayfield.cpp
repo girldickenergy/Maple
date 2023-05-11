@@ -88,7 +88,7 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 			fadeOut = Transformation(TransformationType::Fade, 1.f, 0.f, hitObject.EndTime, hitObject.EndTime + 240);
 		}
 
-		SliderOsu slider = SliderOsu(hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
+		SliderOsu slider = SliderOsu(&hitObject, hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
 			fadeIn, hitObject.SliderScoreTimingPoints, hitObject.CumulativeLengths, hitObject.SliderCurveSmoothLines);
 
 		slider.SetColor(color);
@@ -96,6 +96,7 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 
 		DrawSlider::CalculateCurves(&slider, EditorGlobals::PlayfieldScale(CIRCLESIZE(cs)), (_replay->Mods & Mods::HardRock) > Mods::None);
 		slider.InitializeSliderBall();
+		slider.InitializeSliderTicks();
 		//_drawables.push_back(slider.GetSliderBall());
 		_drawables.push_back(slider);
 	}

@@ -317,7 +317,7 @@ void HitObjectManager::CacheHitObjects(uintptr_t instance)
 				const int sliderScoreTimingPointsCount = *reinterpret_cast<int*>(sliderScoreTimingPointsAddress + 0xC);
 
 				for (int j = 0; j < sliderScoreTimingPointsCount; j++)
-					sliderScoreTimingPoints.emplace_back(*reinterpret_cast<double*>(sliderScoreTimingPointsItemsAddress + 0x8 + 0x4 * j));
+					sliderScoreTimingPoints.emplace_back(*reinterpret_cast<int*>(sliderScoreTimingPointsItemsAddress + 0x8 + 0x4 * j));
 			}
 
 			HitObjects.emplace_back(i, type, startTime, endTime, position, endPosition, segmentCount, stackCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths, velocity, sliderScoreTimingPoints);

@@ -1,8 +1,12 @@
 #include "SliderOsu.h"
 
-ReplayEditor::SliderOsu::SliderOsu(int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints)
+#include "../../../EditorGlobals.h"
+
+ReplayEditor::SliderOsu::SliderOsu(HitObject* _internalHitObject, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints)
 	: Drawable(DrawableType::Drawable_HitObjectSliderOsu, _timer, _position, _transformation)
 {
+	internalHitObject = _internalHitObject;
+
 	time = _time;
 	preempt = _preempt;
 	points = _points;
@@ -100,7 +104,30 @@ void ReplayEditor::SliderOsu::InitializeSliderBall()
 	}
 }
 
+void ReplayEditor::SliderOsu::InitializeSliderTicks()
+{
+	for (auto const& time : sliderScoreTimingPoints)
+	{
+		if (time == GetTime() || time == internalHitObject->EndTime)
+			continue;
+
+		auto position = internalHitObject->PositionAtTime(time);
+		
+		auto sliderTick = new SliderTickOsu(time, preempt, GetTimer(), EditorGlobals::ConvertToPlayArea(position));
+
+		for (auto const transformation : GetTransformations())
+			sliderTick->PushTransformation(transformation);
+
+		sliderTicks.push_back(sliderTick);
+	}
+}
+
 ReplayEditor::SliderBallOsu* ReplayEditor::SliderOsu::GetSliderBall()
 {
 	return sliderBallOsu;
+}
+
+std::vector<ReplayEditor::SliderTickOsu*> ReplayEditor::SliderOsu::GetSliderTicks()
+{
+	return sliderTicks;
 }
