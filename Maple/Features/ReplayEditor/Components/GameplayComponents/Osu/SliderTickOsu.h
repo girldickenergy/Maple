@@ -1,11 +1,11 @@
 #pragma once
-#include "../Drawable.h"
+#include "OsuDrawable.h"
 
 namespace ReplayEditor
 {
-	class SliderTickOsu : public Drawable
+	class SliderTickOsu : public OsuDrawable
 	{
-		using Drawable::Drawable;
+		using OsuDrawable::OsuDrawable;
 
 		int _time;
 	public:

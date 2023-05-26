@@ -1,13 +1,16 @@
 #pragma once
-#include "../Drawable.h"
+#include "OsuDrawable.h"
 
 namespace ReplayEditor
 {
-	class ApproachCircle : public Drawable
+	class ApproachCircle : public OsuDrawable
 	{
-		using Drawable::Drawable;
+		using OsuDrawable::OsuDrawable;
 
+		OsuDrawable* _linkedObject;
 	public:
-		ApproachCircle(int* timer, Vector2 position, Transformation fade, Transformation scale, int index = 0);
+		ApproachCircle(int* timer, Vector2 position, Transformation fade, Transformation scale, OsuDrawable* linkedObject, int index = 0);
+
+		ImU32 GetHitColor();
 	};
 }

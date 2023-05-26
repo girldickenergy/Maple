@@ -1,5 +1,5 @@
 #pragma once
-#include "../Drawable.h"
+#include "OsuDrawable.h"
 #include "Math/Vector2.h"
 
 #include "SliderBallOsu.h"
@@ -8,9 +8,9 @@
 
 namespace ReplayEditor
 {
-	class SliderOsu : public Drawable
+	class SliderOsu : public OsuDrawable
 	{
-		using Drawable::Drawable;
+		using OsuDrawable::OsuDrawable;
 
 		int time;
 		int preempt;

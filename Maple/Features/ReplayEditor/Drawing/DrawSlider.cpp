@@ -41,27 +41,24 @@ void ReplayEditor::DrawSlider::Render(SliderOsu* sliderOsu, ImDrawList* drawList
 
 		const std::vector<Vector2> points = sliderOsu->GetAllPoints();
 
-		ImVec4 color = ImGui::ColorConvertU32ToFloat4(sliderOsu->GetColor());
-		color.w = sliderOsu->GetOpacity();
-
 		for (int i = 0; i < points.size() - 1; i++)
 		{
 			const auto point1 = points[i];
 			const auto point2 = points[i + 1];
-			drawList->AddLine(ImVec2(point1.X, point1.Y), ImVec2(point2.X, point2.Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
+			drawList->AddLine(ImVec2(point1.X, point1.Y), ImVec2(point2.X, point2.Y), sliderOsu->GetHitColor(), 4.f);
 		}
-		drawList->AddLine(ImVec2(points.front().X, points.front().Y), ImVec2(points.back().X, points.back().Y), ImGui::ColorConvertFloat4ToU32(color), 4.f);
+		drawList->AddLine(ImVec2(points.front().X, points.front().Y), ImVec2(points.back().X, points.back().Y), sliderOsu->GetHitColor(), 4.f);
 
 		// Render slider ticks
 		for (auto const& tick : sliderOsu->GetSliderTicks())
 		{
 			auto position = tick->GetPosition();
-			drawList->AddCircleFilled(ImVec2(position.X, position.Y), PERC(circleSize * sliderBall->GetScale(), 7.5f), ImGui::ColorConvertFloat4ToU32(color), 0);
+			drawList->AddCircleFilled(ImVec2(position.X, position.Y), PERC(circleSize * sliderBall->GetScale(), 7.5f), sliderOsu->GetHitColor(), 0);
 		}
 
 		// Render the slider ball
 		auto position = sliderBall->GetPosition();
 		const auto playAreaPosition = EditorGlobals::ConvertToPlayArea(position);
-		drawList->AddCircle(ImVec2(playAreaPosition.X, playAreaPosition.Y), circleSize * sliderBall->GetScale(), ImGui::ColorConvertFloat4ToU32(color), 0, 4.f);
+		drawList->AddCircle(ImVec2(playAreaPosition.X, playAreaPosition.Y), circleSize * sliderBall->GetScale(), sliderOsu->GetHitColor(), 0, 4.f);
 	}
 }

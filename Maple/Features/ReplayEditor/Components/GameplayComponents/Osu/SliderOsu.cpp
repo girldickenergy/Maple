@@ -3,7 +3,7 @@
 #include "../../../EditorGlobals.h"
 
 ReplayEditor::SliderOsu::SliderOsu(HitObject* _internalHitObject, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints)
-	: Drawable(DrawableType::Drawable_HitObjectSliderOsu, _timer, _position, _transformation)
+	: OsuDrawable(DrawableType::Drawable_HitObjectSliderOsu, _timer, _position, _transformation)
 {
 	internalHitObject = _internalHitObject;
 

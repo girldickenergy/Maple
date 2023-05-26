@@ -25,12 +25,6 @@ int ReplayEditor::ClickTimeline::TimeToX(int time)
 
 int ReplayEditor::ClickTimeline::XToTime(int x)
 {
-	//var inputXPosition; // assuming 0 for middle of screen
-	//var currentTime;
-
-	//var relativeTime = inputXPosition * msPerPixel; // or `/ pixelsPerMs`, whichever one you have
-	//var absTime = currentTime + relativeTime;
-
 	auto width = static_cast<float>(clientBounds.X);
 	auto msPerScreen = (width * 2) * Config::ReplayEditor::TimelineResolution;
 	auto pixelsPerMs = width / msPerScreen;

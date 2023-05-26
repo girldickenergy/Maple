@@ -1,14 +1,5 @@
 #include "EventTimeline.h"
 
-ReplayEditor::EventType ReplayEditor::EventTimeline::GetHitRange(int delta)
-{
-	if (delta <= HitObjectManager::GetHitWindow300(homInstance)) return EventType::ThreeHundred;
-	if (delta <= HitObjectManager::GetHitWindow100(homInstance)) return EventType::OneHundred;
-	if (delta <= HitObjectManager::GetHitWindow50(homInstance))  return EventType::Fifty;
-
-	return EventType::Miss;
-}
-
 int ReplayEditor::EventTimeline::TimeToX(int time)
 {
 	return static_cast<int>((static_cast<float>(time) / replay->ReplayLength) * clientBounds.X);
@@ -19,60 +10,6 @@ int ReplayEditor::EventTimeline::XToTime(int x)
 	if (clientBounds.X < 0)
 		return 0;
 	return static_cast<int>((static_cast<float>(x) / clientBounds.X) * replay->ReplayLength);
-}
-
-ReplayEditor::EventType ReplayEditor::EventTimeline::TestTimeMiss(HitObject ho, ReplayFrame frame, int hoIndex)
-{
-	auto preempt = HitObjectManager::GetPreEmpt(reinterpret_cast<void*>(homInstance));
-	if ((ho.IsType(HitObjectType::Normal) || ho.IsType(HitObjectType::Slider)) && hoIndex > 0)
-	{
-		auto& previousObj = (*hitObjects)[hoIndex - 1];
-		if (previousObj.StackCount > 0 &&
-			(frame.Time >= previousObj.StartTime - preempt &&
-				frame.Time <= previousObj.EndTime + 240) &&
-			!previousObj.IsHit)
-			return EventType::Ignore;
-	}
-
-	int hitWindow50 = HitObjectManager::GetHitWindow50(homInstance);
-
-	bool isNextCircle = true;
-
-	for (auto it = hitObjects->begin(); it != hitObjects->begin() + hoIndex; ++it)
-	{
-		auto& h = *it;
-		if (h.StartTime + hitWindow50 <= frame.Time || h.IsHit)
-			continue;
-		if (h.StartTime < ho.StartTime && std::distance(it, hitObjects->begin() + hoIndex) != hoIndex)
-			isNextCircle = false;
-		break;
-	}
-
-	/*for (int i = 0; i < hitObjects->size(); i++)
-	{
-		auto& h = (*hitObjects)[i];
-		if (h.StartTime + hitWindow50 <= frame.Time || h.IsHit)
-			continue;
-		if (h.StartTime < ho.StartTime && i != hoIndex)
-			isNextCircle = false;
-		break;
-	}*/
-
-	if (isNextCircle && std::abs(ho.StartTime - frame.Time) < 400)
-		return EventType::Hit;
-
-	return EventType::Notelock;
-}
-
-bool ReplayEditor::EventTimeline::TestHit(HitObject ho, ReplayFrame frame, int hoIndex)
-{
-	auto radius = HitObjectManager::GetHitObjectRadius(homInstance);
-	int hitWindow50 = HitObjectManager::GetHitWindow50(homInstance);
-	auto preempt = HitObjectManager::GetPreEmpt(homInstance);
-	if ((ho.StartTime - preempt <= frame.Time && ho.StartTime + hitWindow50 >= frame.Time && !ho.IsHit) &&
-		(Vector2(frame.X, frame.Y).DistanceSquared(ho.Position) <= radius * radius))
-		return true;
-	return false;
 }
 
 ReplayEditor::EventTimeline::EventTimeline()
@@ -97,65 +34,29 @@ void ReplayEditor::EventTimeline::SetHitObjects(std::vector<HitObject>* _hitObje
 	hits = std::vector<bool>(hitObjects->size(), false);
 }
 
-void ReplayEditor::EventTimeline::ParseEvents(std::vector<ReplayFrame> _replayFrames, bool _otherMode)
+void ReplayEditor::EventTimeline::ParseEvents(std::vector<std::pair<int, HitObjectScoring>> hits)
 {
-	auto rf = (_replayFrames.empty() ? replay->ReplayFrames : _replayFrames);
-	std::vector<bool> used = std::vector<bool>(rf.size(), false);
 	events = std::vector<ReplayEditor::Event>();
 	events.clear();
 
-	auto previousObject = hitObjects->begin();
-	auto replayFrame = rf.begin();
-
-	/*for (auto it = hitObjects->begin(); it != hitObjects->begin() + hoIndex; ++it)
+	for (auto current = hits.begin(); current != hits.end(); ++current)
 	{
-		auto& h = *it;
-		if (h.StartTime + hitWindow50 <= frame.Time || h.IsHit)
-			continue;
-		if (h.StartTime < ho.StartTime && std::distance(it, hitObjects->begin() + hoIndex) != hoIndex)
-			isNextCircle = false;
-		break;
-	}*/
-	if (!_otherMode)
-	{
-		auto frame = rf.begin() + 1; // First frame cannot be click
-		for (auto current = hitObjects->begin(); current != hitObjects->end(); ++current) {
-			auto& ho = *current;
-
-			if (ho.IsType(HitObjectType::Spinner)) continue;
-
-			ho.IsHit = false;
-
-			// We can advance replay frames until we're sure the current object isn't clicked
-			// This won't miss future objects because of notelock
-			// Otherwise, we check against the next object starting from the next frame
-			// This may not work for double clicking if both keys go down on the same frame, I guess?
-			for (; frame != rf.end() && frame->Time <= ho.StartTime + HitObjectManager::GetHitWindow50(homInstance); ++frame) {
-				const auto prevFrame = *(frame - 1);
-				OsuKeys ok = static_cast<OsuKeys>((int)frame->OsuKeys & ~(int)prevFrame.OsuKeys);
-				if (((ok & OsuKeys::K1) > OsuKeys::None || (ok & OsuKeys::K2) > OsuKeys::None) && TestHit(ho, *frame, ho.Count)) {
-					int accuracy = std::abs(frame->Time - ho.StartTime);
-					EventType determinedRange = EventTimeline::GetHitRange(accuracy);
-
-					events.emplace_back(frame->Time, determinedRange);
-					if (determinedRange == EventType::OneHundred) ho.Is100 = true;
-					else if (determinedRange == EventType::Fifty) ho.Is50 = true;
-
-					ho.IsHit = true;
-
-					// Frame used
-					++frame;
-					break;
-				}
-			}
+		switch (current->second)
+		{
+			case HitObjectScoring::Miss:
+				events.emplace_back(current->first, EventType::Miss);
+				break;
+			case HitObjectScoring::Fifty:
+				events.emplace_back(current->first, EventType::Fifty);
+				break;
+			case HitObjectScoring::OneHundred:
+				events.emplace_back(current->first, EventType::OneHundred);
+				break;
+			case HitObjectScoring::ThreeHundred:
+				events.emplace_back(current->first, EventType::ThreeHundred);
+				break;
 		}
 	}
-
-	for (auto& ho : *hitObjects)
-		if (!ho.IsHit && !ho.IsType(HitObjectType::Spinner))
-			events.emplace_back(ho.StartTime, EventType::Miss);
-		else if (ho.IsType(HitObjectType::Spinner))
-			events.emplace_back(ho.StartTime, EventType::ThreeHundred);
 
 	IsInit = true;
 }

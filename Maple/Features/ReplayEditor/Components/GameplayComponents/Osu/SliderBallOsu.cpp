@@ -1,10 +1,10 @@
 #include "SliderBallOsu.h"
 
-ReplayEditor::SliderBallOsu::SliderBallOsu() : Drawable(Drawable_HitObjectSliderBallOsu, nullptr, Vector2(0,0))
+ReplayEditor::SliderBallOsu::SliderBallOsu() : OsuDrawable(Drawable_HitObjectSliderBallOsu, nullptr, Vector2(0,0))
 { }
 
 ReplayEditor::SliderBallOsu::SliderBallOsu(int time, int preempt, int* timer, Vector2 position, Transformation transformation)
-	: Drawable(DrawableType::Drawable_HitObjectSliderBallOsu, timer, position, transformation)
+	: OsuDrawable(DrawableType::Drawable_HitObjectSliderBallOsu, timer, position, transformation)
 {
 	_time = time;
 }
