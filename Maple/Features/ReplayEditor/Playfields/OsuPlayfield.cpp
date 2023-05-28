@@ -12,7 +12,6 @@ ReplayEditor::OsuPlayfield::OsuPlayfield()
 	_hitObjects = nullptr;
 	_currentFrame = nullptr;
 	_osuCursor = OsuCursor();
-	_hits = std::vector<std::pair<int, HitObjectScoring>>();
 	_drawables = std::vector<OsuDrawable*>();
 }
 
@@ -28,7 +27,6 @@ ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, B
 	_currentFrame = currentFrame;
 	_clientBounds = GameBase::GetClientSize();
 	_osuCursor = OsuCursor(_currentFrame, _replay, _drawList);
-	_hits = std::vector<std::pair<int, HitObjectScoring>>();
 	_drawables = std::vector<OsuDrawable*>();
 
 	CalculatePlayareaCoordinates();
@@ -38,8 +36,6 @@ ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, B
 
 void ReplayEditor::OsuPlayfield::CalculateHits()
 {
-	_hits.clear();
-
 	auto frame = _replay->ReplayFrames.begin() + 1; // First frame cannot be click
 	for (auto current = _hitObjects->begin(); current != _hitObjects->end(); ++current) {
 		auto& hitObject = *current;
@@ -57,7 +53,7 @@ void ReplayEditor::OsuPlayfield::CalculateHits()
 
 		if (hitObject.IsType(HitObjectType::Spinner)) continue;
 
-		foundDrawable->SetHitObjectScoring(HitObjectScoring::Miss);
+		//foundDrawable->SetHitObjectScoring(HitObjectScoring::Miss);
 
 		// We can advance replay frames until we're sure the current object isn't clicked
 		// This won't miss future objects because of notelock
@@ -70,10 +66,22 @@ void ReplayEditor::OsuPlayfield::CalculateHits()
 				int accuracy = std::abs(frame->Time - hitObject.StartTime);
 				auto determinedRange = getHitRange(accuracy);
 
-				_hits.emplace_back(frame->Time, determinedRange);
+				// Slidertick logic
+				if (hitObject.IsType(HitObjectType::Slider))
+				{
+					// Since sliderticks are already accounted for whenever this code is ran, we can just grab the event from the Slider
+					SliderOsu* slider = nullptr;
+					if (foundDrawable->GetDrawableType() == Drawable_HitObjectSliderOsu)
+						slider = dynamic_cast<SliderOsu*>(foundDrawable);
+					else if (foundDrawable->GetDrawableType() == Drawable_ApproachCircle)
+						slider = dynamic_cast<SliderOsu*>(dynamic_cast<ApproachCircle*>(foundDrawable)->GetLinkedObject());
+
+					if (slider->GetHitObjectScoring() != HitObjectScoring::ThreeHundred)
+						determinedRange = slider->GetHitObjectScoring();
+				}
+
 				foundDrawable->SetHitObjectScoring(determinedRange);
 
-				// Frame used
 				++frame;
 				break;
 			}
@@ -81,9 +89,9 @@ void ReplayEditor::OsuPlayfield::CalculateHits()
 	}
 }
 
-std::vector<std::pair<int, HitObjectScoring>> ReplayEditor::OsuPlayfield::GetHits()
+std::vector<ReplayEditor::OsuDrawable*> ReplayEditor::OsuPlayfield::GetDrawables()
 {
-	return _hits;
+	return _drawables;
 }
 
 void ReplayEditor::OsuPlayfield::CalculatePlayareaCoordinates()
@@ -135,21 +143,20 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 		Transformation fadeAr = Transformation(TransformationType::Fade, 0.f, 0.9f, hitObject.StartTime - preempt, std::min(hitObject.StartTime, hitObject.StartTime - preempt + 400 * 2));
 		Transformation scaleAr = Transformation(TransformationType::Scale, 4.f, 1.f, hitObject.StartTime - preempt, hitObject.StartTime);
 
-		if (hitObject.IsType(HitObjectType::Normal))
+		HitObjectOsu* hitObjectOsu = new HitObjectOsu(hitObject.StartTime, preempt, _timer, hitObject.Position, fadeIn, hitObject.Count);
+		hitObjectOsu->PushTransformation(fadeOut);
+
+		ApproachCircle* approachCircle = new ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, hitObjectOsu);
+		if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
+			approachCircle->PushTransformation(fadeOut);
+
+		if (!hitObject.IsType(HitObjectType::Slider))
 		{
-			HitObjectOsu* hitObjectOsu = new HitObjectOsu(hitObject.StartTime, preempt, _timer, hitObject.Position, fadeIn, hitObject.Count);
-			hitObjectOsu->PushTransformation(fadeOut);
-
 			_drawables.emplace_back(hitObjectOsu);
-			ApproachCircle* approachCircle = new ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, hitObjectOsu, hitObject.Count);
-			if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
-				approachCircle->PushTransformation(fadeOut);
-
 			if ((_replay->Mods & Mods::Hidden) <= Mods::None || (_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
 				_drawables.emplace_back(approachCircle);
+			continue;
 		}
-
-		if (!hitObject.IsType(HitObjectType::Slider)) continue;
 		
 		if ((_replay->Mods & Mods::Hidden) > Mods::None)
 		{
@@ -164,13 +171,10 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 			fadeOut = Transformation(TransformationType::Fade, 1.f, 0.f, hitObject.EndTime, hitObject.EndTime + 240);
 		}
 
-		SliderOsu* slider = new SliderOsu(&hitObject, hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
+		SliderOsu* slider = new SliderOsu(&hitObject, hitObject.Count, hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
 			fadeIn, hitObject.SliderScoreTimingPoints, hitObject.CumulativeLengths, hitObject.SliderCurveSmoothLines);
 
-		ApproachCircle* approachCircle = new ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, slider, hitObject.Count);
-		if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
-			approachCircle->PushTransformation(fadeOut);
-
+		approachCircle->SetLinkedObject(slider);
 		if ((_replay->Mods & Mods::Hidden) <= Mods::None || (_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
 			_drawables.emplace_back(approachCircle);
 

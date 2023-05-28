@@ -4,9 +4,10 @@ ReplayEditor::OsuDrawable::OsuDrawable() : Drawable(Drawable_Null, nullptr, Vect
 { 
 }
 
-ReplayEditor::OsuDrawable::OsuDrawable(DrawableType drawableType, int* timer, Vector2 position, Transformation transformation, int index)
+ReplayEditor::OsuDrawable::OsuDrawable(DrawableType drawableType, int* timer, int time, Vector2 position, Transformation transformation, int index)
 	: Drawable(drawableType, timer, position, transformation, index)
 {
+	_time = time;
 	_hitObjectScoring = HitObjectScoring::Miss;
 }
 
@@ -18,6 +19,16 @@ HitObjectScoring ReplayEditor::OsuDrawable::GetHitObjectScoring()
 void ReplayEditor::OsuDrawable::SetHitObjectScoring(HitObjectScoring hitObjectScoring)
 {
 	_hitObjectScoring = hitObjectScoring;
+}
+
+void ReplayEditor::OsuDrawable::SetTime(int time)
+{
+	_time = time;
+}
+
+int ReplayEditor::OsuDrawable::GetTime()
+{
+	return _time;
 }
 
 ImU32 ReplayEditor::OsuDrawable::GetHitColor()

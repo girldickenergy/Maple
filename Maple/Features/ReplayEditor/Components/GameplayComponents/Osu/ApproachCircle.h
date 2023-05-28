@@ -9,8 +9,10 @@ namespace ReplayEditor
 
 		OsuDrawable* _linkedObject;
 	public:
-		ApproachCircle(int* timer, Vector2 position, Transformation fade, Transformation scale, OsuDrawable* linkedObject, int index = 0);
+		ApproachCircle(int* timer, Vector2 position, Transformation fade, Transformation scale, OsuDrawable* linkedObject);
 
+		void SetLinkedObject(OsuDrawable* linkedObject);
+		OsuDrawable* GetLinkedObject();
 		ImU32 GetHitColor();
 	};
 }

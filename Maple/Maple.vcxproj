@@ -275,6 +275,7 @@
     <ClCompile Include="Features\ReplayEditor\Editor.cpp" />
     <ClCompile Include="Features\ReplayEditor\Playfields\OsuPlayfield.cpp" />
     <ClCompile Include="Features\ReplayEditor\Utilities\InputHandler.cpp" />
+    <ClCompile Include="Features\ReplayEditor\Utilities\ReplayHandler.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
@@ -624,6 +625,7 @@
     <ClInclude Include="Features\ReplayEditor\Editor.h" />
     <ClInclude Include="Features\ReplayEditor\EditorGlobals.h" />
     <ClInclude Include="Features\ReplayEditor\Playfields\OsuPlayfield.h" />
+    <ClInclude Include="Features\ReplayEditor\Utilities\ReplayHandler.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Logging\Logger.h" />

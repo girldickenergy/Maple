@@ -1,13 +1,13 @@
 #include "SliderOsu.h"
 
 #include "../../../EditorGlobals.h"
+#include "../../../Editor.h"
 
-ReplayEditor::SliderOsu::SliderOsu(HitObject* _internalHitObject, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints)
-	: OsuDrawable(DrawableType::Drawable_HitObjectSliderOsu, _timer, _position, _transformation)
+ReplayEditor::SliderOsu::SliderOsu(HitObject* _internalHitObject, int _index, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints)
+	: OsuDrawable(DrawableType::Drawable_HitObjectSliderOsu, _timer, _time, _position, _transformation, _index)
 {
 	internalHitObject = _internalHitObject;
 
-	time = _time;
 	preempt = _preempt;
 	points = _points;
 	allPoints = _allPoints;
@@ -15,16 +15,11 @@ ReplayEditor::SliderOsu::SliderOsu(HitObject* _internalHitObject, int _time, int
 	segmentCount = _segmentCount;
 	cumulativeLengths = _cumulativeLengths;
 	sliderScoreTimingPoints = _sliderScoreTimingPoints;
-}
 
-void ReplayEditor::SliderOsu::SetTime(int _time)
-{
-	time = _time;
-}
+	_sliderTicksHit = 0;
+	_sliderTicksMissed = 0;
 
-int ReplayEditor::SliderOsu::GetTime()
-{
-	return time;
+	SetHitObjectScoring(HitObjectScoring::ThreeHundred);
 }
 
 void ReplayEditor::SliderOsu::SetPreempt(int _preempt)
@@ -64,12 +59,12 @@ std::vector<Vector2> ReplayEditor::SliderOsu::GetAllPoints()
 
 void ReplayEditor::SliderOsu::InitializeSliderBall()
 {
-	sliderBallOsu = new SliderBallOsu(time, preempt, GetTimer(), GetPosition());
+	sliderBallOsu = new SliderBallOsu(GetTime(), preempt, GetTimer(), GetPosition());
 	
 	for (auto const transformation : GetTransformations())
 		sliderBallOsu->PushTransformation(transformation);
 
-	auto startTime = time;
+	auto startTime = GetTime();
 	Vector2 vector1 = Vector2();
 	Vector2 vector2 = Vector2();
 	for (int i = 0; i < segmentCount; i++)
@@ -106,19 +101,89 @@ void ReplayEditor::SliderOsu::InitializeSliderBall()
 
 void ReplayEditor::SliderOsu::InitializeSliderTicks()
 {
-	for (auto const& time : sliderScoreTimingPoints)
+	auto radius = HitObjectManager::GetHitObjectRadius(Editor::Get().GetHitObjectManagerInstance());
+	for (auto it = sliderScoreTimingPoints.begin(); it < sliderScoreTimingPoints.end() - 1; ++it)
 	{
+		auto time = *it;
 		if (time == GetTime() || time == internalHitObject->EndTime)
 			continue;
 
 		auto position = internalHitObject->PositionAtTime(time);
+
+		if (position.DistanceSquared(internalHitObject->PositionAtTime(*(sliderScoreTimingPoints.end() - 1))) <= radius * radius ||
+			position.DistanceSquared(GetPosition()) <= radius * radius)
+			continue;
 		
 		auto sliderTick = new SliderTickOsu(time, preempt, GetTimer(), EditorGlobals::ConvertToPlayArea(position));
+
+		AnalyzeSliderTick(time, sliderTick);
 
 		for (auto const transformation : GetTransformations())
 			sliderTick->PushTransformation(transformation);
 
 		sliderTicks.push_back(sliderTick);
+	}
+	
+	for (auto const& tick : sliderTicks)
+		if (tick->GetHitObjectScoring() == HitObjectScoring::Miss)
+		{
+			SetHitObjectScoring(HitObjectScoring::Miss);
+			return;
+		}
+		else if (tick->GetHitObjectScoring() == HitObjectScoring::OneHundred)
+		{
+			SetHitObjectScoring(HitObjectScoring::OneHundred);
+			return;
+		}
+}
+
+void ReplayEditor::SliderOsu::AnalyzeSliderTick(int time, SliderTickOsu* sliderTickOsu)
+{
+	bool allowable = false;
+	auto sliderBall = GetSliderBall();
+	auto sliderBallTransformation = sliderBall->GetTransformations();
+	auto replayHandler = Editor::Get().GetReplayHandler();
+	auto radius = HitObjectManager::GetHitObjectRadius(Editor::Get().GetHitObjectManagerInstance()) * 2.4f;
+
+	Transformation* t = nullptr;
+	for (auto& transformation : sliderBallTransformation)
+	{
+		if (transformation.GetStartTime() <= time && transformation.GetEndTime() >= time)
+		{
+			t = &transformation;
+			break;
+		}
+	}
+
+	if (t == nullptr && time > sliderBallTransformation[sliderBallTransformation.size() - 1].GetEndTime())
+		t = &sliderBallTransformation[sliderBallTransformation.size() - 1];
+
+	if (t != nullptr)
+	{
+		Vector2 position;
+		if (t->GetEndTime() == t->GetStartTime())
+			position = t->GetEndPosition();
+		else
+			position = t->GetStartPosition() + 
+			(t->GetEndPosition() - t->GetStartPosition()) * 
+			(1 - static_cast<float>(t->GetEndTime() - time) / (t->GetEndTime() - t->GetStartTime()));
+
+		allowable = replayHandler.GetMousePositionAtTime(time).DistanceSquared(position) < radius * radius;
+	}
+
+	if (allowable && GetTime() <= time)
+	{
+		_sliderTicksHit++;
+		sliderTickOsu->SetHitObjectScoring(HitObjectScoring::ThreeHundred);
+	}
+	else
+	{
+		_sliderTicksMissed++;
+
+		if (_sliderTicksHit + _sliderTicksMissed == sliderScoreTimingPoints.size())
+			sliderTickOsu->SetHitObjectScoring(HitObjectScoring::OneHundred);
+		else
+			sliderTickOsu->SetHitObjectScoring(HitObjectScoring::Miss);
 	}
 }
 

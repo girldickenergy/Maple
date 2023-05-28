@@ -56,9 +56,6 @@ namespace ReplayEditor
 		/// @brief Osu cursor instance.
 		OsuCursor _osuCursor;
 
-		/// @brief A vector that holds hit information.
-		std::vector<std::pair<int, HitObjectScoring>> _hits;
-
 		/// @brief Calculates the offset/position and size of the playarea on screen.
 		void CalculatePlayareaCoordinates();
 
@@ -106,8 +103,8 @@ namespace ReplayEditor
 		/// @brief Iterate through all HitObjects and calculate their Hit status.
 		void CalculateHits();
 
-		/// @brief Returns all the hits calculated in the playfield.
-		std::vector<std::pair<int, HitObjectScoring>> GetHits();
+		/// @brief Returns a vector of pointers to all osu drawables
+		std::vector<ReplayEditor::OsuDrawable*> GetDrawables();
 
 		/// @brief Renders the osu playfield instance to the editor screen.
 		void Render();
