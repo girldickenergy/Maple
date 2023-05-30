@@ -8,6 +8,7 @@
 #include "../../../../Config/Config.h"
 #include "Click.h"
 #include "../../../../Sdk/Player/HitObjectManager.h"
+#include "../GameplayComponents/HitObjectScoring.h"
 
 namespace ReplayEditor
 {
@@ -46,11 +47,8 @@ namespace ReplayEditor
 		int cs;
 		uintptr_t homInstance;
 
-		EventType GetHitRange(int delta);
 		int TimeToX(int time);
 		bool ContainsPoint(HitObject ho, Vector2 point);
-		EventType TestTimeMiss(HitObject ho, ReplayFrame frame, int hoIndex);
-		bool TestHit(HitObject ho, ReplayFrame frame, int hoIndex);
 	public:
 		ImDrawList* drawList;
 		Vector2 clientBounds;
@@ -60,7 +58,7 @@ namespace ReplayEditor
 		EventTimeline();
 		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
-		void ParseEvents(std::vector<ReplayFrame> _replayFrames = std::vector<ReplayFrame>(), bool _otherMode = false);
+		void ParseEvents(std::vector<std::pair<int, HitObjectScoring>> hits);
 		void Draw();
 		void SetOverallDifficulty(int _od);
 		void SetCircleSize(int _cs);

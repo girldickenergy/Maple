@@ -1,7 +1,7 @@
 #include "HitObjectOsu.h"
 
 ReplayEditor::HitObjectOsu::HitObjectOsu(int _time, int _preempt, int* _timer, Vector2 _position, Transformation _transformation, int index)
-	: Drawable(DrawableType::Drawable_HitObjectOsu, _timer, _position, _transformation, index)
+	: OsuDrawable(DrawableType::Drawable_HitObjectOsu, _timer, _position, _transformation, index)
 {
 	time = _time;
 	preempt = _preempt;

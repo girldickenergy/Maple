@@ -355,7 +355,8 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 				clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
 				
-			Editor::eventTimeline.ParseEvents();
+			Editor::osuPlayfield.CalculateHits();
+			Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetHits());
 
 			Editor::ForceUpdateCursorPosition();
 		}
@@ -379,7 +380,8 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
 
-		Editor::eventTimeline.ParseEvents();
+		Editor::osuPlayfield.CalculateHits();
+		Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetHits());
 
 		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();
@@ -403,8 +405,9 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
 			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
-			
-		Editor::eventTimeline.ParseEvents();
+
+		Editor::osuPlayfield.CalculateHits();
+		Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetHits());
 
 		Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
 		Editor::clickTimeline.ParseClicks();

@@ -16,6 +16,7 @@
 #include "../Components/GameplayComponents/Osu/ApproachCircle.h"
 #include "../Components/GameplayComponents/Osu/HitObjectOsu.h"
 #include "../Components/GameplayComponents/Osu/SliderOsu.h"
+#include "../Components/GameplayComponents/HitObjectScoring.h"
 
 #include <Math/sRectangle.h>
 
@@ -50,10 +51,13 @@ namespace ReplayEditor
 		Vector2 _clientBounds;
 
 		/// @brief Vector holding all the drawables meant to be displayed on screen.
-		std::vector<std::any> _drawables;
+		std::vector<OsuDrawable*> _drawables;
 
 		/// @brief Osu cursor instance.
 		OsuCursor _osuCursor;
+
+		/// @brief A vector that holds hit information.
+		std::vector<std::pair<int, HitObjectScoring>> _hits;
 
 		/// @brief Calculates the offset/position and size of the playarea on screen.
 		void CalculatePlayareaCoordinates();
@@ -66,6 +70,22 @@ namespace ReplayEditor
 
 		/// @brief Renders the drawables that have to be drawn to the draw list context.
 		void RenderDrawables();
+
+		/// @brief Gets the hit range of the supplied delta.
+		/// @param delta Delta between actual user hit input and the HitObject start time.
+		HitObjectScoring getHitRange(int delta);
+
+		/// @brief Tests whether or not the hit was a 300, 100, 50, NoteLock, etc...
+		/// @param hitObject The HitObject the hit should be tested on.
+		/// @param replayFrame The ReplayFrame of when the hit occured.
+		/// @param hitObjectIndex The Index of the HitObject.
+		HitObjectScoring testTimeMiss(HitObject hitObject, ReplayFrame replayFrame, int hitObjectIndex);
+
+		/// @brief Tests whether or not the HitObject was hit in the ReplayFrame.
+		/// @param hitObject The HitObject that should be tested.
+		/// @param replayFrame The ReplayFrame where the hit occured.
+		/// @param hitObjectIndex The Index of the HitObject.
+		bool testHit(HitObject hitObject, ReplayFrame replayFrame, int hitObjectIndex);
 	public:
 		/// @brief A boolean value that can be checked to see if osu playfield has been initialized with values.
 		bool _isInit;
@@ -82,6 +102,12 @@ namespace ReplayEditor
 		/// @param currentFrame Pointer to the current frame field from the editor instance.
 		/// @param hitObjects Pointer to vector holding all the currently loaded hit objects.
 		OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects);
+
+		/// @brief Iterate through all HitObjects and calculate their Hit status.
+		void CalculateHits();
+
+		/// @brief Returns all the hits calculated in the playfield.
+		std::vector<std::pair<int, HitObjectScoring>> GetHits();
 
 		/// @brief Renders the osu playfield instance to the editor screen.
 		void Render();

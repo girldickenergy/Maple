@@ -89,11 +89,11 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	eventTimeline.SetHitObjects(&hitObjects);
 	eventTimeline.SetCircleSize(cs);
 	eventTimeline.SetOverallDifficulty(bmap.GetOverallDifficulty());
-	eventTimeline.ParseEvents();
 
 	osuPlayfield = OsuPlayfield(drawList, &Editor::selectedReplay, &Editor::bmap, customHomInstance,
 	                                          &Time, &Editor::currentFrame, &hitObjects);
 
+	eventTimeline.ParseEvents(osuPlayfield.GetHits());
 	//BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
 
 	BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());

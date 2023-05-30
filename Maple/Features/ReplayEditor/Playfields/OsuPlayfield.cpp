@@ -1,6 +1,91 @@
 #define NOMINMAX
 #include "OsuPlayfield.h"
 
+ReplayEditor::OsuPlayfield::OsuPlayfield()
+{
+	_isInit = false;
+	_drawList = nullptr;
+	_replay = nullptr;
+	_beatmap = nullptr;
+	_hitObjectManager = NULL;
+	_timer = nullptr;
+	_hitObjects = nullptr;
+	_currentFrame = nullptr;
+	_osuCursor = OsuCursor();
+	_hits = std::vector<std::pair<int, HitObjectScoring>>();
+	_drawables = std::vector<OsuDrawable*>();
+}
+
+ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects)
+{
+	_isInit = false;
+	_drawList = drawList;
+	_replay = replay;
+	_beatmap = beatmap;
+	_hitObjectManager = hitObjectManager;
+	_timer = timer;
+	_hitObjects = hitObjects;
+	_currentFrame = currentFrame;
+	_clientBounds = GameBase::GetClientSize();
+	_osuCursor = OsuCursor(_currentFrame, _replay, _drawList);
+	_hits = std::vector<std::pair<int, HitObjectScoring>>();
+	_drawables = std::vector<OsuDrawable*>();
+
+	CalculatePlayareaCoordinates();
+	ConstructDrawables();
+	CalculateHits();
+}
+
+void ReplayEditor::OsuPlayfield::CalculateHits()
+{
+	_hits.clear();
+
+	auto frame = _replay->ReplayFrames.begin() + 1; // First frame cannot be click
+	for (auto current = _hitObjects->begin(); current != _hitObjects->end(); ++current) {
+		auto& hitObject = *current;
+
+		// Find the drawable associated with this hitObject
+		auto& foundDrawable = _drawables[0];
+		for (auto drawable = _drawables.begin(); drawable != _drawables.end(); ++drawable)
+		{
+			if ((*drawable)->GetIndex() == current->Count)
+			{
+				foundDrawable = *drawable;
+				break;
+			}
+		}
+
+		if (hitObject.IsType(HitObjectType::Spinner)) continue;
+
+		foundDrawable->SetHitObjectScoring(HitObjectScoring::Miss);
+
+		// We can advance replay frames until we're sure the current object isn't clicked
+		// This won't miss future objects because of notelock
+		// Otherwise, we check against the next object starting from the next frame
+		// This may not work for double clicking if both keys go down on the same frame, I guess?
+		for (; frame != _replay->ReplayFrames.end() && frame->Time <= hitObject.StartTime + HitObjectManager::GetHitWindow50(_hitObjectManager); ++frame) {
+			const auto prevFrame = *(frame - 1);
+			OsuKeys osuKeys = static_cast<OsuKeys>((int)frame->OsuKeys & ~(int)prevFrame.OsuKeys);
+			if (((osuKeys & OsuKeys::K1) > OsuKeys::None || (osuKeys & OsuKeys::K2) > OsuKeys::None) && testHit(hitObject, *frame, hitObject.Count)) {
+				int accuracy = std::abs(frame->Time - hitObject.StartTime);
+				auto determinedRange = getHitRange(accuracy);
+
+				_hits.emplace_back(frame->Time, determinedRange);
+				foundDrawable->SetHitObjectScoring(determinedRange);
+
+				// Frame used
+				++frame;
+				break;
+			}
+		}
+	}
+}
+
+std::vector<std::pair<int, HitObjectScoring>> ReplayEditor::OsuPlayfield::GetHits()
+{
+	return _hits;
+}
+
 void ReplayEditor::OsuPlayfield::CalculatePlayareaCoordinates()
 {
 	if (_clientBounds.X == 0 || _clientBounds.Y == 0) return;
@@ -47,31 +132,22 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 				hitObject.StartTime - static_cast<int>((static_cast<double>(preempt * 0.3f))));
 		}
 
-		HitObjectOsu hitObjectOsu = HitObjectOsu(hitObject.StartTime, preempt, _timer, hitObject.Position, fadeIn, hitObject.Count);
-		hitObjectOsu.PushTransformation(fadeOut);
-
-		bool isHit = hitObject.IsHit;
-		ImU32 color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f));
-		if (!isHit)
-			color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(0.f), COL(0.f), 1.f));
-		if (hitObject.Is100)
-			color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(0.f), COL(255.f), COL(0.f), 1.f));
-		if (hitObject.Is50) //255, 230, 170
-			color = ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(230.f), COL(170.f), 1.f));
-		hitObjectOsu.SetColor(color);
-
-		_drawables.push_back(hitObjectOsu);
-		
 		Transformation fadeAr = Transformation(TransformationType::Fade, 0.f, 0.9f, hitObject.StartTime - preempt, std::min(hitObject.StartTime, hitObject.StartTime - preempt + 400 * 2));
 		Transformation scaleAr = Transformation(TransformationType::Scale, 4.f, 1.f, hitObject.StartTime - preempt, hitObject.StartTime);
 
-		ApproachCircle approachCircle = ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, hitObject.Count);
-		approachCircle.SetColor(color);
-		if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
-			approachCircle.PushTransformation(fadeOut);
+		if (hitObject.IsType(HitObjectType::Normal))
+		{
+			HitObjectOsu* hitObjectOsu = new HitObjectOsu(hitObject.StartTime, preempt, _timer, hitObject.Position, fadeIn, hitObject.Count);
+			hitObjectOsu->PushTransformation(fadeOut);
 
-		if ((_replay->Mods & Mods::Hidden) <= Mods::None || (_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
-			_drawables.push_back(approachCircle);
+			_drawables.emplace_back(hitObjectOsu);
+			ApproachCircle* approachCircle = new ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, hitObjectOsu, hitObject.Count);
+			if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
+				approachCircle->PushTransformation(fadeOut);
+
+			if ((_replay->Mods & Mods::Hidden) <= Mods::None || (_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
+				_drawables.emplace_back(approachCircle);
+		}
 
 		if (!hitObject.IsType(HitObjectType::Slider)) continue;
 		
@@ -88,17 +164,23 @@ void ReplayEditor::OsuPlayfield::ConstructDrawables()
 			fadeOut = Transformation(TransformationType::Fade, 1.f, 0.f, hitObject.EndTime, hitObject.EndTime + 240);
 		}
 
-		SliderOsu slider = SliderOsu(&hitObject, hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
+		SliderOsu* slider = new SliderOsu(&hitObject, hitObject.StartTime, preempt, _timer, hitObject.Position, hitObject.Velocity, hitObject.SegmentCount, 
 			fadeIn, hitObject.SliderScoreTimingPoints, hitObject.CumulativeLengths, hitObject.SliderCurveSmoothLines);
 
-		slider.SetColor(color);
-		slider.PushTransformation(fadeOut);
+		ApproachCircle* approachCircle = new ApproachCircle(_timer, hitObject.Position, fadeAr, scaleAr, slider, hitObject.Count);
+		if ((_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
+			approachCircle->PushTransformation(fadeOut);
 
-		DrawSlider::CalculateCurves(&slider, EditorGlobals::PlayfieldScale(CIRCLESIZE(cs)), (_replay->Mods & Mods::HardRock) > Mods::None);
-		slider.InitializeSliderBall();
-		slider.InitializeSliderTicks();
+		if ((_replay->Mods & Mods::Hidden) <= Mods::None || (_replay->Mods & Mods::Hidden) > Mods::None && hitObject.Count == 0)
+			_drawables.emplace_back(approachCircle);
+
+		slider->PushTransformation(fadeOut);
+
+		DrawSlider::CalculateCurves(slider, EditorGlobals::PlayfieldScale(CIRCLESIZE(cs)), (_replay->Mods & Mods::HardRock) > Mods::None);
+		slider->InitializeSliderBall();
+		slider->InitializeSliderTicks();
 		//_drawables.push_back(slider.GetSliderBall());
-		_drawables.push_back(slider);
+		_drawables.emplace_back(slider);
 	}
 	_isInit = true;
 }
@@ -119,47 +201,41 @@ void ReplayEditor::OsuPlayfield::RenderDrawables()
 
 	for (auto& drawable : _drawables)
 	{
-		switch (std::type_index(drawable.type()).hash_code())
+		switch (drawable->GetDrawableType())
 		{
-			case 1696882241:
+			case Drawable_HitObjectSliderOsu:
 			{
-				SliderOsu sliderOsu = std::any_cast<SliderOsu>(drawable);
-				if (sliderOsu.NeedsToDraw())
+				SliderOsu* sliderOsu = dynamic_cast<SliderOsu*>(drawable);
+				if (sliderOsu->NeedsToDraw())
 				{
-					sliderOsu.DoTransformations();
-					DrawSlider::Render(&sliderOsu, _drawList, EditorGlobals::PlayfieldScale(circleRadius));
+					sliderOsu->DoTransformations();
+					DrawSlider::Render(sliderOsu, _drawList, EditorGlobals::PlayfieldScale(circleRadius));
 				}
 				break;
 			}
-			case 2753814496:
+			case Drawable_HitObjectOsu:
 			{
-				HitObjectOsu hitObjectOsu = std::any_cast<HitObjectOsu>(drawable);
-				if (hitObjectOsu.NeedsToDraw())
+				HitObjectOsu* hitObjectOsu = dynamic_cast<HitObjectOsu*>(drawable);
+				if (hitObjectOsu->NeedsToDraw())
 				{
-					hitObjectOsu.DoTransformations();
-					Vector2 position = EditorGlobals::ConvertToPlayArea(hitObjectOsu.GetPosition());
+					hitObjectOsu->DoTransformations();
+					Vector2 position = EditorGlobals::ConvertToPlayArea(hitObjectOsu->GetPosition());
 
-					ImVec4 color = ImGui::ColorConvertU32ToFloat4(hitObjectOsu.GetColor());
-					color.w = hitObjectOsu.GetOpacity();
-
-					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * hitObjectOsu.GetScale(),
-						ImGui::ColorConvertFloat4ToU32(color), 0, 4.20f);
+					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * hitObjectOsu->GetScale(),
+						hitObjectOsu->GetHitColor(), 0, 4.20f);
 				}
 				break;
 			}
-			case 2215551597:
+			case Drawable_ApproachCircle:
 			{
-				ApproachCircle approachCircle = std::any_cast<ApproachCircle>(drawable);
-				if (approachCircle.NeedsToDraw())
+				ApproachCircle* approachCircle = dynamic_cast<ApproachCircle*>(drawable);
+				if (approachCircle->NeedsToDraw())
 				{
-					approachCircle.DoTransformations();
-					Vector2 position = EditorGlobals::ConvertToPlayArea(approachCircle.GetPosition());
+					approachCircle->DoTransformations();
+					Vector2 position = EditorGlobals::ConvertToPlayArea(approachCircle->GetPosition());
 
-					ImVec4 color = ImGui::ColorConvertU32ToFloat4(approachCircle.GetColor());
-					color.w = approachCircle.GetOpacity();
-
-					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * approachCircle.GetScale(),
-						ImGui::ColorConvertFloat4ToU32(color), 0, 4.20f);
+					_drawList->AddCircle(ImVec2(position.X, position.Y), EditorGlobals::PlayfieldScale(circleRadius) * approachCircle->GetScale(),
+						approachCircle->GetHitColor(), 0, 4.20f);
 				}
 				break;
 			}
@@ -167,36 +243,57 @@ void ReplayEditor::OsuPlayfield::RenderDrawables()
 	}
 }
 
-ReplayEditor::OsuPlayfield::OsuPlayfield()
+HitObjectScoring ReplayEditor::OsuPlayfield::getHitRange(int delta)
 {
-	_isInit = false;
-	_drawList = nullptr;
-	_replay = nullptr;
-	_beatmap = nullptr;
-	_hitObjectManager = NULL;
-	_timer = nullptr;
-	_hitObjects = nullptr;
-	_currentFrame = nullptr;
-	_osuCursor = OsuCursor();
-	_drawables = std::vector<std::any>();
+	if (delta <= HitObjectManager::GetHitWindow300(_hitObjectManager)) return HitObjectScoring::ThreeHundred;
+	if (delta <= HitObjectManager::GetHitWindow100(_hitObjectManager)) return HitObjectScoring::OneHundred;
+	if (delta <= HitObjectManager::GetHitWindow50(_hitObjectManager))  return HitObjectScoring::Fifty;
+
+	return HitObjectScoring::Miss;
 }
 
-ReplayEditor::OsuPlayfield::OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects)
+HitObjectScoring ReplayEditor::OsuPlayfield::testTimeMiss(HitObject hitObject, ReplayFrame replayFrame, int hitObjectIndex)
 {
-	_isInit = false;
-	_drawList = drawList;
-	_replay = replay;
-	_beatmap = beatmap;
-	_hitObjectManager = hitObjectManager;
-	_timer = timer;
-	_hitObjects = hitObjects;
-	_currentFrame = currentFrame;
-	_clientBounds = GameBase::GetClientSize();
-	_osuCursor = OsuCursor(_currentFrame, _replay, _drawList);
-	_drawables = std::vector<std::any>();
+	auto preEmpt = HitObjectManager::GetPreEmpt(reinterpret_cast<void*>(_hitObjectManager));
+	if ((hitObject.IsType(HitObjectType::Normal) || hitObject.IsType(HitObjectType::Slider)) && hitObjectIndex > 0)
+	{
+		auto& previousObject = (*_hitObjects)[hitObjectIndex - 1];
+		if (previousObject.StackCount > 0 &&
+			(replayFrame.Time >= previousObject.StartTime - preEmpt &&
+				replayFrame.Time <= previousObject.EndTime + 240) &&
+			!previousObject.IsHit)
+			return HitObjectScoring::Ignore;
+	}
 
-	CalculatePlayareaCoordinates();
-	ConstructDrawables();
+	int hitWindow50 = HitObjectManager::GetHitWindow50(_hitObjectManager);
+
+	bool isNextCircle = true;
+
+	for (auto it = _hitObjects->begin(); it != _hitObjects->begin() + hitObjectIndex; ++it)
+	{
+		auto& h = *it;
+		if (h.StartTime + hitWindow50 <= replayFrame.Time || h.IsHit)
+			continue;
+		if (h.StartTime < hitObject.StartTime && std::distance(it, _hitObjects->begin() + hitObjectIndex) != hitObjectIndex)
+			isNextCircle = false;
+		break;
+	}
+
+	if (isNextCircle && std::abs(hitObject.StartTime - replayFrame.Time) < 400)
+		return HitObjectScoring::Hit;
+
+	return HitObjectScoring::Notelock;
+}
+
+bool ReplayEditor::OsuPlayfield::testHit(HitObject hitObject, ReplayFrame replayFrame, int hitObjectIndex)
+{
+	auto radius = HitObjectManager::GetHitObjectRadius(_hitObjectManager);
+	int hitWindow50 = HitObjectManager::GetHitWindow50(_hitObjectManager);
+	auto preEmpt = HitObjectManager::GetPreEmpt(_hitObjectManager);
+	if ((hitObject.StartTime - preEmpt <= replayFrame.Time && hitObject.StartTime + hitWindow50 >= replayFrame.Time && !hitObject.IsHit) &&
+		(Vector2(replayFrame.X, replayFrame.Y).DistanceSquared(hitObject.Position) <= radius * radius))
+		return true;
+	return false;
 }
 
 void ReplayEditor::OsuPlayfield::Render()
