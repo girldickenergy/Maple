@@ -298,6 +298,7 @@ void Editor::Render()
 			}
 			Widgets::EndPanel();
 		}
+		ImGui::PopFont();
 		ImGui::End();
 	}
 }
