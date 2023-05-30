@@ -34,26 +34,27 @@ void ReplayEditor::EventTimeline::SetHitObjects(std::vector<HitObject>* _hitObje
 	hits = std::vector<bool>(hitObjects->size(), false);
 }
 
-void ReplayEditor::EventTimeline::ParseEvents(std::vector<std::pair<int, HitObjectScoring>> hits)
+void ReplayEditor::EventTimeline::ParseEvents(std::vector<ReplayEditor::OsuDrawable*> drawables)
 {
 	events = std::vector<ReplayEditor::Event>();
 	events.clear();
 
-	for (auto current = hits.begin(); current != hits.end(); ++current)
+	for (auto current = drawables.begin(); current != drawables.end(); ++current)
 	{
-		switch (current->second)
+		auto drawablePointer = *current;
+		switch (drawablePointer->GetHitObjectScoring())
 		{
 			case HitObjectScoring::Miss:
-				events.emplace_back(current->first, EventType::Miss);
+				events.emplace_back(drawablePointer->GetTime(), EventType::Miss);
 				break;
 			case HitObjectScoring::Fifty:
-				events.emplace_back(current->first, EventType::Fifty);
+				events.emplace_back(drawablePointer->GetTime(), EventType::Fifty);
 				break;
 			case HitObjectScoring::OneHundred:
-				events.emplace_back(current->first, EventType::OneHundred);
+				events.emplace_back(drawablePointer->GetTime(), EventType::OneHundred);
 				break;
 			case HitObjectScoring::ThreeHundred:
-				events.emplace_back(current->first, EventType::ThreeHundred);
+				events.emplace_back(drawablePointer->GetTime(), EventType::ThreeHundred);
 				break;
 		}
 	}

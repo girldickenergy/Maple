@@ -30,6 +30,7 @@
 #include "../../Sdk/Audio/AudioEngine.h"
 
 #include "Singleton.h"
+#include "Utilities/ReplayHandler.h"
 
 namespace ReplayEditor
 {
@@ -48,7 +49,7 @@ namespace ReplayEditor
 		Playing
 	};
 
-	class Editor : Singleton<Editor>
+	class Editor : public Singleton<Editor>
 	{
 		static inline bool isVisible = false;
 
@@ -56,7 +57,8 @@ namespace ReplayEditor
 		static inline ImGui::FileBrowser fileDialog;
 		static inline char replayPath[256];
 
-		static inline Replay selectedReplay = Replay();
+		static inline ReplayHandler _replayHandler;
+
 		static inline int currentFrame;
 
 		static inline int mouseX;
@@ -107,6 +109,7 @@ namespace ReplayEditor
 
 		static void ForceUpdateCursorPosition();
 	public:
+
 		Editor(singletonLock);
 		static void HandleInputs(int nCode, WPARAM wParam, LPARAM lParam);
 		static void Initialize();
@@ -117,5 +120,8 @@ namespace ReplayEditor
 
 		static void ToggleVisibility();
 		static bool GetIsVisible();
+
+		ReplayHandler& GetReplayHandler();
+		uintptr_t GetHitObjectManagerInstance();
 	};
 }

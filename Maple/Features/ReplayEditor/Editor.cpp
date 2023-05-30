@@ -36,13 +36,13 @@ void Editor::CreateHitObjectManager()
 		Vanilla::RemoveRelocation(std::ref(customHomInstance));
 	}
 
-	switch (selectedReplay.PlayMode)
+	switch (_replayHandler.GetReplayPlayMode())
 	{
 	case PlayModes::Osu:
 	{
 		customHomInstance = Ruleset::CreateHitObjectManager(NULL);
 		Vanilla::AddRelocation(std::ref(customHomInstance));
-		customHomPlayMode = selectedReplay.PlayMode;
+		customHomPlayMode = _replayHandler.GetReplayPlayMode();
 	}
 	break;
 	}
@@ -50,16 +50,16 @@ void Editor::CreateHitObjectManager()
 
 void Editor::LoadBeatmap(std::string beatmapHash)
 {
-	if (customHomInstance == 0x00000000 || customHomPlayMode != selectedReplay.PlayMode)
+	if (customHomInstance == 0x00000000 || customHomPlayMode != _replayHandler.GetReplayPlayMode())
 		CreateHitObjectManager();
 
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(converter.from_bytes(selectedReplay.BeatmapHash));
+	uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(converter.from_bytes(_replayHandler.GetReplayBeatmapHash()));
 
 	bmap = Beatmap(beatmapPointer);
 	bmap.Update();
 
-	HitObjectManager::SetBeatmap(customHomInstance, beatmapPointer, selectedReplay.Mods);
+	HitObjectManager::SetBeatmap(customHomInstance, beatmapPointer, _replayHandler.GetReplayMods());
 	HitObjectManager::Load(customHomInstance, true, 0);
 	// UpdateStacking gets called in ApplyStacking, same with UpdateSlidersAll
 
@@ -77,12 +77,12 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	HitObjectManager::HitObjects.clear();
 	
 	for (auto& object : hitObjects)
-		if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
+		if ((_replayHandler.GetReplayMods() & Mods::HardRock) > Mods::None)
 			object.Position = Vector2(object.Position.X, 384 - object.Position.Y);
 	clickTimeline.SetHitObjects(&hitObjects);
 
 	float cs = bmap.GetCircleSize();
-	if ((selectedReplay.Mods & Mods::HardRock) > Mods::None)
+	if ((_replayHandler.GetReplayMods() & Mods::HardRock) > Mods::None)
 		cs = std::min(10.f, cs * 1.3f);
 
 	eventTimeline.SetHomInstance(customHomInstance);
@@ -90,10 +90,10 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	eventTimeline.SetCircleSize(cs);
 	eventTimeline.SetOverallDifficulty(bmap.GetOverallDifficulty());
 
-	osuPlayfield = OsuPlayfield(drawList, &Editor::selectedReplay, &Editor::bmap, customHomInstance,
+	osuPlayfield = OsuPlayfield(drawList, _replayHandler.GetReplay(), &Editor::bmap, customHomInstance,
 	                                          &Time, &Editor::currentFrame, &hitObjects);
 
-	eventTimeline.ParseEvents(osuPlayfield.GetHits());
+	eventTimeline.ParseEvents(osuPlayfield.GetDrawables());
 	//BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
 
 	BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
@@ -124,22 +124,24 @@ void Editor::DrawSelectedFrames(ImDrawList* drawList)
 
 void Editor::ForceUpdateCursorPosition()
 {
-	if (selectedReplay.ReplayFrames.size() <= 1) return;
+	auto frames = _replayHandler.GetReplay()->ReplayFrames;
 
-	if (currentFrame < selectedReplay.ReplayFrames.size() - 1)
+	if (frames.size() <= 1) return;
+
+	if (currentFrame < frames.size() - 1)
 	{
 		int fC = currentFrame;
 		if (fC != 0)
-			while (Time < selectedReplay.ReplayFrames[fC].Time)
+			while (Time < frames[fC].Time)
 				fC--;
-		while (Time > selectedReplay.ReplayFrames[fC].Time)
+		while (Time > frames[fC].Time)
 			fC++;
 		currentFrame = fC;
 	}
 	else
 	{
 		int fC = currentFrame;
-		while (Time < selectedReplay.ReplayFrames[fC].Time)
+		while (Time < frames[fC].Time)
 			fC--;
 		currentFrame = fC;
 	}
@@ -213,42 +215,24 @@ void Editor::Render()
 				fileDialog.ClearSelected();
 
 				// parse
-				selectedReplay = ReplayDecoder::Decode(replayPath);
+				_replayHandler = ReplayHandler(ReplayDecoder::Decode(replayPath));
+
 				currentFrame = 0;
 
-				// remove first two replay frames since it's garbage anyways
-				selectedReplay.ReplayFrames.erase(selectedReplay.ReplayFrames.begin(),
-				                                  selectedReplay.ReplayFrames.begin() + 2);
-
-				std::vector<int> toRemove = std::vector<int>();
-				auto begin = selectedReplay.ReplayFrames.begin();
-				for (auto it = begin; it != selectedReplay.ReplayFrames.end(); ++it)
-				{
-					auto& frame = *it;
-					if (std::distance(begin, it) > 0)
-					{
-						auto& previousFrame = *(it - 1);
-						if (frame.Time == previousFrame.Time)
-							toRemove.push_back(std::distance(begin, it));
-					}
-				}
-
-				for (auto& idx : toRemove)
-					selectedReplay.ReplayFrames.erase(selectedReplay.ReplayFrames.begin() + idx);
 
 				// click timeline
-				clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr);
+				clickTimeline = ClickTimeline(&Time, drawList, _replayHandler.GetReplay(), clientBounds, nullptr);
 				clickTimeline.ParseClicks();
 
 				// click overlay
 				clickOverlay = ClickOverlay(&Time, &clickTimeline.clicks, drawList, &clientBounds);
 
 				// event timeline
-				eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, nullptr, 0, 0, customHomInstance);
+				eventTimeline = EventTimeline(&Time, drawList, _replayHandler.GetReplay(), clientBounds, nullptr, 0, 0, customHomInstance);
 				// PARSE EVENTS AFTER BEATMAP LOADING XDDD
 
 				//bm
-				std::string beatmapHash = selectedReplay.BeatmapHash;
+				std::string beatmapHash = _replayHandler.GetReplayBeatmapHash();;
 				LoadBeatmap(beatmapHash);
 			}
 		}
@@ -261,7 +245,7 @@ void Editor::Render()
 		if (Widgets::Button(xorstr_("Exit"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
 		{
 			isVisible = false;
-			ReplayBot::LoadFromReplayEditor(selectedReplay);
+			ReplayBot::LoadFromReplayEditor(*_replayHandler.GetReplay());
 		}
 		ImGui::SetCursorPos(ImVec2(355 * StyleProvider::Scale, (topBarHeight * 19.f) / 100.f));
 		if (Widgets::Button(xorstr_("Options"), ImVec2(75 * StyleProvider::Scale, topBarHeight - ((topBarHeight * 19.f) / 100.f) * 2)))
@@ -351,21 +335,22 @@ void Editor::TimerThread()
 			if (dftDuration >= 1) {
 				Time++;
 				b = GetTicks();
+				auto frames = _replayHandler.GetReplay()->ReplayFrames;
 
-				if (currentFrame < selectedReplay.ReplayFrames.size() - 1)
+				if (currentFrame < frames.size() - 1)
 				{
 					int fC = currentFrame;
 					if (fC != 0)
-						while (Time < selectedReplay.ReplayFrames[fC].Time)
+						while (Time < frames[fC].Time)
 							fC--;
-					while (Time > selectedReplay.ReplayFrames[fC].Time)
+					while (Time > frames[fC].Time)
 						fC++;
 					currentFrame = fC;
 				}
 				else
 				{
 					int fC = currentFrame;
-					while (Time < selectedReplay.ReplayFrames[fC].Time)
+					while (Time < frames[fC].Time)
 						fC--;
 					currentFrame = fC;
 				}
@@ -382,4 +367,14 @@ void ReplayEditor::Editor::ToggleVisibility()
 bool ReplayEditor::Editor::GetIsVisible()
 {
 	return isVisible;
+}
+
+ReplayHandler& ReplayEditor::Editor::GetReplayHandler()
+{
+	return _replayHandler;
+}
+
+uintptr_t ReplayEditor::Editor::GetHitObjectManagerInstance()
+{
+	return customHomInstance;
 }

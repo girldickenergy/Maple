@@ -9,6 +9,7 @@
 #include "Click.h"
 #include "../../../../Sdk/Player/HitObjectManager.h"
 #include "../GameplayComponents/HitObjectScoring.h"
+#include "../GameplayComponents/Osu/OsuDrawable.h"
 
 namespace ReplayEditor
 {
@@ -58,7 +59,7 @@ namespace ReplayEditor
 		EventTimeline();
 		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
-		void ParseEvents(std::vector<std::pair<int, HitObjectScoring>> hits);
+		void ParseEvents(std::vector<ReplayEditor::OsuDrawable*> drawables);
 		void Draw();
 		void SetOverallDifficulty(int _od);
 		void SetCircleSize(int _cs);

@@ -12,10 +12,11 @@ namespace ReplayEditor
 	{
 		using OsuDrawable::OsuDrawable;
 
-		int time;
 		int preempt;
 		double velocity;
 		int segmentCount;
+		int _sliderTicksHit;
+		int _sliderTicksMissed;
 		std::vector<std::pair<Vector2, Vector2>> points;
 		std::vector<Vector2> allPoints;
 		std::vector<int> sliderScoreTimingPoints;
@@ -26,9 +27,7 @@ namespace ReplayEditor
 
 		HitObject* internalHitObject;
 	public:
-		SliderOsu(HitObject* _internalHitObject, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints = std::vector<Vector2>());
-		void SetTime(int _time);
-		int GetTime();
+		SliderOsu(HitObject* _internalHitObject, int _index, int _time, int _preempt, int* _timer, Vector2 _position, double _velocity, int _segmentCount, Transformation _transformation, std::vector<int> _sliderScoreTimingPoints, std::vector<double> _cumulativeLengths, std::vector<std::pair<Vector2, Vector2>> _points, std::vector<Vector2> _allPoints = std::vector<Vector2>());
 		void SetPreempt(int _preempt);
 		int GetPreempt();
 		void SetPoints(std::vector<std::pair<Vector2, Vector2>> _points);
@@ -39,6 +38,8 @@ namespace ReplayEditor
 
 		void InitializeSliderBall();
 		void InitializeSliderTicks();
+		void AnalyzeSliderTick(int time, SliderTickOsu* sliderTickOsu);
+
 		ReplayEditor::SliderBallOsu* GetSliderBall();
 		std::vector<ReplayEditor::SliderTickOsu*> GetSliderTicks();
 	};

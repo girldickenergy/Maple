@@ -53,7 +53,7 @@ void ReplayEditor::DrawSlider::Render(SliderOsu* sliderOsu, ImDrawList* drawList
 		for (auto const& tick : sliderOsu->GetSliderTicks())
 		{
 			auto position = tick->GetPosition();
-			drawList->AddCircleFilled(ImVec2(position.X, position.Y), PERC(circleSize * sliderBall->GetScale(), 7.5f), sliderOsu->GetHitColor(), 0);
+			drawList->AddCircleFilled(ImVec2(position.X, position.Y), PERC(circleSize * tick->GetScale(), 7.5f), tick->GetHitColor(), 0);
 		}
 
 		// Render the slider ball

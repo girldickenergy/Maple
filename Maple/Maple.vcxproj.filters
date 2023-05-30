@@ -269,6 +269,9 @@
     <ClCompile Include="Features\ReplayEditor\Components\GameplayComponents\Osu\OsuDrawable.cpp">
       <Filter>Features\ReplayEditor\Components\GameplayComponents\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Utilities\ReplayHandler.cpp">
+      <Filter>Features\ReplayEditor\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1595,6 +1598,9 @@
     </ClInclude>
     <ClInclude Include="Features\ReplayEditor\Components\GameplayComponents\HitObjectScoring.h">
       <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Utilities\ReplayHandler.h">
+      <Filter>Features\ReplayEditor\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
