@@ -28,15 +28,9 @@ namespace ReplayEditor
 	{
 		/// @brief Pointer to the ImGui draw list context from the editor instance.
 		ImDrawList* _drawList;
-	
-		/// @brief Pointer to the current selected replay.
-		Replay* _replay;
 
 		/// @brief Pointer to the current loaded beatmap.
 		Beatmap* _beatmap;
-
-		/// @brief Pointer to the self constructed hit object manager.
-		uintptr_t _hitObjectManager;
 
 		/// @brief Pointer to the timer from the editor instance.
 		int* _timer;
@@ -81,8 +75,7 @@ namespace ReplayEditor
 		/// @brief Tests whether or not the HitObject was hit in the ReplayFrame.
 		/// @param hitObject The HitObject that should be tested.
 		/// @param replayFrame The ReplayFrame where the hit occured.
-		/// @param hitObjectIndex The Index of the HitObject.
-		bool testHit(HitObject hitObject, ReplayFrame replayFrame, int hitObjectIndex);
+		bool testHit(HitObject hitObject, ReplayFrame replayFrame);
 	public:
 		/// @brief A boolean value that can be checked to see if osu playfield has been initialized with values.
 		bool _isInit;
@@ -92,13 +85,11 @@ namespace ReplayEditor
 
 		/// @brief Creates an instance of the osu playfield.
 		/// @param drawList Pointer to the ImGui draw list context from the editor instance.
-		/// @param replay Pointer to the current selected replay.
 		/// @param beatmap Pointer to the current loaded beatmap.
-		/// @param hitObjectManager Pointer to the self constructed hit object manager.
 		/// @param timer Pointer to the timer from the editor instance.
 		/// @param currentFrame Pointer to the current frame field from the editor instance.
 		/// @param hitObjects Pointer to vector holding all the currently loaded hit objects.
-		OsuPlayfield(ImDrawList* drawList, Replay* replay, Beatmap* beatmap, uintptr_t hitObjectManager, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects);
+		OsuPlayfield(ImDrawList* drawList, Beatmap* beatmap, int* timer, int* currentFrame, std::vector<HitObject>* hitObjects);
 
 		/// @brief Iterate through all HitObjects and calculate their Hit status.
 		void CalculateHits();

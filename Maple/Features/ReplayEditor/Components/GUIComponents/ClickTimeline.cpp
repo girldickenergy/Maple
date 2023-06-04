@@ -1,5 +1,6 @@
-
 #include "ClickTimeline.h"
+
+#include "../../Editor.h"
 
 ReplayEditor::ClickTimeline::ClickTimeline()
 { }
@@ -11,6 +12,10 @@ ReplayEditor::ClickTimeline::ClickTimeline(int* _timer, ImDrawList* _drawList, R
 	replay = _replay;
 	clientBounds = _clientBounds;
 	hitObjects = _hitObjects;
+
+	currentlyDragging = false;
+	draggingIndex = 0;
+	dragMode = DragMode::Middle;
 }
 
 int ReplayEditor::ClickTimeline::TimeToX(int time)
@@ -40,7 +45,7 @@ int ReplayEditor::ClickTimeline::GetClick(GetClickState state)
 	if (state == GetClickState::Forward)
 	{
 		for (auto& click : clicks)
-			if (click._startTime > *timer) {
+			if (click.StartTime > *timer) {
 				c = click;
 				break;
 			}
@@ -49,11 +54,11 @@ int ReplayEditor::ClickTimeline::GetClick(GetClickState state)
 	{
 		std::vector<Click> cl = std::vector<Click>();
 		for (auto& clck : clicks)
-			if (clck._startTime < *timer)
+			if (clck.StartTime < *timer)
 				cl.push_back(clck);
 		c = cl.back();
 	}
-	return c._startTime;
+	return c.StartTime;
 }
 
 void ReplayEditor::ClickTimeline::SetHitObjects(std::vector<HitObject>* _hitObjects)
@@ -63,6 +68,8 @@ void ReplayEditor::ClickTimeline::SetHitObjects(std::vector<HitObject>* _hitObje
 
 void ReplayEditor::ClickTimeline::ParseClicks()
 {
+	clicks.clear();
+
 	// TODO: this is very ugly code and bad practice, but it makes both keys at the same time work. make this prettier
 	for (int i = 0; i < replay->ReplayFrames.size(); i++)
 	{
@@ -71,10 +78,11 @@ void ReplayEditor::ClickTimeline::ParseClicks()
 		{
 			Click c = Click(frame.Time, Vector2(frame.X, frame.Y), 0, OsuKeys::K1);
 			while ((replay->ReplayFrames[++i].OsuKeys & OsuKeys::K1) > OsuKeys::None)
-				c._duration = replay->ReplayFrames[i].Time - c._startTime;
-			if (c._duration == 0)
-				c._duration = replay->ReplayFrames[i].Time - c._startTime;
+				c.Duration = replay->ReplayFrames[i].Time - c.StartTime;
+			if (c.Duration == 0)
+				c.Duration = replay->ReplayFrames[i].Time - c.StartTime;
 
+			c.OriginalDuration = c.Duration;
 			clicks.push_back(c);
 		}
 	}
@@ -86,211 +94,203 @@ void ReplayEditor::ClickTimeline::ParseClicks()
 		{
 			Click c = Click(frame.Time, Vector2(frame.X, frame.Y), 0, OsuKeys::K2);
 			while ((replay->ReplayFrames[++i].OsuKeys & OsuKeys::K2) > OsuKeys::None)
-				c._duration = replay->ReplayFrames[i].Time - c._startTime;
-			if (c._duration == 0)
-				c._duration = replay->ReplayFrames[i].Time - c._startTime;
+				c.Duration = replay->ReplayFrames[i].Time - c.StartTime;
+			if (c.Duration == 0)
+				c.Duration = replay->ReplayFrames[i].Time - c.StartTime;
 
+			c.OriginalDuration = c.Duration;
 			clicks.push_back(c);
 		}
 	}
-
-	// remove all clicks with a duration of 0
-	std::vector<int> toRemove = std::vector<int>();
-	for (int i = 0; i < clicks.size(); i++)
-		if (clicks[i]._duration == 0)
-			toRemove.push_back(i);
-	for (auto& rem : toRemove)
-		clicks.erase(clicks.begin() + rem);
+	//// remove all clicks with a duration of 0
+	//std::vector<int> toRemove = std::vector<int>();
+	//for (int i = 0; i < clicks.size(); i++)
+	//	if (clicks[i].Duration == 0)
+	//		toRemove.push_back(i);
+	//for (auto& rem : toRemove)
+	//	clicks.erase(clicks.begin() + rem);
 
 	IsInit = true;
 }
 
-void ReplayEditor::ClickTimeline::HandleMouse(Vector2 _mousePos, bool _released)
+void ReplayEditor::ClickTimeline::HandleMouse(Vector2 mousePosition, bool released, bool rightClick)
 {
-	float clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
+	const auto clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
+	const auto resolution = Config::ReplayEditor::TimelineResolution;
+	const auto centerX = clientBounds.X / 2;
+	const auto mouseClickImVec2 = ImVec2(mousePosition.X, mousePosition.Y);
 
-	static bool secondCall = false;
-
-	static Click previousClick = Click();
-	static int clickIndex = 0;
-	static Click nextClick = Click();
-	static bool left, mid, right;
-	// Find dragged click
-	if (!secondCall)
-		for (int i = 0; i < clicks.size(); i++)
+	// Find dragged click event
+	if (!currentlyDragging)
+		for (auto it = clicks.begin(); it != clicks.end(); ++it)
 		{
-			auto& click = clicks[i];
-			auto var = TimeToX(click._startTime);
-			if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds.X * 2) && var < clientBounds.X)
-				if (click._keys == OsuKeys::K1)
-				{
-					if (i > 0)
-					{
-						int intermediary = 1;
-						while ((i - intermediary > 0) && clicks[i - intermediary]._keys != click._keys)
-							intermediary++;
-						previousClick = clicks[i - intermediary];
-					}
-					if (i < clicks.size() - 1)
-					{
-						int intermediary = 1;
-						while ((i + intermediary < clicks.size() - 1) && clicks[i + intermediary]._keys != click._keys)
-							intermediary++;
-						nextClick = clicks[i + intermediary];
-					}
+			auto click = *it;
+			auto xPosition = TimeToX(click.StartTime);
 
-					Vector2 clickTopLeft = Vector2((clientBounds.X / 2) + var, clientBounds.Y - clickTimelineHeight);
-					Vector2 clickBottomRight = Vector2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) /
-						Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y - (clickTimelineHeight / 2));
-					if (_mousePos.X >= clickTopLeft.X && _mousePos.X <= clickBottomRight.X &&
-						_mousePos.Y >= clickTopLeft.Y && _mousePos.Y <= clickBottomRight.Y)
-					{
-						Vector2 barSize = clickBottomRight - clickTopLeft;
-						Vector2 middle = Vector2(clickTopLeft.X + (barSize.X / 2), clickTopLeft.Y + (barSize.Y / 2));
-						// If drag left
-						if (_mousePos.Distance(clickTopLeft) <= 20.f)
-						{
-							clickIndex = i;
-							left = true;
-							mid = false;
-							right = false;
-							break;
-						}
-						// If drag center
-						else if (_mousePos.Distance(middle) <= 30.f)
-						{
-							clickIndex = i;
-							left = false;
-							mid = true;
-							right = false;
-							break;
-						}
-						// If drag right
-						else if (_mousePos.Distance(clickBottomRight) <= 20.f)
-						{
-							clickIndex = i;
-							left = false;
-							mid = false;
-							right = true;
-							break;
-						}
-					}
-				}
-			if (click._keys == OsuKeys::K2)
+			// If the click event is not currently being drawn, don't check for it
+			if (xPosition * resolution >= -(clientBounds.X * 2) && xPosition < clientBounds.X)
 			{
-				if (i > 0)
-				{
-					int intermediary = 1;
-					while ((i - intermediary > 0) && clicks[i - intermediary]._keys != click._keys)
-						intermediary++;
-					previousClick = clicks[i - intermediary];
-				}
-				if (i < clicks.size() - 1)
-				{
-					int intermediary = 1;
-					while ((i + intermediary < clicks.size() - 1) && clicks[i + intermediary]._keys != click._keys)
-						intermediary++;
-					nextClick = clicks[i + intermediary];
-				}
+				// StartX, StartY, EndX, EndY
+				ImRect clickBoundingBox;
+				if (click._keys == OsuKeys::K1)
+					clickBoundingBox = ImRect(
+						centerX + xPosition,
+						clientBounds.Y - clickTimelineHeight,
+						centerX + ((click.Duration / 2) / resolution) + xPosition,
+						clientBounds.Y - (clickTimelineHeight / 2));
+				else if (click._keys == OsuKeys::K2)
+					clickBoundingBox = ImRect(
+						centerX + xPosition,
+						clientBounds.Y - (clickTimelineHeight / 2),
+						centerX + ((click.Duration / 2) / resolution) + xPosition,
+						clientBounds.Y);
 
-				//ImVec2((clientBounds->Width / 2) + var, clientBounds->Height - (clickTimelineHeight / 2)),
-				//	ImVec2((clientBounds->Width / 2) + ((static_cast<float>(click.duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds->Height)
+				// If the mouse click is not within this click event
+				if (!clickBoundingBox.Contains(mouseClickImVec2))
+					continue;
 
-				Vector2 clickTopLeft = Vector2((clientBounds.X / 2) + var, clientBounds.Y - (clickTimelineHeight / 2));
-				Vector2 clickBottomRight = Vector2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) /
-					Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y);
-				if (_mousePos.X >= clickTopLeft.X && _mousePos.X <= clickBottomRight.X &&
-					_mousePos.Y >= clickTopLeft.Y && _mousePos.Y <= clickBottomRight.Y)
+				// Check how this event should be manipulated.
+				// The click bar should be split in 33.3 percentiles
+				// where if the user clicks on the left 33.3% it will drag from the left
+				// if the user dragged on the middle 33.3% it will move and if the user
+				// dragged on the right 33.3% it will drag from the right.
+				const auto boundingBoxCenterImVec2 = clickBoundingBox.GetCenter();
+				const auto boundingBoxCenter = Vector2(boundingBoxCenterImVec2.x, boundingBoxCenterImVec2.y);
+				const auto boundingBoxLeftImVec2 = clickBoundingBox.GetTL();
+				const auto boundingBoxLeft = Vector2(boundingBoxLeftImVec2.x, boundingBoxLeftImVec2.y);
+				const auto boundingBoxRightImVec2 = clickBoundingBox.GetBR();
+				const auto boundingBoxRight = Vector2(boundingBoxRightImVec2.x, boundingBoxRightImVec2.y);
+
+				const auto sizeImVec2 = clickBoundingBox.GetSize();
+				const auto middleLeftMinX = boundingBoxCenter.X - PERC(sizeImVec2.x, 33.3f);
+				const auto middleRightMaxX = boundingBoxCenter.X + PERC(sizeImVec2.x, 33.3f);
+				const auto leftBoundingBox = ImRect(boundingBoxLeft.X, boundingBoxLeft.Y, middleLeftMinX, boundingBoxRight.Y);
+				const auto middleBoundingBox = ImRect(middleLeftMinX, boundingBoxLeft.Y, middleRightMaxX, boundingBoxRight.Y);
+				const auto rightBoundingBox = ImRect(middleRightMaxX, boundingBoxLeft.Y, boundingBoxRight.X, boundingBoxRight.Y);
+
+				// The click has landed on the left bounding box
+				if (leftBoundingBox.Contains(mouseClickImVec2))
 				{
-					Vector2 barSize = clickBottomRight - clickTopLeft;
-					Vector2 middle = Vector2(clickTopLeft.X + (barSize.X / 2), clickTopLeft.Y + (barSize.Y / 2));
-					// If drag left
-					if (_mousePos.Distance(clickTopLeft) <= 20.f)
-					{
-						clickIndex = i;
-						left = true;
-						mid = false;
-						right = false;
-						break;
-					}
-					// If drag center
-					else if (_mousePos.Distance(middle) <= 30.f)
-					{
-						clickIndex = i;
-						left = false;
-						mid = true;
-						right = false;
-						break;
-					}
-					// If drag right
-					else if (_mousePos.Distance(clickBottomRight) <= 20.f)
-					{
-						clickIndex = i;
-						left = false;
-						mid = false;
-						right = true;
-						break;
-					}
+					dragMode = DragMode::Left;
 				}
+				// The click has landed on the middle bounding box
+				else if (middleBoundingBox.Contains(mouseClickImVec2))
+				{
+					dragMode = DragMode::Middle;
+				}
+				// The click has landed on the right bounding box
+				else if (rightBoundingBox.Contains(mouseClickImVec2))
+				{
+					dragMode = DragMode::Right;
+				}
+				// The click landed nowhere near (how did we get here?)
+				else
+					continue;
+
+				currentlyDragging = true;
+				draggingIndex = std::distance(clicks.begin(), it);
+				break;
 			}
 		}
-
-	if (left)
+	else
 	{
-		auto& click = clicks[clickIndex];
-		secondCall = true;
-		bool p = false;
-		if (previousClick._startTime != 0 && previousClick._duration != 0)
-			p = true;
-
-		int end = click._startTime + click._duration;
-		if ((p && XToTime(_mousePos.X) > previousClick._startTime + previousClick._duration) &&
-			XToTime(_mousePos.X) < end)
+		auto& click = clicks[draggingIndex];
+		const auto time = XToTime(mousePosition.X);
+		switch (dragMode)
 		{
-			click._startTime = XToTime(_mousePos.X);
-			click._duration = end - click._startTime;
-		}
-		click._edited = true;
-	}
-	else if (mid)
-	{
-		auto& click = clicks[clickIndex];
-		secondCall = true;
-		bool p = false;
-		bool n = false;
-		if (previousClick._startTime != 0 && previousClick._duration != 0)
-			p = true;
-		if (nextClick._startTime != 0 && nextClick._duration != 0)
-			n = true;
-
-		if ((p && XToTime(_mousePos.X) - (click._duration / 2) > previousClick._startTime + previousClick._duration) &&
-			(n && XToTime(_mousePos.X) + (click._duration / 2) < nextClick._startTime))
+		case DragMode::Left:
 		{
-			click._startTime = XToTime(_mousePos.X) - (click._duration / 2);
-		}
-		click._edited = true;
-	}
-	else if (right)
-	{
-		auto& click = clicks[clickIndex];
-		secondCall = true;
-		bool n = false;
-		if (nextClick._startTime != 0 && nextClick._duration != 0)
-			n = true;
+			auto end = click.StartTime + click.Duration;
 
-		if (XToTime(_mousePos.X) > click._startTime &&
-			(n && XToTime(_mousePos.X) < nextClick._startTime))
-		{
-			click._duration = XToTime(_mousePos.X) - click._startTime;
+			click.StartTime = time;
+			click.Duration = end - click.StartTime;
+			break;
 		}
+		case DragMode::Middle: {
+			click.StartTime = time - (click.Duration / 2);
+			break;
+		}
+		case DragMode::Right: {
+			click.Duration = time - click.StartTime;
+			break;
+		}
+		}
+
 		click._edited = true;
 	}
 
-	if (_released) {
-		secondCall = false;
-		left = false;
-		mid = false;
-		right = false;
+	if (rightClick)
+		clicks[draggingIndex]._keys = OsuKeys::None;
+
+	if (released && currentlyDragging)
+	{
+		auto& click = clicks[draggingIndex];
+		currentlyDragging = false;
+		dragMode = DragMode::Middle;
+
+		auto& replayHandler = Editor::Get().GetReplayHandler();
+		auto& replayFrames = replayHandler.GetReplay()->ReplayFrames;
+
+		// Check if the click landed exactly on a replay frame
+		auto closestReplayFrame = replayHandler.GetFrameClosestToTime(click.StartTime);
+		if (closestReplayFrame.Time == click.StartTime)
+		{
+			// If the frame has the exact same time as the click we only have to change the keys on the frame
+			auto frameIndex = replayHandler.GetIndexOfFrame(closestReplayFrame);
+			replayFrames[frameIndex].OsuKeys = click._keys;
+		}
+		else
+		{
+			// Grab the two closest replay frames
+			auto closestReplayFrames = replayHandler.GetTwoClosestReplayFrames(click.StartTime);
+			// Create an interpolated frame from the two closest replay frames
+			auto interpolatedFrame = replayHandler.InterpolateReplayFrames(std::get<0>(closestReplayFrames),
+				std::get<1>(closestReplayFrames), click.StartTime);
+			interpolatedFrame.OsuKeys = click._keys;
+
+			// Grab the index of the first frame
+			auto firstFrameIndex = replayHandler.GetIndexOfFrame(std::get<0>(closestReplayFrames));
+
+			// Insert the interpolated frame into the replay
+			replayFrames.insert(replayFrames.begin() + firstFrameIndex + 1, interpolatedFrame);
+		}
+
+		// Find all replayframes affected by the edit and reset their keypresses
+		auto searchStartTime = (click.StartTime > click.OriginalStartTime) ? click.OriginalStartTime : click.StartTime;
+		auto searchDuration = (click.Duration > click.OriginalDuration) ? click.Duration : click.OriginalDuration;
+		auto affectedFrames = replayHandler.GetReplayFramesWithinTimeFrame(searchStartTime, searchStartTime + searchDuration);
+
+		for (auto const& frame : affectedFrames)
+		{
+			auto index = replayHandler.GetIndexOfFrame(frame);
+
+			auto foundClick = Click();
+			foundClick._keys = OsuKeys::None;
+			for (auto it = clicks.begin(); it != clicks.end(); ++it)
+			{
+				auto& currentClick = *it;
+				if (frame.Time >= currentClick.StartTime && frame.Time < currentClick.StartTime + currentClick.Duration)
+				{
+					if (foundClick._keys == OsuKeys::None)
+						foundClick = currentClick;
+					else
+						foundClick._keys = foundClick._keys | currentClick._keys;
+				}
+			}
+			replayFrames[index].OsuKeys = foundClick._keys;
+		}
+
+		// Update the original times, so that the next edit will also work as intended
+		click.OriginalStartTime = click.StartTime;
+		click.OriginalDuration = click.Duration;
+
+		if (rightClick)
+			clicks.erase(clicks.begin() + draggingIndex);
+
+		draggingIndex = 0;
+
+		// Reparse all clicks from the replay frames so there's no discrepencies between the ClickTimeline and the ReplayFrames
+		ParseClicks();
 	}
 }
 
@@ -305,14 +305,18 @@ void ReplayEditor::ClickTimeline::Draw()
 	if (hitObjects == nullptr) return;
 
 	for (auto& click : clicks) {
-		auto var = TimeToX(click._startTime);
+		auto var = TimeToX(click.StartTime);
 		if (var * Config::ReplayEditor::TimelineResolution >= -(clientBounds.X * 2) && var < clientBounds.X)
 			if (click._keys == OsuKeys::K1)
-				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) /* - (click.duration / 2)*/ + var, clientBounds.Y - clickTimelineHeight),
-					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y - (clickTimelineHeight / 2)), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(232.f), COL(93.f), COL(155.f), 1.0f)), 8.f);
+				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) + var, clientBounds.Y - clickTimelineHeight),
+					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click.Duration) / 2) / Config::ReplayEditor::TimelineResolution) + var,
+						clientBounds.Y - (clickTimelineHeight / 2)),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(COL(232.f), COL(93.f), COL(155.f), 1.0f)), 8.f);
 			else if (click._keys == OsuKeys::K2)
-				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) /* - (click.duration / 2)*/ + var, clientBounds.Y - (clickTimelineHeight / 2)),
-					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click._duration) / 2) / Config::ReplayEditor::TimelineResolution) + var, clientBounds.Y), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(223.f), COL(148.f), COL(86.f), 1.0f)), 8.f);
+				drawList->AddRectFilled(ImVec2((clientBounds.X / 2) + var, clientBounds.Y - (clickTimelineHeight / 2)),
+					ImVec2((clientBounds.X / 2) + ((static_cast<float>(click.Duration) / 2) / Config::ReplayEditor::TimelineResolution) + var,
+						clientBounds.Y),
+					ImGui::ColorConvertFloat4ToU32(ImVec4(COL(223.f), COL(148.f), COL(86.f), 1.0f)), 8.f);
 	}
 
 	for (auto& ho : *hitObjects) {

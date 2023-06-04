@@ -46,7 +46,6 @@ namespace ReplayEditor
 		std::vector<bool> hits;
 		int od;
 		int cs;
-		uintptr_t homInstance;
 
 		int TimeToX(int time);
 		bool ContainsPoint(HitObject ho, Vector2 point);
@@ -57,12 +56,11 @@ namespace ReplayEditor
 		std::pair<Vector2, Vector2> EventTimelineLocation;
 		bool IsInit;
 		EventTimeline();
-		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance);
+		EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
 		void ParseEvents(std::vector<ReplayEditor::OsuDrawable*> drawables);
 		void Draw();
 		void SetOverallDifficulty(int _od);
 		void SetCircleSize(int _cs);
-		void SetHomInstance(uintptr_t _homInstance);
 	};
 }

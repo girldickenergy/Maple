@@ -26,7 +26,7 @@ void ReplayEditor::Editor::HandleSelectionDrag()
 
 void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	auto frames = _replayHandler.GetReplay()->ReplayFrames;
+	auto& frames = _replayHandler.GetReplay()->ReplayFrames;
 
 	static UINT lastMessage;
 	static bool isLeftMouseDown;
@@ -46,7 +46,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 			const auto displacement = Vector2(mousePosition.X - currentFramePosition.X, mousePosition.Y - currentFramePosition.Y);
 
 			auto begin = frames.begin() + currentFrame;
-		 
+
 			for (auto it = begin - (std::min)(50, currentFrame);
 				it != begin + (std::min)(50, static_cast<int>(frames.size() - currentFrame)); ++it)
 			{
@@ -54,45 +54,26 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 
 				// note: 150 time in ms
 				const auto dist = std::abs(frames[currentFrame].Time - frame.Time);
-				const auto editAmount = dist <= Config::ReplayEditor::EditResyncTime ? (1.f - 
+				const auto editAmount = dist <= Config::ReplayEditor::EditResyncTime ? (1.f -
 					(dist / static_cast<float>(Config::ReplayEditor::EditResyncTime))) : 0.f;
 
 				frame.X += (editAmount * displacement.X);
 
 				frame.Y += (editAmount * displacement.Y);
 			}
+		}
 
-#pragma region "Old Logic"
-			/*auto begin = frames.begin() + currentFrame;
-			int prior = (std::min)(20, currentFrame);
-			int future = (std::min)(20, static_cast<int>(frames.size() - currentFrame));
+		auto xPos = (int)((short)LOWORD(pMsg->lParam));
+		auto yPos = (int)((short)HIWORD(pMsg->lParam));
+		if (xPos >= clickTimeline.ClickTimelineLocation.first.X && xPos <= clickTimeline.ClickTimelineLocation.second.X &&
+			yPos >= clickTimeline.ClickTimelineLocation.first.Y && yPos <= clickTimeline.ClickTimelineLocation.second.Y)
+		{
+			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), true, true);
 
-			std::vector<ReplayFrame> allFrames = std::vector<ReplayFrame>{ begin - prior, begin + future };
-			for (int i = 0; i < allFrames.size(); i++)
-			{
-				auto& frame = allFrames[i];
-				float editAmount = (i % (allFrames.size() / 2)) / static_cast<float>((allFrames.size() / 2));
-				if (i == allFrames.size() / 2) {
-					editAmount = 1.0f;
-				}
-				else if (i > allFrames.size() / 2)
-					editAmount = std::lerp(1.0f, 0.0f, editAmount);
+			Editor::osuPlayfield.CalculateHits();
+			Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetDrawables());
 
-				frame.X -= frames[currentFrame].X * editAmount;
-				frame.Y -= frames[currentFrame].Y * editAmount;
-
-				auto newPos = EditorGlobals::DisplayToField(Vector2(mouseX, mouseY));
-				frame.X += (newPos.X * editAmount);
-				frame.Y += (newPos.Y * editAmount);
-			}
-
-			for (auto& frame : frames)
-				for (auto& editedFrame : allFrames)
-					if (frame.Time == editedFrame.Time) {
-						frame.X = editedFrame.X;
-						frame.Y = editedFrame.Y;
-					}*/
-#pragma endregion
+			Editor::ForceUpdateCursorPosition();
 		}
 	}
 	if (pMsg->message == WM_LBUTTONDOWN && lastMessage != WM_LBUTTONDOWN) {
@@ -116,7 +97,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		if (xPos >= clickTimeline.ClickTimelineLocation.first.X && xPos <= clickTimeline.ClickTimelineLocation.second.X &&
 			yPos >= clickTimeline.ClickTimelineLocation.first.Y && yPos <= clickTimeline.ClickTimelineLocation.second.Y)
 		{
-			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), false);
+			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), false, false);
 			clickWithinClickTimeline = true;
 			/*Time = eventTimeline.XToTime(xPos);
 			if (Editor::EditorState != EditorState::Playing)
@@ -133,112 +114,15 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		Dragging = false;
 		isLeftMouseDown = false;
 
-		// TODO: make this work at some point
-		//if (clickWithinClickTimeline)
-		//{
-		//	clickTimeline.HandleMouse(Vector2(mouseX, mouseY), true);
-		//	clickWithinClickTimeline = false;
+		if (clickWithinClickTimeline)
+		{
+			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), true, false);
 
-		//	// apply edited clicks to replay frames
-		//	for (auto& click : clickTimeline.clicks)
-		//	{
-		//		OsuKeys realKeys = click.keys;
-		//		bool found = false;
-		//		ReplayFrame closestFrame = ReplayFrame();
-		//		int closestIndex = 0;
-		//		closestFrame.Time = 999999999;
-		//		for (int i = 0; i < frames.size() - 1; i++)
-		//		{
-		//			auto& frame = frames[i];
+			Editor::osuPlayfield.CalculateHits();
+			Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetDrawables());
 
-		//			if (std::abs(click.startTime - frame.Time) < std::abs(click.startTime - closestFrame.Time)) {
-		//				closestFrame = frame;
-		//				closestIndex = i;
-		//			}
-		//			
-		//			if (realKeys == OsuKeys::K1)
-		//				realKeys = (OsuKeys::M1 & OsuKeys::K1);
-		//			if (realKeys == OsuKeys::K2)
-		//				realKeys = (OsuKeys::M2 & OsuKeys::K2);
-
-		//			if (frame.Time == click.startTime) {
-		//				found = true;
-		//				if (click.edited)
-		//					frame.OsuKeys = realKeys;
-		//				break;
-		//			}
-		//		}
-		//		if (!found && closestFrame.Time != -1)
-		//		{
-		//			bool before = false;
-		//			if (closestFrame.Time - click.startTime > 0)
-		//				before = true;
-		//			int idx = (before ? closestIndex - 1 : closestIndex + 1);
-
-		//			ReplayFrame prevFrame;
-		//			ReplayFrame futFrame;
-		//			if (idx > 1)
-		//				prevFrame = frames[idx - 1];
-		//			if (idx < frames.size() - 1)
-		//				futFrame = frames[idx + 1];
-
-		//			int difference = futFrame.Time - prevFrame.Time;
-
-		//			float frameCount = difference / 16.67f; // Get required frames for 60 FPS between both replay frames!
-		//			if (frameCount > 0.000000f)
-		//			{
-		//				float roundedFrameCount = std::ceilf(frameCount); // Rounded up, just to make sure :)
-		//				for (int j = 0; j < roundedFrameCount; j++)
-		//				{
-		//					if (before)
-		//					{
-		//						int lerpedX = std::lerp(prevFrame.X, closestFrame.X, PERC(roundedFrameCount, j) * 100);
-		//						int lerpedY = std::lerp(prevFrame.Y, closestFrame.Y, PERC(roundedFrameCount, j) * 100);
-		//						int time = closestFrame.Time - (difference / j);
-		//						ReplayFrame frame;
-		//						frame.X = lerpedX;
-		//						frame.Y = lerpedY;
-		//						frame.Time = time;
-		//						frame.TimeDiff = std::abs(frame.Time - prevFrame.Time);
-		//						frame.OsuKeys = realKeys;
-
-		//						frames.insert(frames.begin() +
-		//							idx - (roundedFrameCount - j), frame);
-		//					}
-		//					else
-		//					{
-		//						int lerpedX = std::lerp(closestFrame.X, futFrame.X, PERC(roundedFrameCount, j) * 100);
-		//						int lerpedY = std::lerp(closestFrame.Y, futFrame.Y, PERC(roundedFrameCount, j) * 100);
-		//						int time = closestFrame.Time + (difference / (roundedFrameCount - j));
-		//						ReplayFrame frame;
-		//						frame.X = lerpedX;
-		//						frame.Y = lerpedY;
-		//						frame.Time = time;
-		//						frame.TimeDiff = std::abs(futFrame.Time - frame.Time);
-		//						frame.OsuKeys = realKeys;
-
-		//						frames.insert(frames.begin() +
-		//							idx + j, frame);
-		//					}
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-		//	sRectangle* clientBounds = eventTimeline.clientBounds;
-		//	ImDrawList* drawList = eventTimeline.drawList;
-		//	Editor::eventTimeline = EventTimeline(&Time, drawList, &Editor::selectedReplay,
-		//		clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
-
-		//	Editor::eventTimeline.ParseEvents();
-
-		//	Editor::clickTimeline = ClickTimeline(&Time, drawList, &Editor::selectedReplay, clientBounds, &hitObjects);
-		//	Editor::clickTimeline.ParseClicks();
-
-		//	Editor::ForceUpdateCursorPosition();
-		//}
-		//else
+			Editor::ForceUpdateCursorPosition();
+		}
 		Editor::HandleSelectionDrag();
 	}
 	if (pMsg->message == WM_MOUSEMOVE) {
@@ -278,7 +162,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		}
 		if (isLeftMouseDown && clickWithinClickTimeline)
 		{
-			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), false);
+			clickTimeline.HandleMouse(Vector2(mouseX, mouseY), false, false);
 		}
 	}
 	if (pMsg->message == WM_MOUSEWHEEL && lastMessage != WM_MOUSEWHEEL)
@@ -354,11 +238,6 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		if (IsEditing)
 		{
 			// why the fuck do i have to reinstantiate it when re-parsing? when i don't do this, it's all misses. fix!!!
-			Vector2 clientBounds = eventTimeline.clientBounds;
-			ImDrawList* drawList = eventTimeline.drawList;
-			Editor::eventTimeline = EventTimeline(&Time, drawList, _replayHandler.GetReplay(),
-				clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
-				
 			Editor::osuPlayfield.CalculateHits();
 			Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetDrawables());
 
@@ -382,7 +261,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		Vector2 clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, _replayHandler.GetReplay(),
-			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
+			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize());
 
 		Editor::osuPlayfield.CalculateHits();
 		Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetDrawables());
@@ -408,7 +287,7 @@ void ReplayEditor::Editor::HandleInputs(int nCode, WPARAM wParam, LPARAM lParam)
 		Vector2 clientBounds = eventTimeline.clientBounds;
 		ImDrawList* drawList = eventTimeline.drawList;
 		Editor::eventTimeline = EventTimeline(&Time, drawList, _replayHandler.GetReplay(),
-			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize(), customHomInstance);
+			clientBounds, &hitObjects, Editor::bmap.GetOverallDifficulty(), Editor::bmap.GetCircleSize());
 
 		Editor::osuPlayfield.CalculateHits();
 		Editor::eventTimeline.ParseEvents(Editor::osuPlayfield.GetDrawables());

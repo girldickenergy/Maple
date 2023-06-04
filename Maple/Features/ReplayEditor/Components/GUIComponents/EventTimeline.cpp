@@ -15,7 +15,7 @@ int ReplayEditor::EventTimeline::XToTime(int x)
 ReplayEditor::EventTimeline::EventTimeline()
 { }
 
-ReplayEditor::EventTimeline::EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs, uintptr_t _homInstance)
+ReplayEditor::EventTimeline::EventTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects, int _od, int _cs)
 {
 	timer = _timer;
 	drawList = _drawList;
@@ -24,7 +24,6 @@ ReplayEditor::EventTimeline::EventTimeline(int* _timer, ImDrawList* _drawList, R
 	hitObjects = _hitObjects;
 	od = _od;
 	cs = _cs;
-	homInstance = _homInstance;
 	hits = std::vector<bool>(420, false);
 }
 
@@ -44,18 +43,18 @@ void ReplayEditor::EventTimeline::ParseEvents(std::vector<ReplayEditor::OsuDrawa
 		auto drawablePointer = *current;
 		switch (drawablePointer->GetHitObjectScoring())
 		{
-			case HitObjectScoring::Miss:
-				events.emplace_back(drawablePointer->GetTime(), EventType::Miss);
-				break;
-			case HitObjectScoring::Fifty:
-				events.emplace_back(drawablePointer->GetTime(), EventType::Fifty);
-				break;
-			case HitObjectScoring::OneHundred:
-				events.emplace_back(drawablePointer->GetTime(), EventType::OneHundred);
-				break;
-			case HitObjectScoring::ThreeHundred:
-				events.emplace_back(drawablePointer->GetTime(), EventType::ThreeHundred);
-				break;
+		case HitObjectScoring::Miss:
+			events.emplace_back(drawablePointer->GetTime(), EventType::Miss);
+			break;
+		case HitObjectScoring::Fifty:
+			events.emplace_back(drawablePointer->GetTime(), EventType::Fifty);
+			break;
+		case HitObjectScoring::OneHundred:
+			events.emplace_back(drawablePointer->GetTime(), EventType::OneHundred);
+			break;
+		case HitObjectScoring::ThreeHundred:
+			events.emplace_back(drawablePointer->GetTime(), EventType::ThreeHundred);
+			break;
 		}
 	}
 
@@ -67,7 +66,7 @@ void ReplayEditor::EventTimeline::Draw()
 	float eventTimelineHeight = (PERC(clientBounds.Y, 3.f) * StyleProvider::Scale) - 2;
 	float clickTimelineHeight = PERC(clientBounds.Y, 4.f) * StyleProvider::Scale;
 
-	// Upper border 
+	// Upper border
 	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight - eventTimelineHeight - 2), ImVec2(clientBounds.X, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(51.f), COL(51.f), COL(51.f), 1.f)));
 
 	drawList->AddRectFilled(ImVec2(0, clientBounds.Y - clickTimelineHeight - eventTimelineHeight), ImVec2(clientBounds.X, clientBounds.Y - clickTimelineHeight), ImGui::ColorConvertFloat4ToU32(ImVec4(COL(71.f), COL(71.f), COL(71.f), 1.f)));
@@ -113,9 +112,4 @@ void ReplayEditor::EventTimeline::SetOverallDifficulty(int _od)
 void ReplayEditor::EventTimeline::SetCircleSize(int _cs)
 {
 	cs = _cs;
-}
-
-void ReplayEditor::EventTimeline::SetHomInstance(uintptr_t _homInstance)
-{
-	homInstance = _homInstance;
 }

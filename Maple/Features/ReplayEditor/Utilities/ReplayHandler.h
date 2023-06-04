@@ -7,14 +7,22 @@ namespace ReplayEditor
 	class ReplayHandler
 	{
 		Replay _selectedReplay;
-	
+
 		void removeStartFrames();
 		void removeFramesWithSameTime();
 	public:
 		ReplayHandler();
 		ReplayHandler(Replay selectedReplay, bool lazy = false);
 
+		ReplayFrame InterpolateReplayFrames(ReplayFrame firstFrame, ReplayFrame secondFrame, int resyncTime);
+
+		int GetIndexOfFrame(ReplayFrame replayFrame);
+		ReplayFrame GetFrameAtIndex(int index);
+
 		ReplayFrame GetFrameClosestToTime(int time);
+		std::tuple<ReplayFrame, ReplayFrame> GetTwoClosestReplayFrames(int time);
+		std::vector<ReplayFrame> GetReplayFramesWithinTimeFrame(int startTime, int endTime);
+
 		Vector2 GetMousePositionAtTime(int time);
 
 		Replay* GetReplay();
