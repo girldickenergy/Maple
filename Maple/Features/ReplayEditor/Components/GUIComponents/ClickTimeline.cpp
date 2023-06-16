@@ -122,7 +122,7 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 mousePosition, bool releas
 	const auto mouseClickImVec2 = ImVec2(mousePosition.X, mousePosition.Y);
 
 	// Find dragged click event
-	if (!currentlyDragging)
+	if (!currentlyDragging) {
 		for (auto it = clicks.begin(); it != clicks.end(); ++it)
 		{
 			auto click = *it;
@@ -193,6 +193,27 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 mousePosition, bool releas
 				break;
 			}
 		}
+
+		// If no click has been clicked, but the user still clicked within the clicktimeline
+		if (!currentlyDragging)
+		{
+			auto addingTop = mousePosition.Y >= clientBounds.Y - clickTimelineHeight && mousePosition.Y < clientBounds.Y - (clickTimelineHeight / 2);
+			auto addingBottom = mousePosition.Y >= clientBounds.Y - (clickTimelineHeight / 2) && mousePosition.Y < clientBounds.Y;
+
+			if (!addingTop && !addingBottom)
+				return;
+
+			auto addingStartTime = XToTime(mousePosition.X);
+
+			auto keys = addingTop ? OsuKeys::K1 : OsuKeys::K2;
+			auto newClick = Click(addingStartTime, Vector2(), 50, keys);
+			clicks.push_back(newClick);
+
+			dragMode = DragMode::Right;
+			draggingIndex = clicks.size() - 1;
+			currentlyDragging = true;
+		}
+	}
 	else
 	{
 		auto& click = clicks[draggingIndex];

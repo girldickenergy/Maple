@@ -112,9 +112,9 @@ void ReplayEditor::SliderOsu::InitializeSliderTicks()
 
 		auto position = internalHitObject->PositionAtTime(time);
 
-		if (position.DistanceSquared(internalHitObject->PositionAtTime(*(sliderScoreTimingPoints.end() - 1))) <= radius * radius ||
+		/*if (position.DistanceSquared(internalHitObject->PositionAtTime(*(sliderScoreTimingPoints.end() - 1))) <= radius * radius ||
 			position.DistanceSquared(GetPosition()) <= radius * radius)
-			continue;
+			continue;*/
 
 		auto sliderTick = new SliderTickOsu(time, preempt, GetTimer(), EditorGlobals::ConvertToPlayArea(position));
 
@@ -168,9 +168,9 @@ void ReplayEditor::SliderOsu::AnalyzeSliderTick(int time, SliderTickOsu* sliderT
 			position = t->GetEndPosition();
 		else
 			position = t->GetStartPosition() +
-			(t->GetEndPosition() - t->GetStartPosition()) *
-			(1 - static_cast<float>(t->GetEndTime() - time) / (t->GetEndTime() - t->GetStartTime()));
-
+				(t->GetEndPosition() - t->GetStartPosition()) *
+				(1 - static_cast<float>(t->GetEndTime() - time) / (t->GetEndTime() - t->GetStartTime()));
+		
 		allowable = replayHandler.GetMousePositionAtTime(time).DistanceSquared(position) < radius * radius;
 	}
 
