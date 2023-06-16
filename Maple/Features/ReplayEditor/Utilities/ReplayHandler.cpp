@@ -119,6 +119,11 @@ std::vector<ReplayFrame> ReplayEditor::ReplayHandler::GetReplayFramesWithinTimeF
 	return temporary;
 }
 
+bool ReplayEditor::ReplayHandler::DoesFrameExistOnTime(int time)
+{
+	return std::ranges::any_of(_selectedReplay.ReplayFrames, [time](const auto& frame) { return frame.Time == time; });
+}
+
 Vector2 ReplayEditor::ReplayHandler::GetMousePositionAtTime(int time)
 {
 	auto replayFrame = GetFrameClosestToTime(time);
@@ -154,11 +159,11 @@ void ReplayEditor::ReplayHandler::removeFramesWithSameTime()
 {
 	auto framesToRemove = std::vector<int>();
 
-	for (auto it = _selectedReplay.ReplayFrames.begin(); it != _selectedReplay.ReplayFrames.end(); ++it)
-		if (std::distance(_selectedReplay.ReplayFrames.begin(), it) > 0)
-			if ((*it).Time == (*(it - 1)).Time)
-				framesToRemove.push_back(std::distance(_selectedReplay.ReplayFrames.begin(), it));
-
-	for (auto const& index : framesToRemove)
-		_selectedReplay.ReplayFrames.erase(_selectedReplay.ReplayFrames.begin() + index);
+	for (auto it = _selectedReplay.ReplayFrames.begin() + 1; it != _selectedReplay.ReplayFrames.end();)
+	{
+		if ((*it).Time == (*(it - 1)).Time)
+			it = _selectedReplay.ReplayFrames.erase(it);
+		else
+			++it;
+	}
 }

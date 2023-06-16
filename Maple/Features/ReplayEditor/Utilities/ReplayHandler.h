@@ -23,6 +23,8 @@ namespace ReplayEditor
 		std::tuple<ReplayFrame, ReplayFrame> GetTwoClosestReplayFrames(int time);
 		std::vector<ReplayFrame> GetReplayFramesWithinTimeFrame(int startTime, int endTime);
 
+		bool DoesFrameExistOnTime(int time);
+
 		Vector2 GetMousePositionAtTime(int time);
 
 		Replay* GetReplay();

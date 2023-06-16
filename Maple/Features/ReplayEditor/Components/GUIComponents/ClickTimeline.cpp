@@ -70,6 +70,7 @@ void ReplayEditor::ClickTimeline::ParseClicks()
 {
 	clicks.clear();
 
+	// todo: key never released bad
 	// TODO: this is very ugly code and bad practice, but it makes both keys at the same time work. make this prettier
 	for (int i = 0; i < replay->ReplayFrames.size(); i++)
 	{
@@ -224,68 +225,130 @@ void ReplayEditor::ClickTimeline::HandleMouse(Vector2 mousePosition, bool releas
 
 	if (released && currentlyDragging)
 	{
-		auto& click = clicks[draggingIndex];
 		currentlyDragging = false;
-		dragMode = DragMode::Middle;
+
+		// Update clicks
+		//switch (dragMode)
+		//{
+		//case DragMode::Left:
+		//{
+		//	auto& click = clicks[draggingIndex];
+		//	int comparrasionIndex = draggingIndex;
+		//	while (--comparrasionIndex > 0)
+		//	{
+		//		auto& previousClick = clicks[comparrasionIndex];
+		//		if (previousClick._keys != click._keys)
+		//			continue;
+
+		//		if (previousClick.StartTime >= click.StartTime) {
+		//			clicks.erase(clicks.begin() + comparrasionIndex);
+		//			draggingIndex--;
+		//		}
+		//		else if (previousClick.StartTime + previousClick.Duration >= click.StartTime)
+		//		{
+		//			auto newDuration = (click.StartTime + click.Duration) - previousClick.StartTime;
+		//			previousClick.Duration = newDuration;
+		//			clicks.erase(clicks.begin() + draggingIndex);
+		//			draggingIndex = comparrasionIndex;
+		//		}
+		//		else
+		//			break;
+		//	}
+
+		//	break;
+		//}
+		//case DragMode::Middle: {
+		//	auto& click = clicks[draggingIndex];
+		//	// Determine if the click has been dragged to the right or to the left
+		//	bool draggedLeft = (click.StartTime < click.OriginalStartTime) ? true : false;
+		//	int comparrasionIndex = draggingIndex;
+
+		//	while ((draggedLeft) ? --comparrasionIndex > 0 : ++comparrasionIndex < clicks.size())
+		//	{
+		//		auto& toCheckClick = clicks[comparrasionIndex];
+		//		if (toCheckClick._keys != click._keys)
+		//			continue;
+		//		auto clickEndTime = click.StartTime + click.Duration;
+		//		auto toCheckClickEndTime = toCheckClick.StartTime + toCheckClick.Duration;
+
+		//		if (draggedLeft)
+		//		{
+		//			if (click.StartTime < toCheckClickEndTime)
+		//			{
+		//				auto maxEndtime = (std::max)(clickEndTime, toCheckClickEndTime);
+		//				toCheckClick.Duration = maxEndtime - toCheckClick.StartTime;
+
+		//				clicks.erase(clicks.begin() + draggingIndex);
+		//				draggingIndex = comparrasionIndex;
+		//			}
+		//		}
+		//	}
+		//	break;
+		//}
+		//					 /*case DragMode::Right: {
+		//	click.Duration = time - click.StartTime;
+		//	break;
+		//}*/
+		//}
+
+		auto& click = clicks[draggingIndex];
 
 		auto& replayHandler = Editor::Get().GetReplayHandler();
 		auto& replayFrames = replayHandler.GetReplay()->ReplayFrames;
 
-		// Check if the click landed exactly on a replay frame
-		auto closestReplayFrame = replayHandler.GetFrameClosestToTime(click.StartTime);
-		if (closestReplayFrame.Time == click.StartTime)
+		// interpolate if needed
+
+		/*if (click.Duration > click.OriginalDuration)
 		{
-			// If the frame has the exact same time as the click we only have to change the keys on the frame
-			auto frameIndex = replayHandler.GetIndexOfFrame(closestReplayFrame);
-			replayFrames[frameIndex].OsuKeys = click._keys;
-		}
-		else
-		{
-			// Grab the two closest replay frames
-			auto closestReplayFrames = replayHandler.GetTwoClosestReplayFrames(click.StartTime);
-			// Create an interpolated frame from the two closest replay frames
-			auto interpolatedFrame = replayHandler.InterpolateReplayFrames(std::get<0>(closestReplayFrames),
-				std::get<1>(closestReplayFrames), click.StartTime);
-			interpolatedFrame.OsuKeys = click._keys;
-
-			// Grab the index of the first frame
-			auto firstFrameIndex = replayHandler.GetIndexOfFrame(std::get<0>(closestReplayFrames));
-
-			// Insert the interpolated frame into the replay
-			replayFrames.insert(replayFrames.begin() + firstFrameIndex + 1, interpolatedFrame);
-		}
-
-		// Find all replayframes affected by the edit and reset their keypresses
-		auto searchStartTime = (click.StartTime > click.OriginalStartTime) ? click.OriginalStartTime : click.StartTime;
-		auto searchDuration = (click.Duration > click.OriginalDuration) ? click.Duration : click.OriginalDuration;
-		auto affectedFrames = replayHandler.GetReplayFramesWithinTimeFrame(searchStartTime, searchStartTime + searchDuration);
-
-		for (auto const& frame : affectedFrames)
-		{
-			auto index = replayHandler.GetIndexOfFrame(frame);
-
-			auto foundClick = Click();
-			foundClick._keys = OsuKeys::None;
-			for (auto it = clicks.begin(); it != clicks.end(); ++it)
+			auto replayFramesAffected = replayHandler.GetReplayFramesWithinTimeFrame(click.StartTime, click.StartTime + click.Duration);
+			for (const auto& frame : replayFramesAffected)
 			{
-				auto& currentClick = *it;
-				if (frame.Time >= currentClick.StartTime && frame.Time < currentClick.StartTime + currentClick.Duration)
-				{
-					if (foundClick._keys == OsuKeys::None)
-						foundClick = currentClick;
-					else
-						foundClick._keys = foundClick._keys | currentClick._keys;
-				}
+				auto index = replayHandler.GetIndexOfFrame(frame);
+				replayFrames[index].OsuKeys = replayFrames[index].OsuKeys | click._keys;
 			}
-			replayFrames[index].OsuKeys = foundClick._keys;
 		}
-
-		// Update the original times, so that the next edit will also work as intended
-		click.OriginalStartTime = click.StartTime;
-		click.OriginalDuration = click.Duration;
+		else if (click.Duration < click.OriginalDuration)
+		{
+			auto replayFramesAffected = replayHandler.GetReplayFramesWithinTimeFrame(click.OriginalStartTime, click.StartTime);
+			for (const auto& frame : replayFramesAffected)
+			{
+				auto index = replayHandler.GetIndexOfFrame(frame);
+				replayFrames[index].OsuKeys = replayFrames[index].OsuKeys & ~(click._keys | OsuKeys::M1 | OsuKeys::M2);
+			}
+		}*/
 
 		if (rightClick)
 			clicks.erase(clicks.begin() + draggingIndex);
+
+		bool frameStartExists = replayHandler.DoesFrameExistOnTime(click.StartTime);
+		bool frameEndExists = replayHandler.DoesFrameExistOnTime(click.StartTime + click.Duration);
+
+		if (!frameStartExists)
+		{
+			auto closestTwoFrames = replayHandler.GetTwoClosestReplayFrames(click.StartTime);
+			auto interpolatedFrame = replayHandler.InterpolateReplayFrames(std::get<0>(closestTwoFrames), std::get<1>(closestTwoFrames), click.StartTime);
+
+			replayFrames.insert(replayFrames.begin() + replayHandler.GetIndexOfFrame(std::get<1>(closestTwoFrames)), interpolatedFrame);
+		}
+
+		if (!frameEndExists)
+		{
+			auto closestTwoFrames = replayHandler.GetTwoClosestReplayFrames(click.StartTime + click.Duration);
+			auto interpolatedFrame = replayHandler.InterpolateReplayFrames(std::get<0>(closestTwoFrames), std::get<1>(closestTwoFrames), click.StartTime + click.Duration);
+
+			replayFrames.insert(replayFrames.begin() + replayHandler.GetIndexOfFrame(std::get<1>(closestTwoFrames)), interpolatedFrame);
+		}
+
+		for (auto& frame : replayFrames)
+		{
+			frame.OsuKeys = OsuKeys::None;
+			for (auto& click : clicks)
+			{
+				auto clickEndTime = click.StartTime + click.Duration;
+				if (click.StartTime <= frame.Time && clickEndTime >= frame.Time)
+					frame.OsuKeys = frame.OsuKeys | click._keys;
+			}
+		}
 
 		draggingIndex = 0;
 
