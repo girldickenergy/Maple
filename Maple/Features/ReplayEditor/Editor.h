@@ -31,6 +31,7 @@
 
 #include "Singleton.h"
 #include "Utilities/ReplayHandler.h"
+#include "Utilities/HitObjectManagerWrapper.h"
 
 namespace ReplayEditor
 {
@@ -58,6 +59,7 @@ namespace ReplayEditor
 		static inline char replayPath[256];
 
 		static inline ReplayHandler _replayHandler;
+		static inline HitObjectManagerWrapper _hitObjectManagerWrapper;
 
 		static inline int currentFrame;
 
@@ -71,7 +73,6 @@ namespace ReplayEditor
 		static inline bool toolsOpen;
 
 		// TODO: refactor this into a Tuple<PlayMode, void*> at some point!!!
-		static inline uintptr_t customHomInstance = 0x00000000;
 		static inline PlayModes customHomPlayMode = PlayModes::Osu;
 
 		static inline Beatmap bmap = Beatmap();
@@ -101,8 +102,6 @@ namespace ReplayEditor
 		static inline ReplayFrame EditingFrame;
 		static inline bool IsEditing;
 
-		static void CreateHitObjectManager();
-
 		static void LoadBeatmap(std::string beatmapHash);
 
 		static int64_t GetTicks();
@@ -122,6 +121,6 @@ namespace ReplayEditor
 		static bool GetIsVisible();
 
 		ReplayHandler& GetReplayHandler();
-		uintptr_t GetHitObjectManagerInstance();
+		HitObjectManagerWrapper& GetHitObjectManagerWrapper();
 	};
 }

@@ -1,7 +1,7 @@
 #include "ClickOverlay.h"
 
 ReplayEditor::ClickOverlay::ClickOverlay()
-{ 
+{
 	_isInit = false;
 }
 
@@ -35,7 +35,7 @@ void ReplayEditor::ClickOverlay::Render()
 		ImGui::ColorConvertFloat4ToU32(ImVec4(COL(255.f), COL(255.f), COL(255.f), 1.f)), 6.f, 0, 2.f);
 
 	for (auto& click : *_clicks)
-		if (click._startTime <= *_timer && click._startTime + click._duration >= *_timer) {
+		if (click.StartTime <= *_timer && click.StartTime + click.Duration >= *_timer) {
 			_currentOsuKeys = click._keys;
 			if ((click._keys & OsuKeys::K1) > OsuKeys::None)
 				_drawList->AddRectFilled(buttonOneStart, buttonOneEnd,

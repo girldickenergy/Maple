@@ -6,11 +6,17 @@
 class Click
 {
 public:
+	/// @brief The original start time of the click.
+	int OriginalStartTime;
+
 	/// @brief Start time of the click.
-	int _startTime;
+	int StartTime;
+
+	/// @brief The original duration of the click.
+	int OriginalDuration;
 
 	/// @brief The duration of the click.
-	int _duration;
+	int Duration;
 
 	/// @brief Position of the click in osu!px.
 	Vector2 _position;
@@ -27,14 +33,14 @@ public:
 	/// @brief Empty constructor for first initialization.
 	Click()
 	{
-		_startTime = 0;
+		StartTime = 0;
 		_position = Vector2(0, 0);
-		_duration = 0;
+		Duration = 0;
 		_keys = OsuKeys::None;
 		_usedInAnalyzation = false;
 		_edited = false;
 	}
-	
+
 	/// @brief Constructs a new click instance.
 	/// @param startTime Start time of the click.
 	/// @param position Position of the click.
@@ -42,9 +48,11 @@ public:
 	/// @param keys OsuKeys utilized in the click.
 	Click(int startTime, Vector2 position, int duration, OsuKeys keys)
 	{
-		_startTime = startTime;
+		OriginalStartTime = startTime;
+		StartTime = startTime;
 		_position = position;
-		_duration = duration;
+		OriginalDuration = duration;
+		Duration = duration;
 		_keys = keys;
 		_usedInAnalyzation = false;
 		_edited = false;

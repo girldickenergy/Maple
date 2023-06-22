@@ -12,9 +12,6 @@ namespace ReplayEditor
 		/// @brief Pointer to the CurrentFrame int taken from the Editor instance.
 		int* _currentFrame;
 
-		/// @brief Pointer to the CurrentReplay taken from the Editor instance.
-		Replay* _currentReplay;
-
 		/// @brief Pointer to the DrawList taken from the Editor window created from the Editor instance.
 		ImDrawList* _drawList;
 
@@ -31,11 +28,10 @@ namespace ReplayEditor
 		OsuCursor();
 
 		/// @brief Constructor for constructing a OsuCursor instance to handle Cursor drawing.
-		/// @param currentReplay Pointer to the Replay from the Editor instance.
 		/// @param currentFrame Pointer to the CurrentFrame int from the Editor instance.
 		/// @param drawList Pointer to the DrawList from the Editor window.
 		/// @param currentPressedKeys Pointer to the currently pressed keys from the click overlay instance.
-		OsuCursor(int* currentFrame, Replay* currentReplay, ImDrawList* drawList, OsuKeys* currentPressedKeys = nullptr);
+		OsuCursor(int* currentFrame, ImDrawList* drawList, OsuKeys* currentPressedKeys = nullptr);
 
 		/// @brief Renders the cursor and trail on screen
 		void Render();

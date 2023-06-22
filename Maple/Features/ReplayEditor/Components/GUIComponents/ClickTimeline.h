@@ -17,6 +17,13 @@ namespace ReplayEditor
 		Backward
 	};
 
+	enum DragMode : int
+	{
+		Left,
+		Middle,
+		Right
+	};
+
 	class ClickTimeline
 	{
 		int* timer;
@@ -26,6 +33,10 @@ namespace ReplayEditor
 		std::vector<HitObject>* hitObjects;
 		int TimeToX(int time);
 		int XToTime(int x);
+
+		bool currentlyDragging;
+		int draggingIndex;
+		DragMode dragMode;
 	public:
 		std::vector<Click> clicks;
 		int GetClick(GetClickState state);
@@ -35,7 +46,7 @@ namespace ReplayEditor
 		ClickTimeline(int* _timer, ImDrawList* _drawList, Replay* _replay, Vector2 _clientBounds, std::vector<HitObject>* _hitObjects);
 		void SetHitObjects(std::vector<HitObject>* _hitObjects);
 		void ParseClicks();
-		void HandleMouse(Vector2 _mousePos, bool _released);
+		void HandleMouse(Vector2 mousePosition, bool released, bool rightClick);
 		void Draw();
 	};
 }

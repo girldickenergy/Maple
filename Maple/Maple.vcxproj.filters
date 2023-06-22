@@ -272,6 +272,9 @@
     <ClCompile Include="Features\ReplayEditor\Utilities\ReplayHandler.cpp">
       <Filter>Features\ReplayEditor\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Features\ReplayEditor\Utilities\HitObjectManagerWrapper.cpp">
+      <Filter>Features\ReplayEditor\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1600,6 +1603,9 @@
       <Filter>Features\ReplayEditor\Components\GameplayComponents</Filter>
     </ClInclude>
     <ClInclude Include="Features\ReplayEditor\Utilities\ReplayHandler.h">
+      <Filter>Features\ReplayEditor\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ReplayEditor\Utilities\HitObjectManagerWrapper.h">
       <Filter>Features\ReplayEditor\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
