@@ -33,8 +33,7 @@ void Editor::LoadBeatmap(std::string beatmapHash)
 	_hitObjectManagerWrapper.ConstructNewHitObjectManager();
 	auto& instance = _hitObjectManagerWrapper.GetHitObjectManagerInstance();
 
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(converter.from_bytes(_replayHandler.GetReplayBeatmapHash()));
+    uintptr_t beatmapPointer = BeatmapManager::Get().GetBeatmapByChecksum(_replayHandler.GetReplayBeatmapHash());
 
 	bmap = Beatmap(beatmapPointer);
 	bmap.Update();
@@ -102,31 +101,28 @@ void Editor::DrawSelectedFrames(ImDrawList* drawList)
 
 void Editor::ForceUpdateCursorPosition()
 {
-	auto frames = _replayHandler.GetReplay()->ReplayFrames;
+    auto& frames = _replayHandler.GetReplay()->ReplayFrames;
 
-	if (frames.size() <= 1) return;
+    if (frames.size() <= 1)
+        return;
 
-	if (currentFrame < frames.size() - 1)
-	{
-		int fC = currentFrame;
-		if (fC != 0)
-			while (Time < frames[fC].Time)
-				fC--;
-		while (Time > frames[fC].Time)
-			fC++;
-		currentFrame = fC;
-	}
-	else
-	{
-		int fC = currentFrame;
-		while (Time < frames[fC].Time)
-			fC--;
-		currentFrame = fC;
-	}
-}
-
-Editor::Editor(singletonLock)
-{
+    if (currentFrame < frames.size() - 1)
+    {
+        int fC = currentFrame;
+        if (fC != 0)
+            while (Time < frames[fC].Time)
+                fC--;
+        while (Time > frames[fC].Time)
+            fC++;
+        currentFrame = fC;
+    }
+    else
+    {
+        int fC = currentFrame;
+        while (Time < frames[fC].Time)
+            fC--;
+        currentFrame = fC;
+    }
 }
 
 void Editor::Initialize()
@@ -300,42 +296,44 @@ void Editor::Play()
 
 void Editor::TimerThread()
 {
-	LARGE_INTEGER Frequency;
-	QueryPerformanceFrequency(&Frequency);
+    LARGE_INTEGER Frequency;
+    QueryPerformanceFrequency(&Frequency);
 
-	int64_t b = GetTicks();
-	while (true)
-	{
-		if (EditorState == Playing) {
-			int64_t c = GetTicks();
+    int64_t b = GetTicks();
+    while (true)
+    {
+        if (EditorState == Playing)
+        {
+            int64_t c = GetTicks();
 
-			double dftDuration = (double)(c - b) * (Config::ReplayEditor::PlaybackRate * 1000.f) / (double)Frequency.QuadPart;
+            double dftDuration = (double)(c - b) * (Config::ReplayEditor::PlaybackRate * 1000.f) / (double)Frequency.QuadPart;
 
-			if (dftDuration >= 1) {
-				Time++;
-				b = GetTicks();
-				auto frames = _replayHandler.GetReplay()->ReplayFrames;
+            if (dftDuration >= 1)
+            {
+                Time++;
+                b = GetTicks();
+                auto& frames = _replayHandler.GetReplay()->ReplayFrames;
 
-				if (currentFrame < frames.size() - 1)
-				{
-					int fC = currentFrame;
-					if (fC != 0)
-						while (Time < frames[fC].Time)
-							fC--;
-					while (Time > frames[fC].Time)
-						fC++;
-					currentFrame = fC;
-				}
-				else
-				{
-					int fC = currentFrame;
-					while (Time < frames[fC].Time)
-						fC--;
-					currentFrame = fC;
-				}
-			}
-		}
-	}
+                if (currentFrame < frames.size() - 1)
+                {
+                    int fC = currentFrame;
+                    if (fC != 0)
+                        while (Time < frames[fC].Time)
+                            fC--;
+                    while (Time > frames[fC].Time)
+                        fC++;
+                    currentFrame = fC;
+                }
+                else
+                {
+                    int fC = currentFrame;
+                    while (Time < frames[fC].Time)
+                        fC--;
+                    currentFrame = fC;
+                }
+            }
+        }
+    }
 }
 
 void ReplayEditor::Editor::ToggleVisibility()
