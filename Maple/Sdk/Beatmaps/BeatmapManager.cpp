@@ -17,7 +17,7 @@ void BeatmapManager::Initialize()
 
 uintptr_t BeatmapManager::GetBeatmapByChecksum(std::string beatmapChecksum)
 {
-    const auto beatmapsPointer = **reinterpret_cast<uintptr_t**>(Memory::Objects["BeatmapManager::Beatmaps"]);
+    const auto beatmapsPointer = **reinterpret_cast<uintptr_t**>(Memory::Objects[xorstr_("BeatmapManager::Beatmaps")]);
     const int32_t beatmapAmount = *reinterpret_cast<int32_t*>(beatmapsPointer + 0xC);
 
     const auto beatmapsList = *reinterpret_cast<uintptr_t*>(beatmapsPointer + 0x04);
@@ -47,5 +47,5 @@ uintptr_t BeatmapManager::GetBeatmapByChecksum(std::string beatmapChecksum)
 
 void BeatmapManager::SetCurrent(uintptr_t beatmapPointer)
 {
-    reinterpret_cast<fnSetCurrent>(Memory::Objects["BeatmapManager::set_Current"])(beatmapPointer);
+    reinterpret_cast<fnSetCurrent>(Memory::Objects[xorstr_("BeatmapManager::set_Current")])(beatmapPointer);
 }

@@ -1,31 +1,32 @@
-#include <clocale>
 #include <WinSock2.h>
+#include <clocale>
 
-#include "curl.h"
-#include "VirtualizerSDK.h"
-#include "Vanilla.h"
-#include "xorstr.hpp"
 #include "Communication/Communication.h"
 #include "Hooking/VanillaHooking.h"
+#include "Vanilla.h"
+#include "VirtualizerSDK.h"
+#include "curl.h"
+#include "xorstr.hpp"
 
-#include "Logging/Logger.h"
-#include "Storage/Storage.h"
 #include "Config/Config.h"
 #include "Dependencies/Milk/Milk.h"
+#include "Logging/Logger.h"
+#include "Storage/Storage.h"
 
 #include "Utilities/Security/Security.h"
 
-#include "SDK/Memory.h"
+#include "Dependencies/Milk/MilkThread.h"
 #include "SDK/Audio/AudioEngine.h"
+#include "SDK/Beatmaps/BeatmapManager.h"
 #include "SDK/Discord/DiscordRPC.h"
 #include "SDK/GL/GLControl.h"
 #include "SDK/Helpers/ErrorSubmission.h"
 #include "SDK/Helpers/Obfuscated.h"
 #include "SDK/Input/InputManager.h"
+#include "SDK/Memory.h"
 #include "SDK/Mods/ModManager.h"
 #include "SDK/Osu/GameBase.h"
 #include "SDK/Osu/GameField.h"
-#include "SDK/Beatmaps/BeatmapManager.h"
 #include "SDK/Player/HitObjectManager.h"
 #include "SDK/Player/Player.h"
 #include "SDK/Player/Ruleset.h"
@@ -33,9 +34,8 @@
 #include "SDK/Streaming/StreamingManager.h"
 #include "UI/UI.h"
 #include "Utilities/Anticheat/AnticheatUtilities.h"
-#include "Utilities/Strings/StringUtilities.h"
-#include "Dependencies/Milk/MilkThread.h"
 #include "Utilities/Exceptions/ExceptionHandler.h"
+#include "Utilities/Strings/StringUtilities.h"
 
 #include "Features/ReplayEditor/Editor.h"
 
@@ -76,14 +76,18 @@ DWORD WINAPI Initialize()
     auto data_addr = data;
 
     VIRTUALIZER_TIGER_LITE_START
-        Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
+    Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
     ExceptionHandler::Setup();
 
     if (!data_addr)
         Security::CorruptMemory();
 
+#ifdef NO_BYPASS
+    Communication::SetUser(new User("dev", "dev", "", ""));
+#else
     UserData userData = *static_cast<UserData*>(data_addr);
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
+#endif
 
     // Initialize this a bit earlier just so we can log more data earlier.
     Storage::Initialize(Communication::GetUser()->GetUsernameHashed());
@@ -94,9 +98,11 @@ DWORD WINAPI Initialize()
     Logger::Initialize(LogSeverity::All, true);
 #endif
 
+#ifndef NO_BYPASS
     memset(data_addr, 0x0, sizeof(UserData));
 
     Communication::Connect();
+#endif
 
     Logger::StartPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
     while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
@@ -112,13 +118,13 @@ DWORD WINAPI Initialize()
 
     VIRTUALIZER_TIGER_LITE_END
 
-        return 0;
+    return 0;
 }
 
 void InitializeMaple()
 {
     VIRTUALIZER_FISH_RED_START
-        Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
+    Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
 
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
@@ -141,7 +147,7 @@ void InitializeMaple()
     {
         Logger::Log(LogSeverity::Info, xorstr_("Initialized Vanilla!"));
 
-        //initializing SDK
+        // initializing SDK
         Memory::StartInitialize();
 
         GameBase::Initialize();
@@ -166,8 +172,8 @@ void InitializeMaple()
 
         WaitForCriticalSDKToInitialize();
 
-        //initializing UI and Spoofer
-        //TODO: maybe we can move spoofer initialization outside of ui hooks?
+        // initializing UI and Spoofer
+        // TODO: maybe we can move spoofer initialization outside of ui hooks?
         UI::Initialize();
     }
     else
@@ -184,28 +190,28 @@ void InitializeMaple()
 void WaitForCriticalSDKToInitialize()
 {
     VIRTUALIZER_FISH_RED_START
-        Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
+    Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
 
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
 
     VIRTUALIZER_FISH_RED_END
 
-        unsigned int retries = 0;
+    unsigned int retries = 0;
 #ifdef NO_BYPASS
-    while (!clientHash || !updateTiming/*||!submit*/)
+    while (!clientHash || !updateTiming /*||!submit*/)
 #else
     while (!clientHash || !updateTiming)
 #endif
     {
         VIRTUALIZER_FISH_RED_START
 
-            if (retries >= 30)
-            {
-                Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
+        if (retries >= 30)
+        {
+            Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
 
-                Security::CorruptMemory();
-            }
+            Security::CorruptMemory();
+        }
 
         retries++;
 
