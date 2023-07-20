@@ -99,7 +99,7 @@ void ReplayEditor::OsuPlayfield::CalculateHits()
     }
 }
 
-std::vector<ReplayEditor::OsuDrawable*> ReplayEditor::OsuPlayfield::GetDrawables()
+std::vector<ReplayEditor::OsuDrawable*>& ReplayEditor::OsuPlayfield::GetDrawables()
 {
     return _drawables;
 }

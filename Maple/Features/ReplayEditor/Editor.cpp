@@ -74,7 +74,8 @@ void Editor::LoadBeatmap(std::string beatmapHash)
     eventTimeline.ParseEvents(osuPlayfield.GetDrawables());
     // BeatmapManager::Get().Load(reinterpret_cast<void*>(bmap.GetBeatmapOsuPointer()));
 
-    BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
+    // This created problems when closing the editor and going to song select screen
+    // BeatmapManager::Get().SetCurrent(bmap.GetBeatmapOsuPointer());
 
     /*AudioEngine::LoadAudio(bmap.GetBeatmapOsuPointer(), false, false, true, false);
     Logger::Log(LogSeverity::Debug, "Reached after AudioEngine::LoadAudio()");*/
