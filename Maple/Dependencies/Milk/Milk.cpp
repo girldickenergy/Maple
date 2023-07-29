@@ -73,7 +73,7 @@ uintptr_t Milk::xorValue(uintptr_t valuePointer, uintptr_t xorKey)
     {
         /**(uint8_t*)((uintptr_t)&functionSize + i) = *(uint8_t*)((uintptr_t)&functionSize + i) ^ *(uint8_t*)((uintptr_t)pair.second + 0xC);*/
 
-        auto resultPointer = reinterpret_cast<uint8_t*>(&result + i);
+        auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
         char buf[255];
         sprintf(buf, "%08X", *resultPointer);
         Logger::Log(LogSeverity::Debug, buf);
