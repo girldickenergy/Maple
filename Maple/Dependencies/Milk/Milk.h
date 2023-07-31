@@ -53,10 +53,10 @@ class Milk : public Singleton<Milk>
     using fnSomeBassFunc = int(__stdcall*)(int handle);
     static inline fnSomeBassFunc oSomeBassFunc;
 
-    uintptr_t xorValue(uintptr_t valuePointer, uintptr_t xorKey);
+    __forceinline uintptr_t xorValue(uintptr_t valuePointer, uintptr_t xorKey);
 
     uintptr_t findAuthStub();
-    uintptr_t findFirstCRCAddress();
+    uintptr_t findCRCMap();
 
     /**
      * \brief Bypasses the detection vector where functions would be checked against CRC32.

@@ -71,12 +71,7 @@ uintptr_t Milk::xorValue(uintptr_t valuePointer, uintptr_t xorKey)
     uintptr_t result = valuePointer;
     for (int i = 0; i < sizeof(uint32_t); i++)
     {
-        /**(uint8_t*)((uintptr_t)&functionSize + i) = *(uint8_t*)((uintptr_t)&functionSize + i) ^ *(uint8_t*)((uintptr_t)pair.second + 0xC);*/
-
         auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
-        char buf[255];
-        sprintf(buf, "%08X", *resultPointer);
-        Logger::Log(LogSeverity::Debug, buf);
         *resultPointer = *resultPointer ^ static_cast<uint8_t>(xorKey);
     }
 
@@ -97,7 +92,7 @@ uintptr_t Milk::findAuthStub()
 }
 
 // ReSharper disable once CppInconsistentNaming
-uintptr_t Milk::findFirstCRCAddress()
+uintptr_t Milk::findCRCMap()
 {
     VIRTUALIZER_LION_BLACK_START
 
@@ -121,23 +116,14 @@ uintptr_t Milk::findFirstCRCAddress()
 
 void Milk::doCRCBypass(uintptr_t address)
 {
-    VIRTUALIZER_TIGER_BLACK_START
+    VIRTUALIZER_TIGER_LITE_START
 
     for (auto& pair : *_crcMap)
     {
         auto crcStruct = pair.second;
-        char buf[255];
-        sprintf(buf, "%08X", crcStruct);
-        Logger::Log(LogSeverity::Debug, buf);
         auto functionPointer = xorValue(crcStruct->functionPointer, crcStruct->functionPointerXORKey);
-        sprintf(buf, "%08X", functionPointer);
-        Logger::Log(LogSeverity::Debug, buf);
         auto functionSize = xorValue(crcStruct->functionSize, crcStruct->functionSizeXORKey);
-        sprintf(buf, "%08X", functionSize);
-        Logger::Log(LogSeverity::Debug, buf);
         auto checksum = xorValue(crcStruct->checksum, crcStruct->checksumXORKey);
-        sprintf(buf, "%08X", checksum);
-        Logger::Log(LogSeverity::Debug, buf);
 
         if (address >= reinterpret_cast<uintptr_t>(functionPointer) && address <= reinterpret_cast<uintptr_t>(functionPointer) + functionSize)
         {
@@ -152,7 +138,7 @@ void Milk::doCRCBypass(uintptr_t address)
         }
     }
 
-    VIRTUALIZER_TIGER_BLACK_END
+    VIRTUALIZER_TIGER_LITE_END
 }
 
 bool Milk::DoCRCBypass(uintptr_t address)
@@ -196,24 +182,22 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] AS != 0x00000000"));
 
-    _firstCRCAddress = findFirstCRCAddress();
+    _firstCRCAddress = findCRCMap();
     if (!_firstCRCAddress)
         return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC != 0x00000000"));
 
     _crcMap = reinterpret_cast<std::map<uint32_t, CRC*>*>(_firstCRCAddress);
-    //_firstCRC = _crcMap->begin()->second;
-    // auto decryptedSize = xorValue(_firstCRC->functionSize);
+    _firstCRC = _crcMap->begin()->second;
+    auto decryptedSize = xorValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
 
     //// Logger::Log(LogSeverity::Debug, _firstCRC->className);
     //// Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
     // Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
 
-    // TODO: the check has to be reimplemented
-
-    // if (decryptedSize < 1 || decryptedSize > 2000)
-    //     return false;
+    if (decryptedSize < 1 || decryptedSize > 2000)
+        return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
 
