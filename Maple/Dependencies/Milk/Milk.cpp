@@ -116,29 +116,28 @@ uintptr_t Milk::findCRCMap()
 
 void Milk::doCRCBypass(uintptr_t address)
 {
-    VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_FISH_WHITE_START
 
     for (auto& pair : *_crcMap)
     {
-        auto crcStruct = pair.second;
+        auto& crcStruct = pair.second;
         auto functionPointer = xorValue(crcStruct->functionPointer, crcStruct->functionPointerXORKey);
         auto functionSize = xorValue(crcStruct->functionSize, crcStruct->functionSizeXORKey);
-        auto checksum = xorValue(crcStruct->checksum, crcStruct->checksumXORKey);
 
-        if (address >= reinterpret_cast<uintptr_t>(functionPointer) && address <= reinterpret_cast<uintptr_t>(functionPointer) + functionSize)
+        if (address >= functionPointer && address <= functionPointer + functionSize)
         {
             CryptoPP::CRC32 crc;
             byte digest[CryptoPP::CRC32::DIGESTSIZE];
             crc.CalculateDigest(digest, reinterpret_cast<byte*>(functionPointer), functionSize);
 
-            checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
+            auto checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
             crcStruct->checksum = xorValue(checksum, crcStruct->checksumXORKey);
 
             return;
         }
     }
 
-    VIRTUALIZER_TIGER_LITE_END
+    VIRTUALIZER_FISH_WHITE_END
 }
 
 bool Milk::DoCRCBypass(uintptr_t address)
