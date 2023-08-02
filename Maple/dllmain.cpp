@@ -205,7 +205,6 @@ void WaitForCriticalSDKToInitialize()
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
         updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
-        submit = Memory::Objects[xorstr_("Score::Submit")];
 
         Sleep(1000);
 
