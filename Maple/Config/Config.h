@@ -100,6 +100,7 @@ public:
 		static inline int Type;
 		static inline int Rate;
 		static inline float Multiplier;
+                static inline bool RateLimitEnabled;
 	};
 
 	struct Visuals

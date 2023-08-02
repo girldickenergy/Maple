@@ -171,9 +171,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-27032023"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-03082023"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-27032023"));
+                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-03082023"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -290,7 +290,7 @@ void MainMenu::Render()
             }
             if (currentTab == 2)
             {
-                Widgets::BeginPanel(xorstr_("Timewarp"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(3)));
+                Widgets::BeginPanel(xorstr_("Timewarp"), ImVec2(optionsWidth, Widgets::CalcPanelHeight( 4, Config::Timewarp::RateLimitEnabled ? 0 : 2)));
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &Config::Timewarp::Enabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Slows down or speeds up the game."));
                    
@@ -301,12 +301,20 @@ void MainMenu::Render()
                     
                     if (Config::Timewarp::Type == 0)
                     {
-                        Widgets::SliderInt(xorstr_("Rate"), &Config::Timewarp::Rate, 25, 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_AlwaysClamp); ImGui::SameLine(); Widgets::Tooltip(xorstr_("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime."));
+                        Widgets::SliderInt(xorstr_("Rate"), &Config::Timewarp::Rate, 25, Config::Timewarp::RateLimitEnabled ? 150 : 300, 1, 10, xorstr_("%d"), ImGuiSliderFlags_AlwaysClamp); ImGui::SameLine(); Widgets::Tooltip(xorstr_("The desired speed of timewarp.\n\nLower value = slower.\nHigher value = faster.\n\n75 is HalfTime.\n100 is NoMod.\n150 is DoubleTime."));
                     }
                     else
                     {
-                        Widgets::SliderFloat(xorstr_("Multiplier"), &Config::Timewarp::Multiplier, 0.25f, 1.5f, .01f, .1f, xorstr_("%.2f"), ImGuiSliderFlags_AlwaysClamp);
+                        Widgets::SliderFloat(xorstr_("Multiplier"), &Config::Timewarp::Multiplier, 0.25f, Config::Timewarp::RateLimitEnabled ? 1.0f : 1.5f, .01f, .1f, xorstr_("%.2f"), ImGuiSliderFlags_AlwaysClamp);
                     }
+
+		    Widgets::Checkbox(xorstr_("Rate Limit"), &Config::Timewarp::RateLimitEnabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Limits the maximum speed to original speed."));
+
+		    if (!Config::Timewarp::RateLimitEnabled)
+		    {
+                        ImGui::TextColored(StyleProvider::AccentColour, xorstr_("WARNING: Playing with the speed higher than original speed"));
+                        ImGui::TextColored(StyleProvider::AccentColour, xorstr_("will inevitably get your account banned!"));
+		    }
                 }
                 Widgets::EndPanel();
             }
