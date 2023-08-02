@@ -70,6 +70,7 @@ void Config::loadDefaults()
 	Timewarp::Type = 0;
 	Timewarp::Rate = 100;
 	Timewarp::Multiplier = 1.;
+        Timewarp::RateLimitEnabled = true;
 
 	Visuals::ARChanger::Enabled = false;
 	Visuals::ARChanger::AR = 9.2f;
@@ -245,6 +246,8 @@ void Config::Load()
 			Timewarp::Rate = std::stoi(value);
 		if (variable == xorstr_("Timewarp_Multiplier"))
 			Timewarp::Multiplier = std::stof(value);
+                if (variable == xorstr_("Timewarp_RateLimitEnabled"))
+                        Timewarp::RateLimitEnabled = value == xorstr_("1");
 
 		if (variable == xorstr_("Visuals_ARChanger_Enabled"))
 			Visuals::ARChanger::Enabled = value == xorstr_("1");
@@ -367,6 +370,7 @@ void Config::Save()
 	ofs << xorstr_("Timewarp_Type=") << Timewarp::Type << std::endl;
 	ofs << xorstr_("Timewarp_Rate=") << Timewarp::Rate << std::endl;
 	ofs << xorstr_("Timewarp_Multiplier=") << Timewarp::Multiplier << std::endl;
+        ofs << xorstr_("Timewarp_RateLimitEnabled=") << Timewarp::RateLimitEnabled << std::endl;
 
 	ofs << xorstr_("Visuals_ARChanger_Enabled=") << Visuals::ARChanger::Enabled << std::endl;
 	ofs << xorstr_("Visuals_ARChanger_AR=") << Visuals::ARChanger::AR << std::endl;
