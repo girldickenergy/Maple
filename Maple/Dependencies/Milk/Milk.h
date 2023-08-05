@@ -34,9 +34,11 @@ class Milk : public Singleton<Milk>
 {
     MilkMemory _milkMemory;
     uintptr_t _authStubBaseAddress;
+    DWORD _authStubSize;
     uintptr_t _firstCRCAddress;
     CRC* _firstCRC;
     std::map<uint32_t, CRC*>* _crcMap;
+    uintptr_t _secondaryKey;
 
     static inline uintptr_t _originalJITVtable;
     static inline uintptr_t* _copiedJITVtable;
@@ -53,10 +55,13 @@ class Milk : public Singleton<Milk>
     using fnSomeBassFunc = int(__stdcall*)(int handle);
     static inline fnSomeBassFunc oSomeBassFunc;
 
-    __forceinline uintptr_t xorValue(uintptr_t valuePointer, uintptr_t xorKey);
+    __forceinline uintptr_t encryptValue(uintptr_t valuePointer, uintptr_t xorKey);
+    __forceinline uintptr_t decryptValue(uintptr_t valuePointer, uintptr_t xorKey);
 
     uintptr_t findAuthStub();
+    DWORD findAuthStubSize();
     uintptr_t findCRCMap();
+    uintptr_t findSecondaryKey();
 
     /**
      * \brief Bypasses the detection vector where functions would be checked against CRC32.
