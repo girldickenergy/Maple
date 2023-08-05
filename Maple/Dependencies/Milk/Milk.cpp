@@ -254,9 +254,9 @@ bool Milk::Prepare()
     _firstCRC = _crcMap->begin()->second;
     auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
 
-    //// Logger::Log(LogSeverity::Debug, _firstCRC->className);
-    //// Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
-    // Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
+    Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->className, _firstCRC->classNameXORKey)));
+    Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->functionName, _firstCRC->functionNameXORKey)));
+    Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
 
     if (decryptedSize < 1 || decryptedSize > 2000)
         return false;
