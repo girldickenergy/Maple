@@ -66,12 +66,26 @@ void _declspec(naked) someBassFuncHook()
     }
 }
 
-uintptr_t Milk::xorValue(uintptr_t valuePointer, uintptr_t xorKey)
+uintptr_t Milk::encryptValue(uintptr_t valuePointer, uintptr_t xorKey)
 {
     uintptr_t result = valuePointer;
     for (int i = 0; i < sizeof(uint32_t); i++)
     {
         auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
+        *resultPointer = *resultPointer ^ static_cast<uint8_t>(xorKey);
+        *resultPointer = *resultPointer + *(reinterpret_cast<uint8_t*>(&_secondaryKey) + i % 4);
+    }
+
+    return result;
+}
+
+uintptr_t Milk::decryptValue(uintptr_t valuePointer, uintptr_t xorKey)
+{
+    uintptr_t result = valuePointer;
+    for (int i = 0; i < sizeof(uint32_t); i++)
+    {
+        auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
+        *resultPointer = *resultPointer - *(reinterpret_cast<uint8_t*>(&_secondaryKey) + i % 4);
         *resultPointer = *resultPointer ^ static_cast<uint8_t>(xorKey);
     }
 
@@ -91,6 +105,21 @@ uintptr_t Milk::findAuthStub()
     return 0;
 }
 
+DWORD Milk::findAuthStubSize()
+{
+    DWORD size = 0;
+
+    for (const auto& region : *_milkMemory.GetMemoryRegions())
+    {
+        if (region.BaseAddress > _authStubBaseAddress && (region.State == MEM_FREE || (region.Protect != PAGE_EXECUTE && region.Protect != PAGE_EXECUTE_READWRITE)))
+            return size;
+
+	size += region.RegionSize;
+    }
+
+    return 0;
+}
+
 // ReSharper disable once CppInconsistentNaming
 uintptr_t Milk::findCRCMap()
 {
@@ -103,10 +132,32 @@ uintptr_t Milk::findCRCMap()
         if (region.BaseAddress < _authStubBaseAddress)
             continue;
 
-        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, region.BaseAddress, region.RegionSize, 9);
+        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize, 9);
 
         if (result > _authStubBaseAddress)
             return *reinterpret_cast<uintptr_t*>(result);
+    }
+
+    VIRTUALIZER_LION_BLACK_END
+
+    return 0;
+}
+
+uintptr_t Milk::findSecondaryKey()
+{
+    VIRTUALIZER_LION_BLACK_START
+
+    auto pattern = xorstr_("55 8B EC 51 89 4D FC E8 ?? ?? ?? ?? 8B E5 5D C3");
+
+    for (const auto& region : *_milkMemory.GetMemoryRegions())
+    {
+        if (region.BaseAddress < _authStubBaseAddress)
+            continue;
+
+        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize);
+
+        if (result > _authStubBaseAddress)
+            return result;
     }
 
     VIRTUALIZER_LION_BLACK_END
@@ -121,8 +172,8 @@ void Milk::doCRCBypass(uintptr_t address)
     for (auto& pair : *_crcMap)
     {
         auto& crcStruct = pair.second;
-        auto functionPointer = xorValue(crcStruct->functionPointer, crcStruct->functionPointerXORKey);
-        auto functionSize = xorValue(crcStruct->functionSize, crcStruct->functionSizeXORKey);
+        auto functionPointer = decryptValue(crcStruct->functionPointer, crcStruct->functionPointerXORKey);
+        auto functionSize = decryptValue(crcStruct->functionSize, crcStruct->functionSizeXORKey);
 
         if (address >= functionPointer && address <= functionPointer + functionSize)
         {
@@ -131,7 +182,7 @@ void Milk::doCRCBypass(uintptr_t address)
             crc.CalculateDigest(digest, reinterpret_cast<byte*>(functionPointer), functionSize);
 
             auto checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
-            crcStruct->checksum = xorValue(checksum, crcStruct->checksumXORKey);
+            crcStruct->checksum = encryptValue(checksum, crcStruct->checksumXORKey);
 
             return;
         }
@@ -181,15 +232,27 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] AS != 0x00000000"));
 
+    _authStubSize = findAuthStubSize();
+    if (!_authStubSize)
+        return false;
+
+    Logger::Log(LogSeverity::Debug, xorstr_("[Milk] ASS != 0x00000000"));
+
     _firstCRCAddress = findCRCMap();
     if (!_firstCRCAddress)
         return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC != 0x00000000"));
 
+    _secondaryKey = findSecondaryKey();
+    if (!_secondaryKey)
+	return false;
+
+    Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SC != 0x00000000"));
+
     _crcMap = reinterpret_cast<std::map<uint32_t, CRC*>*>(_firstCRCAddress);
     _firstCRC = _crcMap->begin()->second;
-    auto decryptedSize = xorValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
+    auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
 
     //// Logger::Log(LogSeverity::Debug, _firstCRC->className);
     //// Logger::Log(LogSeverity::Debug, _firstCRC->functionName);
