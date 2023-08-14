@@ -89,7 +89,8 @@ void HitObjectManager::restoreMods()
 	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
 		return;
 
-	SetActiveMods(originalMods);
+	if (Config::Visuals::Removers::HiddenRemoverEnabled)
+		SetActiveMods(originalMods);
 }
 
 void HitObjectManager::restorePreEmpt()
