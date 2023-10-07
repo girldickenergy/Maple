@@ -1,0 +1,11 @@
+BasedOnStyle: LLVM
+
+ColumnLimit: 150
+PointerAlignment: Left
+
+BreakBeforeBraces: Allman
+AllowShortFunctionsOnASingleLine: Empty
+
+IndentWidth: 4
+AccessModifierOffset: -4
+IndentCaseLabels: True
