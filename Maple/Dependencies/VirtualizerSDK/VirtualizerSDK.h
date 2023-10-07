@@ -3,47 +3,52 @@
   Description: SDK header definition for the C/C++ language
 
   Author/s: Oreans Technologies  
-  (c) 2011 Oreans Technologies
+  (c) 2023 Oreans Technologies
 *****************************************************************************/ 
 
 #pragma once
-
 
 // ***********************************************
 // Cross Compiler definitions
 // ***********************************************
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
+
  #define DLL_IMPORT             extern
  #define STDCALL_CONVENTION
+
 #else
+
  #define DLL_IMPORT             __declspec(dllimport)
  #define STDCALL_CONVENTION     __stdcall
-#endif
 
+#endif
 
 // ***********************************************
 // Specify platform
 // ***********************************************
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 
-  #ifdef __x86_64__
-  #define PLATFORM_X64
+  #if defined(__x86_64__)
+    #define PLATFORM_X64
+  #elif defined(__aarch64__)
+    #define PLATFORM_ARM64
   #else
-  #define PLATFORM_X32
+    #define PLATFORM_X32
   #endif
 
 #else
 
-  #ifdef _WIN64
-  #define PLATFORM_X64
+  #if defined(_M_X64)
+    #define PLATFORM_X64
+  #elif defined(_M_ARM64)
+    #define PLATFORM_ARM64
   #else
-  #define PLATFORM_X32
+    #define PLATFORM_X32
   #endif
 
 #endif
-
 
 // ***********************************************
 // Defines
@@ -51,16 +56,17 @@
 
 #if defined(__GNUC__) || defined (__ICL)
 
-#define CV_X32_INSERT_VIA_INLINE
-#define CV_X64_INSERT_VIA_INLINE
+    #define CV_X32_INSERT_VIA_INLINE
+    #define CV_X64_INSERT_VIA_INLINE
+    #define CV_ARM64_INSERT_VIA_INLINE
 
 #else
 
-#define CV_X32_INSERT_VIA_INLINE
-//#define CV_X64_INSERT_VIA_INLINE
+    #define CV_X32_INSERT_VIA_INLINE
+    //#define CV_X64_INSERT_VIA_INLINE    // uncomment for inline assembly
+    //#define CV_ARM64_INSERT_VIA_INLINE  // uncomment for inline assembly
 
 #endif
-
 
 // ***********************************************
 // Include files
@@ -68,31 +74,39 @@
 
 #include "VirtualizerSDK_CustomVMs.h"
 
-
 // ***********************************************
 // link with correct platform library
 // ***********************************************
 
 #ifndef CV_X64_INSERT_VIA_INLINE
- #ifdef PLATFORM_X64
-  #ifdef _NTDDK_
-    #pragma comment(lib, "VirtualizerDDK.lib")
-  #else
-    #pragma comment(lib, "VirtualizerSDK64.lib")
-  #endif
- #endif
+    #ifdef PLATFORM_X64
+        #ifdef _NTDDK_
+            #pragma comment(lib, "VirtualizerDDK.lib")
+        #else
+            #pragma comment(lib, "VirtualizerSDK64.lib")
+        #endif
+    #endif
 #endif
 
 #ifndef CV_X32_INSERT_VIA_INLINE
- #ifdef PLATFORM_X32
-  #ifdef _NTDDK_
-    #pragma comment(lib, "VirtualizerDDK.lib")
-  #else
-    #pragma comment(lib, "VirtualizerSDK32.lib")
-  #endif
- #endif
+    #ifdef PLATFORM_X32
+        #ifdef _NTDDK_
+            #pragma comment(lib, "VirtualizerDDK.lib")
+        #else
+            #pragma comment(lib, "VirtualizerSDK32.lib")
+        #endif
+    #endif
 #endif
 
+#ifndef CV_ARM64_INSERT_VIA_INLINE
+    #ifdef PLATFORM_ARM64
+        #ifdef _NTDDK_
+            #pragma comment(lib, "VirtualizerArm64DDK.lib")
+        #else
+            #pragma comment(lib, "VirtualizerArm64SDK.lib")
+        #endif
+    #endif
+#endif
 
 // ***********************************************
 // In latest CV versions, we have removed the
@@ -127,7 +141,6 @@
 #define VIRTUALIZER_MUTATE2_START   VIRTUALIZER_START
 #define VIRTUALIZER_MUTATE3_START   VIRTUALIZER_START
 
-
 // ***********************************************
 // Definition of VirtualizerStart macro to keep
 // compatibility with previous CV versions
@@ -158,7 +171,9 @@
  #define VIRTUALIZER_START VirtualizerStart();
  #define VIRTUALIZER_END VirtualizerEnd();
 
- #define VIRTUALIZER_ #define VIRTUALIZER_
+ #define VIRTUALIZER_STR_ENCRYPT_START VirtualizerStrEncryptStart();
+ #define VIRTUALIZER_STR_ENCRYPT_END VirtualizerStrEncryptEnd();
+
  #define VIRTUALIZER_STR_ENCRYPTW_START VirtualizerStrEncryptWStart();
  #define VIRTUALIZER_STR_ENCRYPTW_END VirtualizerStrEncryptWEnd();
 
@@ -168,13 +183,34 @@
  #define CV_CUSTOM_VMS_DEFINED
 
 #endif
+
+#if defined(PLATFORM_ARM64) && !defined(CV_ARM64_INSERT_VIA_INLINE)
+
+#define VIRTUALIZER_START VirtualizerStart();
+#define VIRTUALIZER_END VirtualizerEnd();
+
+#define VIRTUALIZER_STR_ENCRYPT_START VirtualizerStrEncryptStart();
+#define VIRTUALIZER_STR_ENCRYPT_END VirtualizerStrEncryptEnd();
+
+#define VIRTUALIZER_STR_ENCRYPTW_START VirtualizerStrEncryptWStart();
+#define VIRTUALIZER_STR_ENCRYPTW_END VirtualizerStrEncryptWEnd();
+
+#define VIRTUALIZER_UNPROTECTED_START VirtualizerUnprotectedStart();
+#define VIRTUALIZER_UNPROTECTED_END VirtualizerUnprotectedEnd();
+
+#define CV_CUSTOM_VMS_DEFINED
+
+#endif
+
 
 #if defined(PLATFORM_X32) && !defined(CV_X32_INSERT_VIA_INLINE)
 
  #define VIRTUALIZER_START VirtualizerStart();
  #define VIRTUALIZER_END VirtualizerEnd();
 
- #define VIRTUALIZER_ #define VIRTUALIZER_
+ #define VIRTUALIZER_STR_ENCRYPT_START VirtualizerStrEncryptStart();
+ #define VIRTUALIZER_STR_ENCRYPT_END VirtualizerStrEncryptEnd();
+
  #define VIRTUALIZER_STR_ENCRYPTW_START VirtualizerStrEncryptWStart();
  #define VIRTUALIZER_STR_ENCRYPTW_END VirtualizerStrEncryptWEnd();
 
@@ -184,7 +220,6 @@
  #define CV_CUSTOM_VMS_DEFINED
 
 #endif
-
 
 // ***********************************************
 // x32/x64 definition as inline assembly

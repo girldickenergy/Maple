@@ -17,7 +17,7 @@ AuthStreamStageOneRequest::AuthStreamStageOneRequest(const std::string& checksum
 
 std::vector<unsigned char> AuthStreamStageOneRequest::Serialize()
 {
-	VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 			
 	nlohmann::json jsonPayload;
 	jsonPayload[xorstr_("a")] = checksum;
@@ -28,7 +28,7 @@ std::vector<unsigned char> AuthStreamStageOneRequest::Serialize()
 	packet.push_back(static_cast<unsigned char>(PacketType::AuthStreamStageOne));
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
-	VIRTUALIZER_TIGER_LITE_END
+	VIRTUALIZER_TIGER_WHITE_END
 
 	return packet;
 }

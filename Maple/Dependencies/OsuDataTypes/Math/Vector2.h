@@ -1,7 +1,7 @@
 #pragma once
 
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 struct Vector2
 {
@@ -79,7 +79,7 @@ struct Vector2
 
 	float Length()
 	{
-		return sqrt(X * X + Y * Y);
+		return std::sqrt(X * X + Y * Y);
 	}
 
 	float LengthSquared()
@@ -97,7 +97,7 @@ struct Vector2
 		float dx = X - v2.X;
 		float dy = Y - v2.Y;
 
-		return sqrtf(dx * dx + dy * dy);
+		return std::sqrtf(dx * dx + dy * dy);
 	}
 
 	float Distance(Vector2* v2)
@@ -105,7 +105,7 @@ struct Vector2
 		float dx = X - v2->X;
 		float dy = Y - v2->Y;
 
-		return sqrtf(dx * dx + dy * dy);
+		return std::sqrtf(dx * dx + dy * dy);
 	}
 
 	float DistanceSquared(Vector2 v2)

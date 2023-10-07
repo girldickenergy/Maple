@@ -17,7 +17,7 @@ HeartbeatRequest::HeartbeatRequest(const std::string& sessionToken)
 
 std::vector<unsigned char> HeartbeatRequest::Serialize()
 {
-	VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 
 	Logger::StartPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
 	std::time_t epoch;
@@ -34,7 +34,7 @@ std::vector<unsigned char> HeartbeatRequest::Serialize()
 	packet.insert(packet.end(), payload.begin(), payload.end());
 
 	Logger::StopPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
-	VIRTUALIZER_TIGER_LITE_END
+    VIRTUALIZER_TIGER_WHITE_END
 
 	return packet;
 }

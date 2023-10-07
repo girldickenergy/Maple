@@ -78,9 +78,9 @@ std::vector<uint8_t> MilkMemory::ReadMemory(uint32_t startAddress, SIZE_T size)
 
 std::vector<MemoryRegion>* MilkMemory::GetMemoryRegions()
 {
-	VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 	auto ret = &_memoryRegions;
-	VIRTUALIZER_TIGER_LITE_END
+	VIRTUALIZER_TIGER_WHITE_END
 
 	return ret;
 }

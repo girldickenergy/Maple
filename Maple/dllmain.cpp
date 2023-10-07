@@ -72,7 +72,7 @@ DWORD WINAPI Initialize()
 
     auto data_addr = data;
 
-    VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_TIGER_WHITE_START
     Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
     ExceptionHandler::Setup();
 
@@ -107,7 +107,7 @@ DWORD WINAPI Initialize()
     InitializeMaple();
     Logger::StopPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
 
-    VIRTUALIZER_TIGER_LITE_END
+    VIRTUALIZER_TIGER_WHITE_END
 
     return 0;
 }

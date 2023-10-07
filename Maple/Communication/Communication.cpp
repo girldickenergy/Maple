@@ -34,7 +34,7 @@ static inline MilkThread* checkerMilkThread;
 		while (!heartbeatThreadLaunched)
 			Sleep(100);
 
-		VIRTUALIZER_FISH_EXTREME_START
+		VIRTUALIZER_LION_WHITE_START
 		if (!pingThreadLaunched)
 			pingThreadLaunched = true;
 
@@ -49,7 +49,7 @@ static inline MilkThread* checkerMilkThread;
 
 		Sleep(45000); //45 seconds
 		
-		VIRTUALIZER_FISH_EXTREME_END
+		VIRTUALIZER_LION_WHITE_END
 	}
 }
 
@@ -237,14 +237,14 @@ void Communication::Disconnect()
 
 [[clang::optnone]] void Communication::SendAnticheat()
 {
-	VIRTUALIZER_TIGER_LITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 	Logger::StartPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 
 	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
 	tcpClient.Send(authStreamStageOneRequest.Serialize());
 
 	Logger::StopPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
-	VIRTUALIZER_TIGER_LITE_END
+    VIRTUALIZER_TIGER_WHITE_END
 }
 
 bool Communication::GetIsConnected()

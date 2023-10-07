@@ -3,9 +3,9 @@
  * Description: GNU C inline assembly macros definitions
  *
  * Author/s: Oreans Technologies 
- * (c) 2021 Oreans Technologies
+ * (c) 2023 Oreans Technologies
  *
- * --- File generated automatically from Oreans VM Generator (14/5/2021) ---
+ * --- File generated automatically from Oreans VM Generator (16/9/2023) ---
  ******************************************************************************/
 
 /***********************************************
@@ -234,8 +234,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_TIGER_LITE_START
-#define VIRTUALIZER_TIGER_LITE_START \
+#ifndef VIRTUALIZER_FISH_BLACK_START
+#define VIRTUALIZER_FISH_BLACK_START \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -256,8 +256,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_TIGER_LITE_END
-#define VIRTUALIZER_TIGER_LITE_END \
+#ifndef VIRTUALIZER_FISH_BLACK_END
+#define VIRTUALIZER_FISH_BLACK_END \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -454,8 +454,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_FISH_EXTREME_START
-#define VIRTUALIZER_FISH_EXTREME_START \
+#ifndef VIRTUALIZER_SHARK_RED_START
+#define VIRTUALIZER_SHARK_RED_START \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -476,8 +476,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_FISH_EXTREME_END
-#define VIRTUALIZER_FISH_EXTREME_END \
+#ifndef VIRTUALIZER_SHARK_RED_END
+#define VIRTUALIZER_SHARK_RED_END \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -938,6 +938,270 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
+#ifndef VIRTUALIZER_COBRA_WHITE_START
+#define VIRTUALIZER_COBRA_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA6\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_WHITE_END
+#define VIRTUALIZER_COBRA_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x36\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_START
+#define VIRTUALIZER_COBRA_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA8\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_END
+#define VIRTUALIZER_COBRA_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x38\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_START
+#define VIRTUALIZER_COBRA_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAA\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_END
+#define VIRTUALIZER_COBRA_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3A\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_START
+#define VIRTUALIZER_WOLF_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAC\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_END
+#define VIRTUALIZER_WOLF_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3C\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_START
+#define VIRTUALIZER_WOLF_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAE\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_END
+#define VIRTUALIZER_WOLF_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3E\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_START
+#define VIRTUALIZER_WOLF_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB0\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_END
+#define VIRTUALIZER_WOLF_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x40\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
 #ifndef VIRTUALIZER_MUTATE_ONLY_START
 #define VIRTUALIZER_MUTATE_ONLY_START \
 __asm__ (".byte 0xEB\n"\
@@ -970,6 +1234,50 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x11\n"\
      ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_START
+#define VIRTUALIZER_FALCON_TINY_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD9\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_END
+#define VIRTUALIZER_FALCON_TINY_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x69\n"\
+     ".byte 0x02\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\
@@ -1206,8 +1514,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_TIGER_LITE_START
-#define VIRTUALIZER_TIGER_LITE_START \
+#ifndef VIRTUALIZER_FISH_BLACK_START
+#define VIRTUALIZER_FISH_BLACK_START \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -1228,8 +1536,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_TIGER_LITE_END
-#define VIRTUALIZER_TIGER_LITE_END \
+#ifndef VIRTUALIZER_FISH_BLACK_END
+#define VIRTUALIZER_FISH_BLACK_END \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -1426,8 +1734,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_FISH_EXTREME_START
-#define VIRTUALIZER_FISH_EXTREME_START \
+#ifndef VIRTUALIZER_SHARK_RED_START
+#define VIRTUALIZER_SHARK_RED_START \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -1448,8 +1756,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
-#ifndef VIRTUALIZER_FISH_EXTREME_END
-#define VIRTUALIZER_FISH_EXTREME_END \
+#ifndef VIRTUALIZER_SHARK_RED_END
+#define VIRTUALIZER_SHARK_RED_END \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
@@ -1910,6 +2218,270 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n");
 #endif
 
+#ifndef VIRTUALIZER_COBRA_WHITE_START
+#define VIRTUALIZER_COBRA_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA7\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_WHITE_END
+#define VIRTUALIZER_COBRA_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x37\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_START
+#define VIRTUALIZER_COBRA_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xA9\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_END
+#define VIRTUALIZER_COBRA_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x39\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_START
+#define VIRTUALIZER_COBRA_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAB\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_END
+#define VIRTUALIZER_COBRA_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3B\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_START
+#define VIRTUALIZER_WOLF_WHITE_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAD\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_END
+#define VIRTUALIZER_WOLF_WHITE_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3D\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_START
+#define VIRTUALIZER_WOLF_RED_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xAF\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_END
+#define VIRTUALIZER_WOLF_RED_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x3F\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_START
+#define VIRTUALIZER_WOLF_BLACK_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB1\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_END
+#define VIRTUALIZER_WOLF_BLACK_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x41\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
 #ifndef VIRTUALIZER_MUTATE_ONLY_START
 #define VIRTUALIZER_MUTATE_ONLY_START \
 __asm__ (".byte 0xEB\n"\
@@ -1942,6 +2514,1686 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x11\n"\
      ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_START
+#define VIRTUALIZER_FALCON_TINY_START \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xDA\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_END
+#define VIRTUALIZER_FALCON_TINY_END \
+__asm__ (".byte 0xEB\n"\
+     ".byte 0x10\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x6A\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#endif
+
+#ifdef PLATFORM_X64
+
+#ifndef VIRTUALIZER_TIGER_WHITE_START
+#define VIRTUALIZER_TIGER_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB2\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_WHITE_END
+#define VIRTUALIZER_TIGER_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x42\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_RED_START
+#define VIRTUALIZER_TIGER_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB3\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_RED_END
+#define VIRTUALIZER_TIGER_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x43\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_BLACK_START
+#define VIRTUALIZER_TIGER_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB4\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_BLACK_END
+#define VIRTUALIZER_TIGER_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x44\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_WHITE_START
+#define VIRTUALIZER_FISH_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB5\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_WHITE_END
+#define VIRTUALIZER_FISH_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x45\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_RED_START
+#define VIRTUALIZER_FISH_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB6\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_RED_END
+#define VIRTUALIZER_FISH_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x46\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_BLACK_START
+#define VIRTUALIZER_FISH_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB7\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_BLACK_END
+#define VIRTUALIZER_FISH_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x47\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_WHITE_START
+#define VIRTUALIZER_PUMA_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB8\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_WHITE_END
+#define VIRTUALIZER_PUMA_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x48\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_RED_START
+#define VIRTUALIZER_PUMA_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xB9\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_RED_END
+#define VIRTUALIZER_PUMA_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x49\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_BLACK_START
+#define VIRTUALIZER_PUMA_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBA\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_PUMA_BLACK_END
+#define VIRTUALIZER_PUMA_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4A\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_WHITE_START
+#define VIRTUALIZER_SHARK_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBB\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_WHITE_END
+#define VIRTUALIZER_SHARK_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4B\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_RED_START
+#define VIRTUALIZER_SHARK_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBC\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_RED_END
+#define VIRTUALIZER_SHARK_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4C\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_BLACK_START
+#define VIRTUALIZER_SHARK_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBD\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_SHARK_BLACK_END
+#define VIRTUALIZER_SHARK_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4D\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_EXTREME_START
+#define VIRTUALIZER_FISH_EXTREME_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBE\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_EXTREME_END
+#define VIRTUALIZER_FISH_EXTREME_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4E\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_EXTREME_START
+#define VIRTUALIZER_TIGER_EXTREME_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xBF\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_EXTREME_END
+#define VIRTUALIZER_TIGER_EXTREME_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x4F\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_LITE_START
+#define VIRTUALIZER_FISH_LITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC0\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_LITE_END
+#define VIRTUALIZER_FISH_LITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x50\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_LONDON_START
+#define VIRTUALIZER_FISH_LONDON_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC1\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FISH_LONDON_END
+#define VIRTUALIZER_FISH_LONDON_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x51\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_LONDON_START
+#define VIRTUALIZER_TIGER_LONDON_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC2\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_LONDON_END
+#define VIRTUALIZER_TIGER_LONDON_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x52\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_WHITE_START
+#define VIRTUALIZER_DOLPHIN_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC3\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_WHITE_END
+#define VIRTUALIZER_DOLPHIN_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x53\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_RED_START
+#define VIRTUALIZER_DOLPHIN_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC4\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_RED_END
+#define VIRTUALIZER_DOLPHIN_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x54\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_BLACK_START
+#define VIRTUALIZER_DOLPHIN_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC5\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_DOLPHIN_BLACK_END
+#define VIRTUALIZER_DOLPHIN_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x55\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_WHITE_START
+#define VIRTUALIZER_EAGLE_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xC9\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_WHITE_END
+#define VIRTUALIZER_EAGLE_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x59\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_RED_START
+#define VIRTUALIZER_EAGLE_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xCA\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_RED_END
+#define VIRTUALIZER_EAGLE_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x5A\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_BLACK_START
+#define VIRTUALIZER_EAGLE_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xCB\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_EAGLE_BLACK_END
+#define VIRTUALIZER_EAGLE_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x5B\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_LITE_START
+#define VIRTUALIZER_TIGER_LITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xCF\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_TIGER_LITE_END
+#define VIRTUALIZER_TIGER_LITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x5F\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_WHITE_START
+#define VIRTUALIZER_LION_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD0\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_WHITE_END
+#define VIRTUALIZER_LION_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x60\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_RED_START
+#define VIRTUALIZER_LION_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD1\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_RED_END
+#define VIRTUALIZER_LION_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x61\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_BLACK_START
+#define VIRTUALIZER_LION_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD2\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_LION_BLACK_END
+#define VIRTUALIZER_LION_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x62\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_WHITE_START
+#define VIRTUALIZER_COBRA_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD3\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_WHITE_END
+#define VIRTUALIZER_COBRA_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x63\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_START
+#define VIRTUALIZER_COBRA_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD4\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_RED_END
+#define VIRTUALIZER_COBRA_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x64\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_START
+#define VIRTUALIZER_COBRA_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD5\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_COBRA_BLACK_END
+#define VIRTUALIZER_COBRA_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x65\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_START
+#define VIRTUALIZER_WOLF_WHITE_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD6\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_WHITE_END
+#define VIRTUALIZER_WOLF_WHITE_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x66\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_START
+#define VIRTUALIZER_WOLF_RED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD7\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_RED_END
+#define VIRTUALIZER_WOLF_RED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x67\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_START
+#define VIRTUALIZER_WOLF_BLACK_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xD8\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_WOLF_BLACK_END
+#define VIRTUALIZER_WOLF_BLACK_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x68\n"\
+     ".byte 0x02\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_START
+#define VIRTUALIZER_FALCON_TINY_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0xDB\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+#endif
+
+#ifndef VIRTUALIZER_FALCON_TINY_END
+#define VIRTUALIZER_FALCON_TINY_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x6B\n"\
+     ".byte 0x02\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\
      ".byte 0x00\n"\

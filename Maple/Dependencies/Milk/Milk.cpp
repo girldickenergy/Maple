@@ -167,7 +167,7 @@ uintptr_t Milk::findSecondaryKey()
 
 void Milk::doCRCBypass(uintptr_t address)
 {
-    VIRTUALIZER_FISH_WHITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 
     for (auto& pair : *_crcMap)
     {
@@ -188,12 +188,12 @@ void Milk::doCRCBypass(uintptr_t address)
         }
     }
 
-    VIRTUALIZER_FISH_WHITE_END
+    VIRTUALIZER_TIGER_WHITE_END
 }
 
 bool Milk::DoCRCBypass(uintptr_t address)
 {
-    VIRTUALIZER_TIGER_BLACK_START
+    VIRTUALIZER_TIGER_WHITE_START
 
 #ifdef NO_BYPASS
     VIRTUALIZER_TIGER_BLACK_END
@@ -205,7 +205,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
     doCRCBypass(address);
 
-    VIRTUALIZER_TIGER_BLACK_END
+    VIRTUALIZER_TIGER_WHITE_END
 
     return true;
 }

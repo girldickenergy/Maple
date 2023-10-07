@@ -11,6 +11,186 @@
  * Definition as inline assembly
  ***********************************************/
 
+#ifdef PLATFORM_ARM64
+
+#define VIRTUALIZER_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x0C\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x0D\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_STR_ENCRYPT_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x12\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_STR_ENCRYPT_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x13\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_STR_ENCRYPTW_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x22\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_STR_ENCRYPTW_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x23\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_UNPROTECTED_START \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#define VIRTUALIZER_UNPROTECTED_END \
+__asm__ (".byte 0x05\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x14\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n"\
+     ".byte 0x21\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x00\n"\
+     ".byte 0x43\n"\
+     ".byte 0x56\n"\
+     ".byte 0x20\n"\
+     ".byte 0x20\n");
+
+#else
+
 #define VIRTUALIZER_START \
 __asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
@@ -51,7 +231,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x20\n");
 
-#define VIRTUALIZER___asm__ (".byte 0xEB\n"\
+#define VIRTUALIZER_STR_ENCRYPT_START \
+__asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
      ".byte 0x56\n"\
@@ -70,7 +251,8 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x20\n"\
      ".byte 0x20\n");
 
-#define VIRTUALIZER___asm__ (".byte 0xEB\n"\
+#define VIRTUALIZER_STR_ENCRYPT_END \
+__asm__ (".byte 0xEB\n"\
      ".byte 0x10\n"\
      ".byte 0x43\n"\
      ".byte 0x56\n"\
@@ -168,3 +350,4 @@ __asm__ (".byte 0xEB\n"\
      ".byte 0x56\n"\
      ".byte 0x20\n"\
      ".byte 0x20\n");
+#endif
