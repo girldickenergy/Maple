@@ -1,19 +1,7 @@
 #pragma once
 
 #include "../ISDK.h"
-
-struct Vector2
-{
-    float X = 0.f;
-    float Y = 0.f;
-
-    Vector2() = default;
-    Vector2(float x, float y)
-    {
-        X = X;
-        Y = Y;
-    }
-};
+#include "../Vector2.h"
 
 class InputManager : public ISDK
 {
@@ -25,8 +13,8 @@ class InputManager : public ISDK
 
     uintptr_t cursorPositionAddress = 0u;
 
-    void TryFindCursorPosition();
-    void TryFindCursorPositionSetters();
+    void TryFindCursorPosition(uintptr_t start = 0u, unsigned int size = 0);
+    void TryFindCursorPositionSetters(uintptr_t start = 0u, unsigned int size = 0);
 
 public:
     void __fastcall OnLoad(const std::shared_ptr<MapleBase>& mapleBase) override;

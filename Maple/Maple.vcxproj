@@ -163,6 +163,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="SDK\InputManager\InputManager.cpp" />
+    <ClCompile Include="SDK\Osu\GameField.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\Cacao\DependencyContainer.h" />
@@ -182,6 +183,9 @@
     <ClInclude Include="Modules\IModule.h" />
     <ClInclude Include="SDK\InputManager\InputManager.h" />
     <ClInclude Include="SDK\ISDK.h" />
+    <ClInclude Include="SDK\Osu\GameField.h" />
+    <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
+    <ClInclude Include="SDK\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

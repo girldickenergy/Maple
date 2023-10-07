@@ -7,24 +7,27 @@
 #include "MapleBase.h"
 #include "Modules/IModule.h"
 #include "SDK/InputManager/InputManager.h"
+#include "SDK/Osu/GameField.h"
 
 class TestModule : public IModule
 {
-    std::shared_ptr<InputManager> m_InputManager;
+    std::shared_ptr<GameField> m_GameField;
 
 public:
     void __fastcall OnLoad(const std::shared_ptr<MapleBase>& mapleBase) override
     {
         IModule::OnLoad(mapleBase);
 
-        m_InputManager = std::dynamic_pointer_cast<InputManager>(m_MapleBase->GetSDK(xorstr_("InputManager")));
+        m_GameField = std::dynamic_pointer_cast<GameField>(m_MapleBase->GetSDK(xorstr_("GameField")));
     }
 
     void __fastcall OnUpdate() override
     {
-        const Vector2 cursorPosition = m_InputManager->GetCursorPosition();
+        auto instance = m_GameField->GetInternalInstance();
+        float width = instance ? instance->Width : 0.f;
+        float height = instance ? instance->Height : 0.f;
 
-        printf("%f, %f\n", cursorPosition.X, cursorPosition.Y);
+        printf("%f, %f\n", width, height);
     }
 
     void __fastcall OnRender() override {}
@@ -45,6 +48,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         mapleBase->Initialize();
 
 	mapleBase->AddSDKRange({
+	    std::make_pair<std::string, std::shared_ptr<ISDK>>(xorstr_("GameField"), std::make_shared<GameField>()),
 	    std::make_pair<std::string, std::shared_ptr<ISDK>>(xorstr_("InputManager"), std::make_shared<InputManager>())
         });
 

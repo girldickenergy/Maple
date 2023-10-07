@@ -21,6 +21,9 @@
     <ClCompile Include="SDK\InputManager\InputManager.cpp">
       <Filter>SDK\Input</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Osu\GameField.cpp">
+      <Filter>SDK\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -55,6 +58,9 @@
     </Filter>
     <Filter Include="SDK\Input">
       <UniqueIdentifier>{a39c7e63-bfa1-46f6-95a1-a0b9d534e254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Osu">
+      <UniqueIdentifier>{89fbbc05-711a-43b4-9c8d-ed0ef7320fab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +112,15 @@
     <ClInclude Include="MapleBase.h" />
     <ClInclude Include="SDK\InputManager\InputManager.h">
       <Filter>SDK\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Osu\GameField.h">
+      <Filter>SDK\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Osu\GameFieldInternal.h">
+      <Filter>SDK\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Vector2.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,17 +2,23 @@
 
 #include "xorstr.h"
 
-void InputManager::TryFindCursorPosition()
+void InputManager::TryFindCursorPosition(uintptr_t start, unsigned int size)
 {
-    if (const uintptr_t smth = m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC")))
+    if (const uintptr_t smth = start && size
+	    ? m_MapleBase->GetVanilla()->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"), start, size)
+	    : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC")))
+    {
         cursorPositionAddress = *reinterpret_cast<uintptr_t*>(smth + 0x7);
+    }
 
     // todo: log this
 }
 
-void InputManager::TryFindCursorPositionSetters()
+void InputManager::TryFindCursorPositionSetters(uintptr_t start, unsigned int size)
 {
-    if (uintptr_t applyHandler = m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("D9 C1 D9 1C 24 D9 5D ?? D9 5D ?? FF 15")))
+    if (uintptr_t applyHandler = start && size
+         ? m_MapleBase->GetVanilla()->GetPatternScanner().FindPatternInRange(xorstr_("D9 C1 D9 1C 24 D9 5D ?? D9 5D ?? FF 15"), start, size)
+         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("D9 C1 D9 1C 24 D9 5D ?? D9 5D ?? FF 15")))
     {
         applyHandler += 0xD;
 
@@ -40,10 +46,10 @@ void __fastcall InputManager::OnLoad(const std::shared_ptr<MapleBase>& mapleBase
 void __fastcall InputManager::OnJIT(uintptr_t address, unsigned size)
 {
     if (!cursorPositionAddress)
-        TryFindCursorPosition();
+        TryFindCursorPosition(address, size);
 
     if (!SetCursorHandlerPositions || !SetMousePosition)
-        TryFindCursorPositionSetters();
+        TryFindCursorPositionSetters(address, size);
 }
 
 Vector2 __fastcall InputManager::GetCursorPosition()
