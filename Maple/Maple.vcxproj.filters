@@ -122,5 +122,8 @@
     <ClInclude Include="SDK\Vector2.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\OsuKeys.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
