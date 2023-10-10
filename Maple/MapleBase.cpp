@@ -37,6 +37,11 @@ void __fastcall MapleBase::MouseViaKeyboardControlsHook()
 
 void __fastcall MapleBase::ScoreSubmitHook(uintptr_t instance)
 {
+    if (m_PlayerFlagPointer)
+        *m_PlayerFlagPointer = 0;
+    else // todo: log this
+        m_ScoreSubmissionUnsafe = true;
+
     bool allowSubmission = !m_ScoreSubmissionUnsafe;
 
     for (const std::shared_ptr<IModule>& module : m_Modules)
@@ -68,6 +73,11 @@ void __fastcall MapleBase::PlayerDisposeHook(uintptr_t instance, int disposing)
     m_IsPlayerLoaded = false;
 
     [[clang::musttail]] return oPlayerDispose(instance, disposing);
+}
+
+void __fastcall MapleBase::SubmitErrorHook(uintptr_t err)
+{
+    return;
 }
 
 void MapleBase::TryHookSetMousePosition(uintptr_t start, unsigned int size)
@@ -131,6 +141,30 @@ void MapleBase::TryHookPlayerDispose(uintptr_t start, unsigned int size)
     }
 }
 
+void MapleBase::TryHookSubmitError(uintptr_t start, unsigned int size)
+{
+    // todo: error handling
+
+    if (const uintptr_t submitError = start && size
+         ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 83 EC 40 8B F1 8D 7D C0 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D C8 83 3D"), start, size)
+         : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 83 EC 40 8B F1 8D 7D C0 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D C8 83 3D")))
+    {
+        m_Vanilla->GetHookManager().InstallHook(xorstr_("ErrorSubmission.Submit"), submitError, reinterpret_cast<uintptr_t>(SubmitErrorHook), reinterpret_cast<uintptr_t*>(&oSubmitError));
+    }
+}
+
+void MapleBase::TryFindPlayerFlag(uintptr_t start, unsigned int size)
+{
+    // todo: error handling
+
+    if (const uintptr_t playerFlag = start && size
+         ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), start, size)
+         : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9")))
+    {
+        m_PlayerFlagPointer = *reinterpret_cast<int**>(playerFlag + 0x9);
+    }
+}
+
 void MapleBase::OnJIT(uintptr_t address, unsigned int size)
 {
     if (!oSetMousePosition)
@@ -147,6 +181,12 @@ void MapleBase::OnJIT(uintptr_t address, unsigned int size)
 
     if (!oPlayerDispose)
         TryHookPlayerDispose(address, size);
+
+    if (!oSubmitError)
+        TryHookSubmitError(address, size);
+
+    if (!m_PlayerFlagPointer)
+        TryFindPlayerFlag(address, size);
 
     for (const std::pair<std::string, std::shared_ptr<ISDK>> sdk : m_SDKs)
         sdk.second->OnJIT(address, size);
@@ -165,6 +205,10 @@ void MapleBase::Initialize()
     TryHookScoreSubmit();
     TryHookOnPlayerLoadComplete();
     TryHookPlayerDispose();
+
+    TryHookSubmitError();
+
+    TryFindPlayerFlag();
 }
 
 void MapleBase::AddSDK(const std::shared_ptr<ISDK>& sdk)
@@ -205,12 +249,17 @@ void MapleBase::RenderModulesGUI()
         module->OnRender();
 }
 
-std::shared_ptr<Vanilla> MapleBase::GetVanilla()
-{
-    return m_Vanilla;
-}
-
 void MapleBase::MakeScoreSubmissionUnsafe()
 {
     m_ScoreSubmissionUnsafe = true;
+}
+
+bool MapleBase::GetIsScoreSubmissionUnsafe()
+{
+    return m_ScoreSubmissionUnsafe;
+}
+
+std::shared_ptr<Vanilla> MapleBase::GetVanilla()
+{
+    return m_Vanilla;
 }

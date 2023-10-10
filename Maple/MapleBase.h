@@ -19,8 +19,6 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     static inline std::shared_ptr<Vanilla> m_Vanilla = nullptr;
 
     #pragma region Hooks for module callbacks
-    static inline bool m_IsPlayerLoaded = false;
-
     typedef void(__fastcall* fnSetMousePosition)(Vector2 position);
     static inline fnSetMousePosition oSetMousePosition = nullptr;
     static void __fastcall SetMousePositionHook(Vector2 pos);
@@ -35,6 +33,8 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     static inline fnScoreSubmit oScoreSubmit = nullptr;
     static void __fastcall ScoreSubmitHook(uintptr_t instance);
 
+    static inline bool m_IsPlayerLoaded = false;
+
     typedef int(__fastcall* fnOnPlayerLoadComplete)(uintptr_t instance, bool success);
     static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete = nullptr;
     static int __fastcall OnPlayerLoadCompleteHook(uintptr_t instance, bool success);
@@ -43,11 +43,21 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     static inline fnPlayerDispose oPlayerDispose = nullptr;
     static void __fastcall PlayerDisposeHook(uintptr_t instance, int disposing);
 
+    typedef void(__fastcall* fnSubmitError)(uintptr_t err);
+    static inline fnSubmitError oSubmitError;
+    static void __fastcall SubmitErrorHook(uintptr_t err);
+
     static void TryHookSetMousePosition(uintptr_t start = 0u, unsigned int size = 0);
     static void TryHookMouseViaKeyboardControls(uintptr_t start = 0u, unsigned int size = 0);
     static void TryHookScoreSubmit(uintptr_t start = 0u, unsigned int size = 0);
     static void TryHookOnPlayerLoadComplete(uintptr_t start = 0u, unsigned int size = 0);
     static void TryHookPlayerDispose(uintptr_t start = 0u, unsigned int size = 0);
+
+    static void TryHookSubmitError(uintptr_t start = 0u, unsigned int size = 0);
+
+    static inline int* m_PlayerFlagPointer = nullptr;
+
+    static void TryFindPlayerFlag(uintptr_t start = 0u, unsigned int size = 0);
     #pragma endregion
 
     static void OnJIT(uintptr_t address, unsigned int size);
@@ -66,7 +76,8 @@ public:
 
     void RenderModulesGUI();
 
-    std::shared_ptr<Vanilla> GetVanilla();
-
     void MakeScoreSubmissionUnsafe();
+    bool GetIsScoreSubmissionUnsafe();
+
+    std::shared_ptr<Vanilla> GetVanilla();
 };
