@@ -27,6 +27,11 @@ void __fastcall GameField::OnJIT(uintptr_t address, unsigned size)
         TryFindInternalInstance(address, size);
 }
 
+std::string __fastcall GameField::GetName()
+{
+    return xorstr_("GameField");
+}
+
 GameFieldInternal* GameField::GetInternalInstance()
 {
     return m_InternalInstanceAddress ? *reinterpret_cast<GameFieldInternal**>(m_InternalInstanceAddress) : nullptr;

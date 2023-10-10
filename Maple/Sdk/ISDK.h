@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../MapleBase.h"
+#include "../INameable.h"
 
-class ISDK
+class ISDK : public INameable
 {
 protected:
     std::shared_ptr<MapleBase> m_MapleBase;
@@ -17,9 +18,4 @@ public:
      * \brief Executed whenever new function gets compiled
      */
     virtual void __fastcall OnJIT(uintptr_t address, unsigned int size) {}
-
-    /**
-     * \returns This SDK's name
-     */
-    virtual std::string GetName() = 0;
 };

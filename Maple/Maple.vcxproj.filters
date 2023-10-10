@@ -18,9 +18,6 @@
       <Filter>Dependencies\Vanilla</Filter>
     </ClCompile>
     <ClCompile Include="MapleBase.cpp" />
-    <ClCompile Include="SDK\InputManager\InputManager.cpp">
-      <Filter>SDK\Input</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Osu\GameField.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
@@ -55,9 +52,6 @@
     </Filter>
     <Filter Include="Dependencies\xorstr">
       <UniqueIdentifier>{9cd9c63e-f15e-44ef-b273-18961e5ec11d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SDK\Input">
-      <UniqueIdentifier>{a39c7e63-bfa1-46f6-95a1-a0b9d534e254}</UniqueIdentifier>
     </Filter>
     <Filter Include="SDK\Osu">
       <UniqueIdentifier>{89fbbc05-711a-43b4-9c8d-ed0ef7320fab}</UniqueIdentifier>
@@ -110,9 +104,6 @@
       <Filter>Dependencies\xorstr</Filter>
     </ClInclude>
     <ClInclude Include="MapleBase.h" />
-    <ClInclude Include="SDK\InputManager\InputManager.h">
-      <Filter>SDK\Input</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\Osu\GameField.h">
       <Filter>SDK\Osu</Filter>
     </ClInclude>
@@ -125,5 +116,6 @@
     <ClInclude Include="SDK\OsuKeys.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="INameable.h" />
   </ItemGroup>
 </Project>

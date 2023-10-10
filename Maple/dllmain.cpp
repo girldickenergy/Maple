@@ -6,7 +6,6 @@
 
 #include "MapleBase.h"
 #include "Modules/IModule.h"
-#include "SDK/InputManager/InputManager.h"
 #include "SDK/Osu/GameField.h"
 
 class TestModule : public IModule
@@ -21,16 +20,48 @@ public:
         m_GameField = std::dynamic_pointer_cast<GameField>(m_MapleBase->GetSDK(xorstr_("GameField")));
     }
 
-    void __fastcall OnUpdate() override
+    Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) override
+    {
+        printf("Current cursor position: %f, %f\n", currentPosition.X, currentPosition.Y);
+
+        return currentPosition;
+    }
+
+    bool __fastcall OnScoreSubmission() override
+    {
+        printf("Score submission started");
+
+        return true;
+    }
+
+    void __fastcall OnPlayerLoad() override
     {
         auto instance = m_GameField->GetInternalInstance();
         float width = instance ? instance->Width : 0.f;
         float height = instance ? instance->Height : 0.f;
 
-        printf("%f, %f\n", width, height);
+        printf("Player loaded: %f, %f\n", width, height);
     }
 
-    void __fastcall OnRender() override {}
+    void __fastcall OnPlayerExit() override
+    {
+        printf("Player exited");
+    }
+
+    bool __fastcall RequiresCursorPosition() override
+    {
+        return true;
+    }
+
+    bool __fastcall RequiresScoreSubmission() override
+    {
+        return true;
+    }
+
+    std::string __fastcall GetName() override
+    {
+        return xorstr_("TestModule");
+    }
 };
 
 std::shared_ptr<MapleBase> mapleBase;
@@ -48,8 +79,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         mapleBase->Initialize();
 
 	mapleBase->AddSDKRange({
-	    std::make_pair<std::string, std::shared_ptr<ISDK>>(xorstr_("GameField"), std::make_shared<GameField>()),
-	    std::make_pair<std::string, std::shared_ptr<ISDK>>(xorstr_("InputManager"), std::make_shared<InputManager>())
+	    std::make_shared<GameField>(),
         });
 
 	mapleBase->AddModuleRange({

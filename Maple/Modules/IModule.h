@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../MapleBase.h"
+#include "../INameable.h"
 #include "../SDK/OsuKeys.h"
 #include "../SDK/Vector2.h"
 
-class IModule
+class IModule : public INameable
 {
 protected:
     std::shared_ptr<MapleBase> m_MapleBase;
@@ -18,29 +19,43 @@ public:
     /**
      * \brief Executed on each GUI draw call
      */
-    virtual void __fastcall OnRender() = 0;
+    virtual void __fastcall OnRender() {}
 
     /**
      * \brief Executed each time osu! tries to update cursor position
      * \param currentPosition Current cursor position
      * \return New cursor position to set
      */
-    virtual Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) = 0;
+    virtual Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition)
+    {
+        return currentPosition;
+    }
     /**
      * \brief Executed each time osu! tries to update gameplay keypresses
      * \param currentKeys Currently pressed gameplay keys
      * \return New gameplay keys to set
      */
-    virtual OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys) = 0;
+    virtual OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys)
+    {
+        return currentKeys;
+    }
+    /**
+     * \brief Executed each time osu! tries to submit a score
+     * \return Whether or not a score should be submitted
+     */
+    virtual bool __fastcall OnScoreSubmission()
+    {
+        return true;
+    }
 
     /**
      * \brief Executed on each Player initialization
      */
-    virtual void __fastcall OnPlayerLoad() = 0;
+    virtual void __fastcall OnPlayerLoad() {}
     /**
      * \brief Executed on each Player exit
      */
-    virtual void __fastcall OnPlayerExit() = 0;
+    virtual void __fastcall OnPlayerExit() {}
 
     /**
      * \brief Whether or not this Module will handle OnCursorPositionUpdate event
@@ -56,9 +71,11 @@ public:
     {
         return false;
     }
-
     /**
-     * \returns This Module's name
+     * \brief Whether or not this Module will handle OnScoreSubmission event
      */
-    virtual std::string GetName() = 0;
+    virtual bool __fastcall RequiresScoreSubmission()
+    {
+        return false;
+    }
 };

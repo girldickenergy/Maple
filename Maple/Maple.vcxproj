@@ -162,7 +162,6 @@
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MapleBase.cpp" />
-    <ClCompile Include="SDK\InputManager\InputManager.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,9 +178,9 @@
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
     <ClInclude Include="Dependencies\xorstr\xorstr.h" />
+    <ClInclude Include="INameable.h" />
     <ClInclude Include="MapleBase.h" />
     <ClInclude Include="Modules\IModule.h" />
-    <ClInclude Include="SDK\InputManager\InputManager.h" />
     <ClInclude Include="SDK\ISDK.h" />
     <ClInclude Include="SDK\OsuKeys.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
