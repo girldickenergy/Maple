@@ -1,21 +1,14 @@
 #pragma once
 
 #include "../MapleBase.h"
+#include "../IMapleComponent.h"
 #include "../INameable.h"
 #include "../SDK/OsuKeys.h"
 #include "../SDK/Vector2.h"
 
-class IModule : public INameable
+class IModule : public IMapleComponent, public INameable
 {
-protected:
-    std::shared_ptr<MapleBase> m_MapleBase;
-
 public:
-    virtual void __fastcall OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
-    {
-        m_MapleBase = mapleBase;
-    }
-
     /**
      * \brief Executed on each GUI draw call
      */

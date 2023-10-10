@@ -190,6 +190,9 @@ void MapleBase::OnJIT(uintptr_t address, unsigned int size)
 
     for (const std::pair<std::string, std::shared_ptr<ISDK>> sdk : m_SDKs)
         sdk.second->OnJIT(address, size);
+
+    for (const std::shared_ptr<IModule>& module : m_Modules)
+        module->OnJIT(address, size);
 }
 
 void MapleBase::Initialize()

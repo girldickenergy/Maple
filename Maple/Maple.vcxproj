@@ -178,6 +178,7 @@
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
     <ClInclude Include="Dependencies\xorstr\xorstr.h" />
+    <ClInclude Include="IMapleComponent.h" />
     <ClInclude Include="INameable.h" />
     <ClInclude Include="MapleBase.h" />
     <ClInclude Include="Modules\IModule.h" />

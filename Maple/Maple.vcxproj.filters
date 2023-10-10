@@ -117,5 +117,6 @@
       <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="INameable.h" />
+    <ClInclude Include="IMapleComponent.h" />
   </ItemGroup>
 </Project>
