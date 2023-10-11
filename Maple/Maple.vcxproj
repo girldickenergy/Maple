@@ -163,6 +163,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
+    <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
     <ClCompile Include="Sdk\Scoring\Score.cpp" />
   </ItemGroup>
@@ -186,7 +187,9 @@
     <ClInclude Include="Modules\IModule.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="SDK\ISDK.h" />
+    <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="SDK\OsuKeys.h" />
+    <ClInclude Include="Sdk\OsuMods.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />

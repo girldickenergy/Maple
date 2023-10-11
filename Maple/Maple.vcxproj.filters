@@ -27,6 +27,9 @@
     <ClCompile Include="Sdk\Scoring\Score.cpp">
       <Filter>SDK\Scoring</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Mods\ModManager.cpp">
+      <Filter>SDK\Mods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -67,6 +70,9 @@
     </Filter>
     <Filter Include="SDK\Scoring">
       <UniqueIdentifier>{18619d7f-5333-4633-879d-bcb75a8df064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Mods">
+      <UniqueIdentifier>{4d05b8b9-9ffc-46a1-aaf4-49b80918a664}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +144,12 @@
     </ClInclude>
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h">
       <Filter>SDK\Scoring</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Mods\ModManager.h">
+      <Filter>SDK\Mods</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\OsuMods.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
