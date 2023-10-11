@@ -6,8 +6,7 @@ enum class OsuKeys : int
     M1 = 1,
     M2 = 2,
     K1 = 4,
-    K2 = 8,
-    Smoke = 16
+    K2 = 8
 };
 
 inline OsuKeys operator&(OsuKeys a, OsuKeys b)
@@ -18,6 +17,11 @@ inline OsuKeys operator&(OsuKeys a, OsuKeys b)
 inline OsuKeys operator|(OsuKeys a, OsuKeys b)
 {
     return static_cast<OsuKeys>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline OsuKeys operator|=(OsuKeys& a, OsuKeys b)
+{
+    return static_cast<OsuKeys>(reinterpret_cast<int&>(a) |= static_cast<int>(b));
 }
 
 inline OsuKeys operator~(OsuKeys a)

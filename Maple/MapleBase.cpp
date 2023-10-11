@@ -19,20 +19,70 @@ void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
     [[clang::musttail]] return oSetMousePosition(newPosition);
 }
 
-void __fastcall MapleBase::MouseViaKeyboardControlsHook()
+[[clang::optnone]] void __fastcall MapleBase::MouseViaKeyboardControlsHook()
 {
-    OsuKeys newKeys = OsuKeys::None;
-
     if (m_IsPlayerLoaded)
     {
+	const bool m1PressedPrevious = m_LeftButtons[0];
+        const bool k1PressedPrevious = m_LeftButtons[2];
+        const bool m2PressedPrevious = m_RightButtons[0];
+        const bool k2PressedPrevious = m_RightButtons[2];
+
+	oMouseViaKeyboardControls();
+
+        auto newKeyState = OsuKeys::None;
+
+	if (m_LeftButtons)
+        {
+            if (!m_LeftButtons[2] && m_LeftButtons[0])
+                newKeyState |= OsuKeys::M1;
+            else if (m_LeftButtons[2])
+                newKeyState |= OsuKeys::K1;
+        }
+
+        if (m_RightButtons)
+        {
+            if (!m_RightButtons[2] && m_RightButtons[0])
+                newKeyState |= OsuKeys::M2;
+            else if (m_RightButtons[2])
+                newKeyState |= OsuKeys::K2;
+        }
+
         for (const std::shared_ptr<IModule>& module : m_Modules)
             if (module->RequiresGameplayKeys())
-                newKeys = module->OnGameplayKeysUpdate(newKeys);
+                newKeyState = module->OnGameplayKeysUpdate(newKeyState);
+
+        const bool m1Pressed = (newKeyState & OsuKeys::M1) > OsuKeys::None;
+        const bool k1Pressed = (newKeyState & OsuKeys::K1) > OsuKeys::None;
+        const bool m2Pressed = (newKeyState & OsuKeys::M2) > OsuKeys::None;
+        const bool k2Pressed = (newKeyState & OsuKeys::K2) > OsuKeys::None;
+
+        if (m_LeftButtons)
+        {
+            m_LeftButtons[0] = m1Pressed || k1Pressed;
+            m_LeftButtons[1] = (m1Pressed || k1Pressed) && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m1PressedPrevious);
+
+	    m_LeftButtons[2] = k1Pressed;
+            m_LeftButtons[3] = k1Pressed && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !k1PressedPrevious);
+        }
+
+        if (m_RightButtons)
+        {
+            m_RightButtons[0] = m2Pressed || k2Pressed;
+            m_RightButtons[1] = (m2Pressed || k2Pressed) && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m2PressedPrevious);
+
+            m_RightButtons[2] = k2Pressed;
+            m_RightButtons[3] = k2Pressed && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !k2PressedPrevious);
+        }
+
+        if (m_LeftButton)
+            *m_LeftButton = (m_LeftButtons[3] || m_LeftButtons[1]);
+
+        if (m_RightButton)
+            *m_RightButton = (m_RightButtons[3] || m_RightButtons[1]);
     }
-
-    // todo: handle keys
-
-    [[clang::musttail]] return oMouseViaKeyboardControls();
+    else
+	[[clang::musttail]] return oMouseViaKeyboardControls();
 }
 
 void __fastcall MapleBase::ScoreSubmitHook(uintptr_t instance)
@@ -100,6 +150,21 @@ void MapleBase::TryHookMouseViaKeyboardControls(uintptr_t start, unsigned int si
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84")))
     {
+        if (const uintptr_t mouseButtonInstantRelease = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("85 C9 74 45 80 3D ?? ?? ?? ?? 00"), mouseViaKeyboardControls + 0x30, mouseViaKeyboardControls + 0xB0))
+            m_MouseButtonInstantRelease = *reinterpret_cast<bool**>(mouseButtonInstantRelease + 0x6);
+
+	if (const uintptr_t leftButtons = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("85 F6 0F 84 ?? ?? ?? ?? 0F B6 3D"), mouseViaKeyboardControls, mouseViaKeyboardControls + 0x50))
+            m_LeftButtons = *reinterpret_cast<bool**>(leftButtons + 0xB);
+
+	if (const uintptr_t rightButtons = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("85 F6 0F 84 ?? ?? ?? ?? 0F B6 3D"), mouseViaKeyboardControls + 0x150, mouseViaKeyboardControls + 0x50))
+            m_RightButtons = *reinterpret_cast<bool**>(rightButtons + 0xB);
+
+	if (const uintptr_t leftButton = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("74 09 83 3D ?? ?? ?? ?? 00 75 0A C7 05"), mouseViaKeyboardControls + 0x2A0, mouseViaKeyboardControls + 0x60))
+            m_LeftButton = *reinterpret_cast<int**>(leftButton + 0xD);
+
+	if (const uintptr_t rightButton = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("74 09 83 3D ?? ?? ?? ?? 00 75 0A C7 05"), mouseViaKeyboardControls + 0x310, mouseViaKeyboardControls + 0x2A))
+            m_RightButton = *reinterpret_cast<int**>(rightButton + 0xD);
+
         m_Vanilla->GetHookManager().InstallHook(xorstr_("InputManager.MouseViaKeyboardControls"), mouseViaKeyboardControls, reinterpret_cast<uintptr_t>(MouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
     }
 }

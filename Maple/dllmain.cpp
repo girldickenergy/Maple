@@ -24,7 +24,14 @@ public:
     {
         printf("Current cursor position: %f, %f\n", currentPosition.X, currentPosition.Y);
 
-        return currentPosition;
+        return currentPosition + Vector2(100, 100);
+    }
+
+    OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys) override
+    {
+        printf("Current keys: %i\n", static_cast<int>(currentKeys));
+
+        return currentKeys;
     }
 
     bool __fastcall OnScoreSubmission() override
@@ -49,6 +56,11 @@ public:
     }
 
     bool __fastcall RequiresCursorPosition() override
+    {
+        return true;
+    }
+
+    bool __fastcall RequiresGameplayKeys() override
     {
         return true;
     }

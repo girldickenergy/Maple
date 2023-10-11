@@ -7,6 +7,7 @@
 
 #include "Vanilla.h"
 
+#include "SDK/OsuKeys.h"
 #include "SDK/Vector2.h"
 
 class IModule;
@@ -22,6 +23,12 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     typedef void(__fastcall* fnSetMousePosition)(Vector2 position);
     static inline fnSetMousePosition oSetMousePosition = nullptr;
     static void __fastcall SetMousePositionHook(Vector2 pos);
+
+    static inline bool* m_MouseButtonInstantRelease = nullptr;
+    static inline bool* m_LeftButtons = nullptr;
+    static inline bool* m_RightButtons = nullptr;
+    static inline int* m_LeftButton = nullptr;
+    static inline int* m_RightButton = nullptr;
 
     typedef void(__fastcall* fnMouseViaKeyboardControls)();
     static inline fnMouseViaKeyboardControls oMouseViaKeyboardControls = nullptr;
