@@ -7,9 +7,11 @@
 #include "MapleBase.h"
 #include "Modules/IModule.h"
 #include "SDK/Osu/GameField.h"
+#include "Sdk/Audio/AudioEngine.h"
 
 class TestModule : public IModule
 {
+    std::shared_ptr<AudioEngine> m_AudioEngine;
     std::shared_ptr<GameField> m_GameField;
 
 public:
@@ -17,12 +19,13 @@ public:
     {
         IModule::OnLoad(mapleBase);
 
+        m_AudioEngine = std::dynamic_pointer_cast<AudioEngine>(m_MapleBase->GetSDK(xorstr_("AudioEngine")));
         m_GameField = std::dynamic_pointer_cast<GameField>(m_MapleBase->GetSDK(xorstr_("GameField")));
     }
 
     Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) override
     {
-        printf("Current cursor position: %f, %f\n", currentPosition.X, currentPosition.Y);
+        printf("Current cursor position: %f, %f | Current time: %i\n", currentPosition.X, currentPosition.Y, m_AudioEngine->GetTime());
 
         return currentPosition + Vector2(100, 100);
     }
@@ -91,6 +94,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         mapleBase->Initialize();
 
 	mapleBase->AddSDKRange({
+            std::make_shared<AudioEngine>(),
 	    std::make_shared<GameField>(),
         });
 

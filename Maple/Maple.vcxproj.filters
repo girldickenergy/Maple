@@ -21,6 +21,9 @@
     <ClCompile Include="SDK\Osu\GameField.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Audio\AudioEngine.cpp">
+      <Filter>SDK\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -55,6 +58,9 @@
     </Filter>
     <Filter Include="SDK\Osu">
       <UniqueIdentifier>{89fbbc05-711a-43b4-9c8d-ed0ef7320fab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Audio">
+      <UniqueIdentifier>{2d898900-6e1f-41ef-9155-eb0d5695b8b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,5 +124,8 @@
     </ClInclude>
     <ClInclude Include="INameable.h" />
     <ClInclude Include="IMapleComponent.h" />
+    <ClInclude Include="Sdk\Audio\AudioEngine.h">
+      <Filter>SDK\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

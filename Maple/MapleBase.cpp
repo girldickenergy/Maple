@@ -87,8 +87,8 @@ void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
 
 void __fastcall MapleBase::ScoreSubmitHook(uintptr_t instance)
 {
-    if (m_PlayerFlagPointer)
-        *m_PlayerFlagPointer = 0;
+    if (m_PlayerFlag)
+        *m_PlayerFlag = 0;
     else // todo: log this
         m_ScoreSubmissionUnsafe = true;
 
@@ -226,7 +226,7 @@ void MapleBase::TryFindPlayerFlag(uintptr_t start, unsigned int size)
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9")))
     {
-        m_PlayerFlagPointer = *reinterpret_cast<int**>(playerFlag + 0x9);
+        m_PlayerFlag = *reinterpret_cast<int**>(playerFlag + 0x9);
     }
 }
 
@@ -250,7 +250,7 @@ void MapleBase::OnJIT(uintptr_t address, unsigned int size)
     if (!oSubmitError)
         TryHookSubmitError(address, size);
 
-    if (!m_PlayerFlagPointer)
+    if (!m_PlayerFlag)
         TryFindPlayerFlag(address, size);
 
     for (const std::pair<std::string, std::shared_ptr<ISDK>> sdk : m_SDKs)

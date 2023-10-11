@@ -62,7 +62,7 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
 
     static void TryHookSubmitError(uintptr_t start = 0u, unsigned int size = 0);
 
-    static inline int* m_PlayerFlagPointer = nullptr;
+    static inline int* m_PlayerFlag = nullptr;
 
     static void TryFindPlayerFlag(uintptr_t start = 0u, unsigned int size = 0);
     #pragma endregion

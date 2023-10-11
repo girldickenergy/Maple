@@ -162,6 +162,7 @@
     <ClCompile Include="Dependencies\Vanilla\Vanilla.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MapleBase.cpp" />
+    <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +183,7 @@
     <ClInclude Include="INameable.h" />
     <ClInclude Include="MapleBase.h" />
     <ClInclude Include="Modules\IModule.h" />
+    <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="SDK\ISDK.h" />
     <ClInclude Include="SDK\OsuKeys.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
