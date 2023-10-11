@@ -28,12 +28,12 @@ std::string __fastcall AudioEngine::GetName()
     return xorstr_("AudioEngine");
 }
 
-int AudioEngine::GetTime()
+int __fastcall AudioEngine::GetTime()
 {
     return m_Time ? *m_Time : 0;
 }
 
-bool AudioEngine::GetIsPaused()
+bool __fastcall AudioEngine::GetIsPaused()
 {
     return m_Time ? *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(m_Time) + 0x30) == 0 : false;
 }

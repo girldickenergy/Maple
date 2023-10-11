@@ -13,6 +13,6 @@ public:
     void __fastcall OnJIT(uintptr_t address, unsigned size) override;
     std::string __fastcall GetName() override;
 
-    int GetTime();
-    bool GetIsPaused();
+    int __fastcall GetTime();
+    bool __fastcall GetIsPaused();
 };

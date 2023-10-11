@@ -164,6 +164,7 @@
     <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
+    <ClCompile Include="Sdk\Scoring\Score.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\Cacao\DependencyContainer.h" />
@@ -188,6 +189,8 @@
     <ClInclude Include="SDK\OsuKeys.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
+    <ClInclude Include="Sdk\Scoring\Score.h" />
+    <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="SDK\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

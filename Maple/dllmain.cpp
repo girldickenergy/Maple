@@ -8,11 +8,13 @@
 #include "Modules/IModule.h"
 #include "SDK/Osu/GameField.h"
 #include "Sdk/Audio/AudioEngine.h"
+#include "Sdk/Scoring/Score.h"
 
 class TestModule : public IModule
 {
     std::shared_ptr<AudioEngine> m_AudioEngine;
     std::shared_ptr<GameField> m_GameField;
+    std::shared_ptr<Score> m_Score;
 
 public:
     void __fastcall OnLoad(const std::shared_ptr<MapleBase>& mapleBase) override
@@ -21,6 +23,7 @@ public:
 
         m_AudioEngine = std::dynamic_pointer_cast<AudioEngine>(m_MapleBase->GetSDK(xorstr_("AudioEngine")));
         m_GameField = std::dynamic_pointer_cast<GameField>(m_MapleBase->GetSDK(xorstr_("GameField")));
+        m_Score = std::dynamic_pointer_cast<Score>(m_MapleBase->GetSDK(xorstr_("Score")));
     }
 
     Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) override
@@ -39,18 +42,15 @@ public:
 
     bool __fastcall OnScoreSubmission() override
     {
-        printf("Score submission started");
+        printf("Score submission started, start time: %i", m_Score->GetStartTime());
+        m_Score->SetStartTime(1337);
 
         return true;
     }
 
     void __fastcall OnPlayerLoad() override
     {
-        auto instance = m_GameField->GetInternalInstance();
-        float width = instance ? instance->Width : 0.f;
-        float height = instance ? instance->Height : 0.f;
-
-        printf("Player loaded: %f, %f\n", width, height);
+        printf("Player loaded: %f, %f\n", m_GameField->GetWidth(), m_GameField->GetHeight());
     }
 
     void __fastcall OnPlayerExit() override
@@ -96,6 +96,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 	mapleBase->AddSDKRange({
             std::make_shared<AudioEngine>(),
 	    std::make_shared<GameField>(),
+            std::make_shared<Score>()
         });
 
 	mapleBase->AddModuleRange({

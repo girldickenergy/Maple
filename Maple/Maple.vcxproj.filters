@@ -24,6 +24,9 @@
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp">
       <Filter>SDK\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Scoring\Score.cpp">
+      <Filter>SDK\Scoring</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -61,6 +64,9 @@
     </Filter>
     <Filter Include="SDK\Audio">
       <UniqueIdentifier>{2d898900-6e1f-41ef-9155-eb0d5695b8b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Scoring">
+      <UniqueIdentifier>{18619d7f-5333-4633-879d-bcb75a8df064}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +132,12 @@
     <ClInclude Include="IMapleComponent.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h">
       <Filter>SDK\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Scoring\Score.h">
+      <Filter>SDK\Scoring</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Scoring\ScoreInternal.h">
+      <Filter>SDK\Scoring</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
