@@ -7,7 +7,7 @@
 
 #include "Vanilla.h"
 
-#include "SDK/OsuKeys.h"
+#include "Logging/Logger.h"
 #include "SDK/Vector2.h"
 
 class IModule;
@@ -17,6 +17,7 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
 {
     static inline std::unordered_map<std::string, std::shared_ptr<ISDK>> m_SDKs = {};
     static inline std::vector<std::shared_ptr<IModule>> m_Modules = {};
+    static inline std::shared_ptr<Logger> m_RuntimeLogger = nullptr;
     static inline std::shared_ptr<Vanilla> m_Vanilla = nullptr;
 
     #pragma region Hooks for module callbacks

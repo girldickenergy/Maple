@@ -89,8 +89,12 @@ void __fastcall MapleBase::ScoreSubmitHook(uintptr_t instance)
 {
     if (m_PlayerFlag)
         *m_PlayerFlag = 0;
-    else // todo: log this
+    else
+    {
         m_ScoreSubmissionUnsafe = true;
+
+        m_RuntimeLogger->Log(LogLevel::Important, xorstr_("Failed to reset Player.flag!"));
+    }
 
     bool allowSubmission = !m_ScoreSubmissionUnsafe;
 
@@ -132,20 +136,19 @@ void __fastcall MapleBase::SubmitErrorHook(uintptr_t err)
 
 void MapleBase::TryHookSetMousePosition(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t setMousePosition = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC")))
     {
-        m_Vanilla->GetHookManager().InstallHook(xorstr_("MouseManager.SetMousePosition"), setMousePosition, reinterpret_cast<uintptr_t>(SetMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
+        if (m_Vanilla->GetHookManager().InstallHook(xorstr_("MouseManager.SetMousePosition"), setMousePosition, reinterpret_cast<uintptr_t>(SetMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition)) == VanillaResult::Success)
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked MouseManager.SetMousePosition!"));
+        else
+            m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook MouseManager.SetMousePosition!"));
     }
 }
 
 void MapleBase::TryHookMouseViaKeyboardControls(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t mouseViaKeyboardControls = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84")))
@@ -165,68 +168,74 @@ void MapleBase::TryHookMouseViaKeyboardControls(uintptr_t start, unsigned int si
 	if (const uintptr_t rightButton = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("74 09 83 3D ?? ?? ?? ?? 00 75 0A C7 05"), mouseViaKeyboardControls + 0x310, mouseViaKeyboardControls + 0x2A))
             m_RightButton = *reinterpret_cast<int**>(rightButton + 0xD);
 
-        m_Vanilla->GetHookManager().InstallHook(xorstr_("InputManager.MouseViaKeyboardControls"), mouseViaKeyboardControls, reinterpret_cast<uintptr_t>(MouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
+        if (m_Vanilla->GetHookManager().InstallHook(xorstr_("InputManager.MouseViaKeyboardControls"), mouseViaKeyboardControls, reinterpret_cast<uintptr_t>(MouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls)) == VanillaResult::Success)
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked InputManager.MouseViaKeyboardControls!"));
+        else
+            m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook InputManager.MouseViaKeyboardControls!"));
     }
 }
 
 void MapleBase::TryHookScoreSubmit(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t submit = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("00 7E ?? 8B 3D ?? ?? ?? ?? C6 87 ?? ?? ?? ?? 00 8B 3D ?? ?? ?? ?? 8B CF 39 09 E8 ?? ?? ?? ?? 8B 8E"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("00 7E ?? 8B 3D ?? ?? ?? ?? C6 87 ?? ?? ?? ?? 00 8B 3D ?? ?? ?? ?? 8B CF 39 09 E8 ?? ?? ?? ?? 8B 8E")))
     {
         oScoreSubmit = reinterpret_cast<fnScoreSubmit>(static_cast<intptr_t>(submit + 0x1B) + *reinterpret_cast<int*>(submit + 0x1B) + 0x4);
         *reinterpret_cast<intptr_t*>(submit + 0x1B) = reinterpret_cast<intptr_t>(ScoreSubmitHook) - static_cast<intptr_t>(submit + 0x1B) - 0x4;
+
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Score.Submit!"));
     }
 }
 
 void MapleBase::TryHookOnPlayerLoadComplete(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t onPlayerLoadComplete = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D")))
     {
-        m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.OnLoadComplete"), onPlayerLoadComplete, reinterpret_cast<uintptr_t>(OnPlayerLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnPlayerLoadComplete));
+        if (m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.OnLoadComplete"), onPlayerLoadComplete, reinterpret_cast<uintptr_t>(OnPlayerLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnPlayerLoadComplete)) == VanillaResult::Success)
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.OnLoadComplete!"));
+        else
+            m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.OnLoadComplete!"));
     }
 }
 
 void MapleBase::TryHookPlayerDispose(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t playerDispose = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 8B F1 8B 8E B8 00 00 00 85 C9 74 0D BA 01 00 00 00 8B 01 8B 40 28 FF 50 1C"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 8B F1 8B 8E B8 00 00 00 85 C9 74 0D BA 01 00 00 00 8B 01 8B 40 28 FF 50 1C")))
     {
-        m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.Dispose"), playerDispose, reinterpret_cast<uintptr_t>(PlayerDisposeHook), reinterpret_cast<uintptr_t*>(&oPlayerDispose));
+        if (m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.Dispose"), playerDispose, reinterpret_cast<uintptr_t>(PlayerDisposeHook), reinterpret_cast<uintptr_t*>(&oPlayerDispose)) == VanillaResult::Success)
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.Dispose!"));
+        else
+            m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.Dispose!"));
     }
 }
 
 void MapleBase::TryHookSubmitError(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t submitError = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 83 EC 40 8B F1 8D 7D C0 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D C8 83 3D"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 83 EC 40 8B F1 8D 7D C0 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D C8 83 3D")))
     {
-        m_Vanilla->GetHookManager().InstallHook(xorstr_("ErrorSubmission.Submit"), submitError, reinterpret_cast<uintptr_t>(SubmitErrorHook), reinterpret_cast<uintptr_t*>(&oSubmitError));
+        if (m_Vanilla->GetHookManager().InstallHook(xorstr_("ErrorSubmission.Submit"), submitError, reinterpret_cast<uintptr_t>(SubmitErrorHook), reinterpret_cast<uintptr_t*>(&oSubmitError)) == VanillaResult::Success)
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked ErrorSubmission.Submit!"));
+        else
+            m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook ErrorSubmission.Submit!"));
     }
 }
 
 void MapleBase::TryFindPlayerFlag(uintptr_t start, unsigned int size)
 {
-    // todo: error handling
-
     if (const uintptr_t playerFlag = start && size
          ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), start, size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9")))
     {
         m_PlayerFlag = *reinterpret_cast<int**>(playerFlag + 0x9);
+
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Found Player.flag!"));
     }
 }
 
@@ -262,10 +271,22 @@ void MapleBase::OnJIT(uintptr_t address, unsigned int size)
 
 void MapleBase::Initialize()
 {
-    // todo: error handling
+    AllocConsole();
+    freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    LoggerInfo loggerInfo = LoggerInfo(xorstr_("mlo-12102023"), xorstr_("somehash"), xorstr_("someauthhash"), xorstr_("Windows 11"), xorstr_("v4.0.30319"));
+    m_RuntimeLogger = std::make_shared<Logger>(xorstr_("runtime"), loggerInfo, LogLevel::Debug, consoleHandle);
 
     m_Vanilla = std::make_shared<Vanilla>();
-    m_Vanilla->Initialize(true);
+    VanillaResult vanillaResult = m_Vanilla->Initialize(true);
+    if (vanillaResult != VanillaResult::Success)
+    {
+        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Vanilla failed to initialize with code %i"), (int)vanillaResult);
+
+        return; // todo: crash
+    }
+
     m_Vanilla->SetJITCallback(OnJIT);
 
     TryHookSetMousePosition();

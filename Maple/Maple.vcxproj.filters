@@ -30,6 +30,9 @@
     <ClCompile Include="Sdk\Mods\ModManager.cpp">
       <Filter>SDK\Mods</Filter>
     </ClCompile>
+    <ClCompile Include="Logging\Logger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -73,6 +76,9 @@
     </Filter>
     <Filter Include="SDK\Mods">
       <UniqueIdentifier>{4d05b8b9-9ffc-46a1-aaf4-49b80918a664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{348d4adb-b94f-4a97-a188-24cc4b35c245}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +156,15 @@
     </ClInclude>
     <ClInclude Include="Sdk\OsuMods.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\Logger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\LogLevel.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\LoggerInfo.h">
+      <Filter>Logging</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
