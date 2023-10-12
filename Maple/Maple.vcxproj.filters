@@ -33,6 +33,9 @@
     <ClCompile Include="Logging\Logger.cpp">
       <Filter>Logging</Filter>
     </ClCompile>
+    <ClCompile Include="Storage\Storage.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -79,6 +82,9 @@
     </Filter>
     <Filter Include="Logging">
       <UniqueIdentifier>{348d4adb-b94f-4a97-a188-24cc4b35c245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{47d1af0f-de63-4c3a-8221-bc0fd972a92c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="Logging\LoggerInfo.h">
       <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage\Storage.h">
+      <Filter>Storage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

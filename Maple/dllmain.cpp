@@ -90,9 +90,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
     {
-        AllocConsole();
-        freopen_s(reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
-
 	mapleBase = std::make_shared<MapleBase>();
         mapleBase->Initialize();
 

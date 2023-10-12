@@ -167,6 +167,7 @@
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
     <ClCompile Include="Sdk\Scoring\Score.cpp" />
+    <ClCompile Include="Storage\Storage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\Cacao\DependencyContainer.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="SDK\Vector2.h" />
+    <ClInclude Include="Storage\Storage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
