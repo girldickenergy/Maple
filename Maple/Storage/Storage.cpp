@@ -3,7 +3,6 @@
 #include "xorstr.h"
 
 #include <filesystem>
-#include <fstream>
 
 bool Storage::MatchWildcard(const char* first, const char* second)
 {
@@ -114,5 +113,5 @@ std::fstream Storage::GetStream(const std::string& path, int fileOpenMode)
     if (!Exists(path))
         Create(path);
 
-    return std::fstream(path, fileOpenMode);
+    return std::fstream(GetFullPath(path), fileOpenMode);
 }
