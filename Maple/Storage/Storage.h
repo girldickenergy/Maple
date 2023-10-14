@@ -7,6 +7,8 @@ class Storage
 {
     std::string m_BasePath;
 
+    bool MatchWildcard(const char* first, const char* second);
+
 public:
     Storage(const std::string& basePath);
 

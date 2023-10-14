@@ -4,6 +4,29 @@
 
 #include <filesystem>
 
+bool Storage::MatchWildcard(const char* first, const char* second)
+{
+    if (*first == '\0' && *second == '\0')
+        return true;
+
+    if (*first == '*')
+    {
+        while (*(first + 1) == '*')
+            first++;
+    }
+
+    if (*first == '*' && *(first + 1) != '\0' && *second == '\0')
+        return false;
+
+    if (*first == '?' || *first == *second)
+        return MatchWildcard(first + 1, second + 1);
+
+    if (*first == '*')
+        return MatchWildcard(first + 1, second) || MatchWildcard(first, second + 1);
+
+    return false;
+}
+
 Storage::Storage(const std::string& basePath)
 {
     m_BasePath = basePath;
@@ -46,7 +69,7 @@ std::vector<std::string> Storage::GetFiles(const std::string& path, const std::s
     auto files = std::vector<std::string>();
 
     for (const std::filesystem::directory_entry& file : std::filesystem::directory_iterator(GetFullPath(path)))
-        if (!file.is_directory()) // todo: match pattern
+        if (!file.is_directory() && MatchWildcard(pattern.c_str(), file.path().filename().string().c_str()))
             files.push_back(file.path().filename().string());
 
     return files;
