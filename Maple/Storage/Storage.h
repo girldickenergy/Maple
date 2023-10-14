@@ -35,6 +35,16 @@ public:
      */
     bool ExistsDirectory(const std::string& path);
     /**
+     * \brief Creates a new file at the specified path
+     * \param path The path to new file
+     */
+    void Create(const std::string& path);
+    /**
+     * \brief Creates a new directory at the specified path
+     * \param path The path to new directory
+     */
+    void CreateDirectory(const std::string& path);
+    /**
      * \brief Delete a file
      * \param path The path of the file to delete
      */
@@ -57,4 +67,6 @@ public:
      * \returns A list of directories in the path, relative to the path of this Storage
      */
     std::vector<std::string> GetDirectories(const std::string& path);
+
+    std::fstream GetStream(const std::string& path, int fileOpenMode);
 };

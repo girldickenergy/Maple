@@ -3,6 +3,7 @@
 #include "xorstr.h"
 
 #include <filesystem>
+#include <fstream>
 
 bool Storage::MatchWildcard(const char* first, const char* second)
 {
@@ -52,6 +53,28 @@ bool Storage::ExistsDirectory(const std::string& path)
     return std::filesystem::is_directory(GetFullPath(path));
 }
 
+void Storage::Create(const std::string& path)
+{
+    if (Exists(path))
+        return;
+
+    const std::string directoryPath = std::filesystem::path(path).parent_path().string();
+
+    if (!ExistsDirectory(directoryPath))
+        CreateDirectory(directoryPath);
+
+    std::ofstream ofs(GetFullPath(path));
+    ofs.close();
+}
+
+void Storage::CreateDirectory(const std::string& path)
+{
+    if (ExistsDirectory(path))
+        return;
+
+    std::filesystem::create_directories(GetFullPath(path));
+}
+
 void Storage::Delete(const std::string& path)
 {
     if (!std::filesystem::is_directory(GetFullPath(path)))
@@ -84,4 +107,12 @@ std::vector<std::string> Storage::GetDirectories(const std::string& path)
             directories.push_back(directory.path().filename().string());
 
     return directories;
+}
+
+std::fstream Storage::GetStream(const std::string& path, int fileOpenMode)
+{
+    if (!Exists(path))
+        Create(path);
+
+    return std::fstream(path, fileOpenMode);
 }
