@@ -60,13 +60,13 @@ void Storage::Create(const std::string& path)
     const std::string directoryPath = std::filesystem::path(path).parent_path().string();
 
     if (!ExistsDirectory(directoryPath))
-        CreateDirectory(directoryPath);
+        CreateDir(directoryPath);
 
     std::ofstream ofs(GetFullPath(path));
     ofs.close();
 }
 
-void Storage::CreateDirectory(const std::string& path)
+void Storage::CreateDir(const std::string& path)
 {
     if (ExistsDirectory(path))
         return;

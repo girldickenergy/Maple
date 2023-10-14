@@ -67,14 +67,10 @@ Vector2 __fastcall GameField::GetOffset()
 
 Vector2 __fastcall GameField::DisplayToField(Vector2 display)
 {
-    const GameFieldInternal* instance = GetInstance();
-
     return (display - GetOffset()) / GetRatio();
 }
 
 Vector2 __fastcall GameField::FieldToDisplay(Vector2 field)
 {
-    const GameFieldInternal* instance = GetInstance();
-
     return field * GetRatio() + GetOffset();
 }

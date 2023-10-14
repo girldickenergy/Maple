@@ -7,9 +7,15 @@
 
 #include "xorstr.h"
 
+
 std::string Logger::GetFileName()
 {
     return m_Name + xorstr_(".log");
+}
+
+std::string Logger::GetFilePath()
+{
+    return xorstr_("logs/") + GetFileName();
 }
 
 unsigned short Logger::LogLevelToConsoleColor(LogLevel logLevel)
@@ -75,14 +81,33 @@ void Logger::CreateLogEntry(LogLevel logLevel, const std::string& message)
 
         std::cout << entry.str() << std::endl;
     }
+
+    std::fstream stream = m_Storage->GetStream(GetFilePath(), std::ios::out | std::ios::app);
+    stream << entry.str() << std::endl; // todo: encryption
+    stream.close();
 }
 
-Logger::Logger(const std::string& name, const LoggerInfo& loggerInfo, LogLevel logLevel, HANDLE consoleHandle)
+Logger::Logger(const std::shared_ptr<Storage>& storage, const std::string& name, const LoggerInfo& loggerInfo, LogLevel logLevel, bool encrypt, HANDLE consoleHandle)
 {
+    m_Storage = storage;
     m_Name = name;
     m_LoggerInfo = loggerInfo;
     m_LogLevel = logLevel;
+    m_Encrypt = encrypt;
     m_ConsoleHandle = consoleHandle;
+
+    if (!storage->ExistsDirectory(xorstr_("logs")))
+        storage->CreateDir(xorstr_("logs"));
+
+    if (storage->Exists(GetFilePath()))
+    {
+        std::fstream stream = storage->GetStream(GetFilePath(), std::ios::in);
+        m_PreviousLog = std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+        stream.close();
+
+	stream = storage->GetStream(GetFilePath(), std::ios::out | std::ios::trunc);
+        stream.close();
+    }
 
     CreateInfoLogMessage();
 }
@@ -101,6 +126,11 @@ void Logger::Log(LogLevel logLevel, const char* format, ...)
         va_end(args);
         CreateLogEntry(logLevel, buffer);
     }
+}
+
+std::string Logger::GetPreviousLog()
+{
+    return m_PreviousLog;
 }
 
 void Logger::ToggleEnabled(bool value)

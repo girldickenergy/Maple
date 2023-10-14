@@ -15,10 +15,17 @@ class ISDK;
 
 class MapleBase : public std::enable_shared_from_this<MapleBase>
 {
-    static inline std::unordered_map<std::string, std::shared_ptr<ISDK>> m_SDKs = {};
-    static inline std::vector<std::shared_ptr<IModule>> m_Modules = {};
+    static inline std::shared_ptr<Storage> m_Storage = nullptr;
     static inline std::shared_ptr<Logger> m_RuntimeLogger = nullptr;
     static inline std::shared_ptr<Vanilla> m_Vanilla = nullptr;
+    static inline std::unordered_map<std::string, std::shared_ptr<ISDK>> m_SDKs = {};
+    static inline std::vector<std::shared_ptr<IModule>> m_Modules = {};
+
+    static void InitializeStorage(const std::string& directoryName);
+    static void InitializeLogging();
+    static void InitializeCore();
+
+    static void OnJIT(uintptr_t address, unsigned int size);
 
     #pragma region Hooks for module callbacks
     typedef void(__fastcall* fnSetMousePosition)(Vector2 position);
@@ -67,8 +74,6 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
 
     static void TryFindPlayerFlag(uintptr_t start = 0u, unsigned int size = 0);
     #pragma endregion
-
-    static void OnJIT(uintptr_t address, unsigned int size);
 
 public:
     MapleBase() = default;

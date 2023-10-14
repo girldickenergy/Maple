@@ -5,6 +5,80 @@
 #include "Modules/IModule.h"
 #include "SDK/ISDK.h"
 
+void MapleBase::InitializeStorage(const std::string& directoryName)
+{
+    char* val;
+    size_t len;
+    errno_t err = _dupenv_s(&val, &len, xorstr_("APPDATA"));
+    std::string storageDirectory = std::string(val) + xorstr_("\\") + directoryName;
+
+    m_Storage = std::make_shared<Storage>(storageDirectory);
+}
+
+void MapleBase::InitializeLogging()
+{
+    AllocConsole();
+    freopen_s(reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    LoggerInfo loggerInfo = LoggerInfo(xorstr_("mlo-12102023"), xorstr_("somehash"), xorstr_("someauthhash"), xorstr_("Windows 11"), xorstr_("v4.0.30319"));
+    m_RuntimeLogger = std::make_shared<Logger>(m_Storage, xorstr_("runtime"), loggerInfo, LogLevel::Debug, false, consoleHandle);
+}
+
+void MapleBase::InitializeCore()
+{
+    m_Vanilla = std::make_shared<Vanilla>();
+    VanillaResult vanillaResult = m_Vanilla->Initialize(true);
+    if (vanillaResult != VanillaResult::Success)
+    {
+        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Vanilla failed to initialize with code %i"), static_cast<int>(vanillaResult));
+
+        return; // todo: crash
+    }
+
+    m_Vanilla->SetJITCallback(OnJIT);
+
+    TryHookSetMousePosition();
+    TryHookMouseViaKeyboardControls();
+    TryHookScoreSubmit();
+    TryHookOnPlayerLoadComplete();
+    TryHookPlayerDispose();
+
+    TryHookSubmitError();
+
+    TryFindPlayerFlag();
+}
+
+void MapleBase::OnJIT(uintptr_t address, unsigned int size)
+{
+    if (!oSetMousePosition)
+        TryHookSetMousePosition(address, size);
+
+    if (!oMouseViaKeyboardControls)
+        TryHookMouseViaKeyboardControls(address, size);
+
+    if (!oScoreSubmit)
+        TryHookScoreSubmit(address, size);
+
+    if (!oOnPlayerLoadComplete)
+        TryHookOnPlayerLoadComplete(address, size);
+
+    if (!oPlayerDispose)
+        TryHookPlayerDispose(address, size);
+
+    if (!oSubmitError)
+        TryHookSubmitError(address, size);
+
+    if (!m_PlayerFlag)
+        TryFindPlayerFlag(address, size);
+
+    for (const std::pair<std::string, std::shared_ptr<ISDK>> sdk : m_SDKs)
+        sdk.second->OnJIT(address, size);
+
+    for (const std::shared_ptr<IModule>& module : m_Modules)
+        module->OnJIT(address, size);
+}
+
 void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
 {
     Vector2 newPosition = position;
@@ -239,65 +313,11 @@ void MapleBase::TryFindPlayerFlag(uintptr_t start, unsigned int size)
     }
 }
 
-void MapleBase::OnJIT(uintptr_t address, unsigned int size)
-{
-    if (!oSetMousePosition)
-        TryHookSetMousePosition(address, size);
-
-    if (!oMouseViaKeyboardControls)
-        TryHookMouseViaKeyboardControls(address, size);
-
-    if (!oScoreSubmit)
-        TryHookScoreSubmit(address, size);
-
-    if (!oOnPlayerLoadComplete)
-        TryHookOnPlayerLoadComplete(address, size);
-
-    if (!oPlayerDispose)
-        TryHookPlayerDispose(address, size);
-
-    if (!oSubmitError)
-        TryHookSubmitError(address, size);
-
-    if (!m_PlayerFlag)
-        TryFindPlayerFlag(address, size);
-
-    for (const std::pair<std::string, std::shared_ptr<ISDK>> sdk : m_SDKs)
-        sdk.second->OnJIT(address, size);
-
-    for (const std::shared_ptr<IModule>& module : m_Modules)
-        module->OnJIT(address, size);
-}
-
 void MapleBase::Initialize()
 {
-    AllocConsole();
-    freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    LoggerInfo loggerInfo = LoggerInfo(xorstr_("mlo-12102023"), xorstr_("somehash"), xorstr_("someauthhash"), xorstr_("Windows 11"), xorstr_("v4.0.30319"));
-    m_RuntimeLogger = std::make_shared<Logger>(xorstr_("runtime"), loggerInfo, LogLevel::Debug, consoleHandle);
-
-    m_Vanilla = std::make_shared<Vanilla>();
-    VanillaResult vanillaResult = m_Vanilla->Initialize(true);
-    if (vanillaResult != VanillaResult::Success)
-    {
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Vanilla failed to initialize with code %i"), (int)vanillaResult);
-
-        return; // todo: crash
-    }
-
-    m_Vanilla->SetJITCallback(OnJIT);
-
-    TryHookSetMousePosition();
-    TryHookMouseViaKeyboardControls();
-    TryHookScoreSubmit();
-    TryHookOnPlayerLoadComplete();
-    TryHookPlayerDispose();
-
-    TryHookSubmitError();
-
-    TryFindPlayerFlag();
+    InitializeStorage(xorstr_("Maple"));
+    InitializeLogging();
+    InitializeCore();
 }
 
 void MapleBase::AddSDK(const std::shared_ptr<ISDK>& sdk)
