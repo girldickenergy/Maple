@@ -2,7 +2,6 @@
 
 #include <cmath>
 
-// todo: move this to dependencies later
 struct Vector2
 {
     float X = 0.f;

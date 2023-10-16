@@ -6,9 +6,9 @@
 #include <unordered_map>
 
 #include "Vanilla.h"
+#include "Numerics/Vector2.h"
 
 #include "Logging/Logger.h"
-#include "SDK/Vector2.h"
 
 class IModule;
 class ISDK;

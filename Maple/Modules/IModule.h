@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Numerics/Vector2.h"
+
 #include "../MapleBase.h"
 #include "../IMapleComponent.h"
 #include "../INameable.h"
 #include "../SDK/OsuKeys.h"
-#include "../SDK/Vector2.h"
 
 class IModule : public IMapleComponent, public INameable
 {

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "../Vector2.h"
+#include "Numerics/Vector2.h"
 
 struct GameFieldInternal
 {

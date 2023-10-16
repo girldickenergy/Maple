@@ -89,6 +89,12 @@
     <Filter Include="Storage">
       <UniqueIdentifier>{47d1af0f-de63-4c3a-8221-bc0fd972a92c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\Licorice">
+      <UniqueIdentifier>{7715b9c6-723f-475e-a879-6720989dbc27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Licorice\Numerics">
+      <UniqueIdentifier>{8f3174a1-6a15-4e6f-a45d-5644d48e4d95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\IModule.h">
@@ -143,9 +149,6 @@
     <ClInclude Include="SDK\Osu\GameFieldInternal.h">
       <Filter>SDK\Osu</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Vector2.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\OsuKeys.h">
       <Filter>SDK</Filter>
     </ClInclude>
@@ -184,11 +187,14 @@
     <ClInclude Include="Sdk\OsuModes.h">
       <Filter>SDK</Filter>
     </ClInclude>
-    <ClInclude Include="Sdk\RectangleF.h">
-      <Filter>SDK</Filter>
+    <ClInclude Include="Dependencies\Licorice\Numerics\RectangleF.h">
+      <Filter>Dependencies\Licorice\Numerics</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\RectangleI.h">
-      <Filter>SDK</Filter>
+    <ClInclude Include="Dependencies\Licorice\Numerics\RectangleI.h">
+      <Filter>Dependencies\Licorice\Numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Licorice\Numerics\Vector2.h">
+      <Filter>Dependencies\Licorice\Numerics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

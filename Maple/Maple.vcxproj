@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -177,6 +177,9 @@
     <ClInclude Include="Dependencies\hde\pstdint.h" />
     <ClInclude Include="Dependencies\hde\table32.h" />
     <ClInclude Include="Dependencies\hde\table64.h" />
+    <ClInclude Include="Dependencies\Licorice\Numerics\RectangleF.h" />
+    <ClInclude Include="Dependencies\Licorice\Numerics\RectangleI.h" />
+    <ClInclude Include="Dependencies\Licorice\Numerics\Vector2.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\Hook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\HookManager.h" />
@@ -200,11 +203,8 @@
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
-    <ClInclude Include="Sdk\RectangleF.h" />
-    <ClInclude Include="SDK\RectangleI.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
-    <ClInclude Include="SDK\Vector2.h" />
     <ClInclude Include="Storage\Storage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

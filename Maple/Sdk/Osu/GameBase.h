@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Numerics/RectangleI.h"
+
 #include "../ISDK.h"
 #include "../OsuModes.h"
-#include "../RectangleI.h"
 
 class GameBase : public ISDK
 {
