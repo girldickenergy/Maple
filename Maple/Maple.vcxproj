@@ -165,6 +165,7 @@
     <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
+    <ClCompile Include="Sdk\Osu\GameBase.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
     <ClCompile Include="Sdk\Scoring\Score.cpp" />
     <ClCompile Include="Storage\Storage.cpp" />
@@ -194,9 +195,12 @@
     <ClInclude Include="SDK\ISDK.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="SDK\OsuKeys.h" />
+    <ClInclude Include="Sdk\OsuModes.h" />
     <ClInclude Include="Sdk\OsuMods.h" />
+    <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
+    <ClInclude Include="Sdk\RectangleF.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="SDK\Vector2.h" />

@@ -9,11 +9,13 @@
 #include "SDK/Osu/GameField.h"
 #include "Sdk/Audio/AudioEngine.h"
 #include "Sdk/Mods/ModManager.h"
+#include "Sdk/Osu/GameBase.h"
 #include "Sdk/Scoring/Score.h"
 
 class TestModule : public IModule
 {
     std::shared_ptr<AudioEngine> m_AudioEngine;
+    std::shared_ptr<GameBase> m_GameBase;
     std::shared_ptr<GameField> m_GameField;
     std::shared_ptr<Score> m_Score;
     std::shared_ptr<ModManager> m_ModManager;
@@ -24,6 +26,7 @@ public:
         IModule::OnLoad(mapleBase);
 
         m_AudioEngine = std::dynamic_pointer_cast<AudioEngine>(m_MapleBase->GetSDK(xorstr_("AudioEngine")));
+        m_GameBase = std::dynamic_pointer_cast<GameBase>(m_MapleBase->GetSDK(xorstr_("GameBase")));
         m_GameField = std::dynamic_pointer_cast<GameField>(m_MapleBase->GetSDK(xorstr_("GameField")));
         m_Score = std::dynamic_pointer_cast<Score>(m_MapleBase->GetSDK(xorstr_("Score")));
         m_ModManager = std::dynamic_pointer_cast<ModManager>(m_MapleBase->GetSDK(xorstr_("ModManager")));
@@ -53,6 +56,7 @@ public:
 
     void __fastcall OnPlayerLoad() override
     {
+        printf("%i, %i, %i, %f, %f, %f, %f", m_GameBase->GetTime(), m_GameBase->GetMode(), m_GameBase->GetIsFullscreen(), m_GameBase->GetClientBounds().X, m_GameBase->GetClientBounds().Y, m_GameBase->GetClientBounds().Width, m_GameBase->GetClientBounds().Height);
         printf("Player loaded\nPlayfield size: %f, %f\nMods: %i\nPlayback rate: %f\n", m_GameField->GetWidth(), m_GameField->GetHeight(), m_ModManager->GetActiveMods(), m_ModManager->GetModPlaybackRate());
     }
 
@@ -95,6 +99,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 
 	mapleBase->AddSDKRange({
             std::make_shared<AudioEngine>(),
+            std::make_shared<GameBase>(),
 	    std::make_shared<GameField>(),
             std::make_shared<Score>(),
             std::make_shared<ModManager>()

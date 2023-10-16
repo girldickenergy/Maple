@@ -36,6 +36,9 @@
     <ClCompile Include="Storage\Storage.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\Osu\GameBase.cpp">
+      <Filter>SDK\Osu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -174,6 +177,15 @@
     </ClInclude>
     <ClInclude Include="Storage\Storage.h">
       <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\Osu\GameBase.h">
+      <Filter>SDK\Osu</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\OsuModes.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\RectangleF.h">
+      <Filter>SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
