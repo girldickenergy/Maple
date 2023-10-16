@@ -56,7 +56,6 @@ public:
 
     void __fastcall OnPlayerLoad() override
     {
-        printf("%i, %i, %i, %f, %f, %f, %f", m_GameBase->GetTime(), m_GameBase->GetMode(), m_GameBase->GetIsFullscreen(), m_GameBase->GetClientBounds().X, m_GameBase->GetClientBounds().Y, m_GameBase->GetClientBounds().Width, m_GameBase->GetClientBounds().Height);
         printf("Player loaded\nPlayfield size: %f, %f\nMods: %i\nPlayback rate: %f\n", m_GameField->GetWidth(), m_GameField->GetHeight(), m_ModManager->GetActiveMods(), m_ModManager->GetModPlaybackRate());
     }
 

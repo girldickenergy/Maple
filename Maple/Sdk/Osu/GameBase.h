@@ -2,7 +2,7 @@
 
 #include "../ISDK.h"
 #include "../OsuModes.h"
-#include "../RectangleF.h"
+#include "../RectangleI.h"
 
 class GameBase : public ISDK
 {
@@ -27,6 +27,6 @@ public:
     int GetTime();
     OsuModes GetMode();
     bool GetIsFullscreen();
-    RectangleF GetClientBounds();
+    RectangleI GetClientBounds();
     void SetTickrate(double value);
 };

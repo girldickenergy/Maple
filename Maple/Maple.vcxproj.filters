@@ -187,5 +187,8 @@
     <ClInclude Include="Sdk\RectangleF.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\RectangleI.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,7 +20,7 @@ void GameBase::TryFindMode(uintptr_t start, unsigned int size)
         ? m_MapleBase->GetVanilla()->GetPatternScanner().FindPatternInRange(xorstr_("80 B8 ?? ?? ?? ?? 00 75 19 A1 ?? ?? ?? ?? 83 F8 0B 74 0B"), start, size)
         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("80 B8 ?? ?? ?? ?? 00 75 19 A1 ?? ?? ?? ?? 83 F8 0B 74 0B")))
     {
-        m_Time = *reinterpret_cast<int**>(mode + 0xA);
+        m_Mode = *reinterpret_cast<OsuModes**>(mode + 0xA);
 
         m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found GameBase.Mode");
     }
@@ -45,7 +45,7 @@ void GameBase::TryFindClientBounds(uintptr_t start, unsigned int size)
         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("56 FF 75 F0 8B 15 ?? ?? ?? ?? 83 C2 04 39 09")))
     {
         m_ClientBoundsAddress = *reinterpret_cast<uintptr_t*>(clientBounds + 0x6);
-
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "m_ClientBoundsAddress -> %x", m_ClientBoundsAddress);
         m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found GameBase.ClientBounds");
     }
 }
@@ -161,9 +161,9 @@ bool GameBase::GetIsFullscreen()
     return m_IsFullscreen ? *m_IsFullscreen : true;
 }
 
-RectangleF GameBase::GetClientBounds()
+RectangleI GameBase::GetClientBounds()
 {
-    return m_ClientBoundsAddress ? *reinterpret_cast<RectangleF*>(*reinterpret_cast<uintptr_t*>(m_ClientBoundsAddress) + 0x4) : RectangleF();
+    return m_ClientBoundsAddress ? *reinterpret_cast<RectangleI*>(*reinterpret_cast<uintptr_t*>(m_ClientBoundsAddress) + 0x4) : RectangleI();
 }
 
 void GameBase::SetTickrate(double value)

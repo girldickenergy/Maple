@@ -201,6 +201,7 @@
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
     <ClInclude Include="Sdk\RectangleF.h" />
+    <ClInclude Include="SDK\RectangleI.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="SDK\Vector2.h" />
