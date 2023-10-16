@@ -1,11 +1,11 @@
 #pragma once
 
+#include "Gameplay/Keys/OsuKeys.h"
 #include "Numerics/Vector2.h"
 
 #include "../MapleBase.h"
 #include "../IMapleComponent.h"
 #include "../INameable.h"
-#include "../SDK/OsuKeys.h"
 
 class IModule : public IMapleComponent, public INameable
 {

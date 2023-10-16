@@ -95,6 +95,15 @@
     <Filter Include="Dependencies\Licorice\Numerics">
       <UniqueIdentifier>{8f3174a1-6a15-4e6f-a45d-5644d48e4d95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\OsuDataTypes">
+      <UniqueIdentifier>{36fffe47-ec60-4f61-a3f4-d83dd2dde2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Gameplay">
+      <UniqueIdentifier>{f53eda81-907d-47da-9fa7-c233d6f53c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\OsuDataTypes\Gameplay\Keys">
+      <UniqueIdentifier>{e0fabcc0-66ad-46bc-9e32-a2e2429c68e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\IModule.h">
@@ -149,9 +158,6 @@
     <ClInclude Include="SDK\Osu\GameFieldInternal.h">
       <Filter>SDK\Osu</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\OsuKeys.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="INameable.h" />
     <ClInclude Include="IMapleComponent.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h">
@@ -165,9 +171,6 @@
     </ClInclude>
     <ClInclude Include="Sdk\Mods\ModManager.h">
       <Filter>SDK\Mods</Filter>
-    </ClInclude>
-    <ClInclude Include="Sdk\OsuMods.h">
-      <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="Logging\Logger.h">
       <Filter>Logging</Filter>
@@ -184,9 +187,6 @@
     <ClInclude Include="Sdk\Osu\GameBase.h">
       <Filter>SDK\Osu</Filter>
     </ClInclude>
-    <ClInclude Include="Sdk\OsuModes.h">
-      <Filter>SDK</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\Licorice\Numerics\RectangleF.h">
       <Filter>Dependencies\Licorice\Numerics</Filter>
     </ClInclude>
@@ -195,6 +195,27 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Licorice\Numerics\Vector2.h">
       <Filter>Dependencies\Licorice\Numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\OsuModes.h">
+      <Filter>Dependencies\OsuDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Mods.h">
+      <Filter>Dependencies\OsuDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\PlayModes.h">
+      <Filter>Dependencies\OsuDataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuManiaKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\TaikoKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\CatchTheBeatKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuKeys.h">
+      <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

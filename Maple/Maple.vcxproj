@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -180,6 +180,13 @@
     <ClInclude Include="Dependencies\Licorice\Numerics\RectangleF.h" />
     <ClInclude Include="Dependencies\Licorice\Numerics\RectangleI.h" />
     <ClInclude Include="Dependencies\Licorice\Numerics\Vector2.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\CatchTheBeatKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuManiaKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\TaikoKeys.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Mods.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\OsuModes.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\PlayModes.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\Hook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\HookManager.h" />
@@ -197,9 +204,6 @@
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="SDK\ISDK.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
-    <ClInclude Include="SDK\OsuKeys.h" />
-    <ClInclude Include="Sdk\OsuModes.h" />
-    <ClInclude Include="Sdk\OsuMods.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />

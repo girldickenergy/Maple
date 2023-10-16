@@ -45,7 +45,7 @@ void GameBase::TryFindClientBounds(uintptr_t start, unsigned int size)
         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("56 FF 75 F0 8B 15 ?? ?? ?? ?? 83 C2 04 39 09")))
     {
         m_ClientBoundsAddress = *reinterpret_cast<uintptr_t*>(clientBounds + 0x6);
-        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "m_ClientBoundsAddress -> %x", m_ClientBoundsAddress);
+
         m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found GameBase.ClientBounds");
     }
 }
