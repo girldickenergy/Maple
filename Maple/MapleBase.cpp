@@ -167,7 +167,7 @@ void __fastcall MapleBase::ScoreSubmitHook(uintptr_t instance)
     {
         m_ScoreSubmissionUnsafe = true;
 
-        m_RuntimeLogger->Log(LogLevel::Important, xorstr_("Failed to reset Player.flag!"));
+        m_RuntimeLogger->Log(LogLevel::Important, xorstr_("Failed to reset Player.flag because it was null! Invalidating score submission."));
     }
 
     bool allowSubmission = !m_ScoreSubmissionUnsafe;
@@ -215,7 +215,7 @@ void MapleBase::TryHookSetMousePosition(uintptr_t start, unsigned int size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 83 EC 14 A1 ?? ?? ?? ?? 83 C0 04 D9 45 08 D9 18 D9 45 0C D9 58 04 A1 ?? ?? ?? ?? 83 C0 04 D9 00 D9 5D FC")))
     {
         if (m_Vanilla->GetHookManager().InstallHook(xorstr_("MouseManager.SetMousePosition"), setMousePosition, reinterpret_cast<uintptr_t>(SetMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition)) == VanillaResult::Success)
-            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked MouseManager.SetMousePosition!"));
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked MouseManager.SetMousePosition"));
         else
             m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook MouseManager.SetMousePosition!"));
     }
@@ -243,7 +243,7 @@ void MapleBase::TryHookMouseViaKeyboardControls(uintptr_t start, unsigned int si
             m_RightButton = *reinterpret_cast<int**>(rightButton + 0xD);
 
         if (m_Vanilla->GetHookManager().InstallHook(xorstr_("InputManager.MouseViaKeyboardControls"), mouseViaKeyboardControls, reinterpret_cast<uintptr_t>(MouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls)) == VanillaResult::Success)
-            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked InputManager.MouseViaKeyboardControls!"));
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked InputManager.MouseViaKeyboardControls"));
         else
             m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook InputManager.MouseViaKeyboardControls!"));
     }
@@ -258,7 +258,7 @@ void MapleBase::TryHookScoreSubmit(uintptr_t start, unsigned int size)
         oScoreSubmit = reinterpret_cast<fnScoreSubmit>(static_cast<intptr_t>(submit + 0x1B) + *reinterpret_cast<int*>(submit + 0x1B) + 0x4);
         *reinterpret_cast<intptr_t*>(submit + 0x1B) = reinterpret_cast<intptr_t>(ScoreSubmitHook) - static_cast<intptr_t>(submit + 0x1B) - 0x4;
 
-        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Score.Submit!"));
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Score.Submit"));
     }
 }
 
@@ -269,7 +269,7 @@ void MapleBase::TryHookOnPlayerLoadComplete(uintptr_t start, unsigned int size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D")))
     {
         if (m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.OnLoadComplete"), onPlayerLoadComplete, reinterpret_cast<uintptr_t>(OnPlayerLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnPlayerLoadComplete)) == VanillaResult::Success)
-            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.OnLoadComplete!"));
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.OnLoadComplete"));
         else
             m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.OnLoadComplete!"));
     }
@@ -282,7 +282,7 @@ void MapleBase::TryHookPlayerDispose(uintptr_t start, unsigned int size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 8B F1 8B 8E B8 00 00 00 85 C9 74 0D BA 01 00 00 00 8B 01 8B 40 28 FF 50 1C")))
     {
         if (m_Vanilla->GetHookManager().InstallHook(xorstr_("Player.Dispose"), playerDispose, reinterpret_cast<uintptr_t>(PlayerDisposeHook), reinterpret_cast<uintptr_t*>(&oPlayerDispose)) == VanillaResult::Success)
-            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.Dispose!"));
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.Dispose"));
         else
             m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.Dispose!"));
     }
@@ -295,7 +295,7 @@ void MapleBase::TryHookSubmitError(uintptr_t start, unsigned int size)
          : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 83 EC 40 8B F1 8D 7D C0 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D C8 83 3D")))
     {
         if (m_Vanilla->GetHookManager().InstallHook(xorstr_("ErrorSubmission.Submit"), submitError, reinterpret_cast<uintptr_t>(SubmitErrorHook), reinterpret_cast<uintptr_t*>(&oSubmitError)) == VanillaResult::Success)
-            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked ErrorSubmission.Submit!"));
+            m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked ErrorSubmission.Submit"));
         else
             m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook ErrorSubmission.Submit!"));
     }
@@ -309,7 +309,7 @@ void MapleBase::TryFindPlayerFlag(uintptr_t start, unsigned int size)
     {
         m_PlayerFlag = *reinterpret_cast<int**>(playerFlag + 0x9);
 
-        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Found Player.flag!"));
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Found Player.flag"));
     }
 }
 
@@ -366,6 +366,11 @@ void MapleBase::MakeScoreSubmissionUnsafe()
 bool MapleBase::GetIsScoreSubmissionUnsafe()
 {
     return m_ScoreSubmissionUnsafe;
+}
+
+std::shared_ptr<Logger> MapleBase::GetRuntimeLogger()
+{
+    return m_RuntimeLogger;
 }
 
 std::shared_ptr<Vanilla> MapleBase::GetVanilla()

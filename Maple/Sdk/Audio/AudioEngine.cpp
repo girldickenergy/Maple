@@ -9,6 +9,8 @@ void AudioEngine::TryFindTime(uintptr_t start, unsigned int size)
 	: m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("D9 58 2C 8B 3D ?? ?? ?? ?? 8B 1D")))
     {
         m_Time = *reinterpret_cast<int**>(time + 0xB);
+
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found AudioEngine.Time");
     }
 }
 

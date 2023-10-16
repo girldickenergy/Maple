@@ -9,6 +9,8 @@ void ModManager::TryFindModStatus(uintptr_t start, unsigned int size)
         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("53 8B F1 A1 ?? ?? ?? ?? 25 ?? ?? ?? ?? 85 C0 0F 9F C0 0F B6 C0 8B F8 80 3D")))
     {
         m_ModStatus = *reinterpret_cast<OsuMods**>(modStatus + 0x4);
+
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found ModManager.ModStatus");
     }
 }
 

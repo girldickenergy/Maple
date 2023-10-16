@@ -9,9 +9,9 @@ void __fastcall GameField::TryFindInstance(uintptr_t start, unsigned int size)
 	: m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? A1")))
     {
         m_Instance = *reinterpret_cast<GameFieldInternal***>(instance + 0xB);
-    }
 
-    // todo: log this
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found GameBase.GameField");
+    }
 }
 
 GameFieldInternal* GameField::GetInstance()

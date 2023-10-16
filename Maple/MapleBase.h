@@ -92,5 +92,6 @@ public:
     void MakeScoreSubmissionUnsafe();
     bool GetIsScoreSubmissionUnsafe();
 
+    std::shared_ptr<Logger> GetRuntimeLogger();
     std::shared_ptr<Vanilla> GetVanilla();
 };

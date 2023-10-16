@@ -4,11 +4,13 @@
 
 void __fastcall Score::TryFindInstance(uintptr_t start, unsigned int size)
 {
-    if (const uintptr_t submit = start && size
+    if (const uintptr_t instance = start && size
         ? m_MapleBase->GetVanilla()->GetPatternScanner().FindPatternInRange(xorstr_("00 7E ?? 8B 3D ?? ?? ?? ?? C6 87 ?? ?? ?? ?? 00 8B 3D ?? ?? ?? ?? 8B CF 39 09 E8 ?? ?? ?? ?? 8B 8E"), start, size)
         : m_MapleBase->GetVanilla()->GetPatternScanner().FindPattern(xorstr_("00 7E ?? 8B 3D ?? ?? ?? ?? C6 87 ?? ?? ?? ?? 00 8B 3D ?? ?? ?? ?? 8B CF 39 09 E8 ?? ?? ?? ?? 8B 8E")))
     {
-        m_Instance = *reinterpret_cast<ScoreInternal***>(submit + 0x12);
+        m_Instance = *reinterpret_cast<ScoreInternal***>(instance + 0x12);
+
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Verbose, "Found Player.currentScore");
     }
 }
 
@@ -46,8 +48,9 @@ void __fastcall Score::SetStartTime(int startTime)
 
     if (!instance)
     {
-        // todo: log this
         m_MapleBase->MakeScoreSubmissionUnsafe();
+
+        m_MapleBase->GetRuntimeLogger()->Log(LogLevel::Important, "Failed to set score start time because score instance was null! Invalidating score submission.");
 
         return;
     }
