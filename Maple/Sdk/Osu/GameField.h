@@ -16,8 +16,7 @@ public:
     void __fastcall OnJIT(uintptr_t address, unsigned size) override;
     std::string __fastcall GetName() override;
 
-    float __fastcall GetWidth();
-    float __fastcall GetHeight();
+    Vector2 GetSize();
     float __fastcall GetRatio();
     Vector2 __fastcall GetOffset();
     Vector2 __fastcall DisplayToField(Vector2 display);

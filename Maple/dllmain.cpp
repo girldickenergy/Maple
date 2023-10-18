@@ -56,7 +56,7 @@ public:
 
     void __fastcall OnPlayerLoad() override
     {
-        printf("Player loaded\nPlayfield size: %f, %f\nMods: %i\nPlayback rate: %f\n", m_GameField->GetWidth(), m_GameField->GetHeight(), m_ModManager->GetActiveMods(), m_ModManager->GetModPlaybackRate());
+        printf("Player loaded\nPlayfield size: %f, %f\nMods: %i\nPlayback rate: %f\n", m_GameField->GetSize().X, m_GameField->GetSize().Y, m_ModManager->GetActiveMods(), m_ModManager->GetModPlaybackRate());
     }
 
     void __fastcall OnPlayerExit() override

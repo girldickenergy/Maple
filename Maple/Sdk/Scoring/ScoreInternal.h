@@ -1,34 +1,32 @@
 #pragma once
 
+#include "CLR/CLRList.h"
 #include "CLR/CLRString.h"
 #include "PlayModes.h"
 
-#include <cstdint>
-
-struct ScoreInternal
+struct ScoreInternal : CLRObject
 {
-    uintptr_t VTable;
     long OnlineId;
     double TotalScoreDouble;
     double CurrentHp;
-    uintptr_t EnabledMods;
+    CLRObject* EnabledMods;
     CLRString* FileChecksum;
-    uintptr_t HpGraph;
+    CLRObject* HpGraph;
     CLRString* PlayerName;
     CLRString* HpGraphString;
-    uintptr_t ReplayCompressed;
-    uintptr_t Replay;
-    uintptr_t HitErrors;
-    uintptr_t SpinningRates;
-    uintptr_t SectionResults;
-    uintptr_t Frames;
-    uintptr_t User;
+    CLRArray<uint8_t>* ReplayCompressed;
+    CLRList<CLRObject*>* Replay;
+    CLRList<int>* HitErrors;
+    CLRList<int>* SpinningRates;
+    CLRList<bool>* SectionResults;
+    CLRList<CLRObject*>* Frames;
+    CLRObject* User;
     CLRString* SubmissionResponseString;
-    uintptr_t ExtraData;
-    uintptr_t Processor;
-    uintptr_t Beatmap;
-    uintptr_t GotReplayData;
-    uintptr_t SubmissionComplete;
+    CLRObject* ExtraData;
+    CLRObject* Processor;
+    CLRObject* Beatmap;
+    CLRObject* GotReplayData;
+    CLRObject* SubmissionComplete;
     PlayModes PlayMode;
     int MaxCombo;
     int OnlineRank;
@@ -52,5 +50,5 @@ struct ScoreInternal
     bool AllowSubmission;
     bool HadStoryboard;
     bool HasOnlineReplay;
-    uintptr_t Date;
+    CLRObject* Date;
 };

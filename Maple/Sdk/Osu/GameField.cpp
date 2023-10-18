@@ -37,25 +37,18 @@ std::string __fastcall GameField::GetName()
     return xorstr_("GameField");
 }
 
-float __fastcall GameField::GetWidth()
+Vector2 GameField::GetSize()
 {
     const GameFieldInternal* instance = GetInstance();
 
-    return instance ? instance->Width : 0.f;
-}
-
-float __fastcall GameField::GetHeight()
-{
-    const GameFieldInternal* instance = GetInstance();
-
-    return instance ? instance->Height : 0.f;
+    return instance ? instance->Size : Vector2();
 }
 
 float __fastcall GameField::GetRatio()
 {
     const GameFieldInternal* instance = GetInstance();
 
-    return instance ? instance->Height / 384.f : 1.f;
+    return instance ? instance->Size.Y / 384.f : 1.f;
 }
 
 Vector2 __fastcall GameField::GetOffset()

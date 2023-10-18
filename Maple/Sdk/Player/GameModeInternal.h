@@ -1,11 +1,10 @@
 #pragma once
 
-#include <cstdint>
+#include "CLR/CLRObject.h"
 
-struct GameModeInternal
+struct GameModeInternal : CLRObject
 {
-    uintptr_t Vtable;
-    uintptr_t Game;
-    uintptr_t Disposed;
-    uintptr_t baseSpriteManager;
+    CLRObject* Game;
+    CLRObject* Disposed;
+    CLRObject* baseSpriteManager;
 };

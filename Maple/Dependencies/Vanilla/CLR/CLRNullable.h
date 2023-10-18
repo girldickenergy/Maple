@@ -3,7 +3,7 @@
 #include "CLRObject.h"
 
 template <typename T>
-struct Nullable : CLRObject
+struct CLRNullable : CLRObject
 {
     T Value;
 };

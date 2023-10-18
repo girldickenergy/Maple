@@ -1,60 +1,62 @@
 #pragma once
 
-#include <cstdint>
-
 #include "CLR/CLRString.h"
+#include "CLR/CLRList.h"
+#include "CLR/CLRNullable.h"
 #include "Numerics/Vector2.h"
 
-struct PlayerInternal
+#include "GameModeInternal.h"
+
+struct PlayerInternal : GameModeInternal
 {
     long scoreChecksumNumerical;
     long unknownPauseThing;
     double jumpCount;
     long dateTimeCheckTimeInitial;
-    uintptr_t s_arrows;
-    uintptr_t ActiveHitObject;
-    uintptr_t visualSettings;
-    uintptr_t scrubber;
+    CLRList<CLRObject*>* s_arrows;
+    CLRObject* ActiveHitObject;
+    CLRObject* visualSettings;
+    CLRObject* scrubber;
     CLRString* currentProgressString;
-    uintptr_t eventManager;
-    uintptr_t hitObjectManager;
-    uintptr_t pauseCursor;
-    uintptr_t pauseCursorText;
-    uintptr_t pauseSprites;
-    uintptr_t pauseContinue;
-    uintptr_t pauseRetry;
-    uintptr_t pauseBack;
-    uintptr_t progressBar;
-    uintptr_t Ruleset;
-    uintptr_t s_breakFail;
-    uintptr_t s_breakPass;
-    uintptr_t breakStopTimes;
-    uintptr_t scoreChecksum;
-    uintptr_t scoreEntry;
-    uintptr_t skip;
-    uintptr_t spectatorList;
-    uintptr_t spriteManager;
-    uintptr_t spriteManagerAdd;
-    uintptr_t spriteManagerBelowHitObjectsWidescreen;
-    uintptr_t spriteManagerBelowScoreboardWidescreen;
-    uintptr_t spriteManagerMetadata;
-    uintptr_t spriteManagerInterface;
-    uintptr_t spriteManagerInterfaceWidescreen;
-    uintptr_t spriteManagerPauseScreen;
-    uintptr_t spriteManagerHighest;
-    uintptr_t t_star2;
-    uintptr_t inputOverlay;
-    uintptr_t showInterfaceToggle;
-    uintptr_t Loader;
-    uintptr_t session;
-    uintptr_t warnings;
-    uintptr_t previewAudioTrack;
-    uintptr_t pauseScreenLoop;
-    uintptr_t OnClick;
-    uintptr_t PendingScoreChangeObject;
-    uintptr_t pauseArrows;
-    uintptr_t loadingSpinner;
-    uintptr_t beatmap;
+    CLRObject* eventManager;
+    CLRObject* hitObjectManager;
+    CLRObject* pauseCursor;
+    CLRObject* pauseCursorText;
+    CLRList<CLRObject*>* pauseSprites;
+    CLRObject* pauseContinue;
+    CLRObject* pauseRetry;
+    CLRObject* pauseBack;
+    CLRObject* progressBar;
+    CLRObject* Ruleset;
+    CLRObject* s_breakFail;
+    CLRObject* s_breakPass;
+    CLRObject* breakStopTimes;
+    CLRString* scoreChecksum;
+    CLRObject* scoreEntry;
+    CLRObject* skip;
+    CLRObject* spectatorList;
+    CLRObject* spriteManager;
+    CLRObject* spriteManagerAdd;
+    CLRObject* spriteManagerBelowHitObjectsWidescreen;
+    CLRObject* spriteManagerBelowScoreboardWidescreen;
+    CLRObject* spriteManagerMetadata;
+    CLRObject* spriteManagerInterface;
+    CLRObject* spriteManagerInterfaceWidescreen;
+    CLRObject* spriteManagerPauseScreen;
+    CLRObject* spriteManagerHighest;
+    CLRObject* t_star2;
+    CLRObject* inputOverlay;
+    CLRObject* showInterfaceToggle;
+    CLRObject* Loader;
+    CLRObject* session;
+    CLRList<CLRObject*>* warnings;
+    CLRObject* previewAudioTrack;
+    CLRObject* pauseScreenLoop;
+    CLRObject* OnClick;
+    CLRObject* PendingScoreChangeObject;
+    CLRList<CLRObject*>* pauseArrows;
+    CLRObject* loadingSpinner;
+    CLRObject* beatmap;
     float bloomBurst;
     int burstSampleNumber;
     int currentUpdateFrame;
@@ -126,18 +128,7 @@ struct PlayerInternal
     Vector2 pauseLocation;
     Vector2 lastHoveredCircle;
     Vector2 mp;
-    bool lastMpHasValue;
-    uint8_t padding1[3];
-    Vector2 lastMp;
-    bool twoFramesAgoHasValue;
-    uint8_t padding2[3];
-    Vector2 twoFramesAgo;
-    uint8_t starBreakAdditiveR;
-    uint8_t padding3[3];
-    uint8_t starBreakAdditiveG;
-    uint8_t padding4[3];
-    uint8_t starBreakAdditiveB;
-    uint8_t padding5[3];
-    uint8_t starBreakAdditiveA;
-    uint8_t padding6[3];
+    CLRNullable<Vector2> lastMp;
+    CLRNullable<Vector2> twoFramesAgo;
+    uint8_t starBreakAdditive[0x10];
 };
