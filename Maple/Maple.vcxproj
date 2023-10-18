@@ -207,6 +207,8 @@
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
+    <ClInclude Include="SDK\Player\GameModeInternal.h" />
+    <ClInclude Include="SDK\Player\PlayerInternal.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="Storage\Storage.h" />

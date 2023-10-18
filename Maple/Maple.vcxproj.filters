@@ -104,6 +104,12 @@
     <Filter Include="Dependencies\OsuDataTypes\Gameplay\Keys">
       <UniqueIdentifier>{e0fabcc0-66ad-46bc-9e32-a2e2429c68e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDK\GameModes">
+      <UniqueIdentifier>{0cbc60fe-c3af-4c19-b90c-e5a91d5f1a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\GameModes\Play">
+      <UniqueIdentifier>{a511e8a4-3466-4115-805c-e00baa692f2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\IModule.h">
@@ -216,6 +222,12 @@
     </ClInclude>
     <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuKeys.h">
       <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Player\PlayerInternal.h">
+      <Filter>SDK\GameModes\Play</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Player\GameModeInternal.h">
+      <Filter>SDK\GameModes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
