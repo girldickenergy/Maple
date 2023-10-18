@@ -2,25 +2,15 @@
 
 #include <string>
 
-class CLRString
+#include "CLRObject.h"
+
+struct CLRString : CLRObject
 {
-    struct StringObject
-    {
-        void* vtable;
-        int length;
-        wchar_t* buffer;
-    };
-
-    StringObject ptr;
-
-public:
-    int Length() const
-    {
-        return ptr.length;
-    }
+    size_t Length;
+    wchar_t* Text;
 
     std::wstring_view Data() const
     {
-        return reinterpret_cast<const wchar_t*>(&ptr.buffer);
+        return reinterpret_cast<const wchar_t*>(&Text);
     }
 };

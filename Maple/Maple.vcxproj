@@ -187,6 +187,10 @@
     <ClInclude Include="Dependencies\OsuDataTypes\Mods.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\OsuModes.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\PlayModes.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRArray.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRList.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRNullable.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRObject.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\Hook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\HookManager.h" />
