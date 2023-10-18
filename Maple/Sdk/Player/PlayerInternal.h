@@ -9,10 +9,10 @@
 
 struct PlayerInternal : GameModeInternal
 {
-    long scoreChecksumNumerical;
-    long unknownPauseThing;
+    long long scoreChecksumNumerical;
+    long long unknownPauseThing;
     double jumpCount;
-    long dateTimeCheckTimeInitial;
+    long long dateTimeCheckTimeInitial;
     CLRList<CLRObject*>* s_arrows;
     CLRObject* ActiveHitObject;
     CLRObject* visualSettings;

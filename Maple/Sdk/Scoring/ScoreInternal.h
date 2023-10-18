@@ -4,9 +4,9 @@
 #include "CLR/CLRString.h"
 #include "PlayModes.h"
 
-struct ScoreInternal : CLRObject
+struct [[gnu::packed]] ScoreInternal : CLRObject
 {
-    long OnlineId;
+    long long OnlineId;
     double TotalScoreDouble;
     double CurrentHp;
     CLRObject* EnabledMods;
@@ -51,4 +51,4 @@ struct ScoreInternal : CLRObject
     bool HadStoryboard;
     bool HasOnlineReplay;
     CLRObject* Date;
-};
+} __attribute__((packed));
