@@ -39,6 +39,9 @@
     <ClCompile Include="Sdk\Osu\GameBase.cpp">
       <Filter>SDK\Osu</Filter>
     </ClCompile>
+    <ClCompile Include="Sdk\GameModes\Play\Player.cpp">
+      <Filter>SDK\GameModes\Play</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -223,11 +226,18 @@
     <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuKeys.h">
       <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Player\PlayerInternal.h">
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRArray.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRList.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRNullable.h" />
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRObject.h" />
+    <ClInclude Include="Sdk\GameModes\GameModeInternal.h">
+      <Filter>SDK\GameModes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdk\GameModes\Play\PlayerInternal.h">
       <Filter>SDK\GameModes\Play</Filter>
     </ClInclude>
-    <ClInclude Include="SDK\Player\GameModeInternal.h">
-      <Filter>SDK\GameModes</Filter>
+    <ClInclude Include="Sdk\GameModes\Play\Player.h">
+      <Filter>SDK\GameModes\Play</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

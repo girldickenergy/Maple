@@ -164,6 +164,7 @@
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="MapleBase.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
+    <ClCompile Include="Sdk\GameModes\Play\Player.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
     <ClCompile Include="Sdk\Osu\GameBase.cpp" />
     <ClCompile Include="SDK\Osu\GameField.cpp" />
@@ -206,13 +207,14 @@
     <ClInclude Include="MapleBase.h" />
     <ClInclude Include="Modules\IModule.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
+    <ClInclude Include="Sdk\GameModes\GameModeInternal.h" />
+    <ClInclude Include="Sdk\GameModes\Play\Player.h" />
+    <ClInclude Include="Sdk\GameModes\Play\PlayerInternal.h" />
     <ClInclude Include="SDK\ISDK.h" />
     <ClInclude Include="Sdk\Mods\ModManager.h" />
     <ClInclude Include="Sdk\Osu\GameBase.h" />
     <ClInclude Include="SDK\Osu\GameField.h" />
     <ClInclude Include="SDK\Osu\GameFieldInternal.h" />
-    <ClInclude Include="SDK\Player\GameModeInternal.h" />
-    <ClInclude Include="SDK\Player\PlayerInternal.h" />
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="Storage\Storage.h" />

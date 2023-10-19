@@ -5,7 +5,7 @@
 #include "CLR/CLRNullable.h"
 #include "Numerics/Vector2.h"
 
-#include "GameModeInternal.h"
+#include "../GameModeInternal.h"
 
 struct PlayerInternal : GameModeInternal
 {
@@ -72,7 +72,7 @@ struct PlayerInternal : GameModeInternal
     int Status;
     int lastHitTime;
     int firstHitTime;
-    int ModeOriginal;
+    PlayModes ModeOriginal;
     float previewAudioTrackVolume;
     int lastPlayerOffsetChange;
     int lastPressTime;
