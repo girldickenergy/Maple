@@ -72,7 +72,7 @@ uintptr_t Milk::encryptValue(uintptr_t valuePointer, uintptr_t xorKey)
     for (int i = 0; i < sizeof(uint32_t); i++)
     {
         auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
-        *resultPointer = *resultPointer ^ static_cast<uint8_t>(xorKey);
+        *resultPointer = *resultPointer ^ *(reinterpret_cast<uint8_t*>(&xorKey) + i % 4);
         *resultPointer = *resultPointer + *(reinterpret_cast<uint8_t*>(&_secondaryKey) + i % 4);
     }
 
@@ -86,7 +86,7 @@ uintptr_t Milk::decryptValue(uintptr_t valuePointer, uintptr_t xorKey)
     {
         auto resultPointer = reinterpret_cast<uint8_t*>(&result) + i;
         *resultPointer = *resultPointer - *(reinterpret_cast<uint8_t*>(&_secondaryKey) + i % 4);
-        *resultPointer = *resultPointer ^ static_cast<uint8_t>(xorKey);
+        *resultPointer = *resultPointer ^ *(reinterpret_cast<uint8_t*>(&xorKey) + i % 4);
     }
 
     return result;
@@ -147,7 +147,7 @@ uintptr_t Milk::findSecondaryKey()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("55 8B EC 51 89 4D FC E8 ?? ?? ?? ?? 8B E5 5D C3");
+    auto pattern = xorstr_("55 8B EC B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 ?? ?? E8 ?? ?? ?? ?? 89 ?? ?? C7");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
@@ -246,11 +246,12 @@ bool Milk::Prepare()
 
     _secondaryKey = findSecondaryKey();
     if (!_secondaryKey)
-	return false;
+		return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SC != 0x00000000"));
 
     _crcMap = reinterpret_cast<std::map<uint32_t, CRC*>*>(_firstCRCAddress);
+
     _firstCRC = _crcMap->begin()->second;
     auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
 
