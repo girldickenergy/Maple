@@ -33,7 +33,7 @@ void AudioEngine::Initialize()
 	Memory::AddObject(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("55 8B EC 56 8B 35 ?? ?? ?? ?? 85 F6 75 05 5E 5D C2 ?? ?? 33 D2 89 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 0F 94 C2 0F B6 D2 8B CE"));
 	Memory::AddHook(xorstr_("AudioEngine::SetCurrentPlaybackRate"), xorstr_("AudioEngine::SetCurrentPlaybackRate"), reinterpret_cast<uintptr_t>(setCurrentPlaybackRateHook), reinterpret_cast<uintptr_t*>(&oSetCurrentPlaybackRate));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 int AudioEngine::GetTime()
@@ -64,7 +64,7 @@ double AudioEngine::GetModTempo()
 float AudioEngine::GetModFrequency(float currentFrequency)
 {
 	if (ModManager::CheckActive(Mods::Nightcore) && Config::Timewarp::Enabled)
-		return currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f;
+        return std::round(currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f);
 
 	return currentFrequency;
 }
