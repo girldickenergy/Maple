@@ -1,5 +1,7 @@
 #include "StringUtilities.h"
 
+#include <random>
+
 std::vector<std::string> StringUtilities::Split(const std::string& s, const std::string& delimiter)
 {
 	std::string str = s;
@@ -32,4 +34,30 @@ std::string StringUtilities::ByteArrayToString(const std::vector<unsigned char> 
 		str.push_back(c);
 
 	return str;
+}
+
+std::string StringUtilities::GenerateRandomString(size_t size, const std::string& seed)
+{
+    constexpr std::hash<std::string> hasher{};
+
+    const size_t seedHashed = hasher(seed);
+
+	if (randomStringLookupTable.contains(seedHashed))
+		return randomStringLookupTable[seedHashed];
+
+    static const char charset[] = 
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	std::default_random_engine generator(seedHashed);
+    std::uniform_int_distribution distribution(0, static_cast<int>(strlen(charset)) - 1);
+
+    std::string str;
+    for (int i = 0; i < size; ++i)
+        str += charset[distribution(generator)];
+
+	randomStringLookupTable[seedHashed] = str;
+
+    return str;
 }

@@ -8,6 +8,7 @@
 #include "../Widgets/Widgets.h"
 #include "../../SDK/Scoring/Score.h"
 #include "../../SDK/Osu/GameBase.h"
+#include "../../Utilities/Strings/StringUtilities.h"
 
 void ScoreSubmissionDialog::Render()
 {
@@ -36,7 +37,7 @@ void ScoreSubmissionDialog::Render()
 	}
 
 	ImGui::SetNextWindowSize(windowSize);
-	ImGui::Begin(xorstr_("Score Submission Dialog"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Begin(StringUtilities::GenerateRandomString(16, xorstr_("Score Submission Dialog")).c_str(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 	{
 		Widgets::BeginPanel(xorstr_("Score Submission"), ImVec2(windowSize.x, panelContentHeight));
 		{

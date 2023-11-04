@@ -16,6 +16,7 @@
 #include "../../Features/ReplayBot/ReplayBot.h"
 #include "../../Utilities/Clipboard/ClipboardUtilities.h"
 #include "../../Logging/Logger.h"
+#include "../../Utilities/Strings/StringUtilities.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -61,7 +62,7 @@ void MainMenu::Render()
     const bool expanded = currentTab != -1;
     ImGui::SetNextWindowSize(expanded ? StyleProvider::MainMenuSize : StyleProvider::MainMenuSideBarSize);
     ImGui::SetNextWindowPos(ImVec2(clientSize.X / 2 - StyleProvider::MainMenuSize.x / 2, clientSize.Y / 2 - StyleProvider::MainMenuSize.y / 2), ImGuiCond_Once);
-    ImGui::Begin(xorstr_("Main Menu"), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Begin(StringUtilities::GenerateRandomString(16, xorstr_("Main Menu")).c_str(), nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
     {
         const ImVec2 menuSize = ImGui::GetCurrentWindow()->Size;
         const ImVec2 menuPos = ImGui::GetCurrentWindow()->Pos;
@@ -69,7 +70,7 @@ void MainMenu::Render()
         ImGui::GetWindowDrawList()->AddRectFilled(menuPos, menuPos + StyleProvider::MainMenuSideBarSize, ImColor(StyleProvider::MenuColourDark), style.WindowRounding, expanded ? ImDrawFlags_RoundCornersAll & ~ImDrawFlags_RoundCornersTopRight : ImDrawFlags_RoundCornersAll);
 
         ImGui::SetCursorPos(StyleProvider::Padding);
-        ImGui::BeginChild(xorstr_("Side Bar"), StyleProvider::MainMenuSideBarSize - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
+        ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("Side Bar")).c_str(), StyleProvider::MainMenuSideBarSize - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground);
         {
             const ImVec2 sideBarSize = ImGui::GetCurrentWindow()->Size;
 
@@ -89,7 +90,7 @@ void MainMenu::Render()
 
             ImGui::Spacing();
 
-            ImGui::BeginChild(xorstr_("User Info"), ImVec2(sideBarSize.x, StyleProvider::MainMenuUserInfoHeight), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("User Info")).c_str(), ImVec2(sideBarSize.x, StyleProvider::MainMenuUserInfoHeight), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 userInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 userInfoSize = ImGui::GetCurrentWindow()->Size;
@@ -110,7 +111,7 @@ void MainMenu::Render()
             }
             ImGui::EndChild();
 
-            ImGui::BeginChild(xorstr_("Tabs"), ImVec2(sideBarSize.x, sideBarSize.y - ImGui::GetCursorPosY() - StyleProvider::MainMenuBuildInfoHeight - style.ItemSpacing.y), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("Tabs")).c_str(), ImVec2(sideBarSize.x, sideBarSize.y - ImGui::GetCursorPosY() - StyleProvider::MainMenuBuildInfoHeight - style.ItemSpacing.y), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 tabsPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 tabsSize = ImGui::GetCurrentWindow()->Size;
@@ -119,7 +120,7 @@ void MainMenu::Render()
 
                 const float tabsHeight = (40 * StyleProvider::Scale) * 8; //scaled tab height * tab count
                 ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, tabsSize.y / 2 - tabsHeight / 2));
-                ImGui::BeginChild(xorstr_("Tabs##001"), ImVec2(tabsSize.x - (StyleProvider::Padding.x * 2), tabsHeight), false, ImGuiWindowFlags_NoBackground);
+                ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("Tabs##001")).c_str(), ImVec2(tabsSize.x - (StyleProvider::Padding.x * 2), tabsHeight), false, ImGuiWindowFlags_NoBackground);
                 {
                     const ImVec2 tabSize = ImVec2(ImGui::GetCurrentWindow()->Size.x, 40 * StyleProvider::Scale);
 
@@ -157,7 +158,7 @@ void MainMenu::Render()
             }
             ImGui::EndChild();
 
-            ImGui::BeginChild(xorstr_("Build Info"), ImVec2(sideBarSize.x, StyleProvider::MainMenuBuildInfoHeight), false, ImGuiWindowFlags_NoBackground);
+            ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("Build Info")).c_str(), ImVec2(sideBarSize.x, StyleProvider::MainMenuBuildInfoHeight), false, ImGuiWindowFlags_NoBackground);
             {
                 const ImVec2 buildInfoPos = ImGui::GetCurrentWindow()->Pos;
                 const ImVec2 buildInfoSize = ImGui::GetCurrentWindow()->Size;
@@ -181,7 +182,7 @@ void MainMenu::Render()
         ImGui::EndChild();
 
         ImGui::SetCursorPos(ImVec2(StyleProvider::MainMenuSideBarSize.x, 0) + StyleProvider::Padding);
-        ImGui::BeginChild(xorstr_("Options"), ImVec2(StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x, StyleProvider::MainMenuSize.y) - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
+        ImGui::BeginChild(StringUtilities::GenerateRandomString(16, xorstr_("Options")).c_str(), ImVec2(StyleProvider::MainMenuSize.x - StyleProvider::MainMenuSideBarSize.x, StyleProvider::MainMenuSize.y) - StyleProvider::Padding * 2, false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
         {
             ImGui::PushFont(StyleProvider::FontDefault);
 

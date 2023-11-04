@@ -4,8 +4,10 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
+#include "xorstr.hpp"
 
 #include "../StyleProvider.h"
+#include "../../Utilities/Strings/StringUtilities.h"
 
 const char* Widgets::patchFormatStringFloatToInt(const char* fmt)
 {
@@ -430,7 +432,7 @@ void Widgets::BeginPanel(const char* label, const ImVec2& size)
     const ImVec2 labelSize = ImGui::CalcTextSize(label);
     const float titleBarHeight = labelSize.y + StyleProvider::Padding.y * 2;
 
-    ImGui::BeginChild(("###panelChild1-" + std::string(label)).c_str(), ImVec2(size.x, size.y + titleBarHeight + StyleProvider::Padding.y * 2), false, ImGuiWindowFlags_NoBackground);
+    ImGui::BeginChild(StringUtilities::GenerateRandomString(16, StringUtilities::GenerateRandomString(4, label)).c_str(), ImVec2(size.x, size.y + titleBarHeight + StyleProvider::Padding.y * 2), false, ImGuiWindowFlags_NoBackground);
     {
         ImGui::GetWindowDrawList()->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + titleBarHeight), ImColor(StyleProvider::MenuColourVeryDark), style.ChildRounding, ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_TopRight);
         ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(pos.x, pos.y + titleBarHeight), ImVec2(pos.x + size.x, pos.y + titleBarHeight + size.y + StyleProvider::Padding.y * 2), ImColor(StyleProvider::MenuColourDark), style.ChildRounding, ImDrawCornerFlags_BotLeft | ImDrawCornerFlags_BotRight);
@@ -441,7 +443,7 @@ void Widgets::BeginPanel(const char* label, const ImVec2& size)
         ImGui::PopFont();
 
         ImGui::SetCursorPos(ImVec2(StyleProvider::Padding.x, titleBarHeight + StyleProvider::Padding.y));
-        ImGui::BeginChild(("###panelChild2-" + std::string(label)).c_str(), ImVec2(size.x - StyleProvider::Padding.x * 2, size.y), false, ImGuiWindowFlags_NoBackground);
+        ImGui::BeginChild(StringUtilities::GenerateRandomString(16, StringUtilities::GenerateRandomString(8, label)).c_str(), ImVec2(size.x - StyleProvider::Padding.x * 2, size.y), false, ImGuiWindowFlags_NoBackground);
         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
     }
 }
