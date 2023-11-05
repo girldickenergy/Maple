@@ -34,11 +34,12 @@ void MilkThread::prepareCodeCave()
     VIRTUALIZER_TIGER_WHITE_START
 
 	DWORD oldProtection;
-	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
-	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0xE9; // rel jmp
-	const uintptr_t jumpLocation = _function - 5 - reinterpret_cast<uintptr_t>(_codeCaveLocation);
+	VirtualProtect(_codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
+	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0x68; // push
+    const uintptr_t jumpLocation = _function;
 	*reinterpret_cast<uint32_t*>((reinterpret_cast<uintptr_t>(_codeCaveLocation) + 1)) = jumpLocation;
-	VirtualProtect(_codeCaveLocation, 5, oldProtection, &oldProtection);
+    *reinterpret_cast<uint8_t *>((reinterpret_cast<uintptr_t>(_codeCaveLocation) + 5)) = 0xC3; // ret
+	VirtualProtect(_codeCaveLocation, 6, oldProtection, &oldProtection);
 
 	_codeCavePrepared = true;
 
@@ -50,10 +51,11 @@ void MilkThread::CleanCodeCave()
         VIRTUALIZER_TIGER_WHITE_START
 
 	DWORD oldProtection;
-	VirtualProtect(_codeCaveLocation, 5, PAGE_EXECUTE_READWRITE, &oldProtection);
+	VirtualProtect(_codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0xCC;
 	*(_codeCaveLocation + 1) = 0xCCCCCCCC;
-	VirtualProtect(_codeCaveLocation, 5, oldProtection, &oldProtection);
+	*reinterpret_cast<uint8_t*>(_codeCaveLocation + 5) = 0xCC;
+	VirtualProtect(_codeCaveLocation, 6, oldProtection, &oldProtection);
 
 	_codeCavePrepared = false;
 
