@@ -74,12 +74,18 @@ std::string Spoofer::encryptEntry(const std::string& key, const std::string& val
 	std::stringstream ss;
 	ss << key << xorstr_("=") << value;
 
-	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("tTaUYiMpXIDEplEQ")));
+	std::string entry = ss.str();
+    CryptoUtilities::MapleXOR(entry, xorstr_("tTaUYiMpXIDEplEQ"));
+
+	return CryptoUtilities::Base64Encode(entry);
 }
 
 std::string Spoofer::decryptEntry(const std::string& entry)
 {
-    return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("tTaUYiMpXIDEplEQ"));
+	std::string entryDecoded = CryptoUtilities::Base64Decode(entry);
+	CryptoUtilities::MapleXOR(entryDecoded, xorstr_("tTaUYiMpXIDEplEQ"));
+
+	return entryDecoded;
 }
 
 void Spoofer::refresh()
@@ -200,7 +206,8 @@ void Spoofer::Import()
 	if (encodedProfileData.empty())
 		return;
 
-	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xorstr_("tTaUYiMpXIDEplEQ"));
+	std::string decodedProfileData = CryptoUtilities::Base64Decode(encodedProfileData);
+	CryptoUtilities::MapleXOR(decodedProfileData, xorstr_("tTaUYiMpXIDEplEQ"));
 	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
 
 	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
@@ -260,7 +267,9 @@ void Spoofer::Export()
 	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData), xorstr_("tTaUYiMpXIDEplEQ")));
+	std::string encoded = CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData);
+    CryptoUtilities::MapleXOR(encoded, xorstr_("tTaUYiMpXIDEplEQ"));
+	const std::string encodedProfileData = CryptoUtilities::Base64Encode(encoded);
 
 	ClipboardUtilities::Write(encodedProfileData);
 

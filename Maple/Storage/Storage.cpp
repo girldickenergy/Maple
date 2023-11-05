@@ -16,12 +16,18 @@ std::string Storage::encryptEntry(const std::string& key, const std::string& val
 	std::stringstream ss;
 	ss << key << xorstr_("=") << value;
 
-	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("hCZNzMKsflkrAkPG")));
+	std::string entry = ss.str();
+    CryptoUtilities::MapleXOR(entry, xorstr_("hCZNzMKsflkrAkPG"));
+
+	return CryptoUtilities::Base64Encode(entry);
 }
 
 std::string Storage::decryptEntry(const std::string& entry)
 {
-	return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("hCZNzMKsflkrAkPG"));
+	std::string entryDecoded = CryptoUtilities::Base64Decode(entry);
+	CryptoUtilities::MapleXOR(entryDecoded, xorstr_("hCZNzMKsflkrAkPG"));
+
+	return entryDecoded;
 }
 
 void Storage::loadStorageConfig()

@@ -56,19 +56,15 @@ std::wstring CryptoUtilities::GetMD5Hash(const std::wstring& str)
     return std::wstring(strHashed.begin(), strHashed.end());
 }
 
-std::string CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
+void CryptoUtilities::MapleXOR(std::string& str, const std::string& key)
 {
-    std::string result = str;
-
-    unsigned int j = 0;
+	unsigned int j = 0;
     for (unsigned int i = 0; i < str.length(); i++)
     {
-        result[i] = str[i] ^ key[j];
+        str[i] = str[i] ^ key[j];
 
         j = (++j < key.length() ? j : 0);
     }
-
-    return result;
 }
 
 std::string CryptoUtilities::Base64Encode(const std::string& str)

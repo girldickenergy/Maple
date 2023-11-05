@@ -85,8 +85,17 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	entry << message;
 
+	std::string entryString = entry.str();
+
+    if (shouldEncrypt)
+    {
+    	CryptoUtilities::MapleXOR(entryString, xorstr_("vD5KJvfDRKZEaR9I"));
+
+		entryString = CryptoUtilities::Base64Encode(entryString);
+	}
+
 	if (consoleHandle)
-		std::cout << (shouldEncrypt ? CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I")) : entry.str()) << std::endl;
+		std::cout << entryString << std::endl;
 
 	if (logFilePath.empty())
 		return;
@@ -95,7 +104,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
+	logFile << entryString << std::endl;
 	logFile.close();
 }
 
@@ -126,9 +135,11 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 void Logger::WriteCrashReport(const std::string& crashReport)
 {
+    std::string report = crashReport;
 	std::fstream logFile;
 	logFile.open(crashLogFilePath, std::ios_base::out | std::ios_base::trunc);
-	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("vD5KJvfDRKZEaR9I")));
+    CryptoUtilities::MapleXOR(report, xorstr_("vD5KJvfDRKZEaR9I"));
+	logFile << CryptoUtilities::Base64Encode(report);
 	logFile.close();
 }
 
@@ -204,11 +215,14 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 	entry << xorstr_("Performance Counter finished! ") << guid << xorstr_(" Start: ") <<
 		std::put_time(&std::get<0>(performanceReport.second), xorstr_("%c")) << xorstr_(" End: ") << std::put_time(&std::get<1>(performanceReport.second), xorstr_("%c"));
 
+	std::string entryString = entry.str();
+
 	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
 
 	std::fstream logFile;
 	logFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entry.str(), xorstr_("vD5KJvfDRKZEaR9I"))) : entry.str()) << std::endl;
+    CryptoUtilities::MapleXOR(entryString, xorstr_("vD5KJvfDRKZEaR9I"));
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(entryString) : entry.str()) << std::endl;
 	logFile.close();
 
 	// Remove from performanceReportMap

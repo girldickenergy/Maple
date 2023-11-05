@@ -17,12 +17,18 @@ std::string Config::encryptEntry(const std::string& key, const std::string& valu
 	std::stringstream ss;
 	ss << key << xorstr_("=") << value;
 
-	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("kelxFFMHsiGnONNa")));
+	std::string entry = ss.str();
+    CryptoUtilities::MapleXOR(entry, xorstr_("kelxFFMHsiGnONNa"));
+
+	return CryptoUtilities::Base64Encode(entry);
 }
 
 std::string Config::decryptEntry(const std::string& entry)
 {
-	return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("kelxFFMHsiGnONNa"));
+	std::string entryDecoded = CryptoUtilities::Base64Decode(entry);
+	CryptoUtilities::MapleXOR(entryDecoded, xorstr_("kelxFFMHsiGnONNa"));
+
+	return entryDecoded;
 }
 
 ImVec4 Config::parseImVec4(std::string vec) {
@@ -445,7 +451,8 @@ void Config::Import()
 	if (encodedConfigData.empty())
 		return;
 
-	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xorstr_("kelxFFMHsiGnONNa"));
+	std::string decodedConfigData = CryptoUtilities::Base64Decode(encodedConfigData);
+    CryptoUtilities::MapleXOR(decodedConfigData, xorstr_("kelxFFMHsiGnONNa"));
 	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, "|");
 
 	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
@@ -506,7 +513,9 @@ void Config::Export()
 	const std::string configData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xorstr_("|") + CryptoUtilities::Base64Encode(configData), xorstr_("kelxFFMHsiGnONNa")));
+	std::string encoded = CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xorstr_("|") + CryptoUtilities::Base64Encode(configData);
+    CryptoUtilities::MapleXOR(encoded, xorstr_("kelxFFMHsiGnONNa"));
+	const std::string encodedConfigData = CryptoUtilities::Base64Encode(encoded);
 
 	ClipboardUtilities::Write(encodedConfigData);
 
