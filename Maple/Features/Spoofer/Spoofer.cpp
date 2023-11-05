@@ -69,6 +69,19 @@ std::string Spoofer::getRandomAdapters()
 	return adapters;
 }
 
+std::string Spoofer::encryptEntry(const std::string& key, const std::string& value)
+{
+	std::stringstream ss;
+	ss << key << xorstr_("=") << value;
+
+	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("tTaUYiMpXIDEplEQ")));
+}
+
+std::string Spoofer::decryptEntry(const std::string& entry)
+{
+    return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("tTaUYiMpXIDEplEQ"));
+}
+
 void Spoofer::refresh()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
@@ -130,9 +143,10 @@ void Spoofer::Load()
 
 		while (std::getline(file, line))
 		{
-			const int delimiterIndex = line.find('=');
-			std::string variable = line.substr(0, delimiterIndex);
-			std::string value = line.substr(delimiterIndex + 1, std::string::npos);
+            std::string decryptedLine = decryptEntry(line);
+			const int delimiterIndex = decryptedLine.find('=');
+			std::string variable = decryptedLine.substr(0, delimiterIndex);
+			std::string value = decryptedLine.substr(delimiterIndex + 1, std::string::npos);
 
 			if (variable == xorstr_("UninstallID"))
 				currentUniqueID = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
@@ -179,7 +193,6 @@ void Spoofer::Delete()
 
 void Spoofer::Import()
 {
-	
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	const std::string encodedProfileData = ClipboardUtilities::Read();
@@ -187,7 +200,7 @@ void Spoofer::Import()
 	if (encodedProfileData.empty())
 		return;
 
-	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xorstr_("OvpvutSCyRdrx0BF"));
+	const std::string decodedProfileData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedProfileData), xorstr_("tTaUYiMpXIDEplEQ"));
 	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
 
 	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
@@ -232,12 +245,10 @@ void Spoofer::Import()
 		SelectedProfile = std::distance(Profiles.begin(), it);
 
 	Load();
-
-	}
+}
 
 void Spoofer::Export()
 {
-	
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
 	if (SelectedProfile == 0)
@@ -249,11 +260,11 @@ void Spoofer::Export()
 	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData), xorstr_("OvpvutSCyRdrx0BF")));
+	const std::string encodedProfileData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData), xorstr_("tTaUYiMpXIDEplEQ")));
 
 	ClipboardUtilities::Write(encodedProfileData);
 
-	}
+}
 
 void Spoofer::Rename()
 {
@@ -331,9 +342,9 @@ void Spoofer::Create()
 	std::ofstream ofs;
 	ofs.open(profileFilePath, std::ofstream::out | std::ofstream::trunc);
 
-	ofs << xorstr_("UninstallID=") << getRandomUninstallID() << std::endl;
-	ofs << xorstr_("DiskID=") << getRandomDiskID() << std::endl;
-	ofs << xorstr_("Adapters=") << getRandomAdapters() << std::endl;
+	ofs << encryptEntry(xorstr_("UninstallID="), getRandomUninstallID()) << std::endl;
+	ofs << encryptEntry(xorstr_("DiskID="), getRandomDiskID()) << std::endl;
+	ofs << encryptEntry(xorstr_("Adapters="), getRandomAdapters()) << std::endl;
 
 	ofs.close();
 

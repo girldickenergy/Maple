@@ -12,8 +12,20 @@
 #include "../Utilities/Crypto/CryptoUtilities.h"
 #include "../Utilities/Strings/StringUtilities.h"
 
-ImVec4 Config::parseImVec4(std::string vec)
+std::string Config::encryptEntry(const std::string& key, const std::string& value)
 {
+	std::stringstream ss;
+	ss << key << xorstr_("=") << value;
+
+	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("kelxFFMHsiGnONNa")));
+}
+
+std::string Config::decryptEntry(const std::string& entry)
+{
+	return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("kelxFFMHsiGnONNa"));
+}
+
+ImVec4 Config::parseImVec4(std::string vec) {
 	float result[4];
 	int pos = 0;
 	int index = 0;
@@ -28,6 +40,14 @@ ImVec4 Config::parseImVec4(std::string vec)
 	result[3] = std::stof(vec);
 
 	return {result[0], result[1], result[2], result[3]};
+}
+
+std::string Config::imvec4ToString(ImVec4 vec)
+{
+    std::stringstream ss;
+    ss << std::to_string(vec.x) << "," << std::to_string(vec.y) << "," << std::to_string(vec.z) << "," << std::to_string(vec.w);
+
+	return ss.str();
 }
 
 void Config::loadDefaults()
@@ -105,7 +125,7 @@ void Config::loadDefaults()
 	Misc::DiscordRichPresenceSpoofer::HideSpectateButton = false;
 	Misc::DiscordRichPresenceSpoofer::HideMatchButton = false;
 
-	}
+}
 
 void Config::refresh()
 {
@@ -156,9 +176,10 @@ void Config::Load()
 	float configVersion = 0.f;
 	while (std::getline(file, line))
 	{
-		const int delimiterIndex = line.find('=');
-		std::string variable = line.substr(0, delimiterIndex);
-		std::string value = line.substr(delimiterIndex + 1, std::string::npos);
+        std::string lineDecrypted = decryptEntry(line);
+		const int delimiterIndex = lineDecrypted.find('=');
+		std::string variable = lineDecrypted.substr(0, delimiterIndex);
+		std::string value = lineDecrypted.substr(delimiterIndex + 1, std::string::npos);
 
 		if (variable == xorstr_("Version"))
 			configVersion = std::stof(value);
@@ -200,38 +221,6 @@ void Config::Load()
 		if (variable == xorstr_("Relax_Blatant_UseLowestPossibleHoldTimes"))
 			Relax::Blatant::UseLowestPossibleHoldTimes = value == xorstr_("1");
 
-		if (configVersion >= 1.f)
-		{
-			if (variable == xorstr_("AimAssist_Enabled"))
-				AimAssist::Enabled = value == xorstr_("1");
-			if (variable == xorstr_("AimAssist_Algorithm"))
-				AimAssist::Algorithm = std::stoi(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_Strength"))
-				AimAssist::Algorithmv1::Strength = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_AssistOnSliders"))
-				AimAssist::Algorithmv1::AssistOnSliders = value == xorstr_("1");
-			if (variable == xorstr_("AimAssist_Algorithmv1_BaseFOV"))
-				AimAssist::Algorithmv1::BaseFOV = std::stoi(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_MaximumFOVScale"))
-				AimAssist::Algorithmv1::MaximumFOVScale = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_MinimumFOVTotal"))
-				AimAssist::Algorithmv1::MinimumFOVTotal = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_MaximumFOVTotal"))
-				AimAssist::Algorithmv1::MaximumFOVTotal = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv1_AccelerationFactor"))
-				AimAssist::Algorithmv1::AccelerationFactor = std::stof(value);
-			if (variable == xorstr_("AimAssist_DrawDebugOverlay"))
-				AimAssist::DrawDebugOverlay = value == xorstr_("1");
-			if (variable == xorstr_("AimAssist_Algorithmv2_Power"))
-				AimAssist::Algorithmv2::Power = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv2_AssistOnSliders"))
-				AimAssist::Algorithmv2::AssistOnSliders = value == xorstr_("1");
-			if (variable == xorstr_("AimAssist_Algorithmv3_Power"))
-				AimAssist::Algorithmv3::Power = std::stof(value);
-			if (variable == xorstr_("AimAssist_Algorithmv3_SliderAssistPower"))
-				AimAssist::Algorithmv3::SliderAssistPower = std::stof(value);
-		}
-
 		if (variable == xorstr_("Timewarp_Enabled"))
 			Timewarp::Enabled = value == xorstr_("1");
 		if (variable == xorstr_("Timewarp_Type"))
@@ -240,8 +229,8 @@ void Config::Load()
 			Timewarp::Rate = std::stoi(value);
 		if (variable == xorstr_("Timewarp_Multiplier"))
 			Timewarp::Multiplier = std::stof(value);
-                if (variable == xorstr_("Timewarp_RateLimitEnabled"))
-                        Timewarp::RateLimitEnabled = value == xorstr_("1");
+        if (variable == xorstr_("Timewarp_RateLimitEnabled"))
+                Timewarp::RateLimitEnabled = value == xorstr_("1");
 
 		if (variable == xorstr_("Visuals_ARChanger_Enabled"))
 			Visuals::ARChanger::Enabled = value == xorstr_("1");
@@ -309,12 +298,10 @@ void Config::Load()
 	}
 
 	file.close();
-
-	}
+}
 
 void Config::Save()
 {
-	
 	if (CurrentConfig == 0)
 		return;
 
@@ -325,83 +312,82 @@ void Config::Save()
 	std::ofstream ofs;
 	ofs.open(configFilePath, std::ofstream::out | std::ofstream::trunc);
 
-	ofs << xorstr_("Version=") << VERSION << std::endl;
+	ofs << encryptEntry(xorstr_("Version"), std::to_string(VERSION)) << std::endl;
 
-	ofs << xorstr_("Relax_Enabled=") << Relax::Enabled << std::endl;
-	ofs << xorstr_("Relax_ToggleKey=") << Relax::ToggleKey << std::endl;
-	ofs << xorstr_("Relax_PrimaryKey=") << Relax::PrimaryKey << std::endl;
-	ofs << xorstr_("Relax_SecondaryKey=") << Relax::SecondaryKey << std::endl;
-	ofs << xorstr_("Relax_AlternateBPM=") << Relax::AlternateBPM << std::endl;
-	ofs << xorstr_("Relax_SliderAlternationOverride=") << Relax::SliderAlternationOverride << std::endl;
-	ofs << xorstr_("Relax_Timing_Offset=") << Relax::Timing::Offset << std::endl;
-	ofs << xorstr_("Relax_Timing_TargetUnstableRate=") << Relax::Timing::TargetUnstableRate << std::endl;
-	ofs << xorstr_("Relax_Timing_AllowableHitRange=") << Relax::Timing::AllowableHitRange << std::endl;
-	ofs << xorstr_("Relax_Timing_MinimumHoldTime=") << Relax::Timing::MinimumHoldTime << std::endl;
-	ofs << xorstr_("Relax_Timing_MaximumHoldTime=") << Relax::Timing::MaximumHoldTime << std::endl;
-	ofs << xorstr_("Relax_Timing_MinimumSliderHoldTime=") << Relax::Timing::MinimumSliderHoldTime << std::endl;
-	ofs << xorstr_("Relax_Timing_MaximumSliderHoldTime=") << Relax::Timing::MaximumSliderHoldTime << std::endl;
-	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Enabled=") << Relax::HitScan::DirectionPredictionEnabled << std::endl;
-	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Angle=") << Relax::HitScan::DirectionPredictionAngle << std::endl;
-	ofs << xorstr_("Relax_HitScan_DirectionPrediction_Scale=") << Relax::HitScan::DirectionPredictionScale << std::endl;
-	ofs << xorstr_("Relax_Blatant_UseLowestPossibleHoldTimes=") << Relax::Blatant::UseLowestPossibleHoldTimes << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Enabled"), std::to_string(Relax::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_ToggleKey"), std::to_string(Relax::ToggleKey)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_PrimaryKey"), std::to_string(Relax::PrimaryKey)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_SecondaryKey"), std::to_string(Relax::SecondaryKey)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_AlternateBPM"), std::to_string(Relax::AlternateBPM)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_SliderAlternationOverride"), std::to_string(Relax::SliderAlternationOverride)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Timing_Offset"), std::to_string(Relax::Timing::Offset)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Timing_TargetUnstableRate"), std::to_string(Relax::Timing::TargetUnstableRate)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Timing_AllowableHitRange"), std::to_string(Relax::Timing::AllowableHitRange)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Timing_MinimumHoldTime"), std::to_string(Relax::Timing::MinimumHoldTime)) << std::endl;
+	ofs << encryptEntry(xorstr_("Relax_Timing_MaximumHoldTime"), std::to_string(Relax::Timing::MaximumHoldTime)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_Timing_MinimumSliderHoldTime"), std::to_string(Relax::Timing::MinimumSliderHoldTime)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_Timing_MaximumSliderHoldTime"), std::to_string(Relax::Timing::MaximumSliderHoldTime)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_HitScan_DirectionPrediction_Enabled"), std::to_string(Relax::HitScan::DirectionPredictionEnabled)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_HitScan_DirectionPrediction_Angle"), std::to_string(Relax::HitScan::DirectionPredictionAngle)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_HitScan_DirectionPrediction_Scale"), std::to_string(Relax::HitScan::DirectionPredictionScale)) << std::endl;
+    ofs << encryptEntry(xorstr_("Relax_Blatant_UseLowestPossibleHoldTimes"), std::to_string(Relax::Blatant::UseLowestPossibleHoldTimes)) << std::endl;
 
-	ofs << xorstr_("AimAssist_Enabled=") << AimAssist::Enabled << std::endl;
-	ofs << xorstr_("AimAssist_Algorithm=") << AimAssist::Algorithm << std::endl;
-	ofs << xorstr_("AimAssist_DrawDebugOverlay=") << AimAssist::DrawDebugOverlay << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_Strength=") << AimAssist::Algorithmv1::Strength << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_AssistOnSliders=") << AimAssist::Algorithmv1::AssistOnSliders << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_BaseFOV=") << AimAssist::Algorithmv1::BaseFOV << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_MaximumFOVScale=") << AimAssist::Algorithmv1::MaximumFOVScale << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_MinimumFOVTotal=") << AimAssist::Algorithmv1::MinimumFOVTotal << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_MaximumFOVTotal=") << AimAssist::Algorithmv1::MaximumFOVTotal << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv1_AccelerationFactor=") << AimAssist::Algorithmv1::AccelerationFactor << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv2_Power=") << AimAssist::Algorithmv2::Power << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv2_AssistOnSliders=") << AimAssist::Algorithmv2::AssistOnSliders << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv3_Power=") << AimAssist::Algorithmv3::Power << std::endl;
-	ofs << xorstr_("AimAssist_Algorithmv3_SliderAssistPower=") << AimAssist::Algorithmv3::SliderAssistPower << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Enabled"), std::to_string(AimAssist::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithm"), std::to_string(AimAssist::Algorithm)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_DrawDebugOverlay"), std::to_string(AimAssist::DrawDebugOverlay)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_Strength"), std::to_string(AimAssist::Algorithmv1::Strength)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_AssistOnSliders"), std::to_string(AimAssist::Algorithmv1::AssistOnSliders)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_BaseFOV"), std::to_string(AimAssist::Algorithmv1::BaseFOV)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_MaximumFOVScale"), std::to_string(AimAssist::Algorithmv1::MaximumFOVScale)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_MinimumFOVTotal"), std::to_string(AimAssist::Algorithmv1::MinimumFOVTotal)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_MaximumFOVTotal"), std::to_string(AimAssist::Algorithmv1::MaximumFOVTotal)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv1_AccelerationFactor"), std::to_string(AimAssist::Algorithmv1::AccelerationFactor)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv2_Power"), std::to_string(AimAssist::Algorithmv2::Power)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv2_AssistOnSliders"), std::to_string(AimAssist::Algorithmv2::AssistOnSliders)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv3_Power"), std::to_string(AimAssist::Algorithmv3::Power)) << std::endl;
+	ofs << encryptEntry(xorstr_("AimAssist_Algorithmv3_SliderAssistPower"), std::to_string(AimAssist::Algorithmv3::SliderAssistPower)) << std::endl;
 
-	ofs << xorstr_("Timewarp_Enabled=") << Timewarp::Enabled << std::endl;
-	ofs << xorstr_("Timewarp_Type=") << Timewarp::Type << std::endl;
-	ofs << xorstr_("Timewarp_Rate=") << Timewarp::Rate << std::endl;
-	ofs << xorstr_("Timewarp_Multiplier=") << Timewarp::Multiplier << std::endl;
-        ofs << xorstr_("Timewarp_RateLimitEnabled=") << Timewarp::RateLimitEnabled << std::endl;
+	ofs << encryptEntry(xorstr_("Timewarp_Enabled"), std::to_string(Timewarp::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Timewarp_Type"), std::to_string(Timewarp::Type)) << std::endl;
+	ofs << encryptEntry(xorstr_("Timewarp_Rate"), std::to_string(Timewarp::Rate)) << std::endl;
+	ofs << encryptEntry(xorstr_("Timewarp_Multiplier"), std::to_string(Timewarp::Multiplier)) << std::endl;
+    ofs << encryptEntry(xorstr_("Timewarp_RateLimitEnabled"), std::to_string(Timewarp::RateLimitEnabled)) << std::endl;
 
-	ofs << xorstr_("Visuals_ARChanger_Enabled=") << Visuals::ARChanger::Enabled << std::endl;
-	ofs << xorstr_("Visuals_ARChanger_AR=") << Visuals::ARChanger::AR << std::endl;
-	ofs << xorstr_("Visuals_ARChanger_AdjustToMods=") << Visuals::ARChanger::AdjustToMods << std::endl;
-	ofs << xorstr_("Visuals_ARChanger_AdjustToRate=") << Visuals::ARChanger::AdjustToRate << std::endl;
-	ofs << xorstr_("Visuals_ARChanger_DrawPreemptiveDot=") << Visuals::ARChanger::DrawPreemptiveDot << std::endl;
-	ofs << xorstr_("Visuals_ARChanger_PreemptiveDotColour=") << Visuals::ARChanger::PreemptiveDotColour.x << "," << Visuals::ARChanger::PreemptiveDotColour.y << "," << Visuals::ARChanger::PreemptiveDotColour.z << "," << Visuals::ARChanger::PreemptiveDotColour.w << std::endl;
-	ofs << xorstr_("Visuals_CSChanger_Enabled=") << Visuals::CSChanger::Enabled << std::endl;
-	ofs << xorstr_("Visuals_CSChanger_CS=") << Visuals::CSChanger::CS << std::endl;
-	ofs << xorstr_("Visuals_Removers_HiddenRemoverEnabled=") << Visuals::Removers::HiddenRemoverEnabled << std::endl;
-	ofs << xorstr_("Visuals_Removers_FlashlightRemoverEnabled=") << Visuals::Removers::FlashlightRemoverEnabled << std::endl;
-	ofs << xorstr_("Visuals_UI_MenuScale=") << Visuals::UI::MenuScale << std::endl;
-	ofs << xorstr_("Visuals_UI_MenuBackground=") << Visuals::UI::MenuBackground << std::endl;
-	ofs << xorstr_("Visuals_UI_Snow=") << Visuals::UI::Snow << std::endl;
-	ofs << xorstr_("Visuals_UI_AccentColour=") << Visuals::UI::AccentColour.x << "," << Visuals::UI::AccentColour.y << "," << Visuals::UI::AccentColour.z << "," << Visuals::UI::AccentColour.w << std::endl;
-	ofs << xorstr_("Visuals_UI_MenuColour=") << Visuals::UI::MenuColour.x << "," << Visuals::UI::MenuColour.y << "," << Visuals::UI::MenuColour.z << "," << Visuals::UI::MenuColour.w << std::endl;
-	ofs << xorstr_("Visuals_UI_ControlColour=") << Visuals::UI::ControlColour.x << "," << Visuals::UI::ControlColour.y << "," << Visuals::UI::ControlColour.z << "," << Visuals::UI::ControlColour.w << std::endl;
-	ofs << xorstr_("Visuals_UI_TextColour=") << Visuals::UI::TextColour.x << "," << Visuals::UI::TextColour.y << "," << Visuals::UI::TextColour.z << "," << Visuals::UI::TextColour.w << std::endl;
-	
-	ofs << xorstr_("Misc_ScoreSubmissionType=") << Misc::ScoreSubmissionType << std::endl;
-	ofs << xorstr_("Misc_PromptBehaviorOnRetry=") << Misc::PromptBehaviorOnRetry << std::endl;
-	ofs << xorstr_("Misc_DisableSpectators=") << Misc::DisableSpectators << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_Enabled=") << Misc::DiscordRichPresenceSpoofer::Enabled << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageText=") << Misc::DiscordRichPresenceSpoofer::CustomLargeImageText << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomPlayModeEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomPlayModeEnabled << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomPlayMode=") << Misc::DiscordRichPresenceSpoofer::CustomPlayMode << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomStateEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomStateEnabled << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomState=") << Misc::DiscordRichPresenceSpoofer::CustomState << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomDetailsEnabled=") << Misc::DiscordRichPresenceSpoofer::CustomDetailsEnabled << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_CustomDetails=") << Misc::DiscordRichPresenceSpoofer::CustomDetails << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_HideSpectateButton=") << Misc::DiscordRichPresenceSpoofer::HideSpectateButton << std::endl;
-	ofs << xorstr_("Misc_DiscordRichPresenceSpoofer_HideMatchButton=") << Misc::DiscordRichPresenceSpoofer::HideMatchButton << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_Enabled"), std::to_string(Visuals::ARChanger::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_AR"), std::to_string(Visuals::ARChanger::AR)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_AdjustToMods"), std::to_string(Visuals::ARChanger::AdjustToMods)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_AdjustToRate"), std::to_string(Visuals::ARChanger::AdjustToRate)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_DrawPreemptiveDot"), std::to_string(Visuals::ARChanger::DrawPreemptiveDot)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_ARChanger_PreemptiveDotColour"), imvec4ToString(Visuals::ARChanger::PreemptiveDotColour)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_CSChanger_Enabled"), std::to_string(Visuals::CSChanger::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_CSChanger_CS"), std::to_string(Visuals::CSChanger::CS)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_Removers_HiddenRemoverEnabled"), std::to_string(Visuals::Removers::HiddenRemoverEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_Removers_FlashlightRemoverEnabled"), std::to_string(Visuals::Removers::FlashlightRemoverEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_MenuScale"), std::to_string(Visuals::UI::MenuScale)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_MenuBackground"), Visuals::UI::MenuBackground) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_Snow"), std::to_string(Visuals::UI::Snow)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_AccentColour"), imvec4ToString(Visuals::UI::AccentColour)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_MenuColour"), imvec4ToString(Visuals::UI::MenuColour)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_ControlColour"), imvec4ToString(Visuals::UI::ControlColour)) << std::endl;
+	ofs << encryptEntry(xorstr_("Visuals_UI_TextColour"), imvec4ToString(Visuals::UI::TextColour)) << std::endl;
+
+	ofs << encryptEntry(xorstr_("Misc_ScoreSubmissionType"), std::to_string(Misc::ScoreSubmissionType)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_PromptBehaviorOnRetry"), std::to_string(Misc::PromptBehaviorOnRetry)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DisableSpectators"), std::to_string(Misc::DisableSpectators)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_Enabled"), std::to_string(Misc::DiscordRichPresenceSpoofer::Enabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageTextEnabled"), std::to_string(Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomLargeImageText"), Misc::DiscordRichPresenceSpoofer::CustomLargeImageText) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomPlayModeEnabled"), std::to_string(Misc::DiscordRichPresenceSpoofer::CustomPlayModeEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomPlayMode"), std::to_string(Misc::DiscordRichPresenceSpoofer::CustomPlayMode)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomStateEnabled"), std::to_string(Misc::DiscordRichPresenceSpoofer::CustomStateEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomState"), Misc::DiscordRichPresenceSpoofer::CustomState) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomDetailsEnabled"), std::to_string(Misc::DiscordRichPresenceSpoofer::CustomDetailsEnabled)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_CustomDetails"), Misc::DiscordRichPresenceSpoofer::CustomDetails) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_HideSpectateButton"), std::to_string(Misc::DiscordRichPresenceSpoofer::HideSpectateButton)) << std::endl;
+	ofs << encryptEntry(xorstr_("Misc_DiscordRichPresenceSpoofer_HideMatchButton"), std::to_string(Misc::DiscordRichPresenceSpoofer::HideMatchButton)) << std::endl;
 
 	ofs.close();
-
-	}
+}
 
 void Config::Delete()
 {
@@ -423,7 +409,6 @@ void Config::Delete()
 
 void Config::Import()
 {
-	
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	const std::string encodedConfigData = ClipboardUtilities::Read();
@@ -431,7 +416,7 @@ void Config::Import()
 	if (encodedConfigData.empty())
 		return;
 
-	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xorstr_("xbb9tuvQCGJRhN8z"));
+	const std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xorstr_("kelxFFMHsiGnONNa"));
 	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, "|");
 
 	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
@@ -477,11 +462,10 @@ void Config::Import()
 
 	Load();
 
-	}
+}
 
 void Config::Export()
 {
-		
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	if (CurrentConfig == 0)
@@ -493,11 +477,11 @@ void Config::Export()
 	const std::string configData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	ifs.close();
 
-	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xorstr_("|") + CryptoUtilities::Base64Encode(configData), xorstr_("xbb9tuvQCGJRhN8z")));
+	const std::string encodedConfigData = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(CryptoUtilities::Base64Encode(Configs[CurrentConfig]) + xorstr_("|") + CryptoUtilities::Base64Encode(configData), xorstr_("kelxFFMHsiGnONNa")));
 
 	ClipboardUtilities::Write(encodedConfigData);
 
-	}
+}
 
 void Config::Rename()
 {

@@ -6,6 +6,9 @@ class Storage
 {
 	static inline std::string storageConfigFilepath;
 
+	static std::string encryptEntry(const std::string& key, const std::string& value);
+	static std::string decryptEntry(const std::string& entry);
+
 	static void loadStorageConfig();
 public:
 	static inline std::string StorageDirectory;

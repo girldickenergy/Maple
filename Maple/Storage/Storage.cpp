@@ -8,10 +8,24 @@
 
 #include "StorageConfig.h"
 #include "xorstr.hpp"
+#include "../Utilities/Crypto/CryptoUtilities.h"
+
+
+std::string Storage::encryptEntry(const std::string& key, const std::string& value)
+{
+	std::stringstream ss;
+	ss << key << xorstr_("=") << value;
+
+	return CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(ss.str(), xorstr_("hCZNzMKsflkrAkPG")));
+}
+
+std::string Storage::decryptEntry(const std::string& entry)
+{
+	return CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(entry), xorstr_("hCZNzMKsflkrAkPG"));
+}
 
 void Storage::loadStorageConfig()
 {
-    		
     StorageConfig::DefaultConfig = xorstr_("default");
     StorageConfig::DefaultProfile = xorstr_("none");
     StorageConfig::ShowMenuAfterInjection = true;
@@ -27,9 +41,10 @@ void Storage::loadStorageConfig()
 
     while (std::getline(configFile, line))
     {
-        const int delimiterIndex = line.find('=');
-        std::string variable = line.substr(0, delimiterIndex);
-        std::string value = line.substr(delimiterIndex + 1, std::string::npos);
+        std::string decryptedLine = decryptEntry(line);
+        const int delimiterIndex = decryptedLine.find('=');
+        std::string variable = decryptedLine.substr(0, delimiterIndex);
+        std::string value = decryptedLine.substr(delimiterIndex + 1, std::string::npos);
 
         if (!value.empty())
         {
@@ -45,12 +60,10 @@ void Storage::loadStorageConfig()
     }
 
     configFile.close();
-
-    }
+}
 
 void Storage::Initialize(const std::string& uniqueName)
 {
-    
     char* val;
     size_t len;
     errno_t err = _dupenv_s(&val, &len, xorstr_("APPDATA"));
@@ -65,8 +78,7 @@ void Storage::Initialize(const std::string& uniqueName)
     storageConfigFilepath = StorageDirectory + xorstr_("\\") + uniqueName + xorstr_(".cfg");
 
     loadStorageConfig();
-
-    }
+}
 
 bool Storage::IsSameFileName(const std::string& a, const std::string& b)
 {
@@ -92,17 +104,15 @@ void Storage::EnsureDirectoryExists(const std::string& directory)
 
 void Storage::SaveStorageConfig()
 {
-    		
     EnsureDirectoryExists(StorageDirectory);
 
     std::ofstream ofs;
     ofs.open(storageConfigFilepath, std::ofstream::out | std::ofstream::trunc);
 
-    ofs << xorstr_("DefaultConfig=") << StorageConfig::DefaultConfig << std::endl;
-    ofs << xorstr_("DefaultProfile=") << StorageConfig::DefaultProfile << std::endl;
-    ofs << xorstr_("ShowMenuAfterInjection=") << StorageConfig::ShowMenuAfterInjection << std::endl;
-    ofs << xorstr_("MenuKey=") << StorageConfig::MenuKey << std::endl;
+	ofs << encryptEntry(xorstr_("DefaultConfig"), StorageConfig::DefaultConfig) << std::endl;
+	ofs << encryptEntry(xorstr_("DefaultProfile"), StorageConfig::DefaultProfile) << std::endl;
+	ofs << encryptEntry(xorstr_("ShowMenuAfterInjection"), std::to_string(StorageConfig::ShowMenuAfterInjection)) << std::endl;
+	ofs << encryptEntry(xorstr_("MenuKey"), std::to_string(StorageConfig::MenuKey)) << std::endl;
 
     ofs.close();
-
-    }
+}

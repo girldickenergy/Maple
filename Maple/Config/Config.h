@@ -8,7 +8,10 @@
 
 class Config
 {
+	static std::string encryptEntry(const std::string& key, const std::string& value);
+	static std::string decryptEntry(const std::string& entry);
 	static ImVec4 parseImVec4(std::string vec);
+    static std::string imvec4ToString(ImVec4 vec);
 	static void loadDefaults();
 	static void refresh();
 public:
@@ -26,8 +29,6 @@ public:
 	static void Rename();
 	static void Create();
 
-	//Version 0.0 - first version
-	//Version 1.0 - breaks aim assist config compatibility (removed aav1, added aav3 (aqn))
 	static inline constexpr float VERSION = 1.f;
 
 	struct Relax

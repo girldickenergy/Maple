@@ -22,6 +22,9 @@ class Spoofer
 	static std::string getRandomDiskID();
 	static std::string getRandomAdapters();
 
+	static std::string encryptEntry(const std::string& key, const std::string& value);
+	static std::string decryptEntry(const std::string& entry);
+
 	static void refresh();
 public:
 	static inline std::vector<std::string> Profiles;
