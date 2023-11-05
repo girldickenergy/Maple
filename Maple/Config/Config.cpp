@@ -221,6 +221,35 @@ void Config::Load()
 		if (variable == xorstr_("Relax_Blatant_UseLowestPossibleHoldTimes"))
 			Relax::Blatant::UseLowestPossibleHoldTimes = value == xorstr_("1");
 
+		if (variable == xorstr_("AimAssist_Enabled"))
+			AimAssist::Enabled = value == xorstr_("1");
+		if (variable == xorstr_("AimAssist_Algorithm"))
+			AimAssist::Algorithm = std::stoi(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_Strength"))
+			AimAssist::Algorithmv1::Strength = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_AssistOnSliders"))
+			AimAssist::Algorithmv1::AssistOnSliders = value == xorstr_("1");
+		if (variable == xorstr_("AimAssist_Algorithmv1_BaseFOV"))
+			AimAssist::Algorithmv1::BaseFOV = std::stoi(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_MaximumFOVScale"))
+			AimAssist::Algorithmv1::MaximumFOVScale = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_MinimumFOVTotal"))
+			AimAssist::Algorithmv1::MinimumFOVTotal = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_MaximumFOVTotal"))
+			AimAssist::Algorithmv1::MaximumFOVTotal = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv1_AccelerationFactor"))
+			AimAssist::Algorithmv1::AccelerationFactor = std::stof(value);
+		if (variable == xorstr_("AimAssist_DrawDebugOverlay"))
+			AimAssist::DrawDebugOverlay = value == xorstr_("1");
+		if (variable == xorstr_("AimAssist_Algorithmv2_Power"))
+			AimAssist::Algorithmv2::Power = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv2_AssistOnSliders"))
+			AimAssist::Algorithmv2::AssistOnSliders = value == xorstr_("1");
+		if (variable == xorstr_("AimAssist_Algorithmv3_Power"))
+			AimAssist::Algorithmv3::Power = std::stof(value);
+		if (variable == xorstr_("AimAssist_Algorithmv3_SliderAssistPower"))
+			AimAssist::Algorithmv3::SliderAssistPower = std::stof(value);
+
 		if (variable == xorstr_("Timewarp_Enabled"))
 			Timewarp::Enabled = value == xorstr_("1");
 		if (variable == xorstr_("Timewarp_Type"))

@@ -83,7 +83,7 @@ DWORD WINAPI Initialize()
     Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
     
     // Initialize this a bit earlier just so we can log more data earlier.
-    Storage::Initialize(Communication::GetUser()->GetUsernameHashed() + xorstr_("-mlo"));
+    Storage::Initialize(Communication::GetUser()->GetUsernameHashed(xorstr_("-mlo")));
 
 #ifdef _DEBUG
     Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");

@@ -14,9 +14,9 @@ const std::string& User::GetUsername()
 	return username;
 }
 
-std::string User::GetUsernameHashed()
+std::string User::GetUsernameHashed(const char* postfix)
 {
-	return CryptoUtilities::GetMD5Hash(username);
+	return CryptoUtilities::GetMD5Hash(username + postfix);
 }
 
 const std::string& User::GetSessionToken()

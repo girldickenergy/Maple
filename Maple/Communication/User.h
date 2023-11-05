@@ -13,7 +13,7 @@ public:
 	User() = default;
 
 	const std::string& GetUsername();
-	std::string GetUsernameHashed();
+    std::string GetUsernameHashed(const char* postfix = "");
 	const std::string& GetSessionToken();
 	const std::string& GetDiscordID();
 	const std::string& GetAvatarHash();
