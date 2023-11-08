@@ -9,7 +9,7 @@
 #include "../Player/Player.h"
 #include "../Audio/AudioEngine.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
 #include "../../Communication/Communication.h"
@@ -39,7 +39,7 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 
 			accumulatedOffset = newPosition - pos;
 		}
-		else if (Config::AimAssist::Enabled)
+		else if (ConfigManager::CurrentConfig.AimAssist.Enabled)
 			newPosition = roundVec(AimAssist::GetCursorPosition(pos));
 	}
 	else
@@ -58,7 +58,7 @@ void __fastcall InputManager::setMousePositionHook(Vector2 pos)
 
 void __fastcall InputManager::mouseViaKeyboardControlsHook()
 {
-	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused() && !Player::GetIsFailed() && (Config::Relax::Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
+	if (Player::GetIsLoaded() && !AudioEngine::GetIsPaused() && !Player::GetIsFailed() && (ConfigManager::CurrentConfig.Relax.Enabled || (ReplayBot::Ready && !ReplayBot::DisableTapping)))
 	{
 		const OsuKeys keys = ReplayBot::Ready && !ReplayBot::DisableTapping ? ReplayBot::GetCurrentKeys() : Relax::Update();
 

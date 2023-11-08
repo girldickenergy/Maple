@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #include "../../SDK/Input/InputManager.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../SDK/Osu/GameField.h"
 #include "../../SDK/Audio/AudioEngine.h"
 #include "../../SDK/Player/HitObjectManager.h"
@@ -29,8 +29,8 @@ Vector2 AimAssist::algorithmv1(Vector2 pos)
 {
 	const int time = AudioEngine::GetTime();
 
-	Vector2 previousHitObjectPosition = GameField::FieldToDisplay(previousHitObject.IsNull ? Vector2() : Config::AimAssist::Algorithmv1::AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position);
-	Vector2 currentHitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv1::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
+	Vector2 previousHitObjectPosition = GameField::FieldToDisplay(previousHitObject.IsNull ? Vector2() : ConfigManager::CurrentConfig.AimAssist.Algorithmv1.AssistOnSliders ? previousHitObject.EndPosition : previousHitObject.Position);
+	Vector2 currentHitObjectPosition = GameField::FieldToDisplay(ConfigManager::CurrentConfig.AimAssist.Algorithmv1.AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
 	const float previousHitObjectDistance = previousHitObject.IsNull ? 0.f : previousHitObjectPosition.Distance(pos);
 	const float currentHitObjectDistance = currentHitObjectPosition.Distance(pos);
@@ -38,21 +38,21 @@ Vector2 AimAssist::algorithmv1(Vector2 pos)
 	const auto arScale = std::clamp(
 		std::max(0.f, ((AudioEngine::GetTime() - (currentHitObject.StartTime - hitWindow50)) / static_cast<float>(preEmpt * 3.f) + 1.f)) * 1.4f,
 		0.f,
-		Config::AimAssist::Algorithmv1::MaximumFOVScale);
+		ConfigManager::CurrentConfig.AimAssist.Algorithmv1.MaximumFOVScale);
 
-	fov = std::clamp(static_cast<float>(Config::AimAssist::Algorithmv1::BaseFOV) * arScale, Config::AimAssist::Algorithmv1::MinimumFOVTotal, Config::AimAssist::Algorithmv1::MaximumFOVTotal) * GameField::GetRatio();
+	fov = std::clamp(static_cast<float>(ConfigManager::CurrentConfig.AimAssist.Algorithmv1.BaseFOV) * arScale, ConfigManager::CurrentConfig.AimAssist.Algorithmv1.MinimumFOVTotal, ConfigManager::CurrentConfig.AimAssist.Algorithmv1.MaximumFOVTotal) * GameField::GetRatio();
 	if (!currentHitObject.IsType(HitObjectType::Spinner))
 	{
 		if (currentHitObjectDistance <= fov || (!previousHitObject.IsNull && previousHitObjectDistance <= fov))
 		{
-			if (InputManager::GetLastCursorPosition().Distance(pos) >= Config::AimAssist::Algorithmv1::AccelerationFactor * GameField::GetRatio())
+			if (InputManager::GetLastCursorPosition().Distance(pos) >= ConfigManager::CurrentConfig.AimAssist.Algorithmv1.AccelerationFactor * GameField::GetRatio())
 			{
-				const float diffobj = previousHitObject.IsNull ? preEmpt : currentHitObject.StartTime - (Config::AimAssist::Algorithmv1::AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime);
+				const float diffobj = previousHitObject.IsNull ? preEmpt : currentHitObject.StartTime - (ConfigManager::CurrentConfig.AimAssist.Algorithmv1.AssistOnSliders && previousHitObject.IsType(HitObjectType::Slider) ? previousHitObject.EndTime : previousHitObject.StartTime);
 				const float fromobj = currentHitObject.StartTime - time;
 				const float t = std::clamp(fromobj / diffobj, 0.f, 1.f);
 
-				const float previousInterpolant = (1.0f - (previousHitObjectDistance / fov)) * (t * Config::AimAssist::Algorithmv1::Strength);
-				const float interpolant = (1.f - (currentHitObjectDistance / fov)) * ((1.f - t) * Config::AimAssist::Algorithmv1::Strength);
+				const float previousInterpolant = (1.0f - (previousHitObjectDistance / fov)) * (t * ConfigManager::CurrentConfig.AimAssist.Algorithmv1.Strength);
+				const float interpolant = (1.f - (currentHitObjectDistance / fov)) * ((1.f - t) * ConfigManager::CurrentConfig.AimAssist.Algorithmv1.Strength);
 
 				Vector2 previousOffset = Vector2(0, 0);
 				if (!previousHitObject.IsNull && previousHitObjectDistance <= fov)
@@ -65,7 +65,7 @@ Vector2 AimAssist::algorithmv1(Vector2 pos)
 			}
 		}
 		else
-			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * Config::AimAssist::Algorithmv1::Strength));
+			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * ConfigManager::CurrentConfig.AimAssist.Algorithmv1.Strength));
 	}
 	
 	return pos + InputManager::GetAccumulatedOffset();
@@ -75,23 +75,23 @@ Vector2 AimAssist::algorithmv2(Vector2 pos)
 {
 	const int time = AudioEngine::GetTime();
 
-	Vector2 hitObjectPosition = GameField::FieldToDisplay(Config::AimAssist::Algorithmv2::AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
+	Vector2 hitObjectPosition = GameField::FieldToDisplay(ConfigManager::CurrentConfig.AimAssist.Algorithmv2.AssistOnSliders ? currentHitObject.PositionAtTime(time) : currentHitObject.Position);
 
 	Vector2 distance = hitObjectPosition - pos;
-	fov = 40.f * Config::AimAssist::Algorithmv2::Power;
+	fov = 40.f * ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power;
 
 	if (!currentHitObject.IsType(HitObjectType::Spinner))
 	{
 		if (point_in_radius(pos, hitObjectPosition, calc_fov_scale(time, currentHitObject.StartTime - hitWindow50, hitWindow50, preEmpt) * fov)) {
-			if (!point_in_radius(pos, InputManager::GetLastCursorPosition(), 1.75f) && Config::AimAssist::Algorithmv2::Power && !previousHitObject.IsNull) {
-				const auto interpolant = calc_interpolant(windowSize, distance.Length(), Config::AimAssist::Algorithmv2::Power);
+			if (!point_in_radius(pos, InputManager::GetLastCursorPosition(), 1.75f) && ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power && !previousHitObject.IsNull) {
+				const auto interpolant = calc_interpolant(windowSize, distance.Length(), ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power);
 
 				if (interpolant > std::numeric_limits<float>::epsilon())
-					InputManager::SetAccumulatedOffset(Vector2(std::clamp(std::lerp(InputManager::GetAccumulatedOffset().X, distance.X, interpolant), -(Config::AimAssist::Algorithmv2::Power * 16.f), Config::AimAssist::Algorithmv2::Power * 16.f), std::clamp(std::lerp(InputManager::GetAccumulatedOffset().Y, distance.Y, interpolant), -(Config::AimAssist::Algorithmv2::Power * 16.f), Config::AimAssist::Algorithmv2::Power * 16.f)));
+					InputManager::SetAccumulatedOffset(Vector2(std::clamp(std::lerp(InputManager::GetAccumulatedOffset().X, distance.X, interpolant), -(ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power * 16.f), ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power * 16.f), std::clamp(std::lerp(InputManager::GetAccumulatedOffset().Y, distance.Y, interpolant), -(ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power * 16.f), ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power * 16.f)));
 			}
 		}
 		else
-			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * Config::AimAssist::Algorithmv2::Power));
+			InputManager::SetAccumulatedOffset(InputManager::Resync(InputManager::GetLastCursorPosition() - pos, InputManager::GetAccumulatedOffset(), .3f * ConfigManager::CurrentConfig.AimAssist.Algorithmv2.Power));
 	}
 
 	return pos + InputManager::GetAccumulatedOffset();
@@ -103,7 +103,7 @@ Vector2 AimAssist::algorithmv3(Vector2 pos)
 
 	const float scaledHitObjectRadius = hitObjectRadius * GameField::GetRatio();
 
-	const float power = Config::AimAssist::Algorithmv3::Power;
+	const float power = ConfigManager::CurrentConfig.AimAssist.Algorithmv3.Power;
 	const float half_power = power - 1.f;
 	float power_low = power <= 1.f ? power * .7f : (half_power * .15f) + .7f;
 	const float power_high = power * 16.f * GameField::GetRatio();
@@ -141,7 +141,7 @@ Vector2 AimAssist::algorithmv3(Vector2 pos)
 				power_low = std::min(distance.Length() / in_slider_radius, 1.f) * power_low;
 
 			if (time > currentHitObject.StartTime && currentHitObject.IsType(HitObjectType::Slider))
-				power_low *= Config::AimAssist::Algorithmv3::SliderAssistPower;
+				power_low *= ConfigManager::CurrentConfig.AimAssist.Algorithmv3.SliderAssistPower;
 
 			InputManager::SetAccumulatedOffset(Vector2(InputManager::GetAccumulatedOffset().X + (distance.X / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length()))), InputManager::GetAccumulatedOffset().Y + (distance.Y / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length())))));
 			InputManager::SetAccumulatedOffset(Vector2(std::clamp(InputManager::GetAccumulatedOffset().X, -power_high, power_high), std::clamp(InputManager::GetAccumulatedOffset().Y, -power_high, power_high)));
@@ -180,12 +180,12 @@ Vector2 AimAssist::GetCursorPosition(Vector2 pos)
 		currentHitObject = HitObjectManager::GetHitObject(currentIndex);
 	}
 
-	return Config::AimAssist::Algorithm == 0 ? algorithmv1(pos) : Config::AimAssist::Algorithm == 1 ? algorithmv2(pos) : algorithmv3(pos);
+	return ConfigManager::CurrentConfig.AimAssist.Algorithm == 0 ? algorithmv1(pos) : ConfigManager::CurrentConfig.AimAssist.Algorithm == 1 ? algorithmv2(pos) : algorithmv3(pos);
 }
 
 void AimAssist::Render()
 {
-	if (Config::AimAssist::Enabled && Config::AimAssist::DrawDebugOverlay && Player::GetIsLoaded() && !Player::GetIsReplayMode())
+	if (ConfigManager::CurrentConfig.AimAssist.Enabled && ConfigManager::CurrentConfig.AimAssist.DrawDebugOverlay && Player::GetIsLoaded() && !Player::GetIsReplayMode())
 	{
 		const Vector2 clientPosition = GameBase::GetClientPosition();
 		const ImVec2 positionOffset = ImVec2(clientPosition.X, clientPosition.Y);
@@ -199,7 +199,7 @@ void AimAssist::Render()
 		drawList->AddCircleFilled(positionOffset + ImVec2(realPosition.X, realPosition.Y), 12.f, ImColor(StyleProvider::AccentColour));
 
 		// Draw FOV
-		drawList->AddCircleFilled(positionOffset + ImVec2(realPosition.X, realPosition.Y), fov * (Config::AimAssist::Algorithm == 1 ? GameField::GetRatio() : 1.f), ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
+		drawList->AddCircleFilled(positionOffset + ImVec2(realPosition.X, realPosition.Y), fov * (ConfigManager::CurrentConfig.AimAssist.Algorithm == 1 ? GameField::GetRatio() : 1.f), ImGui::ColorConvertFloat4ToU32(ImVec4(150.f, 219.f, 96.f, 0.4f)));
 
 		// Draw small debug box uwu
 		ImGui::PushFont(StyleProvider::FontSmallBold);

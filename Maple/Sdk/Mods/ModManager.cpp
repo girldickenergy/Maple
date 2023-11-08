@@ -12,7 +12,7 @@ void ModManager::Initialize()
 	
 	Memory::AddObject(xorstr_("ModManager::ModStatus"), xorstr_("53 8B F1 A1 ?? ?? ?? ?? 25 ?? ?? ?? ?? 85 C0 0F 9F C0 0F B6 C0 8B F8 80 3D"), 0x4, 1);
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 Mods ModManager::GetActiveMods()

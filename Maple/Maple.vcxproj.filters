@@ -65,9 +65,6 @@
     <ClCompile Include="Dependencies\Milk\MilkThread.cpp">
       <Filter>Dependencies\Milk</Filter>
     </ClCompile>
-    <ClCompile Include="Config\Config.cpp">
-      <Filter>Config</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\Clipboard\ClipboardUtilities.cpp">
       <Filter>Utilities\Clipboard</Filter>
     </ClCompile>
@@ -212,6 +209,9 @@
     <ClCompile Include="Utilities\Exceptions\ExceptionHandler.cpp">
       <Filter>Utilities\Exceptions</Filter>
     </ClCompile>
+    <ClCompile Include="Configuration\ConfigManager.cpp">
+      <Filter>Configuration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -306,9 +306,6 @@
     </Filter>
     <Filter Include="Dependencies\Singleton">
       <UniqueIdentifier>{272425d3-0ee4-4a8a-9772-8f096bd2df8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{f7407e2a-cae1-4a18-9aa3-01784e40c5d7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{90af6c88-6be0-4fe6-b88f-bb854076ea03}</UniqueIdentifier>
@@ -441,6 +438,9 @@
     </Filter>
     <Filter Include="Utilities\Exceptions">
       <UniqueIdentifier>{7c99958d-252f-4938-a052-43347cd4945f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{f7407e2a-cae1-4a18-9aa3-01784e40c5d7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1236,9 +1236,6 @@
     <ClInclude Include="Dependencies\Singleton\Singleton.h">
       <Filter>Dependencies\Singleton</Filter>
     </ClInclude>
-    <ClInclude Include="Config\Config.h">
-      <Filter>Config</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\Clipboard\ClipboardUtilities.h">
       <Filter>Utilities\Clipboard</Filter>
     </ClInclude>
@@ -1445,6 +1442,12 @@
     </ClInclude>
     <ClInclude Include="Utilities\Exceptions\ExceptionHandler.h">
       <Filter>Utilities\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\ConfigManager.h">
+      <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\Config.h">
+      <Filter>Configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

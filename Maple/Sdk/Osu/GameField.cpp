@@ -12,7 +12,7 @@ void GameField::Initialize()
 	
 	Memory::AddObject(xorstr_("GameField::Instance"), xorstr_("8B 15 ?? ?? ?? ?? 83 C2 04 8B 0D ?? ?? ?? ?? 39 09 FF 15 ?? ?? ?? ?? A1"), 0xB, 1);
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t GameField::GetInstance()

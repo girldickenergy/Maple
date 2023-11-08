@@ -4,7 +4,7 @@
 #include "xorstr.hpp"
 
 #include "../Memory.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../Player/Player.h"
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
@@ -37,12 +37,12 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 	Logger::Log(LogSeverity::Debug, xorstr_("A.B"));
 
-	if (Config::Misc::ScoreSubmissionType == 1 || Config::Misc::ForceDisableScoreSubmission)
+	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 1 || ConfigManager::ForceDisableScoreSubmission)
 		return;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("B"));
 
-	if (Config::Misc::ScoreSubmissionType == 2 && !Player::GetIsRetrying())
+	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 2 && !Player::GetIsRetrying())
 	{
 		Vanilla::AddRelocation(std::ref(scoreInstance));
 
@@ -55,12 +55,12 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 	Logger::Log(LogSeverity::Debug, xorstr_("C"));
 
-	if (Config::Misc::ScoreSubmissionType == 2 && Player::GetIsRetrying() && Config::Misc::PromptBehaviorOnRetry == 1)
+	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 2 && Player::GetIsRetrying() && ConfigManager::CurrentConfig.Misc.PromptBehaviorOnRetry == 1)
 		return;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("D"));
 
-	if (Config::Timewarp::Enabled)
+	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
 		spoofPlayDuration();
 
 	Logger::Log(LogSeverity::Debug, xorstr_("E"));
@@ -84,7 +84,7 @@ void Score::SetOriginal(void* val)
 
 void Score::Submit()
 {
-	if (Config::Timewarp::Enabled)
+	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
 		spoofPlayDuration();
 
 	oSubmit(scoreInstance);

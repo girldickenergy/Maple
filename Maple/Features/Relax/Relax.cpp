@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #include "Relax.h"
 
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Utilities/Security/Security.h"
 #include "../../SDK/Mods/ModManager.h"
 #include "../../SDK/Player/HitObjectManager.h"
@@ -48,13 +48,13 @@ void Relax::moveToNextHitObject(int skipCount)
 
 void Relax::updateTimings()
 {
-	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MinimumHoldTime + (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2) : (Config::Relax::Timing::MinimumSliderHoldTime + (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2 : (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
+	currentHitOffset = normalDistribution(gen) * (((-0.0007 - ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2) : (ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2 : (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
 }
 
 void Relax::updateAlternation()
 {
-	if (!previousHitObject.IsNull && 60000 / std::clamp(currentHitObject.StartTime - (previousHitObject.IsType(HitObjectType::Slider) && Config::Relax::SliderAlternationOverride ? previousHitObject.StartTime : previousHitObject.EndTime), 1, 60000) / 4 >= Config::Relax::AlternateBPM)
+	if (!previousHitObject.IsNull && 60000 / std::clamp(currentHitObject.StartTime - (previousHitObject.IsType(HitObjectType::Slider) && ConfigManager::CurrentConfig.Relax.SliderAlternationOverride ? previousHitObject.StartTime : previousHitObject.EndTime), 1, 60000) / 4 >= ConfigManager::CurrentConfig.Relax.AlternateBPM)
 		currentKey = currentKey == primaryKey ? secondaryKey : primaryKey;
 	else
 		currentKey = primaryKey;
@@ -95,11 +95,11 @@ HitScanResult Relax::handleHitScan()
 		if (time >= currentHitObject.StartTime + currentHitOffset && distanceToObject <= hitObjectRadius * 0.9)
 			return HitScanResult::Hit;
 
-		if (currentHitObject.IsType(HitObjectType::Normal) && Config::Relax::HitScan::DirectionPredictionEnabled)
+		if (currentHitObject.IsType(HitObjectType::Normal) && ConfigManager::CurrentConfig.Relax.HitScan.DirectionPredictionEnabled)
 		{
-			if (!lastCursorPosition.IsNull() && currentHitObjectIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * Config::Relax::HitScan::DirectionPredictionScale)
+			if (!lastCursorPosition.IsNull() && currentHitObjectIndex + 1 < hitObjectsCount && distanceToObject > lastDistanceToObject && distanceBetweenObjects > distanceToNext && distanceToObject > hitObjectRadius * ConfigManager::CurrentConfig.Relax.HitScan.DirectionPredictionScale)
 			{
-				if (directionAngleNext <= Config::Relax::HitScan::DirectionPredictionAngle)
+				if (directionAngleNext <= ConfigManager::CurrentConfig.Relax.HitScan.DirectionPredictionAngle)
 					return HitScanResult::Hit;
 			}
 		}
@@ -147,7 +147,7 @@ double Relax::calculateDirectionAngle(Vector2 lastPosition, Vector2 currentPosit
 void Relax::handleKeyPress(int customEndTime)
 {
 	int releaseTime;
-	if (Config::Relax::Blatant::UseLowestPossibleHoldTimes)
+	if (ConfigManager::CurrentConfig.Relax.Blatant.UseLowestPossibleHoldTimes)
 		releaseTime = (customEndTime == INT_MIN ? (currentHitObject.IsType(HitObjectType::Normal) ? time : currentHitObject.EndTime) : customEndTime) + (std::min)(25, nextHitObject.IsNull ? 25 : static_cast<int>((nextHitObject.StartTime - currentHitObject.EndTime) * 0.5f));
 	else
 		releaseTime = (customEndTime == INT_MIN ? (currentHitObject.IsType(HitObjectType::Normal) ? time : currentHitObject.EndTime) : customEndTime) + currentHoldTime;
@@ -183,7 +183,7 @@ void Relax::handleKeyRelease()
 
 void Relax::Initialize()
 {
-	if (!Config::Relax::Enabled || Player::GetIsReplayMode() || Player::GetPlayMode() != PlayModes::Osu)
+	if (!ConfigManager::CurrentConfig.Relax.Enabled || Player::GetIsReplayMode() || Player::GetPlayMode() != PlayModes::Osu)
 		return;
 
 	//unstable rate approximation
@@ -230,7 +230,7 @@ void Relax::Initialize()
 	hitWindow100 = HitObjectManager::GetHitWindow100();
 	hitWindow50 = HitObjectManager::GetHitWindow50();
 
-	const int range = Config::Relax::Timing::AllowableHitRange;
+	const int range = ConfigManager::CurrentConfig.Relax.Timing.AllowableHitRange;
 	const int hitWindowStartTime = range <= 100 ? 0 : range <= 200 ? hitWindow300 + 1 : hitWindow100 + 1;
 	const int hitWindowEndTime = range <= 100 ? hitWindow300 : range <= 200 ? hitWindow100 : hitWindow50;
 	const int hitWindowTime = hitWindowEndTime - hitWindowStartTime;
@@ -243,16 +243,16 @@ void Relax::Initialize()
 
 	allowableScanOffset = hitWindowStartTime + (hitWindowTime * multiplier);
 
-	currentHitOffset = normalDistribution(gen) * (((-0.0007 - Config::Relax::Timing::TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MinimumHoldTime + (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2) : (Config::Relax::Timing::MinimumSliderHoldTime + (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (Config::Relax::Timing::MaximumHoldTime - Config::Relax::Timing::MinimumHoldTime) / 2 : (Config::Relax::Timing::MaximumSliderHoldTime - Config::Relax::Timing::MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
+	currentHitOffset = normalDistribution(gen) * (((-0.0007 - ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate) / -3.9955) / 2.3);
+	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2) : (ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2 : (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
 
 	hitObjectRadius = HitObjectManager::GetHitObjectRadius();
 	cursorPosition = Vector2();
 	wasInMissRadius = false;
 	missPosition = Vector2();
 
-	primaryKey = mapleKeyToOsuKey(Config::Relax::PrimaryKey);
-	secondaryKey = mapleKeyToOsuKey(Config::Relax::SecondaryKey);
+	primaryKey = mapleKeyToOsuKey(ConfigManager::CurrentConfig.Relax.PrimaryKey);
+	secondaryKey = mapleKeyToOsuKey(ConfigManager::CurrentConfig.Relax.SecondaryKey);
 	currentKey = primaryKey;
 	primaryKeyPressed = false;
 	primaryKeyPressTime = INT_MIN;
@@ -266,7 +266,7 @@ void Relax::Initialize()
 
 OsuKeys Relax::Update()
 {
-	time = AudioEngine::GetTime() - Config::Relax::Timing::Offset;
+	time = AudioEngine::GetTime() - ConfigManager::CurrentConfig.Relax.Timing.Offset;
 
 	if (currentHitObjectIndex < hitObjectsCount)
 	{
@@ -275,7 +275,7 @@ OsuKeys Relax::Update()
 			case HitScanResult::Hit:
 			{
 				const bool fastSingletap = abs(time - (currentKey == primaryKey ? primaryKeyPressTime : secondaryKeyPressTime)) < 90 * rateMultiplier;
-				if (!fastSingletap || Config::Relax::Blatant::UseLowestPossibleHoldTimes)
+				if (!fastSingletap || ConfigManager::CurrentConfig.Relax.Blatant.UseLowestPossibleHoldTimes)
 				{
 					int customEndTime = INT_MIN;
 					int skipCount = 0;

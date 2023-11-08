@@ -231,7 +231,7 @@
     <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
     <ClCompile Include="Communication\TCP\TCPClient.cpp" />
     <ClCompile Include="Communication\User.cpp" />
-    <ClCompile Include="Config\Config.cpp" />
+    <ClCompile Include="Configuration\ConfigManager.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Decoders\ReplayDecoder.cpp" />
     <ClCompile Include="Dependencies\Chiyo\LZMA\lzma_helper.cpp" />
     <ClCompile Include="Dependencies\Chiyo\Serialization\SerializationReader.cpp" />
@@ -305,7 +305,8 @@
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
     <ClInclude Include="Communication\TCP\TCPClient.h" />
     <ClInclude Include="Communication\User.h" />
-    <ClInclude Include="Config\Config.h" />
+    <ClInclude Include="Configuration\Config.h" />
+    <ClInclude Include="Configuration\ConfigManager.h" />
     <ClInclude Include="Dependencies\Chiyo\Decoders\ReplayDecoder.h" />
     <ClInclude Include="Dependencies\Chiyo\LZMA\lzma_helper.hpp" />
     <ClInclude Include="Dependencies\Chiyo\Replays\LifeFrame.h" />

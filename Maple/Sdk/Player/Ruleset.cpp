@@ -6,24 +6,24 @@
 #include "xorstr.hpp"
 #include "../Memory.h"
 #include "../Osu/GameBase.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Communication/Communication.h"
 
 void __fastcall Ruleset::loadFlashlightHook(uintptr_t instance)
 {
-	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+	if (!ConfigManager::CurrentConfig.Visuals.Removers.FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
 		[[clang::musttail]] return oLoadFlashlight(instance);
 }
 
 void __fastcall Ruleset::loadManiaFlashlightHook(uintptr_t instance)
 {
-	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+	if (!ConfigManager::CurrentConfig.Visuals.Removers.FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
 		[[clang::musttail]] return oLoadManiaFlashlight(instance);
 }
 
 int __fastcall Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 {
-	if (!Config::Visuals::Removers::HiddenRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
+	if (!ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled || GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
 		[[clang::musttail]] return oHasHiddenSprites(instance);
 
 	return FALSE;
@@ -45,7 +45,7 @@ void Ruleset::Initialize()
 	Memory::AddObject(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("55 8B EC 56 A1 ?? ?? ?? ?? 85 C0 74 24 8B 50 1C 8B 4A 04 8B 72 08 FF 72 0C 8B D6"));
 	Memory::AddHook(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t Ruleset::GetInstance()

@@ -46,7 +46,7 @@ void Obfuscated::Initialize()
 	Memory::AddHook(xorstr_("ObfuscatedString::GetValue"), xorstr_("ObfuscatedString::GetValue"), reinterpret_cast<uintptr_t>(getStringValueHook), reinterpret_cast<uintptr_t*>(&oGetStringValue));
 	Memory::AddHook(xorstr_("ObfuscatedString::SetValue"), xorstr_("ObfuscatedString::SetValue"), reinterpret_cast<uintptr_t>(setStringValueHook), reinterpret_cast<uintptr_t*>(&oSetStringValue));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 CLRString* Obfuscated::GetString(uintptr_t instance)

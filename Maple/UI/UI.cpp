@@ -34,7 +34,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 	if (wParam == PM_REMOVE)
 	{
-		if (pMsg->message == WM_KEYUP && pMsg->wParam == Config::Relax::ToggleKey)
+		if (pMsg->message == WM_KEYUP && pMsg->wParam == ConfigManager::CurrentConfig.Relax.ToggleKey)
 			Relax::IsRunning = !Relax::IsRunning;
 
 		if (pMsg->message == WM_KEYUP && pMsg->wParam == StorageConfig::MenuKey)
@@ -241,7 +241,7 @@ void UI::render()
 	else
 		io.MouseDrawCursor = false;
 
-	if (Config::Visuals::UI::Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()))
+	if (ConfigManager::CurrentConfig.Visuals.UI.Snow && (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible()))
 		SnowVisualisation::Render();
 	
 	MainMenu::Render();

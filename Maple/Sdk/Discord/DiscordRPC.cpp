@@ -5,25 +5,25 @@
 #include "xorstr.hpp"
 
 #include "../Memory.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Communication/Communication.h"
 
 void __fastcall DiscordRPC::updateStatusHook(void* instance, int mode, int status, CLRString* beatmapDetails)
 {
-	[[clang::musttail]] return oUpdateStatus(instance, Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::CustomPlayModeEnabled ? Config::Misc::DiscordRichPresenceSpoofer::CustomPlayMode : mode, status, beatmapDetails);
+	[[clang::musttail]] return oUpdateStatus(instance, ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled ? ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomPlayMode : mode, status, beatmapDetails);
 }
 
 void __fastcall DiscordRPC::updateMatchHook(void* instance, void* match)
 {
-	[[clang::musttail]] return oUpdateMatch(instance, Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::HideMatchButton ? nullptr : match);
+	[[clang::musttail]] return oUpdateMatch(instance, ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.HideMatchButton ? nullptr : match);
 }
 
 void __fastcall DiscordRPC::setLargeImageTextHook(void* instance, CLRString* string)
 {
-	if (Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::CustomLargeImageTextEnabled)
+	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageTextEnabled)
 	{
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", Config::Misc::DiscordRichPresenceSpoofer::CustomLargeImageText);
+		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText);
 
 		[[clang::musttail]] return oSetLargeImageText(instance, Vanilla::AllocateCLRString(buf));
 	}
@@ -33,10 +33,10 @@ void __fastcall DiscordRPC::setLargeImageTextHook(void* instance, CLRString* str
 
 void __fastcall DiscordRPC::setStateHook(void* instance, CLRString* string)
 {
-	if (Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::CustomStateEnabled)
+	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomStateEnabled)
 	{
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", Config::Misc::DiscordRichPresenceSpoofer::CustomState);
+		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState);
 
 		[[clang::musttail]] return oSetState(instance, Vanilla::AllocateCLRString(buf));
 	}
@@ -46,10 +46,10 @@ void __fastcall DiscordRPC::setStateHook(void* instance, CLRString* string)
 
 void __fastcall DiscordRPC::setDetailsHook(void* instance, CLRString* string)
 {
-	if (Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::CustomDetailsEnabled)
+	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled)
 	{
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", Config::Misc::DiscordRichPresenceSpoofer::CustomDetails);
+		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails);
 
 		[[clang::musttail]] return oSetDetails(instance, Vanilla::AllocateCLRString(buf));
 	}
@@ -59,7 +59,7 @@ void __fastcall DiscordRPC::setDetailsHook(void* instance, CLRString* string)
 
 void __fastcall DiscordRPC::setSpectateSecretHook(void* instance, CLRString* string)
 {
-	[[clang::musttail]] return oSetSpectateSecret(instance, Config::Misc::DiscordRichPresenceSpoofer::Enabled && Config::Misc::DiscordRichPresenceSpoofer::HideSpectateButton ? nullptr : string);
+	[[clang::musttail]] return oSetSpectateSecret(instance, ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.HideSpectateButton ? nullptr : string);
 }
 
 void DiscordRPC::Initialize()
@@ -84,5 +84,5 @@ void DiscordRPC::Initialize()
 	Memory::AddObject(xorstr_("DiscordRPC::SetSpectateSecret"), xorstr_("39 09 FF 15 ?? ?? ?? ?? 8B C8 33 D2 39 09 FF 15 ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 8B CE FF 15 ?? ?? ?? ?? EB 3F 89 85 ?? ?? ?? ?? 89 45 D8"), 0x10, 2);
 	Memory::AddHook(xorstr_("DiscordRPC::SetSpectateSecret"), xorstr_("DiscordRPC::SetSpectateSecret"), reinterpret_cast<uintptr_t>(setSpectateSecretHook), reinterpret_cast<uintptr_t*>(&oSetSpectateSecret));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }

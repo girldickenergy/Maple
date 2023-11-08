@@ -5,7 +5,7 @@
 
 #include "../Memory.h"
 #include "../Mods/ModManager.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../Player/Player.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../Osu/GameBase.h"
@@ -13,7 +13,7 @@
 
 void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 {
-	if (Config::Timewarp::Enabled && GameBase::GetMode() == OsuModes::Play && Player::GetInstance() && !Player::GetIsReplayMode())
+	if (ConfigManager::CurrentConfig.Timewarp.Enabled && GameBase::GetMode() == OsuModes::Play && Player::GetInstance() && !Player::GetIsReplayMode())
 	{
 		rate = Timewarp::GetRate();
 
@@ -63,7 +63,7 @@ double AudioEngine::GetModTempo()
 
 float AudioEngine::GetModFrequency(float currentFrequency)
 {
-	if (ModManager::CheckActive(Mods::Nightcore) && Config::Timewarp::Enabled)
+	if (ModManager::CheckActive(Mods::Nightcore) && ConfigManager::CurrentConfig.Timewarp.Enabled)
         return std::round(currentFrequency / (static_cast<float>(Timewarp::GetRate()) / 100.f) * 1.5f);
 
 	return currentFrequency;

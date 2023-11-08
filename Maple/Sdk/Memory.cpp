@@ -11,7 +11,7 @@
 #include "../Communication/Communication.h"
 #include "../Utilities/Security/Security.h"
 #include "../Dependencies/Milk/Milk.h"
-#include "../Config/Config.h"
+#include "../Configuration/ConfigManager.h"
 #include "Scoring/Score.h"
 
 void Memory::jitCallback(uintptr_t address, unsigned int size)
@@ -40,8 +40,8 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 					if (!Milk::Get().DoCRCBypass(scanResult))
 					{
-						Config::Misc::ForceDisableScoreSubmission = true;
-						Config::Misc::BypassFailed = true;
+						ConfigManager::ForceDisableScoreSubmission = true;
+						ConfigManager::BypassFailed = true;
 
 						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->first.c_str());
 					}
@@ -72,8 +72,8 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
-				Config::Misc::ForceDisableScoreSubmission = true;
-				Config::Misc::BypassFailed = true;
+				ConfigManager::ForceDisableScoreSubmission = true;
+				ConfigManager::BypassFailed = true;
 
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
 			}
@@ -97,8 +97,8 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
-				Config::Misc::ForceDisableScoreSubmission = true;
-				Config::Misc::BypassFailed = true;
+				ConfigManager::ForceDisableScoreSubmission = true;
+				ConfigManager::BypassFailed = true;
 
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
 			}
@@ -159,8 +159,8 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 
 				if (!Milk::Get().DoCRCBypass(scanResult))
 				{
-					Config::Misc::ForceDisableScoreSubmission = true;
-					Config::Misc::BypassFailed = true;
+					ConfigManager::ForceDisableScoreSubmission = true;
+					ConfigManager::BypassFailed = true;
 
 					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name.c_str());
 				}
@@ -202,8 +202,8 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
-			Config::Misc::ForceDisableScoreSubmission = true;
-			Config::Misc::BypassFailed = true;
+			ConfigManager::ForceDisableScoreSubmission = true;
+			ConfigManager::BypassFailed = true;
 
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
 		}
@@ -238,8 +238,8 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
-			Config::Misc::ForceDisableScoreSubmission = true;
-			Config::Misc::BypassFailed = true;
+			ConfigManager::ForceDisableScoreSubmission = true;
+			ConfigManager::BypassFailed = true;
 
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
 		}

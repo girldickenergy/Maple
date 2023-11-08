@@ -12,7 +12,7 @@
 #include "../../UI/Windows/MainMenu.h"
 #include "../../Features/AimAssist/AimAssist.h"
 #include "../../Features/Relax/Relax.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Logging/Logger.h"
 
 int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
@@ -36,7 +36,7 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 
 void __fastcall Player::updateFlashlightHook(uintptr_t instance)
 {
-	if (!Config::Visuals::Removers::FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || GetIsReplayMode())
+	if (!ConfigManager::CurrentConfig.Visuals.Removers.FlashlightRemoverEnabled || GameBase::GetMode() != OsuModes::Play || GetIsReplayMode())
 		[[clang::musttail]] return oUpdateFlashlight(instance);
 }
 
@@ -76,7 +76,7 @@ void Player::Initialize()
 	Memory::AddObject(xorstr_("Player::UpdateFlashlight"), xorstr_("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 68 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));
 	Memory::AddHook(xorstr_("Player::UpdateFlashlight"), xorstr_("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }
 
 uintptr_t Player::GetInstance()

@@ -4,18 +4,18 @@
 #include "xorstr.hpp"
 
 #include "../Memory.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../../Communication/Communication.h"
 
 void __fastcall StreamingManager::pushNewFrameHook(uintptr_t frame)
 {
-	if (!Config::Misc::DisableSpectators)
+	if (!ConfigManager::CurrentConfig.Misc.DisableSpectators)
 		[[clang::musttail]] return oPushNewFrame(frame);
 }
 
 void __fastcall StreamingManager::purgeFramesHook(int action, uintptr_t extra)
 {
-	if (!Config::Misc::DisableSpectators || action != 6)
+	if (!ConfigManager::CurrentConfig.Misc.DisableSpectators || action != 6)
 		[[clang::musttail]] return oPurgeFrames(action, extra);
 }
 
@@ -29,5 +29,5 @@ void StreamingManager::Initialize()
 	Memory::AddHook(xorstr_("StreamingManager::PushNewFrame"), xorstr_("StreamingManager::PushNewFrame"), reinterpret_cast<uintptr_t>(pushNewFrameHook), reinterpret_cast<uintptr_t*>(&oPushNewFrame));
 	Memory::AddHook(xorstr_("StreamingManager::PurgeFrames"), xorstr_("StreamingManager::PurgeFrames"), reinterpret_cast<uintptr_t>(purgeFramesHook), reinterpret_cast<uintptr_t*>(&oPurgeFrames));
 
-		VIRTUALIZER_FISH_RED_END
+	VIRTUALIZER_FISH_RED_END
 }

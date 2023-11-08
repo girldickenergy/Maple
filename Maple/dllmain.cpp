@@ -10,7 +10,7 @@
 
 #include "Logging/Logger.h"
 #include "Storage/Storage.h"
-#include "Config/Config.h"
+#include "Configuration/ConfigManager.h"
 #include "Dependencies/Milk/Milk.h"
 
 #include "Utilities/Security/Security.h"
@@ -120,7 +120,7 @@ void InitializeMaple()
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
-    Config::Initialize();
+    ConfigManager::Initialize();
 
     Logger::Log(LogSeverity::Info, xorstr_("Initialization started."));
 
@@ -128,10 +128,10 @@ void InitializeMaple()
     bool milkPrepared = Milk::Get().Prepare();
 
     if (!goodKnownAuthVersion || !milkPrepared)
-        Config::Misc::ForceDisableScoreSubmission = true;
+        ConfigManager::ForceDisableScoreSubmission = true;
 
     if (goodKnownAuthVersion && !milkPrepared)
-        Config::Misc::BypassFailed = true;
+        ConfigManager::BypassFailed = true;
 
     VanillaResult vanillaResult = Vanilla::Initialize(true);
     if (vanillaResult == VanillaResult::Success)

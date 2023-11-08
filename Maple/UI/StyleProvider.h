@@ -6,7 +6,7 @@
 
 #include "Assets/Textures.h"
 #include "Assets/Fonts.h"
-#include "../Config/Config.h"
+#include "../Configuration/ConfigManager.h"
 #include "UI.h"
 #include "../Utilities/Textures/TextureLoader.h"
 #include "../Communication/Communication.h"
@@ -112,13 +112,13 @@ public:
 
 	static void UpdateScale()
 	{
-		if (Config::Visuals::UI::MenuScale == 0)
+		if (ConfigManager::CurrentConfig.Visuals.UI.MenuScale == 0)
 			Scale = 0.5f;
-		else if (Config::Visuals::UI::MenuScale == 1)
+		else if (ConfigManager::CurrentConfig.Visuals.UI.MenuScale == 1)
 			Scale = 0.75f;
-		else if (Config::Visuals::UI::MenuScale == 3)
+		else if (ConfigManager::CurrentConfig.Visuals.UI.MenuScale == 3)
 			Scale = 1.25f;
-		else if (Config::Visuals::UI::MenuScale == 4)
+		else if (ConfigManager::CurrentConfig.Visuals.UI.MenuScale == 4)
 			Scale = 1.5f;
 		else Scale = 1;
 
@@ -150,10 +150,10 @@ public:
 	{
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		AccentColour = Config::Visuals::UI::AccentColour;
-		MenuColour = Config::Visuals::UI::MenuColour;
-		ControlColour = Config::Visuals::UI::ControlColour;
-		TextColour = Config::Visuals::UI::TextColour;
+		AccentColour = ConfigManager::CurrentConfig.Visuals.UI.AccentColour;
+		MenuColour = ConfigManager::CurrentConfig.Visuals.UI.MenuColour;
+		ControlColour = ConfigManager::CurrentConfig.Visuals.UI.ControlColour;
+		TextColour = ConfigManager::CurrentConfig.Visuals.UI.TextColour;
 
 		style.Colors[ImGuiCol_TextSelectedBg] = AccentColour;
 

@@ -14,7 +14,7 @@
 #include "../Graphics/SpriteManager.h"
 #include "../Memory.h"
 #include "../Osu/GameBase.h"
-#include "../../Config/Config.h"
+#include "../../Configuration/ConfigManager.h"
 #include "../Osu/GameField.h"
 #include "../Mods/ModManager.h"
 #include "../../Features/Timewarp/Timewarp.h"
@@ -38,9 +38,9 @@ void HitObjectManager::spoofVisuals()
 	spoofPreEmpt();
 	spoofMods();
 
-	if (Config::Visuals::CSChanger::Enabled && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::CatchTheBeat))
+	if (ConfigManager::CurrentConfig.Visuals.CSChanger.Enabled && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::CatchTheBeat))
 	{
-		const float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((Config::Visuals::CSChanger::CS - 5.f) / 5.f));
+		const float spriteDisplaySize = GameField::GetWidth() / 8.f * (1.f - 0.7f * ((ConfigManager::CurrentConfig.Visuals.CSChanger.CS - 5.f) / 5.f));
 		const float hitObjectRadius = spriteDisplaySize / 2.f / GameField::GetRatio() * 1.00041f;
 		const float spriteRatio = spriteDisplaySize / 128.f;
 
@@ -54,7 +54,7 @@ void HitObjectManager::spoofVisuals()
 
 void HitObjectManager::spoofMods()
 {
-	if (Config::Visuals::Removers::HiddenRemoverEnabled)
+	if (ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled)
 	{
 		Mods mods = GetActiveMods();
 		originalMods = mods;
@@ -74,10 +74,10 @@ void HitObjectManager::spoofPreEmpt()
 	originalPreEmpt = GetPreEmpt();
 	originalPreEmptSliderComplete = GetPreEmptSliderComplete();
 
-	if (Config::Visuals::ARChanger::Enabled)
+	if (ConfigManager::CurrentConfig.Visuals.ARChanger.Enabled)
 	{
-		const double rateMultiplier = Config::Visuals::ARChanger::AdjustToRate ? ((Config::Timewarp::Enabled ? Timewarp::GetRate() : ModManager::GetModPlaybackRate()) / 100.) : 1.;
-		const int preEmpt = static_cast<int>(MapDifficultyRange(static_cast<double>(Config::Visuals::ARChanger::AR), 1800., 1200., 450., Config::Visuals::ARChanger::AdjustToMods) * rateMultiplier);
+		const double rateMultiplier = ConfigManager::CurrentConfig.Visuals.ARChanger.AdjustToRate ? ((ConfigManager::CurrentConfig.Timewarp.Enabled ? Timewarp::GetRate() : ModManager::GetModPlaybackRate()) / 100.) : 1.;
+		const int preEmpt = static_cast<int>(MapDifficultyRange(static_cast<double>(ConfigManager::CurrentConfig.Visuals.ARChanger.AR), 1800., 1200., 450., ConfigManager::CurrentConfig.Visuals.ARChanger.AdjustToMods) * rateMultiplier);
 
 		SetPreEmpt(preEmpt);
 		SetPreEmptSliderComplete(preEmpt * 2 / 3);
@@ -89,7 +89,7 @@ void HitObjectManager::restoreMods()
 	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
 		return;
 
-	if (Config::Visuals::Removers::HiddenRemoverEnabled)
+	if (ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled)
 		SetActiveMods(originalMods);
 }
 
@@ -98,7 +98,7 @@ void HitObjectManager::restorePreEmpt()
 	if (GameBase::GetMode() != OsuModes::Play || (Player::GetPlayMode() != PlayModes::Osu && Player::GetPlayMode() != PlayModes::CatchTheBeat) || Player::GetIsReplayMode())
 		return;
 
-	if (Config::Visuals::ARChanger::Enabled)
+	if (ConfigManager::CurrentConfig.Visuals.ARChanger.Enabled)
 	{
 		SetPreEmpt(originalPreEmpt);
 		SetPreEmptSliderComplete(originalPreEmptSliderComplete);

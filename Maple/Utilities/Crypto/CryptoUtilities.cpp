@@ -56,15 +56,34 @@ std::wstring CryptoUtilities::GetMD5Hash(const std::wstring& str)
     return std::wstring(strHashed.begin(), strHashed.end());
 }
 
-void CryptoUtilities::MapleXOR(std::string& str, const std::string& key)
+std::string CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
 {
+    std::string result = str;
+
 	unsigned int j = 0;
     for (unsigned int i = 0; i < str.length(); i++)
     {
-        str[i] = str[i] ^ key[j];
+        result[i] = str[i] ^ key[j];
 
-        j = (++j < key.length() ? j : 0);
+        j = ++j < key.length() ? j : 0;
     }
+
+    return result;
+}
+
+std::vector<uint8_t> CryptoUtilities::MapleXOR(const std::vector<uint8_t>& data, const std::string& key)
+{
+    std::vector<uint8_t> result = data;
+
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < data.size(); i++)
+    {
+        result[i] = data[i] ^ key[j];
+
+        j = ++j < key.length() ? j : 0;
+    }
+
+    return result;
 }
 
 std::string CryptoUtilities::Base64Encode(const std::string& str)
@@ -74,6 +93,18 @@ std::string CryptoUtilities::Base64Encode(const std::string& str)
     CryptoPP::Base64Encoder encoder(nullptr, false);
     encoder.Attach(new CryptoPP::StringSink(result));
     encoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    encoder.MessageEnd();
+
+    return result;
+}
+
+std::string CryptoUtilities::Base64Encode(const std::vector<uint8_t>& data)
+{
+    std::string result;
+
+    CryptoPP::Base64Encoder encoder(nullptr, false);
+    encoder.Attach(new CryptoPP::StringSink(result));
+    encoder.Put(data.data(), data.size());
     encoder.MessageEnd();
 
     return result;

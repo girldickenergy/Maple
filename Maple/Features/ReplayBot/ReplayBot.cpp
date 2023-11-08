@@ -33,18 +33,18 @@ std::string ReplayBot::GetReplayString()
 	std::string rulesetString;
 	switch (currentReplay.PlayMode)
 	{
-	case PlayModes::Osu:
-		rulesetString = "osu!standard";
-		break;
-	case PlayModes::Taiko:
-		rulesetString = "osu!taiko";
-		break;
-	case PlayModes::CatchTheBeat:
-		rulesetString = "osu!ctb";
-		break;
-	case PlayModes::OsuMania:
-		rulesetString = "osu!mania";
-		break;
+		case PlayModes::Osu:
+			rulesetString = "osu!standard";
+			break;
+		case PlayModes::Taiko:
+			rulesetString = "osu!taiko";
+			break;
+		case PlayModes::CatchTheBeat:
+			rulesetString = "osu!ctb";
+			break;
+		case PlayModes::OsuMania:
+			rulesetString = "osu!mania";
+			break;
 	}
 
 	return currentReplay.PlayerName + "'s " + rulesetString + " replay";
