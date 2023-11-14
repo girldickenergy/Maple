@@ -442,6 +442,9 @@
     <Filter Include="Configuration">
       <UniqueIdentifier>{f7407e2a-cae1-4a18-9aa3-01784e40c5d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\Encryption">
+      <UniqueIdentifier>{4aa9a644-035f-487b-8ce9-078a0190d07c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\CryptoPP\shake.h">
@@ -1448,6 +1451,9 @@
     </ClInclude>
     <ClInclude Include="Configuration\Config.h">
       <Filter>Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Encryption\EncryptedArray.h">
+      <Filter>Dependencies\Encryption</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

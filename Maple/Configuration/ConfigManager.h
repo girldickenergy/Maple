@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Config.h"
+#include "EncryptedArray.h"
 
 class ConfigManager
 {
@@ -13,7 +14,7 @@ public:
 	static inline Config CurrentConfig;
 	static inline int CurrentConfigIndex = 0;
 	static inline char RenamedConfigName[32] = { };
-	static inline char NewConfigName[32] = { };
+	static inline EncryptedArray<char, 32> NewConfigName;
 
 	static inline bool ForceDisableScoreSubmission = false;
 	static inline bool BypassFailed = false;

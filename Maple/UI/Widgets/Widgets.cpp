@@ -843,6 +843,9 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
     flags |= ImGuiInputTextFlags_AutoSelectAll;
     flags |= ImGuiInputTextFlags_NoMarkEdited;  // We call MarkItemEdited() ourselves by comparing the actual data rather than the string.
 
+    char initialTextA[512];
+    g.InputTextState.InitialTextA.DecryptTo(initialTextA);
+
     if (p_step != NULL)
     {
         const float button_size = ImGui::GetFrameHeight();
@@ -851,7 +854,7 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
         ImGui::PushID(label);
         ImGui::SetNextItemWidth(ImMax(1.0f, ImGui::CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
         if (ImGui::InputText("", buf, IM_ARRAYSIZE(buf), flags)) // PushId(label) + "" gives us the expected ID from outside point of view
-            value_changed = ImGui::DataTypeApplyOpFromText(buf, g.InputTextState.InitialTextA.Data, data_type, p_data, format);
+            value_changed = ImGui::DataTypeApplyOpFromText(buf, initialTextA, data_type, p_data, format);
 
         // Step buttons
         const ImVec2 backup_frame_padding = style.FramePadding;
@@ -886,7 +889,7 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
     else
     {
         if (ImGui::InputText(label, buf, IM_ARRAYSIZE(buf), flags))
-            value_changed = ImGui::DataTypeApplyOpFromText(buf, g.InputTextState.InitialTextA.Data, data_type, p_data, format);
+            value_changed = ImGui::DataTypeApplyOpFromText(buf, initialTextA, data_type, p_data, format);
     }
     if (value_changed)
         ImGui::MarkItemEdited(window->DC.LastItemId);

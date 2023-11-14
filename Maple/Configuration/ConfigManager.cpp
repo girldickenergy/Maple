@@ -216,8 +216,11 @@ void ConfigManager::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	std::string configName = NewConfigName;
-	std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + NewConfigName + xorstr_(".cfg");
+	char newConfigName[32];
+	NewConfigName.DecryptTo(newConfigName);
+
+	std::string configName = newConfigName;
+	std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + newConfigName + xorstr_(".cfg");
 
 	if (!Storage::IsValidFileName(configName))
 		return;
