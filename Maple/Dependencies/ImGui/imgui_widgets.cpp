@@ -4348,15 +4348,16 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 // Push records into the undo stack so we can CTRL+Z the revert operation itself
                 apply_new_text = initialTextA;
                 apply_new_text_length = (int)strlen(buf);
-                ImVector<ImWchar> w_text;
+                ImWchar wText[512];
+                state->TextW.DecryptTo(wText);
+                int wTextLen = apply_new_text_length > 0 ? ImTextCountCharsFromUtf8(apply_new_text, apply_new_text + apply_new_text_length) + 1 : 0;
                 if (apply_new_text_length > 0)
                 {
-                    w_text.resize(ImTextCountCharsFromUtf8(apply_new_text, apply_new_text + apply_new_text_length) + 1);
-                    ImTextStrFromUtf8(w_text.Data, w_text.Size, apply_new_text, apply_new_text + apply_new_text_length);
+                    ImTextStrFromUtf8(wText, wTextLen, apply_new_text, apply_new_text + apply_new_text_length);
 
                     state->InitialTextA.EncryptFrom(initialTextA);
                 }
-                stb_textedit_replace(state, &state->Stb, w_text.Data, (apply_new_text_length > 0) ? (w_text.Size - 1) : 0);
+                stb_textedit_replace(state, &state->Stb, wText, (apply_new_text_length > 0) ? (wTextLen - 1) : 0);
             }
         }
 
@@ -4387,88 +4388,88 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             }
 
             // User callback
-            if ((flags & (ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CallbackAlways)) != 0)
-            {
-                IM_ASSERT(callback != NULL);
+            //if ((flags & (ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CallbackAlways)) != 0)
+            //{
+            //    IM_ASSERT(callback != NULL);
 
-                // The reason we specify the usage semantic (Completion/History) is that Completion needs to disable keyboard TABBING at the moment.
-                ImGuiInputTextFlags event_flag = 0;
-                ImGuiKey event_key = ImGuiKey_COUNT;
-                if ((flags & ImGuiInputTextFlags_CallbackCompletion) != 0 && IsKeyPressedMap(ImGuiKey_Tab))
-                {
-                    event_flag = ImGuiInputTextFlags_CallbackCompletion;
-                    event_key = ImGuiKey_Tab;
-                }
-                else if ((flags & ImGuiInputTextFlags_CallbackHistory) != 0 && IsKeyPressedMap(ImGuiKey_UpArrow))
-                {
-                    event_flag = ImGuiInputTextFlags_CallbackHistory;
-                    event_key = ImGuiKey_UpArrow;
-                }
-                else if ((flags & ImGuiInputTextFlags_CallbackHistory) != 0 && IsKeyPressedMap(ImGuiKey_DownArrow))
-                {
-                    event_flag = ImGuiInputTextFlags_CallbackHistory;
-                    event_key = ImGuiKey_DownArrow;
-                }
-                else if ((flags & ImGuiInputTextFlags_CallbackEdit) && state->Edited)
-                {
-                    event_flag = ImGuiInputTextFlags_CallbackEdit;
-                }
-                else if (flags & ImGuiInputTextFlags_CallbackAlways)
-                {
-                    event_flag = ImGuiInputTextFlags_CallbackAlways;
-                }
+            //    // The reason we specify the usage semantic (Completion/History) is that Completion needs to disable keyboard TABBING at the moment.
+            //    ImGuiInputTextFlags event_flag = 0;
+            //    ImGuiKey event_key = ImGuiKey_COUNT;
+            //    if ((flags & ImGuiInputTextFlags_CallbackCompletion) != 0 && IsKeyPressedMap(ImGuiKey_Tab))
+            //    {
+            //        event_flag = ImGuiInputTextFlags_CallbackCompletion;
+            //        event_key = ImGuiKey_Tab;
+            //    }
+            //    else if ((flags & ImGuiInputTextFlags_CallbackHistory) != 0 && IsKeyPressedMap(ImGuiKey_UpArrow))
+            //    {
+            //        event_flag = ImGuiInputTextFlags_CallbackHistory;
+            //        event_key = ImGuiKey_UpArrow;
+            //    }
+            //    else if ((flags & ImGuiInputTextFlags_CallbackHistory) != 0 && IsKeyPressedMap(ImGuiKey_DownArrow))
+            //    {
+            //        event_flag = ImGuiInputTextFlags_CallbackHistory;
+            //        event_key = ImGuiKey_DownArrow;
+            //    }
+            //    else if ((flags & ImGuiInputTextFlags_CallbackEdit) && state->Edited)
+            //    {
+            //        event_flag = ImGuiInputTextFlags_CallbackEdit;
+            //    }
+            //    else if (flags & ImGuiInputTextFlags_CallbackAlways)
+            //    {
+            //        event_flag = ImGuiInputTextFlags_CallbackAlways;
+            //    }
 
-                if (event_flag)
-                {
-                    char textA[512];
-                    state->TextA.DecryptTo(textA);
+            //    if (event_flag)
+            //    {
+            //        char textA[512];
+            //        state->TextA.DecryptTo(textA);
 
-                    ImWchar textW[512];
-                    state->TextW.DecryptTo(textW);
+            //        ImWchar textW[512];
+            //        state->TextW.DecryptTo(textW);
 
-                    ImGuiInputTextCallbackData callback_data;
-                    memset(&callback_data, 0, sizeof(ImGuiInputTextCallbackData));
-                    callback_data.EventFlag = event_flag;
-                    callback_data.Flags = flags;
-                    callback_data.UserData = callback_user_data;
+            //        ImGuiInputTextCallbackData callback_data;
+            //        memset(&callback_data, 0, sizeof(ImGuiInputTextCallbackData));
+            //        callback_data.EventFlag = event_flag;
+            //        callback_data.Flags = flags;
+            //        callback_data.UserData = callback_user_data;
 
-                    callback_data.EventKey = event_key;
-                    callback_data.Buf = textA;
-                    callback_data.BufTextLen = state->CurLenA;
-                    callback_data.BufSize = state->BufCapacityA;
-                    callback_data.BufDirty = false;
+            //        callback_data.EventKey = event_key;
+            //        callback_data.Buf = textA;
+            //        callback_data.BufTextLen = state->CurLenA;
+            //        callback_data.BufSize = state->BufCapacityA;
+            //        callback_data.BufDirty = false;
 
-                    // We have to convert from wchar-positions to UTF-8-positions, which can be pretty slow (an incentive to ditch the ImWchar buffer, see https://github.com/nothings/stb/issues/188)
-                    ImWchar* text = textW;
-                    const int utf8_cursor_pos = callback_data.CursorPos = ImTextCountUtf8BytesFromStr(text, text + state->Stb.cursor);
-                    const int utf8_selection_start = callback_data.SelectionStart = ImTextCountUtf8BytesFromStr(text, text + state->Stb.select_start);
-                    const int utf8_selection_end = callback_data.SelectionEnd = ImTextCountUtf8BytesFromStr(text, text + state->Stb.select_end);
+            //        // We have to convert from wchar-positions to UTF-8-positions, which can be pretty slow (an incentive to ditch the ImWchar buffer, see https://github.com/nothings/stb/issues/188)
+            //        ImWchar* text = textW;
+            //        const int utf8_cursor_pos = callback_data.CursorPos = ImTextCountUtf8BytesFromStr(text, text + state->Stb.cursor);
+            //        const int utf8_selection_start = callback_data.SelectionStart = ImTextCountUtf8BytesFromStr(text, text + state->Stb.select_start);
+            //        const int utf8_selection_end = callback_data.SelectionEnd = ImTextCountUtf8BytesFromStr(text, text + state->Stb.select_end);
 
-                    // Call user code
-                    callback(&callback_data);
+            //        // Call user code
+            //        callback(&callback_data);
 
-                    // Read back what user may have modified
-                    IM_ASSERT(callback_data.Buf == state->TextA.Data);  // Invalid to modify those fields
-                    IM_ASSERT(callback_data.BufSize == state->BufCapacityA);
-                    IM_ASSERT(callback_data.Flags == flags);
-                    const bool buf_dirty = callback_data.BufDirty;
-                    if (callback_data.CursorPos != utf8_cursor_pos || buf_dirty) { state->Stb.cursor = ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.CursorPos); state->CursorFollow = true; }
-                    if (callback_data.SelectionStart != utf8_selection_start || buf_dirty) { state->Stb.select_start = (callback_data.SelectionStart == callback_data.CursorPos) ? state->Stb.cursor : ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.SelectionStart); }
-                    if (callback_data.SelectionEnd != utf8_selection_end || buf_dirty) { state->Stb.select_end = (callback_data.SelectionEnd == callback_data.SelectionStart) ? state->Stb.select_start : ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.SelectionEnd); }
-                    if (buf_dirty)
-                    {
-                        IM_ASSERT(callback_data.BufTextLen == (int)strlen(callback_data.Buf)); // You need to maintain BufTextLen if you change the text!
-                        //if (callback_data.BufTextLen > backup_current_text_length && is_resizable)
-                        //    state->TextW.resize(state->TextW.Size + (callback_data.BufTextLen - backup_current_text_length));
-                        state->CurLenW = ImTextStrFromUtf8(textW, buf_size + 1 + (callback_data.BufTextLen - backup_current_text_length), callback_data.Buf, NULL);
-                        state->CurLenA = callback_data.BufTextLen;  // Assume correct length and valid UTF-8 from user, saves us an extra strlen()
-                        state->CursorAnimReset();
-                    }
+            //        // Read back what user may have modified
+            //        IM_ASSERT(callback_data.Buf == state->TextA.Data);  // Invalid to modify those fields
+            //        IM_ASSERT(callback_data.BufSize == state->BufCapacityA);
+            //        IM_ASSERT(callback_data.Flags == flags);
+            //        const bool buf_dirty = callback_data.BufDirty;
+            //        if (callback_data.CursorPos != utf8_cursor_pos || buf_dirty) { state->Stb.cursor = ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.CursorPos); state->CursorFollow = true; }
+            //        if (callback_data.SelectionStart != utf8_selection_start || buf_dirty) { state->Stb.select_start = (callback_data.SelectionStart == callback_data.CursorPos) ? state->Stb.cursor : ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.SelectionStart); }
+            //        if (callback_data.SelectionEnd != utf8_selection_end || buf_dirty) { state->Stb.select_end = (callback_data.SelectionEnd == callback_data.SelectionStart) ? state->Stb.select_start : ImTextCountCharsFromUtf8(callback_data.Buf, callback_data.Buf + callback_data.SelectionEnd); }
+            //        if (buf_dirty)
+            //        {
+            //            IM_ASSERT(callback_data.BufTextLen == (int)strlen(callback_data.Buf)); // You need to maintain BufTextLen if you change the text!
+            //            //if (callback_data.BufTextLen > backup_current_text_length && is_resizable)
+            //            //    state->TextW.resize(state->TextW.Size + (callback_data.BufTextLen - backup_current_text_length));
+            //            state->CurLenW = ImTextStrFromUtf8(textW, buf_size + 1 + (callback_data.BufTextLen - backup_current_text_length), callback_data.Buf, NULL);
+            //            state->CurLenA = callback_data.BufTextLen;  // Assume correct length and valid UTF-8 from user, saves us an extra strlen()
+            //            state->CursorAnimReset();
+            //        }
 
-                    state->TextA.EncryptFrom(textA);
-                    state->TextW.EncryptFrom(textW);
-                }
-            }
+            //        state->TextA.EncryptFrom(textA);
+            //        state->TextW.EncryptFrom(textW);
+            //    }
+            //}
 
             char textA[512];
             state->TextA.DecryptTo(textA);
