@@ -7,17 +7,22 @@ template<typename T, int SIZE>
 class EncryptedArray
 {
 	size_t m_Size;
-	uint8_t m_Key;
+	T m_Key;
     std::array<T, SIZE <= 0 ? 1 : SIZE> m_Buffer;
 
-	static uint8_t generateKey()
+	static T generateKey()
 	{
 	    static std::random_device rd;
 	    static std::mt19937 rng(rd());
+	    static std::uniform_int_distribution<int> dist(1, (std::numeric_limits<uint8_t>::max)());
 
-	    std::uniform_int_distribution<int> dist(1, (std::numeric_limits<uint8_t>::max)());
+	    T key = 0;
+	    const auto keyBytes = reinterpret_cast<uint8_t*>(&key);
 
-	    return (uint8_t)dist(rng);
+	    for (size_t i = 0; i < sizeof(T); i++)
+	        keyBytes[i] = static_cast<uint8_t>(dist(rng));
+
+	    return key;
 	}
 
 public:
@@ -26,9 +31,6 @@ public:
 		for (size_t i = 0; i < m_Size; i++)
 			m_Buffer[i] = (initialBuffer ? initialBuffer[i] : 0) ^ m_Key;
     }
-
-	EncryptedArray(const EncryptedArray &) = delete;
-    EncryptedArray &operator=(const EncryptedArray &) = delete;
 
 	void DecryptTo(T* buffer) const
 	{
