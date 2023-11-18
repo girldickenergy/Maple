@@ -32,6 +32,32 @@ public:
 			m_Buffer[i] = (initialBuffer ? initialBuffer[i] : 0) ^ m_Key;
     }
 
+	EncryptedArray(const EncryptedArray& other) : m_Size(other.m_Size), m_Key(other.m_Key), m_Buffer(other.m_Buffer) {}
+
+    EncryptedArray& operator=(const EncryptedArray& other)
+    {
+        if (this == &other)
+            return *this;
+
+        m_Size = other.m_Size;
+        m_Key = other.m_Key;
+        m_Buffer = other.m_Buffer;
+
+        return *this;
+    }
+
+	friend bool operator==(const EncryptedArray& lhs, const EncryptedArray& rhs)
+    {
+        if (lhs.m_Size != rhs.m_Size)
+            return false;
+
+        for (size_t i = 0; i < lhs.m_Size; i++)
+            if ((lhs.m_Buffer[i] ^ lhs.m_Key) != (rhs.m_Buffer[i] ^ rhs.m_Key))
+                return false;
+
+        return true;
+    }
+
 	void DecryptTo(T* buffer) const
 	{
         if (buffer)
