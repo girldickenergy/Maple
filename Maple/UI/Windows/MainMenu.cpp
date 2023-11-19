@@ -729,10 +729,10 @@ void MainMenu::Render()
 
                     ImGui::Spacing();
 
-                    char newConfigName[32];
-                    ConfigManager::NewConfigName.DecryptTo(newConfigName);
+                    char newConfigName[ConfigManager::NewConfigName.GetSize()];
+                    ConfigManager::NewConfigName.GetData(newConfigName);
                     ImGui::InputText(xorstr_("Config name##newconfig"), newConfigName, 32);
-                    ConfigManager::NewConfigName.EncryptFrom(newConfigName);
+                    ConfigManager::NewConfigName.SetData(newConfigName);
 
                     if (Widgets::Button(xorstr_("Create new config"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {

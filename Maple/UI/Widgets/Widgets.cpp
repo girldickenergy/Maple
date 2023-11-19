@@ -844,7 +844,7 @@ bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_da
     flags |= ImGuiInputTextFlags_NoMarkEdited;  // We call MarkItemEdited() ourselves by comparing the actual data rather than the string.
 
     char initialTextA[512];
-    g.InputTextState.InitialTextA.DecryptTo(initialTextA);
+    g.InputTextState.InitialTextA.GetData(initialTextA);
 
     if (p_step != NULL)
     {

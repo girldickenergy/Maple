@@ -58,7 +58,7 @@ public:
         return true;
     }
 
-	void DecryptTo(T* buffer) const
+	void GetData(T* buffer) const
 	{
         if (buffer)
         {
@@ -67,7 +67,7 @@ public:
 		}
 	}
 
-	void EncryptFrom(const T* buffer)
+	void SetData(const T* buffer)
 	{
 		if (buffer)
         {

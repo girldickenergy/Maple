@@ -3314,7 +3314,7 @@ bool ImGui::TempInputScalar(const ImRect& bb, ImGuiID id, const char* label, ImG
         memcpy(&data_backup, p_data, data_type_size);
 
         char initialTextA[512];
-        g.InputTextState.InitialTextA.DecryptTo(initialTextA);
+        g.InputTextState.InitialTextA.GetData(initialTextA);
 
         // Apply new value (or operations) then clamp
         DataTypeApplyOpFromText(data_buf, initialTextA, data_type, p_data, NULL);
@@ -3357,7 +3357,7 @@ bool ImGui::InputScalar(const char* label, ImGuiDataType data_type, void* p_data
     flags |= ImGuiInputTextFlags_NoMarkEdited;  // We call MarkItemEdited() ourselves by comparing the actual data rather than the string.
 
     char initialTextA[512];
-    g.InputTextState.InitialTextA.DecryptTo(initialTextA);
+    g.InputTextState.InitialTextA.GetData(initialTextA);
 
     if (p_step != NULL)
     {
@@ -3587,14 +3587,14 @@ namespace ImStb
     static ImWchar STB_TEXTEDIT_GETCHAR(const STB_TEXTEDIT_STRING* obj, int idx)
     {
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         return textW[idx];
     }
     static float   STB_TEXTEDIT_GETWIDTH(STB_TEXTEDIT_STRING* obj, int line_start_idx, int char_idx)
     {
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         ImWchar c = textW[line_start_idx + char_idx];
 
@@ -3610,7 +3610,7 @@ namespace ImStb
     static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, STB_TEXTEDIT_STRING* obj, int line_start_idx)
     {
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         const ImWchar* text = textW;
         const ImWchar* text_remaining = NULL;
@@ -3627,7 +3627,7 @@ namespace ImStb
     static int  is_word_boundary_from_right(STB_TEXTEDIT_STRING* obj, int idx)
     {
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         return idx > 0 ? (is_separator(textW[idx - 1]) && !is_separator(textW[idx])) : 1;
     }
@@ -3644,7 +3644,7 @@ namespace ImStb
     static void STB_TEXTEDIT_DELETECHARS(STB_TEXTEDIT_STRING* obj, int pos, int n)
     {
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         ImWchar* dst = textW + pos;
 
@@ -3659,7 +3659,7 @@ namespace ImStb
             *dst++ = c;
         *dst = '\0';
 
-        obj->TextW.EncryptFrom(textW);
+        obj->TextW.SetData(textW);
     }
 
     static bool STB_TEXTEDIT_INSERTCHARS(STB_TEXTEDIT_STRING* obj, int pos, const ImWchar* new_text, int new_text_len)
@@ -3673,7 +3673,7 @@ namespace ImStb
             return false;
 
         ImWchar textW[512];
-        obj->TextW.DecryptTo(textW);
+        obj->TextW.GetData(textW);
 
         // Grow internal buffer if needed
         //if (new_text_len + text_len + 1 > obj->TextW.Size)
@@ -3694,7 +3694,7 @@ namespace ImStb
         obj->CurLenA += new_text_len_utf8;
         textW[obj->CurLenW] = '\0';
 
-        obj->TextW.EncryptFrom(textW);
+        obj->TextW.SetData(textW);
 
         return true;
     }
@@ -3787,7 +3787,7 @@ void ImGuiInputTextCallbackData::InsertChars(int pos, const char* new_text, cons
         ImGuiInputTextState* edit_state = &g.InputTextState;
 
         char textA[512];
-        edit_state->TextA.DecryptTo(textA);
+        edit_state->TextA.GetData(textA);
 
         IM_ASSERT(edit_state->ID != 0 && g.ActiveId == edit_state->ID);
         IM_ASSERT(Buf == edit_state->TextA.Data);
@@ -3998,7 +3998,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->CursorAnimReset();
 
         char initialTextA[512];
-        state->InitialTextA.DecryptTo(initialTextA);
+        state->InitialTextA.GetData(initialTextA);
 
         // Take a copy of the initial buffer value (both in original UTF-8 format and converted to wchar)
         // From the moment we focused we are ignoring the content of 'buf' (unless we are in read-only mode)
@@ -4006,10 +4006,10 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         //state->InitialTextA.resize(buf_len + 1);    // UTF-8. we use +1 to make sure that .Data is always pointing to at least an empty string.
         memcpy(initialTextA, buf, buf_len + 1);
 
-        state->InitialTextA.EncryptFrom(initialTextA);
+        state->InitialTextA.SetData(initialTextA);
 
         ImWchar textW[512];
-        state->TextW.DecryptTo(textW);
+        state->TextW.GetData(textW);
 
         // Start edition
         const char* buf_end = NULL;
@@ -4019,7 +4019,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->CurLenW = ImTextStrFromUtf8(textW, buf_size, buf, NULL, &buf_end);
         state->CurLenA = (int)(buf_end - buf);      // We can't get the result from ImStrncpy() above because it is not UTF-8 aware. Here we'll cut off malformed UTF-8.
 
-        state->TextW.EncryptFrom(textW);
+        state->TextW.SetData(textW);
 
         // Preserve cursor position and undo/redo stack if we come back to same widget
         // FIXME: For non-readonly widgets we might be able to require that TextAIsValid && TextA == buf ? (untested) and discard undo stack if user buffer has changed.
@@ -4083,7 +4083,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     if (is_readonly && state != NULL && (render_cursor || render_selection))
     {
         ImWchar textW[512];
-        state->TextW.DecryptTo(textW);
+        state->TextW.GetData(textW);
 
         const char* buf_end = NULL;
         //state->TextW.resize(buf_size + 1);
@@ -4092,14 +4092,14 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         state->CursorClamp();
         render_selection &= state->HasSelection();
 
-        state->TextW.EncryptFrom(textW);
+        state->TextW.SetData(textW);
     }
 
     // Select the buffer to render.
     const bool buf_display_from_state = (render_cursor || render_selection || g.ActiveId == id) && !is_readonly && state && state->TextAIsValid;
     char textA[512];
     if (buf_display_from_state)
-        state->TextA.DecryptTo(textA);
+        state->TextA.GetData(textA);
     const bool is_displaying_hint = (hint != NULL && (buf_display_from_state ? textA : buf)[0] == 0);
 
     // Password pushes a temporary font with only a fallback glyph
@@ -4278,15 +4278,15 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (io.SetClipboardTextFn)
             {
                 ImWchar textW[512];
-                state->TextW.DecryptTo(textW);
+                state->TextW.GetData(textW);
 
                 const int ib = state->HasSelection() ? ImMin(state->Stb.select_start, state->Stb.select_end) : 0;
                 const int ie = state->HasSelection() ? ImMax(state->Stb.select_start, state->Stb.select_end) : state->CurLenW;
                 const int clipboard_data_len = ImTextCountUtf8BytesFromStr(textW + ib, textW + ie) + 1;
-                char* clipboard_data = (char*)IM_ALLOC(clipboard_data_len * sizeof(char));
+                char clipboard_data[clipboard_data_len];
                 ImTextStrToUtf8(clipboard_data, clipboard_data_len, textW + ib, textW + ie);
 
-                state->TextW.EncryptFrom(textW);
+                state->TextW.SetData(textW);
 
                 SetClipboardText(clipboard_data);
                 MemFree(clipboard_data);
@@ -4305,7 +4305,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             {
                 // Filter pasted buffer
                 const int clipboard_len = (int)strlen(clipboard);
-                ImWchar* clipboard_filtered = (ImWchar*)IM_ALLOC((clipboard_len + 1) * sizeof(ImWchar));
+                ImWchar clipboard_filtered[clipboard_len + 1];
                 int clipboard_filtered_len = 0;
                 for (const char* s = clipboard; *s; )
                 {
@@ -4323,7 +4323,6 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                     stb_textedit_paste(state, &state->Stb, clipboard_filtered, clipboard_filtered_len);
                     state->CursorFollow = true;
                 }
-                MemFree(clipboard_filtered);
             }
         }
 
@@ -4340,7 +4339,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         if (cancel_edit)
         {
             char initialTextA[512];
-            state->InitialTextA.DecryptTo(initialTextA);
+            state->InitialTextA.GetData(initialTextA);
 
             // Restore initial value. Only return true if restoring to the initial value changes the current buffer contents.
             if (!is_readonly && strcmp(buf, initialTextA) != 0)
@@ -4349,13 +4348,13 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 apply_new_text = initialTextA;
                 apply_new_text_length = (int)strlen(buf);
                 ImWchar wText[512];
-                state->TextW.DecryptTo(wText);
+                state->TextW.GetData(wText);
                 int wTextLen = apply_new_text_length > 0 ? ImTextCountCharsFromUtf8(apply_new_text, apply_new_text + apply_new_text_length) + 1 : 0;
                 if (apply_new_text_length > 0)
                 {
                     ImTextStrFromUtf8(wText, wTextLen, apply_new_text, apply_new_text + apply_new_text_length);
 
-                    state->InitialTextA.EncryptFrom(initialTextA);
+                    state->InitialTextA.SetData(initialTextA);
                 }
                 stb_textedit_replace(state, &state->Stb, wText, (apply_new_text_length > 0) ? (wTextLen - 1) : 0);
             }
@@ -4374,17 +4373,17 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (!is_readonly)
             {
                 char textA[512];
-                state->TextA.DecryptTo(textA);
+                state->TextA.GetData(textA);
 
                 ImWchar textW[512];
-                state->TextW.DecryptTo(textW);
+                state->TextW.GetData(textW);
 
                 state->TextAIsValid = true;
                 //state->TextA.resize(state->TextW.Size * 4 + 1);
                 ImTextStrToUtf8(textA, ((buf_size + 1) * 4 + 1), textW, NULL);
 
-                state->TextA.EncryptFrom(textA);
-                state->TextW.EncryptFrom(textW);
+                state->TextA.SetData(textA);
+                state->TextW.SetData(textW);
             }
 
             // User callback
@@ -4422,10 +4421,10 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             //    if (event_flag)
             //    {
             //        char textA[512];
-            //        state->TextA.DecryptTo(textA);
+            //        state->TextA.GetData(textA);
 
             //        ImWchar textW[512];
-            //        state->TextW.DecryptTo(textW);
+            //        state->TextW.GetData(textW);
 
             //        ImGuiInputTextCallbackData callback_data;
             //        memset(&callback_data, 0, sizeof(ImGuiInputTextCallbackData));
@@ -4466,13 +4465,13 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             //            state->CursorAnimReset();
             //        }
 
-            //        state->TextA.EncryptFrom(textA);
-            //        state->TextW.EncryptFrom(textW);
+            //        state->TextA.SetData(textA);
+            //        state->TextW.SetData(textW);
             //    }
             //}
 
             char textA[512];
-            state->TextA.DecryptTo(textA);
+            state->TextA.GetData(textA);
 
             // Will copy result string if modified
             if (!is_readonly && strcmp(textA, buf) != 0)
@@ -4537,7 +4536,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     // Note that we only use this limit on single-line InputText(), so a pathologically large line on a InputTextMultiline() would still crash.
     const int buf_display_max_length = 2 * 1024 * 1024;
     if (buf_display_from_state)
-        state->TextA.DecryptTo(textA);
+        state->TextA.GetData(textA);
     const char* buf_display = buf_display_from_state ? textA : buf; //-V595
     const char* buf_display_end = NULL; // We have specialized paths below for setting the length
     if (is_displaying_hint)
@@ -4562,7 +4561,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         // We are attempting to do most of that in **one main pass** to minimize the computation cost (non-negligible for large amount of text) + 2nd pass for selection rendering (we could merge them by an extra refactoring effort)
         // FIXME: This should occur on buf_display but we'd need to maintain cursor/select_start/select_end for UTF-8.
         ImWchar textW[512];
-        state->TextW.DecryptTo(textW);
+        state->TextW.GetData(textW);
 
         const ImWchar* text_begin = textW;
         ImVec2 cursor_offset, select_start_offset;
@@ -4616,7 +4615,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             if (is_multiline)
                 text_size = ImVec2(inner_size.x, line_count * g.FontSize);
 
-            state->TextW.EncryptFrom(textW);
+            state->TextW.SetData(textW);
         }
 
         // Scroll

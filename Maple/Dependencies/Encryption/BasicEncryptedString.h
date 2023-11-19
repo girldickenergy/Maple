@@ -98,7 +98,12 @@ public:
 	    return lhs;
 	}
 
-	size_t GetSize()
+	T operator[](size_t index) const
+	{
+		return m_Data.at(index) ^ m_Key;
+	}
+
+	size_t GetSize() const
 	{
 		return m_Data.size();
 	}
@@ -111,7 +116,7 @@ public:
             m_Data.back() = 0 ^ m_Key;
 	}
 
-	void GetData(T* outData)
+	void GetData(T* outData) const
 	{
 		for (size_t i = 0; i < m_Data.size(); i++)
             outData[i] = m_Data.at(i) ^ m_Key;
@@ -136,5 +141,12 @@ public:
 
 		if (data[size - 1] != 0)
             m_Data.push_back(0 ^ m_Key);
+	}
+
+	void Clear()
+	{
+		m_Data.clear();
+
+		m_Data.push_back(0 ^ m_Key);
 	}
 };

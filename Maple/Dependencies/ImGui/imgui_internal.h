@@ -981,7 +981,7 @@ struct IMGUI_API ImGuiInputTextState
     ImGuiInputTextCallback  UserCallback;           // "
     void* UserCallbackData;       // "
 
-    ImGuiInputTextState() {  }
+    ImGuiInputTextState() { memset(this, 0, sizeof(*this)); TextA = {}; TextW = {}; InitialTextA = {}; }
     void        ClearText() { CurLenW = CurLenA = 0; TextW.Clear(); TextA.Clear(); CursorClamp(); }
     void        ClearFreeMemory() { TextW.Clear(); TextA.Clear(); InitialTextA.Clear(); }
     int         GetUndoAvailCount() const { return Stb.undostate.undo_point; }
