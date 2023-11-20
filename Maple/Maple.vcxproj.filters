@@ -1464,6 +1464,9 @@
     <ClInclude Include="Dependencies\Encryption\EncryptedWString.h">
       <Filter>Dependencies\Encryption</Filter>
     </ClInclude>
+    <ClInclude Include="Dependencies\Encryption\EncryptedUShortString.h">
+      <Filter>Dependencies\Encryption</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\DirectX\d3dx9.lib">

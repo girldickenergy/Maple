@@ -531,6 +531,7 @@
     <ClInclude Include="Dependencies\Encryption\BasicEncryptedString.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedArray.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedString.h" />
+    <ClInclude Include="Dependencies\Encryption\EncryptedUShortString.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedWString.h" />
     <ClInclude Include="Dependencies\gl3w\GL\gl3w.h" />
     <ClInclude Include="Dependencies\gl3w\GL\glcorearb.h" />
