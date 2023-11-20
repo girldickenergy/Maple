@@ -34,20 +34,29 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 	if (wParam == PM_REMOVE)
 	{
-		if (pMsg->message == WM_KEYUP && pMsg->wParam == ConfigManager::CurrentConfig.Relax.ToggleKey)
-			Relax::IsRunning = !Relax::IsRunning;
+        if (pMsg->message == WM_KEYDOWN)
+        {
+            const bool wasDown = (HIWORD(pMsg->lParam) & KF_REPEAT) == KF_REPEAT;
+	        const bool keyboardCaptured = ImGui::GetIO().WantCaptureKeyboard;
 
-		if (pMsg->message == WM_KEYUP && pMsg->wParam == StorageConfig::MenuKey)
-			MainMenu::ToggleVisibility();
+			bypassGameInput = (pMsg->wParam == StorageConfig::MenuKey || pMsg->wParam == VK_ESCAPE) && MainMenu::GetIsVisible();
 
-		if (MainMenu::GetIsVisible() && pMsg->message == WM_KEYUP && pMsg->wParam == VK_ESCAPE)
-		{
-			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
+			if (pMsg->wParam == ConfigManager::CurrentConfig.Relax.ToggleKey && !wasDown)
+				Relax::IsRunning = !Relax::IsRunning;
 
-			pMsg->message = WM_NULL;
-			MainMenu::Hide();
-		}
-		else if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+			if (pMsg->wParam == StorageConfig::MenuKey && !wasDown && !keyboardCaptured)
+				MainMenu::ToggleVisibility();
+
+			if (MainMenu::GetIsVisible() && pMsg->wParam == VK_ESCAPE && !wasDown && !keyboardCaptured)
+			{
+                //bypassGameInput = true;
+
+				pMsg->message = WM_NULL;
+				MainMenu::Hide();
+			}
+        }
+
+		if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 			ImGui_ImplWin32_WndProcHandler(pMsg->hwnd, pMsg->message, pMsg->wParam, pMsg->lParam);
 	}
 
@@ -67,7 +76,7 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
 
 BOOL __stdcall UI::getKeyboardStateHook(PBYTE arr)
 {
-	if (MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
+	if (bypassGameInput || MainMenu::GetIsVisible() || ScoreSubmissionDialog::GetIsVisible())
 		return false;
 	
 	[[clang::musttail]] return oGetKeyboardState(arr);

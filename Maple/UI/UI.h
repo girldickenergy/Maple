@@ -9,6 +9,8 @@ class UI
 	static inline HHOOK oWndProc;
 	static LRESULT CALLBACK wndProcHook(int nCode, WPARAM wParam, LPARAM lParam);
 
+	static inline bool bypassGameInput = false;
+
 	typedef BOOL(WINAPI* fnGetKeyboardState) (PBYTE arr);
 	static inline fnGetKeyboardState oGetKeyboardState;
 	static BOOL WINAPI getKeyboardStateHook(PBYTE arr);
