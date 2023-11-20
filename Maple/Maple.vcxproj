@@ -529,7 +529,6 @@
     <ClInclude Include="Dependencies\DirectX\d3dx9tex.h" />
     <ClInclude Include="Dependencies\DirectX\d3dx9xof.h" />
     <ClInclude Include="Dependencies\Encryption\BasicEncryptedString.h" />
-    <ClInclude Include="Dependencies\Encryption\EncryptedArray.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedString.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedUShortString.h" />
     <ClInclude Include="Dependencies\Encryption\EncryptedWString.h" />

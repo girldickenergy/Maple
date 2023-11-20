@@ -1452,9 +1452,6 @@
     <ClInclude Include="Configuration\Config.h">
       <Filter>Configuration</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\Encryption\EncryptedArray.h">
-      <Filter>Dependencies\Encryption</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\Encryption\BasicEncryptedString.h">
       <Filter>Dependencies\Encryption</Filter>
     </ClInclude>
