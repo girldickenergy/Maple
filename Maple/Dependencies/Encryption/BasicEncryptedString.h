@@ -24,6 +24,27 @@ class BasicEncryptedString
 	    return key;
 	}
 
+	class EncryptedValueProxy
+    {
+        BasicEncryptedString<T>& m_EncryptedString;
+        size_t m_Index;
+
+	public:
+        EncryptedValueProxy(BasicEncryptedString<T>& encryptedString, size_t index) : m_EncryptedString(encryptedString), m_Index(index) {}
+
+        operator T() const
+        {
+            return m_EncryptedString.m_Data[m_Index] ^ m_EncryptedString.m_Key;
+        }
+
+        EncryptedValueProxy& operator=(T value)
+        {
+            m_EncryptedString.m_Data[m_Index] = value ^ m_EncryptedString.m_Key;
+
+            return *this;
+        }
+    };
+
 public:
 	BasicEncryptedString() : m_Key(GenerateKey()), m_Data()
 	{
@@ -98,9 +119,14 @@ public:
 	    return lhs;
 	}
 
+	EncryptedValueProxy operator[](size_t index)
+	{
+		return EncryptedValueProxy(*this, index);
+	}
+
 	T operator[](size_t index) const
 	{
-		return m_Data.at(index) ^ m_Key;
+		return m_Data[index] ^ m_Key;
 	}
 
 	size_t GetSize() const
