@@ -110,6 +110,23 @@ public:
         return true;
     }
 
+	friend bool operator<(const BasicEncryptedString& lhs, const BasicEncryptedString& rhs)
+	{
+		if (lhs.m_Data.size() != rhs.m_Data.size())
+			return lhs.m_Data.size() < rhs.m_Data.size();
+
+		for (size_t i = 0; i < lhs.m_Data.size(); i++)
+		{
+			T lhs_value = lhs.m_Data[i] ^ lhs.m_Key;
+			T rhs_value = rhs.m_Data[i] ^ rhs.m_Key;
+
+			if (lhs_value != rhs_value)
+				return lhs_value < rhs_value;
+		}
+
+		return false;
+	}
+
 	BasicEncryptedString& operator+=(const BasicEncryptedString& other)
 	{
         while (!m_Data.empty() && (m_Data.back() ^ m_Key) == 0)

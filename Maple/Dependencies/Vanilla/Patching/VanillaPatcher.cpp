@@ -2,7 +2,7 @@
 
 #include "PatternScanning/VanillaPatternScanner.h"
 
-VanillaResult VanillaPatcher::InstallPatch(const std::string& name, uintptr_t address, const std::vector<uint8_t>& patch)
+VanillaResult VanillaPatcher::InstallPatch(const char* name, uintptr_t address, const std::vector<uint8_t>& patch)
 {
 	if (patches.contains(name))
 		return VanillaResult::PatchAlreadyInstalled;
@@ -19,7 +19,7 @@ VanillaResult VanillaPatcher::InstallPatch(const std::string& name, uintptr_t ad
 	return VanillaResult::Success;
 }
 
-VanillaResult VanillaPatcher::InstallPatch(const std::string& name, const std::string& pattern, uintptr_t scanBase, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
+VanillaResult VanillaPatcher::InstallPatch(const char* name, const std::string& pattern, uintptr_t scanBase, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
 	if (patches.contains(name))
 		return VanillaResult::PatchAlreadyInstalled;
@@ -30,7 +30,7 @@ VanillaResult VanillaPatcher::InstallPatch(const std::string& name, const std::s
 	return VanillaResult::PatchPatternNotFound;
 }
 
-VanillaResult VanillaPatcher::UninstallPatch(const std::string& name)
+VanillaResult VanillaPatcher::UninstallPatch(const char* name)
 {
 	if (patches.contains(name))
 		return VanillaResult::PatchNotInstalled;
@@ -47,5 +47,10 @@ VanillaResult VanillaPatcher::UninstallPatch(const std::string& name)
 void VanillaPatcher::UninstallAllPatches()
 {
 	while (!patches.empty())
-		UninstallPatch(patches.begin()->first);
+	{
+		char patchName[patches.begin()->first.GetSize()];
+		patches.begin()->first.GetData(patchName);
+
+		UninstallPatch(patchName);
+	}
 }

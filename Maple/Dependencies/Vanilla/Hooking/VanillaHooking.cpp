@@ -2,7 +2,7 @@
 
 #include <hde32.h>
 
-VanillaHook* VanillaHooking::findHook(const std::string& name)
+VanillaHook* VanillaHooking::findHook(const char* name)
 {
 	for (const auto& hook : hooks)
 		if (hook->Name == name)
@@ -11,7 +11,7 @@ VanillaHook* VanillaHooking::findHook(const std::string& name)
 	return nullptr;
 }
 
-void VanillaHooking::removeHook(const std::string& name)
+void VanillaHooking::removeHook(const char* name)
 {
 	for (size_t i = 0; i < hooks.size(); i++)
 	{
@@ -104,7 +104,7 @@ uintptr_t VanillaHooking::installInlineHook(uintptr_t functionAddress, uintptr_t
 	return trampolineAddress;
 }
 
-VanillaResult VanillaHooking::InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction, bool safe)
+VanillaResult VanillaHooking::InstallHook(const char* name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction, bool safe)
 {
 	if (findHook(name))
 		return VanillaResult::HookAlreadyInstalled;
@@ -122,7 +122,7 @@ VanillaResult VanillaHooking::InstallHook(const std::string& name, uintptr_t fun
 	return VanillaResult::UnknownHookType;
 }
 
-VanillaResult VanillaHooking::UninstallHook(const std::string& name)
+VanillaResult VanillaHooking::UninstallHook(const char* name)
 {
 	VanillaHook* hook = findHook(name);
 	if (hook)
@@ -143,5 +143,10 @@ VanillaResult VanillaHooking::UninstallHook(const std::string& name)
 void VanillaHooking::UninstallAllHooks()
 {
 	for (const auto& hook : hooks)
-		UninstallHook(hook->Name);
+	{
+		char hookName[hook->Name.GetSize()];
+		hook->Name.GetData(hookName);
+
+		UninstallHook(hookName);
+	}
 }
