@@ -4303,9 +4303,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         IM_ASSERT(state != NULL);
 
 		char initialTextA[cancel_edit ? state->InitialTextA.GetSize() : 1];
-        char textA[state->TextA.GetSize()];
-
-		state->TextA.GetData(textA);
+        char textA[is_readonly ? 1 : state->TextW.GetSize() * 4 + 1];
 
         const char* apply_new_text = NULL;
         int apply_new_text_length = 0;
@@ -4345,7 +4343,6 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 state->TextAIsValid = true;
                 state->TextA.SetSize(state->TextW.GetSize() * 4 + 1);
 
-				char textA[state->TextA.GetSize()];
                 state->TextA.GetData(textA);
 
 				ImWchar textW[state->TextW.GetSize()];
