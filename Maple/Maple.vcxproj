@@ -163,6 +163,9 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="MapleBase.cpp" />
+    <ClCompile Include="Milk\Milk.cpp" />
+    <ClCompile Include="Milk\MilkMemory.cpp" />
+    <ClCompile Include="Milk\MilkThread.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\GameModes\Play\Player.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
@@ -205,6 +208,11 @@
     <ClInclude Include="Logging\LoggerInfo.h" />
     <ClInclude Include="Logging\LogLevel.h" />
     <ClInclude Include="MapleBase.h" />
+    <ClInclude Include="Milk\CRC.h" />
+    <ClInclude Include="Milk\MemoryRegion.h" />
+    <ClInclude Include="Milk\Milk.h" />
+    <ClInclude Include="Milk\MilkMemory.h" />
+    <ClInclude Include="Milk\MilkThread.h" />
     <ClInclude Include="Modules\IModule.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\GameModes\GameModeInternal.h" />

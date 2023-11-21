@@ -42,6 +42,15 @@
     <ClCompile Include="Sdk\GameModes\Play\Player.cpp">
       <Filter>SDK\GameModes\Play</Filter>
     </ClCompile>
+    <ClCompile Include="Milk\MilkThread.cpp">
+      <Filter>Milk</Filter>
+    </ClCompile>
+    <ClCompile Include="Milk\MilkMemory.cpp">
+      <Filter>Milk</Filter>
+    </ClCompile>
+    <ClCompile Include="Milk\Milk.cpp">
+      <Filter>Milk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -112,6 +121,9 @@
     </Filter>
     <Filter Include="SDK\GameModes\Play">
       <UniqueIdentifier>{a511e8a4-3466-4115-805c-e00baa692f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Milk">
+      <UniqueIdentifier>{2d4ab6d3-ba88-48a5-88e8-f81179be66a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +250,21 @@
     </ClInclude>
     <ClInclude Include="Sdk\GameModes\Play\Player.h">
       <Filter>SDK\GameModes\Play</Filter>
+    </ClInclude>
+    <ClInclude Include="Milk\MilkThread.h">
+      <Filter>Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Milk\CRC.h">
+      <Filter>Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Milk\MemoryRegion.h">
+      <Filter>Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Milk\MilkMemory.h">
+      <Filter>Milk</Filter>
+    </ClInclude>
+    <ClInclude Include="Milk\Milk.h">
+      <Filter>Milk</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
