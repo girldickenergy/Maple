@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <vector>
 #include <random>
 
@@ -49,6 +50,17 @@ public:
 	BasicEncryptedString() : m_Key(GenerateKey()), m_Data()
 	{
         m_Data.push_back(0 ^ m_Key);
+	}
+
+	BasicEncryptedString(std::istream& inStream) : m_Key(), m_Data()
+	{
+		Deserialize();
+
+		T oldKey = m_Key;
+		m_Key = GenerateKey();
+
+		for (size_t i = 0; i < m_Data.size(); i++)
+			m_Data[i] = (m_Data[i] ^ oldKey) ^ m_Key;
 	}
 
 	BasicEncryptedString(T* plaintext) : m_Key(GenerateKey()), m_Data()
@@ -175,4 +187,32 @@ public:
 
 		m_Data.push_back(0 ^ m_Key);
 	}
+
+    void Serialize(std::ostream& outStream) const
+	{
+        outStream.write(reinterpret_cast<const char*>(&m_Key), sizeof(T));
+
+        const size_t dataSize = m_Data.size();
+        outStream.write(reinterpret_cast<const char*>(&dataSize), sizeof(size_t));
+
+        outStream.write(reinterpret_cast<const char*>(m_Data.data()), m_Data.size() * sizeof(T));
+    }
+
+    void Deserialize(std::istream& inStream)
+	{
+        inStream.read(reinterpret_cast<char*>(&m_Key), sizeof(T));
+
+        size_t dataSize;
+        inStream.read(reinterpret_cast<char*>(&dataSize), sizeof(size_t));
+
+        m_Data.clear();
+
+        for (size_t i = 0; i < dataSize; ++i)
+        {
+            T value;
+
+            inStream.read(reinterpret_cast<char*>(&value), sizeof(T));
+            m_Data.push_back(value);
+        }
+    }
 };
