@@ -4319,13 +4319,14 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 // Push records into the undo stack so we can CTRL+Z the revert operation itself
                 apply_new_text = initialTextA;
                 apply_new_text_length = state->InitialTextA.GetSize() - 1;
-                ImVector<ImWchar> w_text;
+
+                size_t wTextSize = apply_new_text_length > 0 ? ImTextCountCharsFromUtf8(apply_new_text, apply_new_text + apply_new_text_length) + 1 : 1;
+                ImWchar wText[wTextSize];
+
                 if (apply_new_text_length > 0)
-                {
-                    w_text.resize(ImTextCountCharsFromUtf8(apply_new_text, apply_new_text + apply_new_text_length) + 1);
-                    ImTextStrFromUtf8(w_text.Data, w_text.Size, apply_new_text, apply_new_text + apply_new_text_length);
-                }
-                stb_textedit_replace(state, &state->Stb, w_text.Data, (apply_new_text_length > 0) ? (w_text.Size - 1) : 0);
+                    ImTextStrFromUtf8(wText, wTextSize, apply_new_text, apply_new_text + apply_new_text_length);
+
+                stb_textedit_replace(state, &state->Stb, wText, (apply_new_text_length > 0) ? (wTextSize - 1) : 0);
             }
         }
 
