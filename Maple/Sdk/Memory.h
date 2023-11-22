@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "EncryptedString.h"
+
 struct MaplePattern
 {
 	std::string Pattern;
@@ -25,13 +27,13 @@ struct MaplePattern
 
 struct MaplePatch
 {
-	std::string Name;
+	EncryptedString Name;
 	std::string Pattern;
 	unsigned int ScanSize;
 	unsigned int Offset;
 	std::vector<uint8_t> Patch;
 
-	MaplePatch(const std::string& name, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
+	MaplePatch(const char* name, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 	{
 		Name = name;
 		Pattern = pattern;
@@ -45,12 +47,12 @@ struct MaplePatch
 
 struct MapleHook
 {
-	std::string Name;
+	EncryptedString Name;
 	uintptr_t DetourFunctionAddress;
 	uintptr_t* OriginalFunction;
 	bool Safe;
 
-	MapleHook(const std::string& name, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
+	MapleHook(const char* name, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 	{
 		Name = name;
 		DetourFunctionAddress = detourFunctionAddress;
@@ -63,21 +65,21 @@ struct MapleHook
 
 class Memory
 {
-	static inline std::map<std::string, MaplePattern> pendingObjects;
-	static inline std::map<std::string, MaplePatch> pendingPatches;
-	static inline std::map<std::string, MapleHook> pendingHooks;
+	static inline std::map<EncryptedString, MaplePattern> pendingObjects;
+	static inline std::map<EncryptedString, MaplePatch> pendingPatches;
+	static inline std::map<EncryptedString, MapleHook> pendingHooks;
 
 	static inline std::mutex mutex;
 	static void jitCallback(uintptr_t address, unsigned int size);
 
 	static inline bool initialized = false;
 public:
-	static inline std::map<std::string, uintptr_t> Objects;
+	static inline std::map<EncryptedString, uintptr_t> Objects;
 
 	static void StartInitialize();
 	static void EndInitialize();
 
-	static void AddObject(const std::string& name, const std::string& pattern, unsigned int offset = 0, unsigned int readCount = 0, bool resolveRelativeAddress = false);
-	static void AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch);
-	static void AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe = false);
+	static void AddObject(const char* name, const char* pattern, unsigned int offset = 0, unsigned int readCount = 0, bool resolveRelativeAddress = false);
+	static void AddPatch(const char* name, const char* objectName, const char* pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch);
+	static void AddHook(const char* name, const char* objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe = false);
 };

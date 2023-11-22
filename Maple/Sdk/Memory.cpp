@@ -22,7 +22,10 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t scanResult = VanillaPatternScanner::FindPatternInRange(it->second.Pattern, address, size, it->second.Offset, it->second.ReadCount, it->second.ResolveRelativeAddress))
 		{
-			Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved dynamically!"), it->first.c_str());
+			char objectName[it->first.GetSize()];
+			it->first.GetData(objectName);
+
+			Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved dynamically!"), objectName);
 			Objects[it->first] = scanResult;
 
 			// special handling for submit hook. holy fuck.
@@ -43,7 +46,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 						ConfigManager::ForceDisableScoreSubmission = true;
 						ConfigManager::BypassFailed = true;
 
-						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->first.c_str());
+						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 					}
 				}
 				else
@@ -65,17 +68,20 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (VanillaPatcher::InstallPatch(it->second.Name, it->second.Pattern, objectAddress, it->second.ScanSize, it->second.Offset, it->second.Patch) == VanillaResult::Success)
-				Logger::Log(LogSeverity::Info, xorstr_("Patched %s dynamically!"), it->second.Name.c_str());
+			char patchName[it->second.Name.GetSize()];
+			it->second.Name.GetData(patchName);
+
+			if (VanillaPatcher::InstallPatch(patchName, it->second.Pattern, objectAddress, it->second.ScanSize, it->second.Offset, it->second.Patch) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Patched %s dynamically!"), patchName);
 			else
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), it->second.Name.c_str());
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), patchName);
 
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				ConfigManager::ForceDisableScoreSubmission = true;
 				ConfigManager::BypassFailed = true;
 
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), patchName);
 			}
 
 			it = pendingPatches.erase(it);
@@ -90,17 +96,20 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 	{
 		if (const uintptr_t objectAddress = Objects[it->first])
 		{
-			if (VanillaHooking::InstallHook(it->second.Name, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Safe) == VanillaResult::Success)
-				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), it->second.Name.c_str());
+			char hookName[it->second.Name.GetSize()];
+			it->second.Name.GetData(hookName);
+
+			if (VanillaHooking::InstallHook(hookName, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Safe) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), hookName);
 			else
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), it->second.Name.c_str());
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), hookName);
 
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				ConfigManager::ForceDisableScoreSubmission = true;
 				ConfigManager::BypassFailed = true;
 
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), it->second.Name.c_str());
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), hookName);
 			}
 
 			it = pendingHooks.erase(it);
@@ -127,9 +136,9 @@ void Memory::EndInitialize()
 	initialized = true;
 }
 
-void Memory::AddObject(const std::string& name, const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
+void Memory::AddObject(const char* name, const char* pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
-        VIRTUALIZER_TIGER_WHITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -140,7 +149,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 	
 	if (const uintptr_t scanResult = VanillaPatternScanner::FindPattern(pattern, offset, readCount, resolveRelativeAddress))
 	{
-		Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved!"), name.c_str());
+		Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved!"), name);
 
 		Objects[name] = scanResult;
 
@@ -162,7 +171,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 					ConfigManager::ForceDisableScoreSubmission = true;
 					ConfigManager::BypassFailed = true;
 
-					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name.c_str());
+					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name);
 				}
 			}
 			else
@@ -174,7 +183,7 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Debug, xorstr_("Failed to resolve %s. Adding it to the queue for dynamic resolution."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xorstr_("Failed to resolve %s. Adding it to the queue for dynamic resolution."), name);
 
 		pendingObjects[name] = MaplePattern(pattern, offset, readCount, resolveRelativeAddress);
 	}
@@ -182,9 +191,9 @@ void Memory::AddObject(const std::string& name, const std::string& pattern, unsi
 	VIRTUALIZER_TIGER_WHITE_END
 }
 
-void Memory::AddPatch(const std::string& name, const std::string& objectName, const std::string& pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
+void Memory::AddPatch(const char* name, const char* objectName, const char* pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
-        VIRTUALIZER_TIGER_WHITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -196,21 +205,21 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
 		if (VanillaPatcher::InstallPatch(name, pattern, objectAddress, scanSize, offset, patch) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xorstr_("Patched %s!"), name.c_str());
+			Logger::Log(LogSeverity::Info, xorstr_("Patched %s!"), name);
 		else
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name.c_str());
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name);
 
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			ConfigManager::ForceDisableScoreSubmission = true;
 			ConfigManager::BypassFailed = true;
 
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 		}
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Debug, xorstr_("Failed to patch %s. Adding it to the queue for dynamic patching."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xorstr_("Failed to patch %s. Adding it to the queue for dynamic patching."), name);
 
 		pendingPatches[objectName] = MaplePatch(name, pattern, scanSize, offset, patch);
 	}
@@ -218,9 +227,9 @@ void Memory::AddPatch(const std::string& name, const std::string& objectName, co
 	VIRTUALIZER_TIGER_WHITE_END
 }
 
-void Memory::AddHook(const std::string& name, const std::string& objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
+void Memory::AddHook(const char* name, const char* objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 {
-        VIRTUALIZER_TIGER_WHITE_START
+    VIRTUALIZER_TIGER_WHITE_START
 	
 	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
 	{
@@ -232,21 +241,21 @@ void Memory::AddHook(const std::string& name, const std::string& objectName, uin
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
 		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, safe) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name.c_str());
+			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name);
 		else
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name.c_str());
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name);
 
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			ConfigManager::ForceDisableScoreSubmission = true;
 			ConfigManager::BypassFailed = true;
 
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName.c_str());
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 		}
 	}
 	else
 	{
-		Logger::Log(LogSeverity::Debug, xorstr_("Failed to hook %s. Adding it to the queue for dynamic hooking."), name.c_str());
+		Logger::Log(LogSeverity::Debug, xorstr_("Failed to hook %s. Adding it to the queue for dynamic hooking."), name);
 
 		pendingHooks[objectName] = MapleHook(name, detourFunctionAddress, originalFunction, safe);
 	}
