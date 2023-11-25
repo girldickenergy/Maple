@@ -264,7 +264,6 @@ void ConfigManager::Create()
 
 	CurrentConfig = {};
     CurrentConfig.Name = NewConfigName;
-        std::cout << "a" << std::endl;
 	if (!getConfigPathByName(NewConfigName).empty())
 	{
         int i = 1;
@@ -276,8 +275,6 @@ void ConfigManager::Create()
 		// todo: fix += operator?
 		CurrentConfig.Name = NewConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
-
-	std::cout << "b" << std::endl;
 
 	std::ofstream configFile(getUniqueConfigPath(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
     CurrentConfig.Serialize(configFile);
