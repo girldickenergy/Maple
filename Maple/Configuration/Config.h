@@ -3,11 +3,14 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include "EncryptedString.h"
 #include "imgui.h"
+#include "xorstr.hpp"
 
 struct Config
 {
 	float Version = 2.f;
+	EncryptedString Name;
 
 	struct Relax
 	{
@@ -109,7 +112,7 @@ struct Config
 		struct UI
 		{
 			int MenuScale = 2;
-			char MenuBackground[MAX_PATH] = "\0";
+			EncryptedString MenuBackground;
 			bool Snow = false;
 			ImVec4 AccentColour = ImColor(232, 93, 155, 255).Value;
 			ImVec4 MenuColour = ImColor(65, 65, 65, 255).Value;
@@ -128,15 +131,50 @@ struct Config
 		{
 			bool Enabled = false;
 			bool CustomLargeImageTextEnabled = false;
-			char CustomLargeImageText[128] = "peppy (rank #18,267,309)";
+			EncryptedString CustomLargeImageText = xorstr_("peppy (rank #18,267,309)");
 			bool CustomPlayModeEnabled = false;
 			int CustomPlayMode = 0;
-			bool CustomStateEnabled;
-			char CustomState[128] = "Trying to detect Maple since 2021";
+			bool CustomStateEnabled = false;
+			EncryptedString CustomState = xorstr_("Trying to detect Maple since 2021");
 			bool CustomDetailsEnabled = false;
-			char CustomDetails[128] = "Kenji Ninuma - DISCO PRINCE [Normal]";
+			EncryptedString CustomDetails = xorstr_("Kenji Ninuma - DISCO PRINCE [Normal]");
 			bool HideSpectateButton = false;
 			bool HideMatchButton = false;
 		} DiscordRichPresenceSpoofer;
 	} Misc;
+
+	void Serialize(std::ostream& outStream)
+	{
+        outStream.write(reinterpret_cast<const char*>(this), sizeof(float));
+        Name.Serialize(outStream);
+		outStream.write(reinterpret_cast<const char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(this));
+		Visuals.UI.MenuBackground.Serialize(outStream);
+		outStream.write(reinterpret_cast<const char*>(&Visuals.UI.Snow), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomLargeImageText) - reinterpret_cast<uintptr_t>(&Visuals.UI.Snow));
+		Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.Serialize(outStream);
+		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomState) - reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled));
+		Misc.DiscordRichPresenceSpoofer.CustomState.Serialize(outStream);
+		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled), sizeof(bool));
+		Misc.DiscordRichPresenceSpoofer.CustomDetails.Serialize(outStream);
+		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
+	}
+
+	void Deserialize(std::istream& inStream)
+	{
+        float version;
+		inStream.read(reinterpret_cast<char*>(&version), sizeof(float));
+        if (version == 2.f)
+        {
+            Version = version;
+	        Name.Deserialize(inStream);
+			inStream.read(reinterpret_cast<char*>(this), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(this));
+			Visuals.UI.MenuBackground.Deserialize(inStream);
+			inStream.read(reinterpret_cast<char*>(&Visuals.UI.Snow), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomLargeImageText) - reinterpret_cast<uintptr_t>(&Visuals.UI.Snow));
+			Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.Deserialize(inStream);
+			inStream.read(reinterpret_cast<char*>(&Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomState) - reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled));
+			Misc.DiscordRichPresenceSpoofer.CustomState.Deserialize(inStream);
+			inStream.read(reinterpret_cast<char*>(&Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled), sizeof(bool));
+			Misc.DiscordRichPresenceSpoofer.CustomDetails.Deserialize(inStream);
+			inStream.read(reinterpret_cast<char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
+		}
+	}
 };
