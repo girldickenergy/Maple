@@ -22,8 +22,11 @@ void __fastcall DiscordRPC::setLargeImageTextHook(void* instance, CLRString* str
 {
 	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageTextEnabled)
 	{
+		char customLargeImageText[ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.GetSize()];
+		ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.GetData(customLargeImageText);
+
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText);
+		swprintf_s(buf, 128, L"%hs", customLargeImageText);
 
 		[[clang::musttail]] return oSetLargeImageText(instance, Vanilla::AllocateCLRString(buf));
 	}
@@ -35,8 +38,11 @@ void __fastcall DiscordRPC::setStateHook(void* instance, CLRString* string)
 {
 	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomStateEnabled)
 	{
+		char customState[ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState.GetSize()];
+		ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState.GetData(customState);
+
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState);
+		swprintf_s(buf, 128, L"%hs", customState);
 
 		[[clang::musttail]] return oSetState(instance, Vanilla::AllocateCLRString(buf));
 	}
@@ -48,8 +54,11 @@ void __fastcall DiscordRPC::setDetailsHook(void* instance, CLRString* string)
 {
 	if (ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled && ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled)
 	{
+		char customDetails[ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails.GetSize()];
+		ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails.GetData(customDetails);
+
 		wchar_t buf[128];
-		swprintf_s(buf, 128, L"%hs", ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails);
+		swprintf_s(buf, 128, L"%hs", customDetails);
 
 		[[clang::musttail]] return oSetDetails(instance, Vanilla::AllocateCLRString(buf));
 	}

@@ -121,3 +121,15 @@ std::string CryptoUtilities::Base64Decode(const std::string& str)
 
     return result;
 }
+
+std::vector<uint8_t> CryptoUtilities::Base64DecodeToBytes(const std::string &str)
+{
+    std::vector<uint8_t> result;
+
+    CryptoPP::Base64Decoder decoder;
+    decoder.Attach(new CryptoPP::VectorSink(result));
+    decoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    decoder.MessageEnd();
+
+    return result;
+}

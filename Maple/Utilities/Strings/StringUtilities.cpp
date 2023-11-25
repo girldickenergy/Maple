@@ -36,6 +36,22 @@ std::string StringUtilities::ByteArrayToString(const std::vector<unsigned char> 
 	return str;
 }
 
+std::string StringUtilities::GenerateRandomString(size_t size)
+{
+    static const char charset[] = 
+		"0123456789"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	std::default_random_engine generator;
+    std::uniform_int_distribution distribution(0, static_cast<int>(strlen(charset)) - 1);
+
+    std::string str;
+    for (int i = 0; i < size; ++i)
+        str += charset[distribution(generator)];
+
+    return str;
+}
+
 std::string StringUtilities::GenerateRandomString(size_t size, const std::string& seed)
 {
     constexpr std::hash<std::string> hasher{};

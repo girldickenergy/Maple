@@ -19,8 +19,80 @@ void ConfigManager::refresh()
 	Configs.emplace_back(xorstr_("default"));
 
 	for (const auto& file : std::filesystem::directory_iterator(Storage::ConfigsDirectory))
-		if (file.path().extension() == xorstr_(".cfg") && Storage::IsValidFileName(file.path().filename().stem().string()))
-			Configs.push_back(file.path().filename().stem().string());
+	{
+		if (file.path().extension() == xorstr_(".cfg"))
+		{
+            EncryptedString configName;
+
+            std::ifstream configFile(file.path(), std::ifstream::binary);
+
+            configFile.seekg(0, std::ios::end);
+            if (const int length = configFile.tellg(); length < sizeof(float) + sizeof(char) + sizeof(size_t))
+				continue;
+            
+			configFile.seekg(sizeof(float), std::ifstream::beg);
+            configName.Deserialize(configFile);
+            configFile.close();
+
+			Configs.push_back(configName);
+		}
+	}
+
+	std::sort(Configs.begin() + 1, Configs.end(), [](const EncryptedString& a, const EncryptedString& b) -> bool
+    {
+        return a < b;
+    });
+}
+
+std::string ConfigManager::getConfigPathByName(const EncryptedString& configName)
+{
+	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ConfigsDirectory))
+	{
+		if (file.path().extension() == xorstr_(".cfg"))
+		{
+            EncryptedString configFileName;
+
+            std::ifstream configFile(file.path(), std::ifstream::binary);
+
+            configFile.seekg(0, std::ios::end);
+            if (const int length = configFile.tellg(); length < sizeof(float) + sizeof(char) + sizeof(size_t))
+				continue;
+
+			configFile.seekg(sizeof(float), std::ifstream::beg);
+            configFileName.Deserialize(configFile);
+            configFile.close();
+
+			if (configFileName == configName)
+                return file.path().string();
+		}
+	}
+
+	return {};
+}
+
+std::string ConfigManager::getUniqueConfigPath()
+{
+    Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
+
+	std::string configFilePath;
+
+	do
+	{
+		configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + StringUtilities::GenerateRandomString(16) + xorstr_(".cfg");
+	} while (std::filesystem::exists(configFilePath));
+
+	return configFilePath;
+}
+
+int ConfigManager::getConfigIndexByName(const EncryptedString& configName)
+{
+    for (int i = 0; i < Configs.size(); i++)
+        if (Configs[i] == configName)
+                return i;
+
+	return 0;
 }
 
 void ConfigManager::Initialize()
@@ -29,14 +101,9 @@ void ConfigManager::Initialize()
 
 	refresh();
 
-	const auto it = std::find(Configs.begin(), Configs.end(), StorageConfig::DefaultConfig);
+    CurrentConfigIndex = getConfigIndexByName(StorageConfig::DefaultConfig.c_str());
 
-	if (it != Configs.end())
-	{
-		CurrentConfigIndex = std::distance(Configs.begin(), it);
-
-		Load();
-	}
+	Load();
 }
 
 void ConfigManager::Load()
@@ -45,20 +112,29 @@ void ConfigManager::Load()
 
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	StorageConfig::DefaultConfig = Configs[CurrentConfigIndex];
-	Storage::SaveStorageConfig();
+	//StorageConfig::DefaultConfig = Configs[CurrentConfigIndex];
+	//Storage::SaveStorageConfig();
 
 	if (CurrentConfigIndex == 0)
-		return;
+	{
+		CurrentConfig = {};
 
-	const std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + Configs[CurrentConfigIndex] + xorstr_(".cfg");
+        return;
+	}
 
-	if (!std::filesystem::exists(configFilePath))
-		return;
+	const std::string configFilePath = getConfigPathByName(Configs[CurrentConfigIndex]);
+    if (configFilePath.empty() || !std::filesystem::exists(configFilePath))
+    {
+        refresh();
+        CurrentConfigIndex = 0;
+        CurrentConfig = {};
 
-	std::ifstream file(configFilePath, std::ifstream::binary);
-	file.read(reinterpret_cast<char*>(&CurrentConfig), sizeof(Config));
-	file.close();
+        return;
+	}
+
+	std::ifstream configFile(configFilePath, std::ifstream::binary);
+    CurrentConfig.Deserialize(configFile);
+    configFile.close();
 }
 
 void ConfigManager::Save()
@@ -68,11 +144,9 @@ void ConfigManager::Save()
 
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	const std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + Configs[CurrentConfigIndex] + xorstr_(".cfg");
-
-	std::ofstream file(configFilePath, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-	file.write(reinterpret_cast<char*>(&CurrentConfig), sizeof(Config));
-	file.close();
+	std::ofstream configFile(getConfigPathByName(Configs[CurrentConfigIndex]), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+    CurrentConfig.Serialize(configFile);
+	configFile.close();
 }
 
 void ConfigManager::Delete()
@@ -82,9 +156,9 @@ void ConfigManager::Delete()
 	if (CurrentConfigIndex == 0)
 		return;
 
-	const std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + Configs[CurrentConfigIndex] + xorstr_(".cfg");
-
-	std::filesystem::remove(configFilePath);
+	const std::string configFilePath = getConfigPathByName(Configs[CurrentConfigIndex]);
+    if (!configFilePath.empty())
+        std::filesystem::remove(configFilePath);
 	
 	refresh();
 
@@ -102,49 +176,36 @@ void ConfigManager::Import()
 	if (encodedConfigData.empty())
 		return;
 
-	std::string decodedConfigData = CryptoUtilities::MapleXOR(CryptoUtilities::Base64Decode(encodedConfigData), xorstr_("kelxFFMHsiGnONNa"));
-	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, xorstr_("|"));
+	const std::vector<uint8_t> decodedConfigData = CryptoUtilities::Base64DecodeToBytes(encodedConfigData);
 
-	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
-		return;
+	const std::string configFilePath = getUniqueConfigPath();
 
-	std::string configName = CryptoUtilities::Base64Decode(decodedConfigDataSplit[0]);
-	const std::string configData = CryptoUtilities::Base64Decode(decodedConfigDataSplit[1]);
+	std::ofstream configFile(configFilePath, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+	configFile.write(reinterpret_cast<const char*>(decodedConfigData.data()), decodedConfigData.size());
+	configFile.close();
 
-	std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + configName + xorstr_(".cfg");
+	std::ifstream configFile2(configFilePath, std::ifstream::binary);
+    Config tempConfig;
+	tempConfig.Deserialize(configFile2);
+    configFile2.close();
 
-	if (!Storage::IsValidFileName(configName))
-		return;
-
-	if (std::filesystem::exists(configFilePath))
+	if (!getConfigPathByName(tempConfig.Name).empty())
 	{
-		unsigned int i = 2;
-		while (true)
-		{
-			const std::string newConfigName = configName + xorstr_("_") + std::to_string(i);
-			const std::string newConfigFilePath = Storage::ConfigsDirectory + xorstr_("\\") + newConfigName + xorstr_(".cfg");
-			if (!std::filesystem::exists(newConfigFilePath))
-			{
-				configName = newConfigName;
-				configFilePath = newConfigFilePath;
-
-				break;
-			}
-
+        int i = 1;
+		while (!getConfigPathByName(tempConfig.Name + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
-		}
-	}
 
-	std::ofstream file(configFilePath, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-	file << configData << std::endl;
-	file.close();
+		// todo: fix += operator?
+		tempConfig.Name = tempConfig.Name + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
+
+		std::ofstream configFile3(configFilePath, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+        tempConfig.Serialize(configFile3);
+		configFile3.close();
+	}
 
 	refresh();
 
-	const auto it = std::find(Configs.begin(), Configs.end(), configName);
-
-	if (it != Configs.end())
-		CurrentConfigIndex = std::distance(Configs.begin(), it);
+    CurrentConfigIndex = getConfigIndexByName(tempConfig.Name);
 
 	Load();
 }
@@ -156,16 +217,13 @@ void ConfigManager::Export()
 	if (CurrentConfigIndex == 0)
 		return;
 
-	const std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + Configs[CurrentConfigIndex] + xorstr_(".cfg");
+	const std::string configFilePath = getConfigPathByName(Configs[CurrentConfigIndex]);
 
-	std::ifstream file(configFilePath, std::ifstream::binary);
-	const std::vector<uint8_t> configData((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-	file.close();
+	std::ifstream configFile(configFilePath, std::ifstream::binary);
+	const std::vector<uint8_t> configData((std::istreambuf_iterator<char>(configFile)), std::istreambuf_iterator<char>());
+	configFile.close();
 
-	std::string encoded = CryptoUtilities::Base64Encode(Configs[CurrentConfigIndex]) + xorstr_("|") + CryptoUtilities::Base64Encode(configData);
-	encoded = CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(encoded, xorstr_("kelxFFMHsiGnONNa")));
-
-	ClipboardUtilities::Write(encoded);
+	ClipboardUtilities::Write(CryptoUtilities::Base64Encode(configData));
 }
 
 void ConfigManager::Rename()
@@ -175,84 +233,57 @@ void ConfigManager::Rename()
 	if (CurrentConfigIndex == 0)
 		return;
 
-	const std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + Configs[CurrentConfigIndex] + xorstr_(".cfg");
+	if (RenamedConfigName == xorstr_("default"))
+        return;
 
-	if (!Storage::IsValidFileName(RenamedConfigName) || Storage::IsSameFileName(RenamedConfigName, Configs[CurrentConfigIndex]))
-		return;
-
-	std::string renamedConfigName = RenamedConfigName;
-	std::string renamedConfigFilePath = Storage::ConfigsDirectory + xorstr_("\\") + renamedConfigName + xorstr_(".cfg");
-
-	if (std::filesystem::exists(renamedConfigFilePath))
+	if (!getConfigPathByName(RenamedConfigName).empty())
 	{
-		unsigned int i = 2;
-		while (true)
-		{
-			const std::string newConfigName = renamedConfigName + xorstr_("_") + std::to_string(i);
-			const std::string newConfigFilePath = Storage::ConfigsDirectory + xorstr_("\\") + newConfigName + xorstr_(".cfg");
-			if (!std::filesystem::exists(newConfigFilePath))
-			{
-				renamedConfigName = newConfigName;
-				renamedConfigFilePath = newConfigFilePath;
-
-				break;
-			}
-
+        int i = 1;
+		while (!getConfigPathByName(RenamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
-		}
+
+		// todo: fix += operator?
+		CurrentConfig.Name = RenamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
-	
-	std::rename(configFilePath.c_str(), renamedConfigFilePath.c_str());
+	else
+        CurrentConfig.Name = RenamedConfigName;
+
+	Save();
 
 	refresh();
 
-	const auto it = std::find(Configs.begin(), Configs.end(), renamedConfigName);
-
-	if (it != Configs.end())
-		CurrentConfigIndex = std::distance(Configs.begin(), it);
+	CurrentConfigIndex = getConfigIndexByName(CurrentConfig.Name);
 }
 
 void ConfigManager::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	char newConfigName[NewConfigName.GetSize()];
-	NewConfigName.GetData(newConfigName);
-
-	std::string configName = newConfigName;
-	std::string configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + newConfigName + xorstr_(".cfg");
-
-	if (!Storage::IsValidFileName(configName))
+	if (NewConfigName == xorstr_("default"))
 		return;
 
-	if (std::filesystem::exists(configFilePath))
+	CurrentConfig = {};
+    CurrentConfig.Name = NewConfigName;
+        std::cout << "a" << std::endl;
+	if (!getConfigPathByName(NewConfigName).empty())
 	{
-		unsigned int i = 2;
-		while (true)
+        int i = 1;
+		while (!getConfigPathByName(NewConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 		{
-			const std::string newConfigName = configName + xorstr_("_") + std::to_string(i);
-			const std::string newConfigFilePath = Storage::ConfigsDirectory + xorstr_("\\") + newConfigName + xorstr_(".cfg");
-			if (!std::filesystem::exists(newConfigFilePath))
-			{
-				configName = newConfigName;
-				configFilePath = newConfigFilePath;
-
-				break;
-			}
-
-			i++;
+            i++;
 		}
+
+		// todo: fix += operator?
+		CurrentConfig.Name = NewConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
 
-	std::ofstream file(configFilePath);
-	file.close();
-	
+	std::cout << "b" << std::endl;
+
+	std::ofstream configFile(getUniqueConfigPath(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+    CurrentConfig.Serialize(configFile);
+	configFile.close();
+
 	refresh();
 
-	const auto it = std::find(Configs.begin(), Configs.end(), configName);
-
-	if (it != Configs.end())
-		CurrentConfigIndex = std::distance(Configs.begin(), it);
-
-	CurrentConfig = {};
+	CurrentConfigIndex = getConfigIndexByName(CurrentConfig.Name);
 }

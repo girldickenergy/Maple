@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EncryptedString.h"
 #include "imgui.h"
 
 class Widgets
@@ -263,12 +264,14 @@ public:
 	static bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
 	static bool SmallButton(const char* label);
 	static bool Hotkey(const char* label, int* k);
+	static bool InputText(const char* label, EncryptedString& buf, size_t buf_len);
 	static bool InputScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_step = NULL, const void* p_step_fast = NULL, const char* format = NULL, ImGuiInputTextFlags flags = 0);
 	static bool SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags);
 	static bool SliderInt(const char* label, int* v, int v_min, int v_max, int step = 1, int stepFast = 10, const char* format = "%d", ImGuiSliderFlags flags = 0);
 	static bool SliderFloat(const char* label, float* v, float v_min, float v_max, float step = 0.1f, float stepFast = 1.f, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
 	static bool BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags = 0);
 	static bool Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
+	static bool Combo(const char* label, int* current_item, const std::vector<EncryptedString>& items, int popup_max_height_in_items = -1);
 	static bool Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
 	static void Tooltip(const char* text);
 	static void HitErrorBar(int window);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include "Config.h"
@@ -9,11 +8,15 @@
 class ConfigManager
 {
 	static void refresh();
+	static std::string getConfigPathByName(const EncryptedString& configName);
+    static std::string getUniqueConfigPath();
+    static int getConfigIndexByName(const EncryptedString& configName);
+
 public:
-	static inline std::vector<std::string> Configs;
+	static inline std::vector<EncryptedString> Configs;
 	static inline Config CurrentConfig;
 	static inline int CurrentConfigIndex = 0;
-	static inline char RenamedConfigName[32] = { };
+    static inline EncryptedString RenamedConfigName;
 	static inline EncryptedString NewConfigName;
 
 	static inline bool ForceDisableScoreSubmission = false;

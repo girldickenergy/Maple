@@ -10,7 +10,7 @@
 struct Config
 {
 	float Version = 2.f;
-	EncryptedString Name;
+  EncryptedString Name = xorstr_("default");
 
 	struct Relax
 	{
@@ -145,7 +145,7 @@ struct Config
 
 	void Serialize(std::ostream& outStream)
 	{
-        outStream.write(reinterpret_cast<const char*>(this), sizeof(float));
+        outStream.write(reinterpret_cast<const char*>(&Version), sizeof(float));
         Name.Serialize(outStream);
 		outStream.write(reinterpret_cast<const char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(this));
 		Visuals.UI.MenuBackground.Serialize(outStream);

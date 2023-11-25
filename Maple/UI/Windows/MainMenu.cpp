@@ -27,7 +27,10 @@ ImGui::FileBrowser replayDialog;
 
 void MainMenu::updateBackground()
 {
-    if (ConfigManager::CurrentConfig.Visuals.UI.MenuBackground[0] == '\0' || !std::filesystem::exists(ConfigManager::CurrentConfig.Visuals.UI.MenuBackground))
+    char menuBackground[ConfigManager::CurrentConfig.Visuals.UI.MenuBackground.GetSize()];
+    ConfigManager::CurrentConfig.Visuals.UI.MenuBackground.GetData(menuBackground);
+
+    if (menuBackground[0] == '\0' || !std::filesystem::exists(std::string(menuBackground)))
     {
         if (backgroundTexture != nullptr)
         {
@@ -41,9 +44,9 @@ void MainMenu::updateBackground()
     }
 
     if (UI::Renderer == Renderer::OGL3)
-        backgroundTexture = TextureLoader::LoadTextureFromFileOGL3(ConfigManager::CurrentConfig.Visuals.UI.MenuBackground);
-    else
-        backgroundTexture = TextureLoader::LoadTextureFromFileD3D9(UI::D3D9Device, ConfigManager::CurrentConfig.Visuals.UI.MenuBackground);
+		backgroundTexture = TextureLoader::LoadTextureFromFileOGL3(menuBackground);
+	else
+		backgroundTexture = TextureLoader::LoadTextureFromFileD3D9(UI::D3D9Device, menuBackground);
 }
 
 void MainMenu::Render()
@@ -428,7 +431,7 @@ void MainMenu::Render()
 
                     if (backgroundImageDialog.HasSelected())
                     {
-                        strcpy_s(ConfigManager::CurrentConfig.Visuals.UI.MenuBackground, backgroundImageDialog.GetSelected().string().c_str());
+						ConfigManager::CurrentConfig.Visuals.UI.MenuBackground = backgroundImageDialog.GetSelected().string().c_str();
                         backgroundImageDialog.ClearSelected();
 
                         updateBackground();
@@ -604,7 +607,7 @@ void MainMenu::Render()
                     Widgets::Checkbox(xorstr_("Enabled"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.Enabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Spoofs various fields of your Discord Game Activity"));
 
                 	Widgets::Checkbox(xorstr_("Custom large image text"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageTextEnabled);
-                    ImGui::InputText(xorstr_("Large image text"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText, 128);
+                    Widgets::InputText(xorstr_("Large image text"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomLargeImageText, 128);
 
                     Widgets::Checkbox(xorstr_("Custom play mode"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomPlayModeEnabled);
 
@@ -616,10 +619,10 @@ void MainMenu::Render()
                     Widgets::Combo(xorstr_("Play mode"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomPlayMode, playModes, IM_ARRAYSIZE(playModes));
 
                     Widgets::Checkbox(xorstr_("Custom state"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomStateEnabled);
-                    ImGui::InputText(xorstr_("State"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState, 128);
+                    Widgets::InputText(xorstr_("State"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomState, 128);
 
                     Widgets::Checkbox(xorstr_("Custom details"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled);
-                    ImGui::InputText(xorstr_("Details"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails, 128);
+                    Widgets::InputText(xorstr_("Details"), ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.CustomDetails, 128);
 
                     Widgets::Checkbox(xorstr_("Hide spectate button"), &ConfigManager::CurrentConfig.Misc.DiscordRichPresenceSpoofer.HideSpectateButton);
 
@@ -634,13 +637,7 @@ void MainMenu::Render()
                     const bool currentConfigIsDefault = ConfigManager::CurrentConfigIndex == 0;
 
                     const float buttonWidth = ((ImGui::GetWindowWidth() * 0.5f) - (style.ItemSpacing.x * 2)) / 3;
-                    Widgets::Combo(xorstr_("Config"), &ConfigManager::CurrentConfigIndex, [](void* vec, int idx, const char** out_text)
-                    {
-                        auto& vector = *static_cast<std::vector<std::string>*>(vec);
-                        if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
-                        *out_text = vector.at(idx).c_str();
-                        return true;
-                    }, reinterpret_cast<void*>(&ConfigManager::Configs), ConfigManager::Configs.size());
+                    Widgets::Combo(xorstr_("Config"), &ConfigManager::CurrentConfigIndex, ConfigManager::Configs);
 
                     if (Widgets::Button(xorstr_("Load"), ImVec2(buttonWidth, ImGui::GetFrameHeight())))
                     {
@@ -717,7 +714,7 @@ void MainMenu::Render()
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
                     }
 
-                    ImGui::InputText(xorstr_("Config name##configrename"), ConfigManager::RenamedConfigName, IM_ARRAYSIZE(ConfigManager::RenamedConfigName));
+                    Widgets::InputText(xorstr_("Config name##configrename"), ConfigManager::RenamedConfigName, 32);
                     if (Widgets::Button(xorstr_("Rename selected config"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                         ConfigManager::Rename();
 
@@ -729,10 +726,7 @@ void MainMenu::Render()
 
                     ImGui::Spacing();
 
-                    char newConfigName[ConfigManager::NewConfigName.GetSize()];
-                    ConfigManager::NewConfigName.GetData(newConfigName);
-                    ImGui::InputText(xorstr_("Config name##newconfig"), newConfigName, 32);
-                    ConfigManager::NewConfigName.SetData(newConfigName);
+                    Widgets::InputText(xorstr_("Config name##newconfig"), ConfigManager::NewConfigName, 32);
 
                     if (Widgets::Button(xorstr_("Create new config"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                     {

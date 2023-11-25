@@ -822,6 +822,18 @@ bool Widgets::Hotkey(const char* label, int* k)
     return value_changed;
 }
 
+bool Widgets::InputText(const char* label, EncryptedString& buf, size_t buf_len)
+{
+    char decryptedBuffer[buf.GetSize()];
+    buf.GetData(decryptedBuffer);
+
+    const bool value_changed = ImGui::InputText(label, decryptedBuffer, buf_len);
+
+    buf.SetData(decryptedBuffer);
+
+    return value_changed;
+}
+
 bool Widgets::InputScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_step, const void* p_step_fast, const char* format, ImGuiInputTextFlags flags)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -1185,6 +1197,49 @@ bool Widgets::Combo(const char* label, int* current_item, bool(*items_getter)(vo
         const char* item_text;
         if (!items_getter(data, i, &item_text))
             item_text = "*Unknown item*";
+        if (Selectable(item_text, item_selected, ImGuiSelectableFlags_SpanAllColumns))
+        {
+            value_changed = true;
+            *current_item = i;
+        }
+        if (item_selected)
+            ImGui::SetItemDefaultFocus();
+        ImGui::PopID();
+    }
+
+    ImGui::EndCombo();
+    if (value_changed)
+        ImGui::MarkItemEdited(g.CurrentWindow->DC.LastItemId);
+
+    return value_changed;
+}
+
+// todo: this is probably a temporary solution until i come up with a better one
+bool Widgets::Combo(const char* label, int* current_item, const std::vector<EncryptedString>& items, int popup_max_height_in_items)
+{
+    ImGuiContext& g = *GImGui;
+
+    // Call the getter to obtain the preview string which is a parameter to BeginCombo()
+    char preview_value[*current_item >= 0 && *current_item < items.size() ? items[*current_item].GetSize() : 1];
+    if (*current_item >= 0 && *current_item < items.size())
+        items[*current_item].GetData(preview_value);
+
+    // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need it, but we emulate it here.
+    if (popup_max_height_in_items != -1 && !(g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint))
+        ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, calcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+
+    if (!BeginCombo(label, preview_value, ImGuiComboFlags_None))
+        return false;
+
+    // Display items
+    // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
+    bool value_changed = false;
+    for (int i = 0; i < items.size(); i++)
+    {
+        ImGui::PushID((void*)(intptr_t)i);
+        const bool item_selected = (i == *current_item);
+        char item_text[items[i].GetSize()];
+        items[i].GetData(item_text);
         if (Selectable(item_text, item_selected, ImGuiSelectableFlags_SpanAllColumns))
         {
             value_changed = true;
