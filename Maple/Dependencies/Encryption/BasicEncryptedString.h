@@ -54,7 +54,7 @@ public:
 
 	BasicEncryptedString(std::istream& inStream) : m_Key(), m_Data()
 	{
-		Deserialize();
+        Deserialize(inStream);
 
 		T oldKey = m_Key;
 		m_Key = GenerateKey();
