@@ -52,17 +52,6 @@ public:
         m_Data.push_back(0 ^ m_Key);
 	}
 
-	BasicEncryptedString(std::istream& inStream) : m_Key(), m_Data()
-	{
-        Deserialize(inStream);
-
-		T oldKey = m_Key;
-		m_Key = GenerateKey();
-
-		for (size_t i = 0; i < m_Data.size(); i++)
-			m_Data[i] = (m_Data[i] ^ oldKey) ^ m_Key;
-	}
-
 	BasicEncryptedString(T* plaintext) : m_Key(GenerateKey()), m_Data()
 	{
         do
@@ -79,11 +68,7 @@ public:
         } while (*plaintext++ != 0);
 	}
 
-	BasicEncryptedString(const BasicEncryptedString& other) : m_Key(other.m_Key), m_Data()
-	{
-        m_Data.clear();
-		std::copy(other.m_Data.begin(), other.m_Data.end(), std::back_inserter(m_Data));
-	}
+	BasicEncryptedString(const BasicEncryptedString& other) : m_Key(other.m_Key), m_Data(other.m_Data) {}
 
     BasicEncryptedString& operator=(const BasicEncryptedString& other)
     {
@@ -91,9 +76,8 @@ public:
             return *this;
 
         m_Key = other.m_Key;
-
-		m_Data.clear();
-        std::copy(other.m_Data.begin(), other.m_Data.end(), std::back_inserter(m_Data));
+		m_Data = std::vector<T>(other.m_Data.size());
+        std::copy(other.m_Data.begin(), other.m_Data.end(), m_Data.data());
 
         return *this;
     }
@@ -215,21 +199,15 @@ public:
         outStream.write(reinterpret_cast<const char*>(m_Data.data()), m_Data.size() * sizeof(T));
     }
 
-    void Deserialize(std::istream& inStream)
+	void Deserialize(std::istream &inStream)
 	{
-        inStream.read(reinterpret_cast<char*>(&m_Key), sizeof(T));
+		inStream.read(reinterpret_cast<char*>(&m_Key), sizeof(T));
 
         size_t dataSize;
         inStream.read(reinterpret_cast<char*>(&dataSize), sizeof(size_t));
 
-        m_Data.clear();
+		m_Data = std::vector<T>(dataSize);
 
-        for (size_t i = 0; i < dataSize; ++i)
-        {
-            T value;
-
-            inStream.read(reinterpret_cast<char*>(&value), sizeof(T));
-            m_Data.push_back(value);
-        }
-    }
+        inStream.read(reinterpret_cast<char*>(m_Data.data()), sizeof(T) * dataSize);
+	}
 };

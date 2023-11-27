@@ -108,8 +108,6 @@ void ConfigManager::Initialize()
 
 void ConfigManager::Load()
 {
-	CurrentConfig = {};
-
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
 	//StorageConfig::DefaultConfig = Configs[CurrentConfigIndex];

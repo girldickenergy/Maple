@@ -10,7 +10,7 @@
 struct Config
 {
 	float Version = 2.f;
-  EncryptedString Name = xorstr_("default");
+	EncryptedString Name = xorstr_("default");
 
 	struct Relax
 	{
