@@ -142,8 +142,11 @@ void ConfigManager::Save()
 
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
+	Config tempConfig = CurrentConfig;
+	tempConfig.Name = Configs[CurrentConfigIndex];
+
 	std::ofstream configFile(getConfigPathByName(Configs[CurrentConfigIndex]), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-    CurrentConfig.Serialize(configFile);
+    tempConfig.Serialize(configFile);
 	configFile.close();
 }
 

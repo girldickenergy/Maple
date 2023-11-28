@@ -68,14 +68,18 @@ public:
         } while (*plaintext++ != 0);
 	}
 
-	BasicEncryptedString(const BasicEncryptedString& other) : m_Key(other.m_Key), m_Data(other.m_Data) {}
+	BasicEncryptedString(const BasicEncryptedString& other) : m_Key(other.m_Key), m_Data(std::vector<T>(other.m_Data.size()))
+	{
+		std::copy(other.m_Data.begin(), other.m_Data.end(), m_Data.data());
+	}
 
-    BasicEncryptedString& operator=(const BasicEncryptedString& other)
+	BasicEncryptedString& operator=(const BasicEncryptedString& other)
     {
         if (this == &other)
             return *this;
 
         m_Key = other.m_Key;
+
 		m_Data = std::vector<T>(other.m_Data.size());
         std::copy(other.m_Data.begin(), other.m_Data.end(), m_Data.data());
 
@@ -198,7 +202,7 @@ public:
 
         outStream.write(reinterpret_cast<const char*>(m_Data.data()), m_Data.size() * sizeof(T));
     }
-
+	
 	void Deserialize(std::istream &inStream)
 	{
 		inStream.read(reinterpret_cast<char*>(&m_Key), sizeof(T));
