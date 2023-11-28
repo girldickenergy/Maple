@@ -147,7 +147,7 @@ struct Config
 	{
         outStream.write(reinterpret_cast<const char*>(&Version), sizeof(float));
         Name.Serialize(outStream);
-		outStream.write(reinterpret_cast<const char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(this));
+		outStream.write(reinterpret_cast<const char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
 		Visuals.UI.MenuBackground.Serialize(outStream);
 		outStream.write(reinterpret_cast<const char*>(&Visuals.UI.Snow), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomLargeImageText) - reinterpret_cast<uintptr_t>(&Visuals.UI.Snow));
 		Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.Serialize(outStream);
@@ -166,7 +166,7 @@ struct Config
         {
             Version = version;
 	        Name.Deserialize(inStream);
-			inStream.read(reinterpret_cast<char*>(this), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(this));
+			inStream.read(reinterpret_cast<char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
 			Visuals.UI.MenuBackground.Deserialize(inStream);
 			inStream.read(reinterpret_cast<char*>(&Visuals.UI.Snow), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomLargeImageText) - reinterpret_cast<uintptr_t>(&Visuals.UI.Snow));
 			Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.Deserialize(inStream);
