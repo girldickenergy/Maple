@@ -42,7 +42,8 @@ std::string StringUtilities::GenerateRandomString(size_t size)
 		"0123456789"
 		"abcdefghijklmnopqrstuvwxyz";
 
-	std::default_random_engine generator;
+	std::random_device rd;
+	std::mt19937 generator(rd());
     std::uniform_int_distribution distribution(0, static_cast<int>(strlen(charset)) - 1);
 
     std::string str;
