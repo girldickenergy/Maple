@@ -249,7 +249,9 @@ void ConfigManager::Rename()
 	else
         CurrentConfig.Name = RenamedConfigName;
 
-	Save();
+	std::ofstream configFile(getConfigPathByName(Configs[CurrentConfigIndex]), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+    CurrentConfig.Serialize(configFile);
+	configFile.close();
 
 	refresh();
 
