@@ -69,25 +69,6 @@ std::string Spoofer::getRandomAdapters()
 	return adapters;
 }
 
-std::string Spoofer::encryptEntry(const std::string& key, const std::string& value)
-{
-	std::stringstream ss;
-	ss << key << xorstr_("=") << value;
-
-	std::string entry = ss.str();
-    CryptoUtilities::MapleXOR(entry, xorstr_("tTaUYiMpXIDEplEQ"));
-
-	return CryptoUtilities::Base64Encode(entry);
-}
-
-std::string Spoofer::decryptEntry(const std::string& entry)
-{
-	std::string entryDecoded = CryptoUtilities::Base64Decode(entry);
-	CryptoUtilities::MapleXOR(entryDecoded, xorstr_("tTaUYiMpXIDEplEQ"));
-
-	return entryDecoded;
-}
-
 void Spoofer::refresh()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
@@ -96,8 +77,56 @@ void Spoofer::refresh()
 	Profiles.emplace_back(xorstr_("none"));
 
 	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
-		if (file.path().extension() == xorstr_(".profile") && Storage::IsValidFileName(file.path().filename().stem().string()))
-			Profiles.push_back(file.path().filename().stem().string());
+	{
+		if (file.path().extension() == xorstr_(".profile"))
+		{
+            EncryptedString profileName;
+			profileName.Deserialize(CryptoUtilities::Base32Decode(file.path().filename().stem().string()));
+
+			if (profileName != xorstr_("none"))
+				Profiles.push_back(profileName);
+		}
+	}
+
+	std::sort(Profiles.begin() + 1, Profiles.end(), [](const EncryptedString& a, const EncryptedString& b) -> bool
+    {
+        return a < b;
+    });
+}
+
+std::string Spoofer::getProfilePathByName(const EncryptedString& profileName)
+{
+	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	for (const auto& file : std::filesystem::directory_iterator(Storage::ProfilesDirectory))
+	{
+		if (file.path().extension() == xorstr_(".profile"))
+		{
+            EncryptedString profileFileName;
+			profileFileName.Deserialize(CryptoUtilities::Base32Decode(file.path().filename().stem().string()));
+
+			if (profileFileName == profileName)
+                return file.path().string();
+		}
+	}
+
+	return {};
+}
+
+std::string Spoofer::getProfilePathForName(const EncryptedString& profileName)
+{
+    Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
+
+	return Storage::ProfilesDirectory + xorstr_("\\") + CryptoUtilities::Base32Encode(profileName.Serialize()) + xorstr_(".profile");
+}
+
+int Spoofer::getProfileIndexByName(const EncryptedString& profileName)
+{
+    for (int i = 0; i < Profiles.size(); i++)
+        if (Profiles[i] == profileName)
+            return i;
+
+	return 0;
 }
 
 void Spoofer::Initialize()
@@ -117,12 +146,7 @@ void Spoofer::Initialize()
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), StorageConfig::DefaultProfile);
-
-	if (it != Profiles.end())
-		SelectedProfile = std::distance(Profiles.begin(), it);
-	else
-		SelectedProfile = 0;
+	SelectedProfile = getProfileIndexByName(StorageConfig::DefaultProfile.c_str());
 
 	Load();
 
@@ -142,29 +166,45 @@ void Spoofer::Load()
 	}
 	else
 	{
-		std::ifstream file(Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile"));
-		std::string line;
+		const std::string profileFilePath = getProfilePathByName(Profiles[SelectedProfile]);
+	    if (profileFilePath.empty() || !std::filesystem::exists(profileFilePath))
+	    {
+	        refresh();
 
-		std::wstring currentAdapters;
+	        SelectedProfile = 0;
 
-		while (std::getline(file, line))
-		{
-            std::string decryptedLine = decryptEntry(line);
-			const int delimiterIndex = decryptedLine.find('=');
-			std::string variable = decryptedLine.substr(0, delimiterIndex);
-			std::string value = decryptedLine.substr(delimiterIndex + 1, std::string::npos);
+			Load();
 
-			if (variable == xorstr_("UninstallID"))
-				currentUniqueID = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
-
-			if (variable == xorstr_("DiskID"))
-				currentUniqueID2 = CryptoUtilities::GetMD5Hash(std::wstring(value.begin(), value.end()));
-
-			if (variable == xorstr_("Adapters"))
-				currentAdapters = std::wstring(value.begin(), value.end());
+	        return;
 		}
 
-		file.close();
+		std::ifstream profileFile(profileFilePath, std::ifstream::binary);
+
+		EncryptedString uninstallId;
+        EncryptedString diskId;
+        EncryptedString adapters;
+
+		uninstallId.Deserialize(profileFile);
+        diskId.Deserialize(profileFile);
+        adapters.Deserialize(profileFile);
+
+		char uninstallIdBuf[uninstallId.GetSize()];
+        char diskIdBuf[diskId.GetSize()];
+        char adaptersBuf[adapters.GetSize()];
+
+		uninstallId.GetData(uninstallIdBuf);
+        diskId.GetData(diskIdBuf);
+        adapters.GetData(adaptersBuf);
+
+		std::string uninstallIdStr(uninstallIdBuf);
+        std::string diskIdStr(diskIdBuf);
+        std::string adaptersStr(adaptersBuf);
+
+		currentUniqueID = CryptoUtilities::GetMD5Hash(std::wstring(uninstallIdStr.begin(), uninstallIdStr.end()));
+		currentUniqueID2 = CryptoUtilities::GetMD5Hash(std::wstring(diskIdStr.begin(), diskIdStr.end()));
+        std::wstring currentAdapters = std::wstring(adaptersStr.begin(), adaptersStr.end());
+
+		profileFile.close();
 
 		currentUniqueCheck = CryptoUtilities::GetMD5Hash(currentUniqueID + L"8" + L"512" + currentUniqueID2);
 		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoUtilities::GetMD5Hash(currentAdapters) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID2) + L":";
@@ -175,8 +215,8 @@ void Spoofer::Load()
 		
 	LoadedProfile = SelectedProfile;
 
-	StorageConfig::DefaultProfile = Profiles[LoadedProfile];
-	Storage::SaveStorageConfig();
+	//StorageConfig::DefaultProfile = Profiles[LoadedProfile];
+	//Storage::SaveStorageConfig();
 }
 
 void Spoofer::Delete()
@@ -186,13 +226,16 @@ void Spoofer::Delete()
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
+	const std::string profilePath = getProfilePathByName(Profiles[SelectedProfile]);
+    if (!profilePath.empty())
+		std::filesystem::remove(profilePath);
 
-	std::filesystem::remove(profilePath);
+	const EncryptedString lastLoadedProfile = Profiles[LoadedProfile];
 
 	refresh();
 
 	SelectedProfile = 0;
+    LoadedProfile = getProfileIndexByName(lastLoadedProfile);
 
 	Load();
 }
@@ -206,50 +249,37 @@ void Spoofer::Import()
 	if (encodedProfileData.empty())
 		return;
 
-	std::string decodedProfileData = CryptoUtilities::Base64Decode(encodedProfileData);
-	CryptoUtilities::MapleXOR(decodedProfileData, xorstr_("tTaUYiMpXIDEplEQ"));
-	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|");
+	const std::string decodedProfileData = CryptoUtilities::Base64Decode(encodedProfileData);
+	const std::vector<std::string> decodedProfileDataSplit = StringUtilities::Split(decodedProfileData, "|||");
 
 	if (decodedProfileDataSplit.size() < 2 || decodedProfileDataSplit.size() > 2)
 		return;
 
-	std::string profileName = CryptoUtilities::Base64Decode(decodedProfileDataSplit[0]);
-	const std::string profileData = CryptoUtilities::Base64Decode(decodedProfileDataSplit[1]);
+	EncryptedString profileName;
+	profileName.Deserialize(CryptoUtilities::Base32Decode(decodedProfileDataSplit[0]));
 
-	std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + profileName + xorstr_(".profile");
-
-	if (!Storage::IsValidFileName(profileName))
+	if (profileName == xorstr_("none"))
 		return;
 
-	if (std::filesystem::exists(profileFilePath))
+	const std::vector<uint8_t> profileData = CryptoUtilities::Base64DecodeToBytes(decodedProfileDataSplit[1]);
+
+	if (!getProfilePathByName(profileName).empty())
 	{
-		unsigned int i = 2;
-		while (true)
-		{
-			const std::string newProfileName = profileName + xorstr_("_") + std::to_string(i);
-			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
-			if (!std::filesystem::exists(newProfileFilePath))
-			{
-				profileName = newProfileName;
-				profileFilePath = newProfileFilePath;
-
-				break;
-			}
-
+        int i = 1;
+		while (!getProfilePathByName(profileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
-		}
+
+		// todo: fix += operator?
+		profileName = profileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
 
-	std::ofstream ofs(profileFilePath);
-	ofs << profileData << std::endl;
-	ofs.close();
+	std::ofstream configFile(getProfilePathForName(profileName), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+	configFile.write(reinterpret_cast<const char*>(profileData.data()), profileData.size());
+	configFile.close();
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
-
-	if (it != Profiles.end())
-		SelectedProfile = std::distance(Profiles.begin(), it);
+	SelectedProfile = getProfileIndexByName(profileName);
 
 	Load();
 }
@@ -261,18 +291,13 @@ void Spoofer::Export()
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
+	const std::string profileFilePath = getProfilePathByName(Profiles[SelectedProfile]);
 
-	std::ifstream ifs(profileFilePath);
-	const std::string profileData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-	ifs.close();
+	std::ifstream profileFile(profileFilePath, std::ifstream::binary);
+	const std::vector<uint8_t> profileData((std::istreambuf_iterator<char>(profileFile)), std::istreambuf_iterator<char>());
+	profileFile.close();
 
-	std::string encoded = CryptoUtilities::Base64Encode(Profiles[SelectedProfile]) + xorstr_("|") + CryptoUtilities::Base64Encode(profileData);
-    CryptoUtilities::MapleXOR(encoded, xorstr_("tTaUYiMpXIDEplEQ"));
-	const std::string encodedProfileData = CryptoUtilities::Base64Encode(encoded);
-
-	ClipboardUtilities::Write(encodedProfileData);
-
+	ClipboardUtilities::Write(CryptoUtilities::Base64Encode(CryptoUtilities::Base32Encode(Profiles[SelectedProfile].Serialize()) + xorstr_("|||") + CryptoUtilities::Base64Encode(profileData)));
 }
 
 void Spoofer::Rename()
@@ -282,87 +307,61 @@ void Spoofer::Rename()
 	if (SelectedProfile == 0)
 		return;
 
-	const std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + Profiles[SelectedProfile] + xorstr_(".profile");
-
-	if (!Storage::IsValidFileName(RenamedProfileName) || Storage::IsSameFileName(RenamedProfileName, Profiles[SelectedProfile]))
+	if (RenamedProfileName == xorstr_("none") || RenamedProfileName == Profiles[SelectedProfile])
 		return;
 
-	std::string renamedProfileName = RenamedProfileName;
-	std::string renamedProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + renamedProfileName + xorstr_(".profile");
+	EncryptedString renamedProfileName = RenamedProfileName;
 
-	if (std::filesystem::exists(renamedProfileFilePath))
+	if (!getProfilePathByName(renamedProfileName).empty())
 	{
-		unsigned int i = 2;
-		while (true)
-		{
-			const std::string newProfileName = renamedProfileName + xorstr_("_") + std::to_string(i);
-			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
-			if (!std::filesystem::exists(newProfileFilePath))
-			{
-				renamedProfileName = newProfileName;
-				renamedProfileFilePath = newProfileFilePath;
-
-				break;
-			}
-
+        int i = 1;
+		while (!getProfilePathByName(renamedProfileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
-		}
+
+		// todo: fix += operator?
+		renamedProfileName = renamedProfileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
 
-	std::rename(profileFilePath.c_str(), renamedProfileFilePath.c_str());
+	std::rename(getProfilePathByName(Profiles[SelectedProfile]).c_str(), getProfilePathForName(renamedProfileName).c_str());
+
+	const EncryptedString lastLoadedProfile = SelectedProfile == LoadedProfile ? renamedProfileName : Profiles[LoadedProfile];
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), renamedProfileName);
-
-	if (it != Profiles.end())
-		SelectedProfile = std::distance(Profiles.begin(), it);
+    SelectedProfile = getProfileIndexByName(renamedProfileName);
+    LoadedProfile = getProfileIndexByName(lastLoadedProfile);
 }
 
 void Spoofer::Create()
 {
 	Storage::EnsureDirectoryExists(Storage::ProfilesDirectory);
 
-	std::string profileName = NewProfileName;
-	std::string profileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + profileName + xorstr_(".profile");
+	if (NewProfileName == xorstr_("none"))
+        return;
 
-	if (!Storage::IsValidFileName(profileName))
-		return;
+	EncryptedString newProfileName = NewProfileName;
 
-	if (std::filesystem::exists(profileFilePath))
+	if (!getProfilePathByName(newProfileName).empty())
 	{
-		unsigned int i = 2;
-		while (true)
-		{
-			const std::string newProfileName = profileName + xorstr_("_") + std::to_string(i);
-			const std::string newProfileFilePath = Storage::ProfilesDirectory + xorstr_("\\") + newProfileName + xorstr_(".profile");
-			if (!std::filesystem::exists(newProfileFilePath))
-			{
-				profileName = newProfileName;
-				profileFilePath = newProfileFilePath;
-
-				break;
-			}
-
+        int i = 1;
+		while (!getProfilePathByName(newProfileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
-		}
+
+		// todo: fix += operator?
+		newProfileName = newProfileName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
 
-	std::ofstream ofs;
-	ofs.open(profileFilePath, std::ofstream::out | std::ofstream::trunc);
+	std::ofstream profileFile(getProfilePathForName(newProfileName), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
 
-	ofs << encryptEntry(xorstr_("UninstallID="), getRandomUninstallID()) << std::endl;
-	ofs << encryptEntry(xorstr_("DiskID="), getRandomDiskID()) << std::endl;
-	ofs << encryptEntry(xorstr_("Adapters="), getRandomAdapters()) << std::endl;
+    EncryptedString(getRandomUninstallID().c_str()).Serialize(profileFile);
+    EncryptedString(getRandomDiskID().c_str()).Serialize(profileFile);
+    EncryptedString(getRandomAdapters().c_str()).Serialize(profileFile);
 
-	ofs.close();
+    profileFile.close();
 
 	refresh();
 
-	const auto it = std::find(Profiles.begin(), Profiles.end(), profileName);
-
-	if (it != Profiles.end())
-		SelectedProfile = std::distance(Profiles.begin(), it);
+    SelectedProfile = getProfileIndexByName(newProfileName);
 
 	Load();
 }

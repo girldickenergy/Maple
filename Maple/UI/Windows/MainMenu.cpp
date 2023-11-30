@@ -469,15 +469,12 @@ void MainMenu::Render()
 
                     const float buttonWidth = (ImGui::GetWindowWidth() * 0.5f - style.ItemSpacing.x) / 2;
 
-                    Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, [](void* vec, int idx, const char** out_text)
-                        {
-                            auto& vector = *static_cast<std::vector<std::string>*>(vec);
-                            if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
-                            *out_text = vector.at(idx).c_str();
-                            return true;
-                        }, reinterpret_cast<void*>(&Spoofer::Profiles), Spoofer::Profiles.size());
+                    Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, Spoofer::Profiles);
 
-                    ImGui::Text(xorstr_("Current profile: %s"), Spoofer::Profiles[Spoofer::LoadedProfile].c_str());
+					char currentProfileName[Spoofer::Profiles[Spoofer::LoadedProfile].GetSize()];
+                    Spoofer::Profiles[Spoofer::LoadedProfile].GetData(currentProfileName);
+
+                    ImGui::Text(xorstr_("Current profile: %s"), currentProfileName);
 
                     if (sameProfile)
                     {
@@ -537,7 +534,7 @@ void MainMenu::Render()
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
                     }
 
-                    ImGui::InputText(xorstr_("Profile name##profilerename"), Spoofer::RenamedProfileName, IM_ARRAYSIZE(Spoofer::RenamedProfileName));
+                    Widgets::InputText(xorstr_("Profile name##profilerename"), Spoofer::RenamedProfileName, 32);
                     if (Widgets::Button(xorstr_("Rename selected profile"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                         Spoofer::Rename();
 
@@ -549,7 +546,7 @@ void MainMenu::Render()
 
                     ImGui::Spacing();
 
-                    ImGui::InputText(xorstr_("Profile name##newprofile"), Spoofer::NewProfileName, IM_ARRAYSIZE(Spoofer::NewProfileName));
+                    Widgets::InputText(xorstr_("Profile name##newprofile"), Spoofer::NewProfileName, 32);
                     if (Widgets::Button(xorstr_("Create new profile"), ImVec2(ImGui::GetWindowWidth() * 0.5f, ImGui::GetFrameHeight())))
                         Spoofer::Create();
                 }

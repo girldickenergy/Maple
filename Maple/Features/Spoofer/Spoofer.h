@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "EncryptedString.h"
 #include "CLR/CLRString.h"
 
 class Spoofer
@@ -22,16 +23,17 @@ class Spoofer
 	static std::string getRandomDiskID();
 	static std::string getRandomAdapters();
 
-	static std::string encryptEntry(const std::string& key, const std::string& value);
-	static std::string decryptEntry(const std::string& entry);
-
 	static void refresh();
+
+	static std::string getProfilePathByName(const EncryptedString& profileName);
+	static std::string getProfilePathForName(const EncryptedString& profileName);
+    static int getProfileIndexByName(const EncryptedString& profileName);
 public:
-	static inline std::vector<std::string> Profiles;
+	static inline std::vector<EncryptedString> Profiles;
 	static inline int SelectedProfile = 0;
 	static inline int LoadedProfile = 0;
-	static inline char RenamedProfileName[24];
-	static inline char NewProfileName[24];
+	static inline EncryptedString RenamedProfileName;
+	static inline EncryptedString NewProfileName;
 
 	static inline bool Initialized = false;
 

@@ -208,7 +208,7 @@ void ConfigManager::Rename()
 	if (CurrentConfigIndex == 0)
 		return;
 
-	if (RenamedConfigName == xorstr_("default"))
+	if (RenamedConfigName == xorstr_("default") || RenamedConfigName == Configs[CurrentConfigIndex])
         return;
 
 	EncryptedString renamedConfigName = RenamedConfigName;
