@@ -77,7 +77,7 @@ void ConfigManager::Initialize()
 
 	refresh();
 
-    CurrentConfigIndex = getConfigIndexByName(StorageConfig::DefaultConfig.c_str());
+    CurrentConfigIndex = getConfigIndexByName(Storage::Config.DefaultConfig);
 
 	Load();
 }
@@ -86,8 +86,8 @@ void ConfigManager::Load()
 {
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	//StorageConfig::DefaultConfig = Configs[CurrentConfigIndex];
-	//Storage::SaveStorageConfig();
+	Storage::Config.DefaultConfig = Configs[CurrentConfigIndex];
+	Storage::SaveStorageConfig();
 
 	if (CurrentConfigIndex == 0)
 	{

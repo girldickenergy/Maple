@@ -10,7 +10,6 @@
 #include "../Widgets/Widgets.h"
 #include "../../Storage/Storage.h"
 #include "../Widgets/3rd-party/FileDialog/imfilebrowser.h"
-#include "../../Storage/StorageConfig.h"
 #include "../../Features/Spoofer/Spoofer.h"
 #include "../../SDK/Osu/GameBase.h"
 #include "../../Features/ReplayBot/ReplayBot.h"
@@ -572,11 +571,11 @@ void MainMenu::Render()
                     Widgets::Checkbox(xorstr_("Disable spectators"), &ConfigManager::CurrentConfig.Misc.DisableSpectators); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Spectators will keep buffering infinitely."));
 
                     bool storageConfigEdited = false;
-                    storageConfigEdited |= Widgets::Checkbox(xorstr_("Show menu after injection"), &StorageConfig::ShowMenuAfterInjection);
-                    storageConfigEdited |= Widgets::Hotkey(xorstr_("Menu key"), &StorageConfig::MenuKey);
+                    storageConfigEdited |= Widgets::Checkbox(xorstr_("Show menu after injection"), &Storage::Config.ShowMenuAfterInjection);
+                    storageConfigEdited |= Widgets::Hotkey(xorstr_("Menu key"), &Storage::Config.MenuKey);
 
-                    if (StorageConfig::MenuKey == 0)
-                        StorageConfig::MenuKey = VK_DELETE;
+                    if (Storage::Config.MenuKey == 0)
+                        Storage::Config.MenuKey = VK_DELETE;
 
                     if (storageConfigEdited)
                         Storage::SaveStorageConfig();

@@ -14,7 +14,6 @@
 #include "xorstr.hpp"
 #include "../Logging/Logger.h"
 #include "../SDK/GL/GLControl.h"
-#include "../Storage/StorageConfig.h"
 #include "Visualisations/SnowVisualisation/SnowVisualisation.h"
 #include "Windows/MainMenu.h"
 #include "Windows/ScoreSubmissionDialog.h"
@@ -22,6 +21,7 @@
 #include "../Features/Enlighten/Enlighten.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Relax/Relax.h"
+#include "../Storage/Storage.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -39,12 +39,12 @@ LRESULT UI::wndProcHook(int nCode, WPARAM wParam, LPARAM lParam)
             const bool wasDown = (HIWORD(pMsg->lParam) & KF_REPEAT) == KF_REPEAT;
 	        const bool keyboardCaptured = ImGui::GetIO().WantCaptureKeyboard;
 
-			bypassGameInput = (pMsg->wParam == StorageConfig::MenuKey || pMsg->wParam == VK_ESCAPE) && MainMenu::GetIsVisible();
+			bypassGameInput = (pMsg->wParam == Storage::Config.MenuKey || pMsg->wParam == VK_ESCAPE) && MainMenu::GetIsVisible();
 
 			if (pMsg->wParam == ConfigManager::CurrentConfig.Relax.ToggleKey && !wasDown)
 				Relax::IsRunning = !Relax::IsRunning;
 
-			if (pMsg->wParam == StorageConfig::MenuKey && !wasDown && !keyboardCaptured)
+			if (pMsg->wParam == Storage::Config.MenuKey && !wasDown && !keyboardCaptured)
 				MainMenu::ToggleVisibility();
 
 			if (MainMenu::GetIsVisible() && pMsg->wParam == VK_ESCAPE && !wasDown && !keyboardCaptured)
@@ -223,7 +223,7 @@ void UI::initialize(HWND window, IDirect3DDevice9* d3d9Device)
 	
 	oWndProc = SetWindowsHookEx(WH_GETMESSAGE, wndProcHook, NULL, GetCurrentThreadId());
 
-	if (StorageConfig::ShowMenuAfterInjection)
+	if (Storage::Config.ShowMenuAfterInjection)
 		MainMenu::Show();
 	
 	initialized = true;

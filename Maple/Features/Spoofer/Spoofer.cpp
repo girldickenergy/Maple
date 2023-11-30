@@ -146,7 +146,7 @@ void Spoofer::Initialize()
 
 	refresh();
 
-	SelectedProfile = getProfileIndexByName(StorageConfig::DefaultProfile.c_str());
+	SelectedProfile = getProfileIndexByName(Storage::Config.DefaultProfile);
 
 	Load();
 
@@ -215,8 +215,8 @@ void Spoofer::Load()
 		
 	LoadedProfile = SelectedProfile;
 
-	//StorageConfig::DefaultProfile = Profiles[LoadedProfile];
-	//Storage::SaveStorageConfig();
+	Storage::Config.DefaultProfile = Profiles[LoadedProfile];
+	Storage::SaveStorageConfig();
 }
 
 void Spoofer::Delete()
