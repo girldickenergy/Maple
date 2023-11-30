@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+#include "base32.h"
 #include "base64.h"
 #include "md5.h"
 #include "hex.h"
@@ -129,6 +130,30 @@ std::vector<uint8_t> CryptoUtilities::Base64DecodeToBytes(const std::string &str
     CryptoPP::Base64Decoder decoder;
     decoder.Attach(new CryptoPP::VectorSink(result));
     decoder.Put(reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    decoder.MessageEnd();
+
+    return result;
+}
+
+std::string CryptoUtilities::Base32Encode(const std::vector<uint8_t>& data)
+{
+    std::string result;
+
+    CryptoPP::Base32Encoder encoder(nullptr, false);
+    encoder.Attach(new CryptoPP::StringSink(result));
+    encoder.Put(data.data(), data.size());
+    encoder.MessageEnd();
+
+    return result;
+}
+
+std::vector<uint8_t> CryptoUtilities::Base32Decode(const std::string& str)
+{
+    std::vector<uint8_t> result;
+
+    CryptoPP::Base32Decoder decoder;
+    decoder.Attach(new CryptoPP::VectorSink(result));
+    decoder.Put(reinterpret_cast<const uint8_t *>(str.data()), str.length());
     decoder.MessageEnd();
 
     return result;

@@ -218,4 +218,25 @@ public:
 
         inStream.read(reinterpret_cast<char*>(m_Data.data()), sizeof(T) * dataSize);
 	}
+
+	std::vector<uint8_t> Serialize() const
+	{
+        std::vector<uint8_t> result(sizeof(T) + sizeof(size_t) + m_Data.size() * sizeof(T));
+
+		*(T*)result.data() = m_Key;
+        *(size_t*)(result.data() + sizeof(T)) = m_Data.size();
+        std::memcpy(result.data() + sizeof(T) + sizeof(size_t), m_Data.data(), m_Data.size());
+
+		return result;
+    }
+
+	void Deserialize(const std::vector<uint8_t> data)
+	{
+        m_Key = *(T*)data.data();
+        size_t dataSize = *(size_t*)(data.data() + sizeof(T));
+
+        m_Data = std::vector<T>(dataSize);
+
+		std::memcpy(m_Data.data(), data.data() + sizeof(T) + sizeof(size_t), dataSize);
+	}
 };

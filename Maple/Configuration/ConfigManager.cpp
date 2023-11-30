@@ -23,18 +23,10 @@ void ConfigManager::refresh()
 		if (file.path().extension() == xorstr_(".cfg"))
 		{
             EncryptedString configName;
+			configName.Deserialize(CryptoUtilities::Base32Decode(file.path().filename().stem().string()));
 
-            std::ifstream configFile(file.path(), std::ifstream::binary);
-
-            configFile.seekg(0, std::ios::end);
-            if (const int length = configFile.tellg(); length < sizeof(float) + sizeof(char) + sizeof(size_t))
-				continue;
-            
-			configFile.seekg(sizeof(float), std::ifstream::beg);
-            configName.Deserialize(configFile);
-            configFile.close();
-
-			Configs.push_back(configName);
+			if (configName != xorstr_("default"))
+				Configs.push_back(configName);
 		}
 	}
 
@@ -53,16 +45,7 @@ std::string ConfigManager::getConfigPathByName(const EncryptedString& configName
 		if (file.path().extension() == xorstr_(".cfg"))
 		{
             EncryptedString configFileName;
-
-            std::ifstream configFile(file.path(), std::ifstream::binary);
-
-            configFile.seekg(0, std::ios::end);
-            if (const int length = configFile.tellg(); length < sizeof(float) + sizeof(char) + sizeof(size_t))
-				continue;
-
-			configFile.seekg(sizeof(float), std::ifstream::beg);
-            configFileName.Deserialize(configFile);
-            configFile.close();
+			configFileName.Deserialize(CryptoUtilities::Base32Decode(file.path().filename().stem().string()));
 
 			if (configFileName == configName)
                 return file.path().string();
@@ -72,18 +55,11 @@ std::string ConfigManager::getConfigPathByName(const EncryptedString& configName
 	return {};
 }
 
-std::string ConfigManager::getUniqueConfigPath()
+std::string ConfigManager::getConfigPathForName(const EncryptedString& configName)
 {
     Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	std::string configFilePath;
-
-	do
-	{
-		configFilePath = Storage::ConfigsDirectory + xorstr_("\\") + StringUtilities::GenerateRandomString(16) + xorstr_(".cfg");
-	} while (std::filesystem::exists(configFilePath));
-
-	return configFilePath;
+	return Storage::ConfigsDirectory + xorstr_("\\") + CryptoUtilities::Base32Encode(configName.Serialize()) + xorstr_(".cfg");
 }
 
 int ConfigManager::getConfigIndexByName(const EncryptedString& configName)
@@ -142,11 +118,8 @@ void ConfigManager::Save()
 
 	Storage::EnsureDirectoryExists(Storage::ConfigsDirectory);
 
-	Config tempConfig = CurrentConfig;
-	tempConfig.Name = Configs[CurrentConfigIndex];
-
 	std::ofstream configFile(getConfigPathByName(Configs[CurrentConfigIndex]), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-    tempConfig.Serialize(configFile);
+    CurrentConfig.Serialize(configFile);
 	configFile.close();
 }
 
@@ -177,36 +150,37 @@ void ConfigManager::Import()
 	if (encodedConfigData.empty())
 		return;
 
-	const std::vector<uint8_t> decodedConfigData = CryptoUtilities::Base64DecodeToBytes(encodedConfigData);
+	const std::string decodedConfigData = CryptoUtilities::Base64Decode(encodedConfigData);
+	const std::vector<std::string> decodedConfigDataSplit = StringUtilities::Split(decodedConfigData, xorstr_("|||"));
 
-	const std::string configFilePath = getUniqueConfigPath();
+	if (decodedConfigDataSplit.size() < 2 || decodedConfigDataSplit.size() > 2)
+		return;
 
-	std::ofstream configFile(configFilePath, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-	configFile.write(reinterpret_cast<const char*>(decodedConfigData.data()), decodedConfigData.size());
-	configFile.close();
+	EncryptedString configName;
+	configName.Deserialize(CryptoUtilities::Base32Decode(decodedConfigDataSplit[0]));
 
-	std::ifstream configFile2(configFilePath, std::ifstream::binary);
-    Config tempConfig;
-	tempConfig.Deserialize(configFile2);
-    configFile2.close();
+	if (configName == xorstr_("default"))
+		return;
 
-	if (!getConfigPathByName(tempConfig.Name).empty())
+	const std::vector<uint8_t> configData = CryptoUtilities::Base64DecodeToBytes(decodedConfigDataSplit[1]);
+
+	if (!getConfigPathByName(configName).empty())
 	{
         int i = 1;
-		while (!getConfigPathByName(tempConfig.Name + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
+		while (!getConfigPathByName(configName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
 
 		// todo: fix += operator?
-		tempConfig.Name = tempConfig.Name + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
-
-		std::ofstream configFile3(configFilePath, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-        tempConfig.Serialize(configFile3);
-		configFile3.close();
+		configName = configName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
+
+	std::ofstream configFile(getConfigPathForName(configName), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+	configFile.write(reinterpret_cast<const char*>(configData.data()), configData.size());
+	configFile.close();
 
 	refresh();
 
-    CurrentConfigIndex = getConfigIndexByName(tempConfig.Name);
+    CurrentConfigIndex = getConfigIndexByName(configName);
 
 	Load();
 }
@@ -224,7 +198,7 @@ void ConfigManager::Export()
 	const std::vector<uint8_t> configData((std::istreambuf_iterator<char>(configFile)), std::istreambuf_iterator<char>());
 	configFile.close();
 
-	ClipboardUtilities::Write(CryptoUtilities::Base64Encode(configData));
+	ClipboardUtilities::Write(CryptoUtilities::Base64Encode(CryptoUtilities::Base32Encode(Configs[CurrentConfigIndex].Serialize()) + xorstr_("|||") + CryptoUtilities::Base64Encode(configData)));
 }
 
 void ConfigManager::Rename()
@@ -237,25 +211,23 @@ void ConfigManager::Rename()
 	if (RenamedConfigName == xorstr_("default"))
         return;
 
-	if (!getConfigPathByName(RenamedConfigName).empty())
+	EncryptedString renamedConfigName = RenamedConfigName;
+
+	if (!getConfigPathByName(renamedConfigName).empty())
 	{
         int i = 1;
-		while (!getConfigPathByName(RenamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
+		while (!getConfigPathByName(renamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
 			i++;
 
 		// todo: fix += operator?
-		CurrentConfig.Name = RenamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
+		renamedConfigName = renamedConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
-	else
-        CurrentConfig.Name = RenamedConfigName;
 
-	std::ofstream configFile(getConfigPathByName(Configs[CurrentConfigIndex]), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-    CurrentConfig.Serialize(configFile);
-	configFile.close();
+	std::rename(getConfigPathByName(Configs[CurrentConfigIndex]).c_str(), getConfigPathForName(renamedConfigName).c_str());
 
 	refresh();
 
-	CurrentConfigIndex = getConfigIndexByName(CurrentConfig.Name);
+	CurrentConfigIndex = getConfigIndexByName(renamedConfigName);
 }
 
 void ConfigManager::Create()
@@ -266,24 +238,24 @@ void ConfigManager::Create()
 		return;
 
 	CurrentConfig = {};
-    CurrentConfig.Name = NewConfigName;
-	if (!getConfigPathByName(NewConfigName).empty())
+
+	EncryptedString newConfigName = NewConfigName;
+
+	if (!getConfigPathByName(newConfigName).empty())
 	{
         int i = 1;
-		while (!getConfigPathByName(NewConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
-		{
+		while (!getConfigPathByName(newConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")")).empty())
             i++;
-		}
 
 		// todo: fix += operator?
-		CurrentConfig.Name = NewConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
+		newConfigName = newConfigName + xorstr_("(") + std::to_string(i).c_str() + xorstr_(")");
 	}
 
-	std::ofstream configFile(getUniqueConfigPath(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+	std::ofstream configFile(getConfigPathForName(newConfigName), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
     CurrentConfig.Serialize(configFile);
 	configFile.close();
 
 	refresh();
 
-	CurrentConfigIndex = getConfigIndexByName(CurrentConfig.Name);
+	CurrentConfigIndex = getConfigIndexByName(newConfigName);
 }

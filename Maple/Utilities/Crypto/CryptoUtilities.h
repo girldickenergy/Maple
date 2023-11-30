@@ -14,4 +14,6 @@ public:
     static std::string Base64Encode(const std::vector<uint8_t>& data);
     static std::string Base64Decode(const std::string& str);
     static std::vector<uint8_t> Base64DecodeToBytes(const std::string &str);
+    static std::string Base32Encode(const std::vector<uint8_t>& data);
+    static std::vector<uint8_t> Base32Decode(const std::string& str);
 };

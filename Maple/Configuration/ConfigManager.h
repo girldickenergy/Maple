@@ -8,8 +8,9 @@
 class ConfigManager
 {
 	static void refresh();
+
 	static std::string getConfigPathByName(const EncryptedString& configName);
-    static std::string getUniqueConfigPath();
+	static std::string getConfigPathForName(const EncryptedString& configName);
     static int getConfigIndexByName(const EncryptedString& configName);
 
 public:
