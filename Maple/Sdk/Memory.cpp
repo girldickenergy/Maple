@@ -51,7 +51,7 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 				}
 				else
 				{
-					Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s. Score::Submit!"));
+					Logger::Log(LogSeverity::Error, xorstr_("Failed to hook Score::Submit!"));
 					Security::CorruptMemory();
 				}
 			}
