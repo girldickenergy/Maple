@@ -15,6 +15,7 @@ class ReplayBot
 	static inline Vector2 currentCursorPosition;
 public:
 	static inline bool Enabled = false;
+	static inline int Offset = 0;
 	static inline bool DisableAiming = false;
 	static inline bool DisableTapping = false;
 	static inline bool Ready = false;

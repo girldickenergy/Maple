@@ -52,26 +52,28 @@ std::string ReplayBot::GetReplayString()
 
 void ReplayBot::Update()
 {
+	const int time = AudioEngine::GetTime() - Offset;
+
 	bool newFrame = false;
 	Vector2 pos;
-	if (currentFrameIndex < currentReplay.ReplayFrames.size() - 1 && currentReplay.ReplayFrames[currentFrameIndex + 1].Time <= AudioEngine::GetTime())
+	if (currentFrameIndex < currentReplay.ReplayFrames.size() - 1 && currentReplay.ReplayFrames[currentFrameIndex + 1].Time <= time)
 	{
 		currentFrameIndex++;
 		newFrame = true;
 	}
 
-	bool runningSlow = AudioEngine::GetTime() - currentReplay.ReplayFrames[currentFrameIndex].Time > 16 && newFrame;
+	bool runningSlow = time - currentReplay.ReplayFrames[currentFrameIndex].Time > 16 && newFrame;
 
 	//skip unnecessary frames
 	if (runningSlow)
-		while (currentFrameIndex < currentReplay.ReplayFrames.size() - 1 && currentReplay.ReplayFrames[currentFrameIndex].OsuKeys == OsuKeys::None && currentReplay.ReplayFrames[currentFrameIndex + 1].Time <= AudioEngine::GetTime())
+		while (currentFrameIndex < currentReplay.ReplayFrames.size() - 1 && currentReplay.ReplayFrames[currentFrameIndex].OsuKeys == OsuKeys::None && currentReplay.ReplayFrames[currentFrameIndex + 1].Time <= time)
 			currentFrameIndex++;
 
 	if (newFrame)
 	{
 		pos = Vector2(currentReplay.ReplayFrames[currentFrameIndex].X, currentReplay.ReplayFrames[currentFrameIndex].Y);
 	}
-	else if (currentReplay.ReplayFrames[currentFrameIndex].Time >= AudioEngine::GetTime())
+	else if (currentReplay.ReplayFrames[currentFrameIndex].Time >= time)
 	{
 		int p1 = std::max(0, currentFrameIndex - 1);
 		int p2 = currentFrameIndex;

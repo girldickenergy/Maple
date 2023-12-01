@@ -312,21 +312,23 @@ void MainMenu::Render()
                         Widgets::SliderFloat(xorstr_("Multiplier"), &ConfigManager::CurrentConfig.Timewarp.Multiplier, 0.25f, ConfigManager::CurrentConfig.Timewarp.RateLimitEnabled ? 1.0f : 1.5f, .01f, .1f, xorstr_("%.2f"), ImGuiSliderFlags_AlwaysClamp);
                     }
 
-		    Widgets::Checkbox(xorstr_("Rate Limit"), &ConfigManager::CurrentConfig.Timewarp.RateLimitEnabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Limits the maximum speed to original speed."));
+				    Widgets::Checkbox(xorstr_("Rate Limit"), &ConfigManager::CurrentConfig.Timewarp.RateLimitEnabled); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Limits the maximum speed to original speed."));
 
-		    if (!ConfigManager::CurrentConfig.Timewarp.RateLimitEnabled)
-		    {
-                        ImGui::TextColored(StyleProvider::AccentColour, xorstr_("WARNING: Playing with the speed higher than original speed"));
-                        ImGui::TextColored(StyleProvider::AccentColour, xorstr_("will inevitably get your account banned!"));
-		    }
+				    if (!ConfigManager::CurrentConfig.Timewarp.RateLimitEnabled)
+				    {
+		                ImGui::TextColored(StyleProvider::AccentColour, xorstr_("WARNING: Playing with the speed higher than original speed"));
+		                ImGui::TextColored(StyleProvider::AccentColour, xorstr_("will inevitably get your account banned!"));
+				    }
                 }
                 Widgets::EndPanel();
             }
             if (currentTab == 3)
             {
-                Widgets::BeginPanel(xorstr_("Replay Bot"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(4, 1)));
+                Widgets::BeginPanel(xorstr_("Replay Bot"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(5, 1)));
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &ReplayBot::Enabled);
+
+					Widgets::SliderInt(xorstr_("Offset"), &ReplayBot::Offset, -50, 50, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput); ImGui::SameLine(); Widgets::Tooltip(xorstr_("Offsets playback by the specified amount of milliseconds."));
 
                     if (Widgets::Checkbox(xorstr_("Disable aiming"), &ReplayBot::DisableAiming))
                     {
@@ -470,10 +472,11 @@ void MainMenu::Render()
 
                     Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, Spoofer::Profiles);
 
-					char currentProfileName[Spoofer::Profiles[Spoofer::LoadedProfile].GetSize()];
-                    Spoofer::Profiles[Spoofer::LoadedProfile].GetData(currentProfileName);
+					EncryptedString currentProfile = xorstr_("Current profile: ") + Spoofer::Profiles[Spoofer::LoadedProfile];
+                    char currentProfileName[currentProfile.GetSize()];
+                    currentProfile.GetData(currentProfileName);
 
-                    ImGui::Text(xorstr_("Current profile: %s"), currentProfileName);
+                    ImGui::TextUnformatted(currentProfileName);
 
                     if (sameProfile)
                     {
