@@ -39,15 +39,16 @@ void Logger::clearLogFile()
 	performanceReportFile.close();
 }
 
-void Logger::createLogEntry(LogSeverity severity, std::string message)
+void Logger::createLogEntry(LogSeverity severity, const char* message)
 {
-	std::ostringstream entry;
-
-	auto time = std::time(nullptr);
+	const auto time = std::time(nullptr);
 	tm timeStruct{};
 	localtime_s(&timeStruct, &time);
 
-	entry << xorstr_("[") << std::put_time(&timeStruct, xorstr_("%c")) << xorstr_("] ");
+	char timeBuf[32];
+	std::strftime(timeBuf, 32, "%d.%m.%Y %H:%M:%S", &timeStruct);
+
+	EncryptedString entry = xorstr_("[") + EncryptedString(timeBuf) + xorstr_("] ");
 
 	switch (severity)
 	{
@@ -55,47 +56,41 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 8);
 
-			entry << xorstr_("[DEBUG] ");
+			entry += xorstr_("[DEBUG] ");
 			break;
 		case LogSeverity::Warning:
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 6);
 
-			entry << xorstr_("[WARNING] ");
+			entry += xorstr_("[WARNING] ");
 			break;
 		case LogSeverity::Error:
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 4);
 
-			entry << xorstr_("[ERROR] ");
+			entry += xorstr_("[ERROR] ");
 			break;
 		case LogSeverity::Assert:
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 5);
 
-			entry << xorstr_("[ASSERT FAIL] ");
+			entry += xorstr_("[ASSERT FAIL] ");
 			break;
 		default:
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 7);
 
-			entry << xorstr_("[INFO] ");
+			entry += xorstr_("[INFO] ");
 			break;
 	}
 
-	entry << message;
+	entry += message;
 
-	std::string entryString = entry.str();
-
-    if (shouldEncrypt)
-    {
-    	CryptoUtilities::MapleXOR(entryString, xorstr_("vD5KJvfDRKZEaR9I"));
-
-		entryString = CryptoUtilities::Base64Encode(entryString);
-	}
+	char entryBuf[entry.GetSize()];
+	entry.GetData(entryBuf);
 
 	if (consoleHandle)
-		std::cout << entryString << std::endl;
+		std::cout << entryBuf << std::endl;
 
 	if (logFilePath.empty())
 		return;
@@ -104,7 +99,7 @@ void Logger::createLogEntry(LogSeverity severity, std::string message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << entryString << std::endl;
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("vD5KJvfDRKZEaR9I"))) : entryBuf) << std::endl;
 	logFile.close();
 }
 
@@ -135,11 +130,9 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 void Logger::WriteCrashReport(const std::string& crashReport)
 {
-    std::string report = crashReport;
 	std::fstream logFile;
 	logFile.open(crashLogFilePath, std::ios_base::out | std::ios_base::trunc);
-    CryptoUtilities::MapleXOR(report, xorstr_("vD5KJvfDRKZEaR9I"));
-	logFile << CryptoUtilities::Base64Encode(report);
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("vD5KJvfDRKZEaR9I"))) : crashReport);
 	logFile.close();
 }
 
@@ -150,10 +143,10 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 		char buffer[1024];
 		va_list args;
 		__builtin_va_start(args, format);
-		vsprintf_s(buffer, format, args);
+		vsnprintf(buffer, 1024, format, args);
 		__builtin_va_end(args);
 
-		createLogEntry(severity, std::string(buffer));
+		createLogEntry(severity, buffer);
 	}
 }
 
@@ -163,12 +156,12 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 	{
 		char buffer[1024];
 		va_list args;
-		va_start(args, format);
-		vsprintf_s(buffer, format, args);
-		va_end(args);
+		__builtin_va_start(args, format);
+        vsnprintf(buffer, 1024, format, args);
+		__builtin_va_end(args);
 
 		if (static_cast<int>(LogSeverity::Assert & scope) > 0)
-			createLogEntry(LogSeverity::Assert, std::string(buffer));
+			createLogEntry(LogSeverity::Assert, buffer);
 
 		if (throwIfFalse)
 			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
@@ -209,20 +202,22 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 	if (performanceLogFilePath.empty())
 		return;
 
-	std::string lineToWrite;
-	std::ostringstream entry;
+	char timeStartBuf[32];
+	std::strftime(timeStartBuf, 32, "%d.%m.%Y %H:%M:%S", &std::get<0>(performanceReport.second));
 
-	entry << xorstr_("Performance Counter finished! ") << guid << xorstr_(" Start: ") <<
-		std::put_time(&std::get<0>(performanceReport.second), xorstr_("%c")) << xorstr_(" End: ") << std::put_time(&std::get<1>(performanceReport.second), xorstr_("%c"));
+	char timeEndBuf[32];
+	std::strftime(timeEndBuf, 32, "%d.%m.%Y %H:%M:%S", &std::get<1>(performanceReport.second));
 
-	std::string entryString = entry.str();
+	EncryptedString entry = xorstr_("Performance Counter finished! ") + EncryptedString(guid.c_str()) + xorstr_(" Start: ") + EncryptedString(timeStartBuf) + xorstr_(" End: ") + EncryptedString(timeEndBuf);
 
 	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
 
+	char entryBuf[entry.GetSize()];
+    entry.GetData(entryBuf);
+
 	std::fstream logFile;
 	logFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::app);
-    CryptoUtilities::MapleXOR(entryString, xorstr_("vD5KJvfDRKZEaR9I"));
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(entryString) : entry.str()) << std::endl;
+	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("vD5KJvfDRKZEaR9I"))) : entryBuf) << std::endl;
 	logFile.close();
 
 	// Remove from performanceReportMap

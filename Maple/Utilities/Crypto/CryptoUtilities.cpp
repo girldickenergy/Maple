@@ -57,14 +57,14 @@ std::wstring CryptoUtilities::GetMD5Hash(const std::wstring& str)
     return std::wstring(strHashed.begin(), strHashed.end());
 }
 
-std::string CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
+std::vector<uint8_t> CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
 {
-    std::string result = str;
+    std::vector<uint8_t> result;
 
-	unsigned int j = 0;
-    for (unsigned int i = 0; i < str.length(); i++)
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < str.size(); i++)
     {
-        result[i] = str[i] ^ key[j];
+        result.push_back(str[i] ^ key[j]);
 
         j = ++j < key.length() ? j : 0;
     }
@@ -72,14 +72,14 @@ std::string CryptoUtilities::MapleXOR(const std::string& str, const std::string&
     return result;
 }
 
-std::vector<uint8_t> CryptoUtilities::MapleXOR(const std::vector<uint8_t>& data, const std::string& key)
+std::vector<uint8_t> CryptoUtilities::MapleXOR(const char* str, size_t size, const std::string& key)
 {
-    std::vector<uint8_t> result = data;
+    std::vector<uint8_t> result;
 
     unsigned int j = 0;
-    for (unsigned int i = 0; i < data.size(); i++)
+    for (unsigned int i = 0; i < size; i++)
     {
-        result[i] = data[i] ^ key[j];
+        result.push_back(str[i] ^ key[j]);
 
         j = ++j < key.length() ? j : 0;
     }

@@ -20,7 +20,7 @@ class Logger
 	static inline std::map<std::string, std::tuple<tm, tm>> performanceLogMap;
 
 	static void clearLogFile();
-	static void createLogEntry(LogSeverity severity, std::string message);
+	static void createLogEntry(LogSeverity severity, const char* message);
 public:
 	static void Initialize(LogSeverity scope = LogSeverity::None, bool encrypt = false, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
 	static void WriteCrashReport(const std::string& crashReport);
