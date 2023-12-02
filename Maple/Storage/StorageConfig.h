@@ -7,6 +7,7 @@
 #include "EncryptedString.h"
 #include "xorstr.hpp"
 
+#pragma pack(1)
 struct StorageConfig
 {
 	EncryptedString DefaultConfig = xorstr_("default");
