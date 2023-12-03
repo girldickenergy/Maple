@@ -7,7 +7,7 @@
 #include "EncryptedString.h"
 #include "xorstr.hpp"
 
-#pragma pack(1)
+#pragma pack(push, 1)
 struct StorageConfig
 {
 	EncryptedString DefaultConfig = xorstr_("default");
@@ -31,3 +31,4 @@ struct StorageConfig
 		inStream.read(reinterpret_cast<char*>(&MenuKey), sizeof(int));
 	}
 };
+#pragma pack(pop)

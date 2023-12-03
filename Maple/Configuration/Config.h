@@ -7,7 +7,7 @@
 #include "imgui.h"
 #include "xorstr.hpp"
 
-#pragma pack(1)
+#pragma pack(push, 1)
 struct Config
 {
 	float Version = 2.f;
@@ -176,3 +176,4 @@ struct Config
 		}
 	}
 };
+#pragma pack(pop)
