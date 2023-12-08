@@ -74,7 +74,7 @@ DWORD WINAPI Initialize()
 
     VIRTUALIZER_TIGER_WHITE_START
     Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
-    ExceptionHandler::Setup();
+    //ExceptionHandler::Setup();
 
     if (!data_addr)
         Security::CorruptMemory();
