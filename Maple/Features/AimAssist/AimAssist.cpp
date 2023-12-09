@@ -143,8 +143,11 @@ Vector2 AimAssist::algorithmv3(Vector2 pos)
 			if (time > currentHitObject.StartTime && currentHitObject.IsType(HitObjectType::Slider))
 				power_low *= ConfigManager::CurrentConfig.AimAssist.Algorithmv3.SliderAssistPower;
 
-			InputManager::SetAccumulatedOffset(Vector2(InputManager::GetAccumulatedOffset().X + (distance.X / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length()))), InputManager::GetAccumulatedOffset().Y + (distance.Y / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length())))));
-			InputManager::SetAccumulatedOffset(Vector2(std::clamp(InputManager::GetAccumulatedOffset().X, -power_high, power_high), std::clamp(InputManager::GetAccumulatedOffset().Y, -power_high, power_high)));
+			if (distance.Length() > std::numeric_limits<float>::epsilon() && displacement.Length() > std::numeric_limits<float>::epsilon())
+			{
+				InputManager::SetAccumulatedOffset(Vector2(InputManager::GetAccumulatedOffset().X + (distance.X / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length()))), InputManager::GetAccumulatedOffset().Y + (distance.Y / distance.Length() * (weight * power_low * std::min(distance.Length(), displacement.Length())))));
+				InputManager::SetAccumulatedOffset(Vector2(std::clamp(InputManager::GetAccumulatedOffset().X, -power_high, power_high), std::clamp(InputManager::GetAccumulatedOffset().Y, -power_high, power_high)));
+			}
 		}
 		else
 			InputManager::SetAccumulatedOffset(InputManager::Resync(displacement, InputManager::GetAccumulatedOffset(), .6f * power_low));
