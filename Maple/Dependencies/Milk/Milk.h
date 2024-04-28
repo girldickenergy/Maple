@@ -3,7 +3,7 @@
 #include "Singleton.h"
 #include "Structs/CRC.h"
 
-#include <map>
+#include <unordered_map>
 
 struct v7fix
 {
@@ -37,7 +37,7 @@ class Milk : public Singleton<Milk>
     DWORD _authStubSize;
     uintptr_t _firstCRCAddress;
     CRC* _firstCRC;
-    std::map<uint32_t, CRC*>* _crcMap;
+    std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>* _crcMap;
     uintptr_t _secondaryKey;
 
     static inline uintptr_t _originalJITVtable;

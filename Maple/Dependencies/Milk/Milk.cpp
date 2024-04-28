@@ -125,14 +125,14 @@ uintptr_t Milk::findCRCMap()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("55 8B EC 51 8D 45 FF 50 B9");
+    auto pattern = xorstr_("FF 5D C3 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 59 5D C3 55 8B");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
         if (region.BaseAddress < _authStubBaseAddress)
             continue;
 
-        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize, 9);
+        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize, 7);
 
         if (result > _authStubBaseAddress)
             return *reinterpret_cast<uintptr_t*>(result);
@@ -147,7 +147,7 @@ uintptr_t Milk::findSecondaryKey()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("55 8B EC B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 ?? ?? E8 ?? ?? ?? ?? 89 ?? ?? C7");
+    auto pattern = xorstr_("55 8B EC B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 89");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
@@ -169,11 +169,14 @@ void Milk::doCRCBypass(uintptr_t address)
 {
     VIRTUALIZER_TIGER_WHITE_START
 
-    for (auto& pair : *_crcMap)
+    for (const auto& pair : *_crcMap)
     {
-        auto& crcStruct = pair.second;
-        auto functionPointer = decryptValue(crcStruct->functionPointer, crcStruct->functionPointerXORKey);
-        auto functionSize = decryptValue(crcStruct->functionSize, crcStruct->functionSizeXORKey);
+        auto functionPointerStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x48AB2731];
+        auto functionSizeStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x13E76EB2];
+        auto functionChecksumStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x5335172C];
+
+        auto functionPointer = decryptValue(*reinterpret_cast<uintptr_t*>(functionPointerStruct), *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
+        auto functionSize = decryptValue(*reinterpret_cast<uintptr_t*>(functionSizeStruct), *reinterpret_cast<uintptr_t*>(functionSizeStruct + 0x4));
 
         if (address >= functionPointer && address <= functionPointer + functionSize)
         {
@@ -182,7 +185,7 @@ void Milk::doCRCBypass(uintptr_t address)
             crc.CalculateDigest(digest, reinterpret_cast<byte*>(functionPointer), functionSize);
 
             auto checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
-            crcStruct->checksum = encryptValue(checksum, crcStruct->checksumXORKey);
+            *reinterpret_cast<uintptr_t*>(functionChecksumStruct) = encryptValue(checksum, *reinterpret_cast<uintptr_t*>(functionChecksumStruct + 0x4));
 
             return;
         }
@@ -196,8 +199,8 @@ bool Milk::DoCRCBypass(uintptr_t address)
     VIRTUALIZER_TIGER_WHITE_START
 
 #ifdef NO_BYPASS
-    VIRTUALIZER_TIGER_BLACK_END
-    return true;
+        VIRTUALIZER_TIGER_BLACK_END
+        return true;
 #endif
 
     if (!preparationSuccess)
@@ -207,7 +210,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
     VIRTUALIZER_TIGER_WHITE_END
 
-    return true;
+        return true;
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)
@@ -221,8 +224,8 @@ bool Milk::Prepare()
     VIRTUALIZER_LION_BLACK_START
 
 #ifdef NO_BYPASS
-    VIRTUALIZER_LION_BLACK_END
-    return true;
+        VIRTUALIZER_LION_BLACK_END
+        return true;
 #endif
     Logger::StartPerformanceCounter(xorstr_("{99D6FB11-046C-4ACB-A269-92B179C3186A}"));
 
@@ -246,21 +249,21 @@ bool Milk::Prepare()
 
     _secondaryKey = findSecondaryKey();
     if (!_secondaryKey)
-		return false;
+        return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SC != 0x00000000"));
 
-    _crcMap = reinterpret_cast<std::map<uint32_t, CRC*>*>(_firstCRCAddress);
+    _crcMap = reinterpret_cast<std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>*>(_firstCRCAddress);
 
-    _firstCRC = _crcMap->begin()->second;
-    auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
+    //_firstCRC = _crcMap->begin()->second;
+    //auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
 
-    Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->className, _firstCRC->classNameXORKey)));
-    Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->functionName, _firstCRC->functionNameXORKey)));
-    Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
+    //Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->className, _firstCRC->classNameXORKey)));
+    //Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->functionName, _firstCRC->functionNameXORKey)));
+    //Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
 
-    if (decryptedSize < 1 || decryptedSize > 2000)
-        return false;
+    //if (decryptedSize < 1 || decryptedSize > 2000)
+    //    return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
 
@@ -288,7 +291,7 @@ bool Milk::Prepare()
     *reinterpret_cast<uintptr_t*>(jit) = reinterpret_cast<uintptr_t>(_copiedJITVtable);
 
     if (VanillaHooking::InstallHook(xorstr_("GetJitHook"), reinterpret_cast<uintptr_t>(getJit), reinterpret_cast<uintptr_t>(getJitHook),
-                                    reinterpret_cast<uintptr_t*>(&oGetJit)) != VanillaResult::Success)
+        reinterpret_cast<uintptr_t*>(&oGetJit)) != VanillaResult::Success)
         return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] GJH OK"));
@@ -300,7 +303,7 @@ bool Milk::Prepare()
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SBF != 0x00000000"));
 
     if (VanillaHooking::InstallHook(xorstr_("SomeBassFunc"), someBassFunc, reinterpret_cast<uintptr_t>(someBassFuncHook),
-                                    reinterpret_cast<uintptr_t*>(&oSomeBassFunc)) != VanillaResult::Success)
+        reinterpret_cast<uintptr_t*>(&oSomeBassFunc)) != VanillaResult::Success)
         return false;
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] SBFH OK"));
