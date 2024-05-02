@@ -42,15 +42,6 @@
     <ClCompile Include="Sdk\GameModes\Play\Player.cpp">
       <Filter>SDK\GameModes\Play</Filter>
     </ClCompile>
-    <ClCompile Include="Milk\MilkThread.cpp">
-      <Filter>Milk</Filter>
-    </ClCompile>
-    <ClCompile Include="Milk\MilkMemory.cpp">
-      <Filter>Milk</Filter>
-    </ClCompile>
-    <ClCompile Include="Milk\Milk.cpp">
-      <Filter>Milk</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Modules">
@@ -122,8 +113,8 @@
     <Filter Include="SDK\GameModes\Play">
       <UniqueIdentifier>{a511e8a4-3466-4115-805c-e00baa692f2b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Milk">
-      <UniqueIdentifier>{2d4ab6d3-ba88-48a5-88e8-f81179be66a5}</UniqueIdentifier>
+    <Filter Include="Dependencies\fnv1a">
+      <UniqueIdentifier>{deb1ae4b-7ee6-421b-87f4-8c150ab11b99}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +129,6 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h">
       <Filter>Dependencies\Vanilla\CLR</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\Vanilla\Hooking\Hook.h">
-      <Filter>Dependencies\Vanilla\Hooking</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Hooking\HookManager.h">
       <Filter>Dependencies\Vanilla\Hooking</Filter>
@@ -238,10 +226,6 @@
     <ClInclude Include="Dependencies\OsuDataTypes\Gameplay\Keys\OsuKeys.h">
       <Filter>Dependencies\OsuDataTypes\Gameplay\Keys</Filter>
     </ClInclude>
-    <ClInclude Include="Dependencies\Vanilla\CLR\CLRArray.h" />
-    <ClInclude Include="Dependencies\Vanilla\CLR\CLRList.h" />
-    <ClInclude Include="Dependencies\Vanilla\CLR\CLRNullable.h" />
-    <ClInclude Include="Dependencies\Vanilla\CLR\CLRObject.h" />
     <ClInclude Include="Sdk\GameModes\GameModeInternal.h">
       <Filter>SDK\GameModes</Filter>
     </ClInclude>
@@ -251,20 +235,32 @@
     <ClInclude Include="Sdk\GameModes\Play\Player.h">
       <Filter>SDK\GameModes\Play</Filter>
     </ClInclude>
-    <ClInclude Include="Milk\MilkThread.h">
-      <Filter>Milk</Filter>
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRObject.h">
+      <Filter>Dependencies\Vanilla\CLR</Filter>
     </ClInclude>
-    <ClInclude Include="Milk\CRC.h">
-      <Filter>Milk</Filter>
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRArray.h">
+      <Filter>Dependencies\Vanilla\CLR</Filter>
     </ClInclude>
-    <ClInclude Include="Milk\MemoryRegion.h">
-      <Filter>Milk</Filter>
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRList.h">
+      <Filter>Dependencies\Vanilla\CLR</Filter>
     </ClInclude>
-    <ClInclude Include="Milk\MilkMemory.h">
-      <Filter>Milk</Filter>
+    <ClInclude Include="Dependencies\Vanilla\CLR\CLRNullable.h">
+      <Filter>Dependencies\Vanilla\CLR</Filter>
     </ClInclude>
-    <ClInclude Include="Milk\Milk.h">
-      <Filter>Milk</Filter>
+    <ClInclude Include="Dependencies\fnv1a\fnv1a.h">
+      <Filter>Dependencies\fnv1a</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Hooking\HookTypes.h">
+      <Filter>Dependencies\Vanilla\Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Hooking\IHook.h">
+      <Filter>Dependencies\Vanilla\Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Hooking\TrampolineHook.h">
+      <Filter>Dependencies\Vanilla\Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Vanilla\Hooking\PointerRedirectionHook.h">
+      <Filter>Dependencies\Vanilla\Hooking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

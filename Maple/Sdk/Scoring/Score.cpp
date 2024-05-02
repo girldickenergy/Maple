@@ -24,13 +24,7 @@ void __fastcall Score::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindInstance();
 }
 
-void __fastcall Score::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_Instance)
-        TryFindInstance(address, size);
-}
-
-std::string __fastcall Score::GetName()
+const char* __fastcall Score::GetName()
 {
     return xorstr_("Score");
 }

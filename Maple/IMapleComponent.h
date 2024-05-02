@@ -16,5 +16,5 @@ public:
     /**
      * \brief Executed whenever new function gets compiled
      */
-    virtual void __fastcall OnJIT(uintptr_t address, unsigned int size) {}
+    virtual void __fastcall OnJIT(void* methodDesc, uintptr_t functionAddress, size_t functionSize) {}
 };

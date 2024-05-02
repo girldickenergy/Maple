@@ -19,13 +19,7 @@ void __fastcall ModManager::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindModStatus();
 }
 
-void __fastcall ModManager::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_ModStatus)
-        TryFindModStatus(address, size);
-}
-
-std::string __fastcall ModManager::GetName()
+const char* __fastcall ModManager::GetName()
 {
     return xorstr_("ModManager");
 }

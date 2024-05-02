@@ -120,28 +120,10 @@ void __fastcall GameBase::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindMode();
     TryFindIsFullscreen();
     TryFindClientBounds();
-    TryPatchTickrate();
+    //TryPatchTickrate();
 }
 
-void __fastcall GameBase::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_Time)
-        TryFindTime(address, size);
-
-    if (!m_Mode)
-        TryFindMode(address, size);
-
-    if (!m_IsFullscreen)
-        TryFindIsFullscreen(address, size);
-
-    if (!m_ClientBoundsAddress)
-        TryFindClientBounds(address, size);
-
-    if (!m_FoundTickrate)
-        TryPatchTickrate(address, size);
-}
-
-std::string __fastcall GameBase::GetName()
+const char* __fastcall GameBase::GetName()
 {
     return xorstr_("GameBase");
 }

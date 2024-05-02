@@ -19,13 +19,7 @@ void __fastcall AudioEngine::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindTime();
 }
 
-void __fastcall AudioEngine::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_Time)
-        TryFindTime(address, size);
-}
-
-std::string __fastcall AudioEngine::GetName()
+const char* __fastcall AudioEngine::GetName()
 {
     return xorstr_("AudioEngine");
 }

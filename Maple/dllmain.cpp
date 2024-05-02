@@ -34,9 +34,9 @@ public:
 
     Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) override
     {
-        printf("Current cursor position: %f, %f\nCurrent time: %i\n", currentPosition.X, currentPosition.Y, m_AudioEngine->GetTime());
+        printf("Current cursor position: %f, %f\n", currentPosition.X, currentPosition.Y);
 
-        return currentPosition + Vector2(100, 100);
+        return currentPosition;
     }
 
     OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys) override
@@ -48,15 +48,15 @@ public:
 
     bool __fastcall OnScoreSubmission() override
     {
-        printf("Score submission started, start time: %i\n", m_Score->GetStartTime());
-        m_Score->SetStartTime(1337);
+        printf("Score submission started");
+        //m_Score->SetStartTime(1337);
 
         return true;
     }
 
     void __fastcall OnPlayerLoad() override
     {
-        printf("Player loaded\nPlayfield size: %f, %f\nMods: %i\nPlayback rate: %f\n", m_GameField->GetSize().X, m_GameField->GetSize().Y, m_ModManager->GetActiveMods(), m_ModManager->GetModPlaybackRate());
+        printf("Player loaded\n");
     }
 
     void __fastcall OnPlayerExit() override
@@ -79,7 +79,7 @@ public:
         return true;
     }
 
-    std::string __fastcall GetName() override
+    const char* __fastcall GetName() override
     {
         return xorstr_("TestModule");
     }

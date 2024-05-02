@@ -2,20 +2,42 @@
 
 #include <ranges>
 
+#include "fnv1a.h"
 #include "hde32.h"
 
-Hook* HookManager::FindHook(const std::string& name)
-{
-    if (m_Hooks.contains(name))
-        return m_Hooks[name].get();
+#include "PointerRedirectionHook.h"
+#include "TrampolineHook.h"
 
-    return nullptr;
-}
-
-void HookManager::RemoveHook(const std::string& name)
+VanillaResult HookManager::UninstallHook(uint32_t key)
 {
-    if (m_Hooks.contains(name))
-        m_Hooks.erase(name);
+    switch (IHook* hook = m_Hooks[key].get(); hook->GetType())
+    {
+        case HookTypes::Trampoline:
+        {
+            TrampolineHook* trampolineHook = dynamic_cast<TrampolineHook*>(hook);
+
+            for (size_t i = 0; i < trampolineHook->GetFunctionPrologue().size(); i++)
+                *reinterpret_cast<uint8_t*>(trampolineHook->GetFunctionAddress() + i) = trampolineHook->GetFunctionPrologue()[i];
+
+            VirtualFree(reinterpret_cast<LPVOID>(trampolineHook->GetTrampolineAddress()), 0, MEM_RELEASE);
+
+            break;
+        }
+        case HookTypes::PointerRedirection:
+        {
+            PointerRedirectionHook* pointerRedirectionHook = dynamic_cast<PointerRedirectionHook*>(hook);
+
+            *reinterpret_cast<uintptr_t*>(pointerRedirectionHook->GetPointerAddress()) = pointerRedirectionHook->GetOriginalFunctionAddress();
+
+            break;
+        }
+        default:
+            return VanillaResult::HookTypeUnknown;
+    }
+
+    m_Hooks.erase(key);
+
+    return VanillaResult::Success;
 }
 
 std::vector<uint8_t> HookManager::GetFunctionPrologue(uintptr_t functionAddress, unsigned int minimumBytes)
@@ -77,22 +99,22 @@ uintptr_t HookManager::InstallTrampoline(uintptr_t functionAddress, const std::v
     return trampolineAddress;
 }
 
-uintptr_t HookManager::InstallInlineHook(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue, bool safe)
+uintptr_t HookManager::InstallInlineHook(uintptr_t functionAddress, uintptr_t detourAddress, const std::vector<uint8_t>& functionPrologue, bool stealthy)
 {
     const uintptr_t trampolineAddress = InstallTrampoline(functionAddress, functionPrologue);
 
     DWORD oldProtect;
-    VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), safe ? SafeDetourBytes.size() : DetourBytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
+    VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), stealthy ? StealthyDetourBytes.size() : DetourBytes.size(), PAGE_EXECUTE_READWRITE, &oldProtect);
 
-    for (unsigned int i = 0; i < (safe ? SafeDetourBytes.size() : DetourBytes.size()); i++)
-        *reinterpret_cast<uint8_t*>(functionAddress + i) = safe ? SafeDetourBytes[i] : DetourBytes[i];
+    for (unsigned int i = 0; i < (stealthy ? StealthyDetourBytes.size() : DetourBytes.size()); i++)
+        *reinterpret_cast<uint8_t*>(functionAddress + i) = stealthy ? StealthyDetourBytes[i] : DetourBytes[i];
 
-    if (safe)
-        *reinterpret_cast<intptr_t*>(functionAddress + SafeDetourAddressOffset) = static_cast<intptr_t>(detourAddress) - static_cast<intptr_t>(functionAddress) - 0x5;
+    if (stealthy)
+        *reinterpret_cast<intptr_t*>(functionAddress + StealthyDetourAddressOffset) = detourAddress;
     else
-        *reinterpret_cast<uintptr_t*>(functionAddress + DetourAddressOffset) = detourAddress;
+        *reinterpret_cast<uintptr_t*>(functionAddress + DetourAddressOffset) = static_cast<intptr_t>(detourAddress) - static_cast<intptr_t>(functionAddress) - 0x5;
 
-    VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), safe ? SafeDetourBytes.size() : DetourBytes.size(), oldProtect, &oldProtect);
+    VirtualProtect(reinterpret_cast<LPVOID>(functionAddress), stealthy ? StealthyDetourBytes.size() : DetourBytes.size(), oldProtect, &oldProtect);
 
     return trampolineAddress;
 }
@@ -102,40 +124,46 @@ HookManager::~HookManager()
     UninstallAllHooks();
 }
 
-VanillaResult HookManager::InstallHook(const std::string& name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction, bool safe)
+VanillaResult HookManager::InstallTrampolineHook(const char* name, uintptr_t functionAddress, uintptr_t detourAddress, uintptr_t* originalFunction, bool stealthy)
 {
-    if (FindHook(name))
+    if (m_Hooks.contains(fnv1a::Hash(name)))
         return VanillaResult::HookAlreadyInstalled;
 
-    const std::vector<uint8_t> functionPrologue = GetFunctionPrologue(functionAddress, safe ? SafeDetourBytes.size() : DetourBytes.size());
+    const std::vector<uint8_t> functionPrologue = GetFunctionPrologue(functionAddress, stealthy ? StealthyDetourBytes.size() : DetourBytes.size());
 
-    const uintptr_t trampolineAddress = InstallInlineHook(functionAddress, detourAddress, functionPrologue, safe);
+    const uintptr_t trampolineAddress = InstallInlineHook(functionAddress, detourAddress, functionPrologue, stealthy);
 
     *originalFunction = trampolineAddress;
 
-    m_Hooks[name] = std::make_unique<Hook>(functionAddress, trampolineAddress, functionPrologue);
+    m_Hooks[fnv1a::Hash(name)] = std::make_unique<TrampolineHook>(functionAddress, trampolineAddress, functionPrologue);
 
     return VanillaResult::Success;
 }
 
-VanillaResult HookManager::UninstallHook(const std::string& name)
+VanillaResult HookManager::InstallPointerRedirectionHook(const char* name, uintptr_t pointerAddress, uintptr_t detourAddress, uintptr_t* originalFunction)
 {
-    const Hook* hook = FindHook(name);
-    if (!hook)
-        return VanillaResult::HookNotInstalled;
+    if (m_Hooks.contains(fnv1a::Hash(name)))
+        return VanillaResult::HookAlreadyInstalled;
 
-    for (size_t i = 0; i < hook->FunctionPrologue.size(); i++)
-        *reinterpret_cast<uint8_t*>(hook->FunctionAddress + i) = hook->FunctionPrologue[i];
+    *originalFunction = *reinterpret_cast<uintptr_t*>(pointerAddress);
 
-    VirtualFree(reinterpret_cast<LPVOID>(hook->TrampolineAddress), 0, MEM_RELEASE);
+    *reinterpret_cast<uintptr_t*>(pointerAddress) = detourAddress;
 
-    RemoveHook(name);
+    m_Hooks[fnv1a::Hash(name)] = std::make_unique<PointerRedirectionHook>(pointerAddress, *originalFunction);
 
     return VanillaResult::Success;
+}
+
+VanillaResult HookManager::UninstallHook(const char* name)
+{
+    if (!m_Hooks.contains(fnv1a::Hash(name)))
+        return VanillaResult::HookNotInstalled;
+
+    return UninstallHook(fnv1a::Hash(name));
 }
 
 void HookManager::UninstallAllHooks()
 {
-    for (const std::string& key : m_Hooks | std::views::keys)
+    for (const uint32_t key : m_Hooks | std::views::keys)
         UninstallHook(key);
 }

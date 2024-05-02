@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(ProjectDir)Dependencies\fnv1a;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(ProjectDir)Dependencies\fnv1a;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Dependencies\Cacao;$(ProjectDir)Dependencies\Vanilla;$(ProjectDir)Dependencies\hde;$(ProjectDir)Dependencies\xorstr;$(ProjectDir)Dependencies\Licorice;$(ProjectDir)Dependencies\OsuDataTypes;$(IncludePath)</IncludePath>
@@ -163,9 +163,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="MapleBase.cpp" />
-    <ClCompile Include="Milk\Milk.cpp" />
-    <ClCompile Include="Milk\MilkMemory.cpp" />
-    <ClCompile Include="Milk\MilkThread.cpp" />
     <ClCompile Include="Sdk\Audio\AudioEngine.cpp" />
     <ClCompile Include="Sdk\GameModes\Play\Player.cpp" />
     <ClCompile Include="Sdk\Mods\ModManager.cpp" />
@@ -176,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\Cacao\DependencyContainer.h" />
+    <ClInclude Include="Dependencies\fnv1a\fnv1a.h" />
     <ClInclude Include="Dependencies\hde\hde32.h" />
     <ClInclude Include="Dependencies\hde\hde64.h" />
     <ClInclude Include="Dependencies\hde\pstdint.h" />
@@ -196,8 +194,11 @@
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRNullable.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRObject.h" />
     <ClInclude Include="Dependencies\Vanilla\CLR\CLRString.h" />
-    <ClInclude Include="Dependencies\Vanilla\Hooking\Hook.h" />
     <ClInclude Include="Dependencies\Vanilla\Hooking\HookManager.h" />
+    <ClInclude Include="Dependencies\Vanilla\Hooking\HookTypes.h" />
+    <ClInclude Include="Dependencies\Vanilla\Hooking\IHook.h" />
+    <ClInclude Include="Dependencies\Vanilla\Hooking\PointerRedirectionHook.h" />
+    <ClInclude Include="Dependencies\Vanilla\Hooking\TrampolineHook.h" />
     <ClInclude Include="Dependencies\Vanilla\PatternScanning\PatternScanner.h" />
     <ClInclude Include="Dependencies\Vanilla\Vanilla.h" />
     <ClInclude Include="Dependencies\Vanilla\VanillaResult.h" />
@@ -208,11 +209,6 @@
     <ClInclude Include="Logging\LoggerInfo.h" />
     <ClInclude Include="Logging\LogLevel.h" />
     <ClInclude Include="MapleBase.h" />
-    <ClInclude Include="Milk\CRC.h" />
-    <ClInclude Include="Milk\MemoryRegion.h" />
-    <ClInclude Include="Milk\Milk.h" />
-    <ClInclude Include="Milk\MilkMemory.h" />
-    <ClInclude Include="Milk\MilkThread.h" />
     <ClInclude Include="Modules\IModule.h" />
     <ClInclude Include="Sdk\Audio\AudioEngine.h" />
     <ClInclude Include="Sdk\GameModes\GameModeInternal.h" />

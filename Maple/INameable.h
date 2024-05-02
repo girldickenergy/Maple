@@ -5,5 +5,5 @@
 class INameable
 {
 public:
-    virtual std::string __fastcall GetName() = 0;
+    virtual const char* __fastcall GetName() = 0;
 };

@@ -10,16 +10,30 @@
 
 class Vanilla
 {
-    typedef int(__stdcall* fnCompileMethod)(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
-    typedef void(__cdecl* fnJITCallback)(uintptr_t functionAddress, unsigned int functionSize);
-    static inline fnCompileMethod oCompileMethod;
-    static int __stdcall CompileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode);
+    static inline std::mutex jitMutex;
+
+    typedef uintptr_t(__thiscall* fnMakeJitWorker)(void* methodDesc, void* ilHeader, int flags1, int flags2);
+    static inline fnMakeJitWorker oMakeJitWorker;
+    static uintptr_t __fastcall MakeJitWorkerHook(void* methodDesc, void* unused, void* ilHeader, int flags1, int flags2);
+
+    typedef void(__thiscall* fnGenGenerateCode)(void* compiler, uintptr_t* codePtr, size_t* nativeSizeOfCode);
+    static inline fnGenGenerateCode oGenGenerateCode;
+    static void __fastcall GenGenerateCodeHook(void* compiler, void* unused, uintptr_t* codePtr, size_t* nativeSizeOfCode);
+
+    typedef void(__cdecl* fnJITCallback)(void* methodDesc, uintptr_t functionAddress, size_t functionSize);
 
     static inline std::vector<std::reference_wrapper<std::uintptr_t>> Relocations;
     static inline std::mutex relocationMutex;
+
     typedef void(__stdcall* fnRelocateAddress)(uint8_t** block);
     static inline fnRelocateAddress oRelocateAddress;
     static void __stdcall RelocateAddressHook(uint8_t** block);
+
+    typedef void*(__fastcall* fnEntry2MethodDesc)(void* entryPoint, void* methodTable);
+    static inline fnEntry2MethodDesc entry2MethodDesc;
+
+    typedef uintptr_t(__thiscall* fnGetAddrOfSlot)(void* methodDesc);
+    static inline fnGetAddrOfSlot getAddrOfSlot;
 
     typedef CLRString*(__cdecl* fnAllocateCLRString)(const wchar_t* pwsz);
     static inline fnAllocateCLRString allocateCLRString;
@@ -71,6 +85,20 @@ public:
      * \param relocation Address of an object to remove
      */
     void RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation);
+
+    /**
+     * \brief Returns method descriptor by method's native code address
+     * \param nativeCodeAddress Native code address
+     * \return A method descriptor
+     */
+    void* GetMethodDesc(uintptr_t nativeCodeAddress);
+
+    /**
+     * \brief Returns a slot address for the given method. 'Slot' refers to a memory location where the native code address is stored.
+     * \param methodDesc Method descriptor
+     * \return A slot address
+     */
+    uintptr_t GetMethodSlotAddress(void* methodDesc);
 
     /**
      * \brief Allocates a new CLR-compliant string

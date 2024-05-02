@@ -50,19 +50,7 @@ void __fastcall Player::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindIsFailed();
 }
 
-void __fastcall Player::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_Instance)
-        TryFindInstance(address, size);
-
-    if (!m_IsRetrying)
-        TryFindIsRetrying(address, size);
-
-    if (!m_IsFailed)
-        TryFindIsFailed(address, size);
-}
-
-std::string __fastcall Player::GetName()
+const char* __fastcall Player::GetName()
 {
     return xorstr_("Player");
 }

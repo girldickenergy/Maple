@@ -26,13 +26,7 @@ void __fastcall GameField::OnLoad(const std::shared_ptr<MapleBase>& mapleBase)
     TryFindInstance();
 }
 
-void __fastcall GameField::OnJIT(uintptr_t address, unsigned size)
-{
-    if (!m_Instance)
-        TryFindInstance(address, size);
-}
-
-std::string __fastcall GameField::GetName()
+const char* __fastcall GameField::GetName()
 {
     return xorstr_("GameField");
 }

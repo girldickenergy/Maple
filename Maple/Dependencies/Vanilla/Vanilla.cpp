@@ -6,14 +6,27 @@
     #define xorstr_(string) string
 #endif
 
-int __stdcall Vanilla::CompileMethodHook(uintptr_t instance, uintptr_t compHnd, uintptr_t methodInfo, unsigned int flags, uintptr_t* entryAddress, unsigned int* nativeSizeOfCode)
+size_t functionSize = 0u;
+
+uintptr_t __fastcall Vanilla::MakeJitWorkerHook(void* methodDesc, void* unused, void* ilHeader, int flags1, int flags2)
 {
-    const int ret = oCompileMethod(instance, compHnd, methodInfo, flags, entryAddress, nativeSizeOfCode);
+    uintptr_t functionAddress = oMakeJitWorker(methodDesc, ilHeader, flags1, flags2);
 
-    if (ret == 0 && jitCallback)
-        jitCallback(*entryAddress, *nativeSizeOfCode);
+    if (functionAddress)
+        jitCallback(methodDesc, functionAddress, functionSize);
 
-    return ret;
+    jitMutex.unlock();
+
+    return functionAddress;
+}
+
+void __fastcall Vanilla::GenGenerateCodeHook(void* compiler, void* unused, uintptr_t* codePtr, size_t* nativeSizeOfCode)
+{
+    jitMutex.lock();
+
+    oGenGenerateCode(compiler, codePtr, nativeSizeOfCode);
+
+    functionSize = *nativeSizeOfCode;
 }
 
 void __stdcall Vanilla::RelocateAddressHook(uint8_t** block)
@@ -43,19 +56,38 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 
     if (usingCLR)
     {
-        const uintptr_t compileMethodAddress = m_PatternScanner.FindPatternInModule(xorstr_("55 8B EC 83 E4 F8 83 EC 1C 53 8B 5D 10"), xorstr_("clrjit.dll"));
-        if (!compileMethodAddress)
+        const uintptr_t makeJitWorkerAddress = m_PatternScanner.FindPatternInModule(xorstr_("68 ?? ?? ?? ?? B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B F9 89 7D AC"), xorstr_("clr.dll"));
+        if (!makeJitWorkerAddress)
             return VanillaResult::JITFailure;
 
-        if (m_HookManager.InstallHook(xorstr_("JITHook"), compileMethodAddress, reinterpret_cast<uintptr_t>(CompileMethodHook), reinterpret_cast<uintptr_t*>(&oCompileMethod)) != VanillaResult::Success)
+        if (m_HookManager.InstallTrampolineHook(xorstr_("MethodDesc::MakeJitWorker"), makeJitWorkerAddress, reinterpret_cast<uintptr_t>(MakeJitWorkerHook), reinterpret_cast<uintptr_t*>(&oMakeJitWorker)) != VanillaResult::Success)
+            return VanillaResult::JITFailure;
+
+        const uintptr_t genGenerateCodeAddress = m_PatternScanner.FindPatternInModule(xorstr_("55 8B EC 83 EC 14 53 56 57 8B F1 E8"), xorstr_("clrjit.dll"));
+        if (!genGenerateCodeAddress)
+            return VanillaResult::JITFailure;
+
+        if (m_HookManager.InstallTrampolineHook(xorstr_("Compiler::genGenerateCode"), genGenerateCodeAddress, reinterpret_cast<uintptr_t>(GenGenerateCodeHook), reinterpret_cast<uintptr_t*>(&oGenGenerateCode)) != VanillaResult::Success)
             return VanillaResult::JITFailure;
 
         const uintptr_t relocateAddressAddress = m_PatternScanner.FindPatternInModule(xorstr_("55 8B EC 57 8B 7D 08 8B 0F 3B 0D"), xorstr_("clr.dll"));
         if (!relocateAddressAddress)
             return VanillaResult::RelocateFailure;
 
-        if (m_HookManager.InstallHook(xorstr_("RelocateAddressHook"), relocateAddressAddress, reinterpret_cast<uintptr_t>(RelocateAddressHook), reinterpret_cast<uintptr_t*>(&oRelocateAddress)) != VanillaResult::Success)
+        if (m_HookManager.InstallTrampolineHook(xorstr_("WKS::gc_heap::relocate_address"), relocateAddressAddress, reinterpret_cast<uintptr_t>(RelocateAddressHook), reinterpret_cast<uintptr_t*>(&oRelocateAddress)) != VanillaResult::Success)
             return VanillaResult::RelocateFailure;
+
+        const uintptr_t entry2MethodDescAddress = m_PatternScanner.FindPatternInModule(xorstr_("55 8B EC 83 EC 0C 53 56 57 8B FA 8B D9 E8"), xorstr_("clr.dll"));
+        if (!entry2MethodDescAddress)
+            return VanillaResult::CLRStringFailure;
+
+        entry2MethodDesc = reinterpret_cast<fnEntry2MethodDesc>(entry2MethodDescAddress);
+
+        const uintptr_t getAddrOfSlotAddress = m_PatternScanner.FindPatternInModule(xorstr_("51 56 57 0F B7 41"), xorstr_("clr.dll"));
+        if (!getAddrOfSlotAddress)
+            return VanillaResult::CLRStringFailure;
+
+        getAddrOfSlot = reinterpret_cast<fnGetAddrOfSlot>(getAddrOfSlotAddress);
 
         const uintptr_t allocateCLRStringAddress = m_PatternScanner.FindPatternInModule(xorstr_("53 8B D9 56 57 85 DB 0F"), xorstr_("clr.dll"));
         if (!allocateCLRStringAddress)
@@ -113,6 +145,22 @@ void Vanilla::RemoveRelocation(std::reference_wrapper<std::uintptr_t> relocation
             return;
         }
     }
+}
+
+void* Vanilla::GetMethodDesc(uintptr_t nativeCodeAddress)
+{
+    if (usingCLR)
+        return entry2MethodDesc(reinterpret_cast<void*>(nativeCodeAddress), nullptr);
+
+    return nullptr;
+}
+
+uintptr_t Vanilla::GetMethodSlotAddress(void* methodDesc)
+{
+    if (usingCLR)
+        return getAddrOfSlot(methodDesc);
+
+    return 0u;
 }
 
 [[clang::optnone]] CLRString* Vanilla::AllocateCLRString(const wchar_t* pwsz)
