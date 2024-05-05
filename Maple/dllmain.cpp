@@ -59,22 +59,12 @@ public:
         printf("Player loaded\n");
     }
 
-    void __fastcall OnPlayerExit() override
-    {
-        printf("Player exited\n");
-    }
-
     bool __fastcall RequiresCursorPosition() override
     {
         return true;
     }
 
     bool __fastcall RequiresGameplayKeys() override
-    {
-        return true;
-    }
-
-    bool __fastcall RequiresScoreSubmission() override
     {
         return true;
     }

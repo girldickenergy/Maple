@@ -11,9 +11,15 @@ class IModule : public IMapleComponent, public INameable
 {
 public:
     /**
-     * \brief Executed on each GUI draw call
+     * \brief Executed on each Main Menu draw call\n
+     * Use this to render your module's tab.
      */
-    virtual void __fastcall OnRender() {}
+    virtual void __fastcall OnMenuRender() {}
+    /**
+     * \brief Executed on each Overlay draw call\n
+     * Use this to render your visuals.
+     */
+    virtual void __fastcall OnOverlayRender() {}
 
     /**
      * \brief Executed each time osu! tries to update cursor position
@@ -34,22 +40,17 @@ public:
         return currentKeys;
     }
     /**
-     * \brief Executed each time osu! tries to submit a score
+     * \brief Executed on each Player initialization
+     */
+    virtual void __fastcall OnPlayerLoad() {}
+    /**
+     * \brief Executed each time osu! tries to submit a score (also doubles as a Player exit event)
      * \return Whether or not a score should be submitted
      */
     virtual bool __fastcall OnScoreSubmission()
     {
         return true;
     }
-
-    /**
-     * \brief Executed on each Player initialization
-     */
-    virtual void __fastcall OnPlayerLoad() {}
-    /**
-     * \brief Executed on each Player exit
-     */
-    virtual void __fastcall OnPlayerExit() {}
 
     /**
      * \brief Whether or not this Module will handle OnCursorPositionUpdate event
@@ -62,13 +63,6 @@ public:
      * \brief Whether or not this Module will handle OnGameplayKeysUpdate event
      */
     virtual bool __fastcall RequiresGameplayKeys()
-    {
-        return false;
-    }
-    /**
-     * \brief Whether or not this Module will handle OnScoreSubmission event
-     */
-    virtual bool __fastcall RequiresScoreSubmission()
     {
         return false;
     }

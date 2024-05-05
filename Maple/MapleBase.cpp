@@ -39,8 +39,7 @@ void MapleBase::InitializeCore()
 
     m_Vanilla->SetJITCallback(OnJIT);
 
-    TryHookOnPlayerLoadComplete();
-    TryHookPlayerDispose();
+    TryHookLoadComplete();
     TryHookHandleScoreSubmission();
     TryHookSetMousePosition();
     TryHookMouseViaKeyboardControls();
@@ -50,11 +49,8 @@ void MapleBase::InitializeCore()
 
 void MapleBase::OnJIT(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
 {
-    if (!oOnPlayerLoadComplete)
-        TryHookOnPlayerLoadComplete(methodDesc, functionAddress, functionSize);
-
-    if (!oPlayerDispose)
-        TryHookPlayerDispose(methodDesc, functionAddress, functionSize);
+    if (!oLoadComplete)
+        TryHookLoadComplete(methodDesc, functionAddress, functionSize);
 
     if (!oHandleScoreSubmission)
         TryHookHandleScoreSubmission(methodDesc, functionAddress, functionSize);
@@ -76,9 +72,9 @@ void MapleBase::OnJIT(void* methodDesc, uintptr_t functionAddress, size_t functi
         module->OnJIT(methodDesc, functionAddress, functionSize);
 }
 
-int __fastcall MapleBase::OnPlayerLoadCompleteHook(uintptr_t instance, bool success)
+void __fastcall MapleBase::LoadCompleteHook(uintptr_t instance, bool success, bool runSuccessFunction)
 {
-    if (success)
+    if (success && runSuccessFunction)
     {
         for (const std::shared_ptr<IModule>& module : m_Modules)
             module->OnPlayerLoad();
@@ -86,21 +82,16 @@ int __fastcall MapleBase::OnPlayerLoadCompleteHook(uintptr_t instance, bool succ
         m_IsPlayerLoaded = true;
     }
 
-    [[clang::musttail]] return oOnPlayerLoadComplete(instance, success);
-}
-
-void __fastcall MapleBase::PlayerDisposeHook(uintptr_t instance, int disposing)
-{
-    for (const std::shared_ptr<IModule>& module : m_Modules)
-        module->OnPlayerExit();
-
-    m_IsPlayerLoaded = false;
-
-    [[clang::musttail]] return oPlayerDispose(instance, disposing);
+    [[clang::musttail]] return oLoadComplete(instance, success, runSuccessFunction);
 }
 
 void __fastcall MapleBase::HandleScoreSubmissionHook(uintptr_t instance)
 {
+    if (!m_IsPlayerLoaded)
+        [[clang::musttail]] return oHandleScoreSubmission(instance);
+
+    m_IsPlayerLoaded = false;
+
     if (m_PlayerFlag)
         *m_PlayerFlag = 0;
     else
@@ -113,11 +104,10 @@ void __fastcall MapleBase::HandleScoreSubmissionHook(uintptr_t instance)
     bool allowSubmission = !m_ScoreSubmissionUnsafe;
 
     for (const std::shared_ptr<IModule>& module : m_Modules)
-        if (module->RequiresScoreSubmission())
-            allowSubmission &= module->OnScoreSubmission();
+        allowSubmission &= module->OnScoreSubmission();
 
-    if (allowSubmission) [[clang::musttail]]
-        return oHandleScoreSubmission(instance);
+    if (allowSubmission)
+        [[clang::musttail]] return oHandleScoreSubmission(instance);
 }
 
 void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
@@ -200,54 +190,29 @@ void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
 	[[clang::musttail]] return oMouseViaKeyboardControls();
 }
 
-void MapleBase::TryHookOnPlayerLoadComplete(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
+void MapleBase::TryHookLoadComplete(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
 {
-    const uintptr_t onPlayerLoadComplete = methodDesc
-        ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"), functionAddress, functionSize)
-        : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 54 8B F1 8D 7D AC B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 4D B0 33 C9 89 0D"));
+    const uintptr_t loadComplete = methodDesc
+        ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 8B F9 8B 77 04 80"), functionAddress, functionSize)
+        : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 8B F9 8B 77 04 80"));
 
-    if (!onPlayerLoadComplete)
+    if (!loadComplete)
         return;
 
     if (!methodDesc)
-        methodDesc = m_Vanilla->GetMethodDesc(onPlayerLoadComplete);
+        methodDesc = m_Vanilla->GetMethodDesc(loadComplete);
 
     if (!methodDesc)
     {
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to retrieve method descriptor of Player.OnLoadComplete!"));
+        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to retrieve method descriptor of ASyncLoader.complete!"));
 
         return;
     }
 
-    if (m_Vanilla->GetHookManager().InstallPointerRedirectionHook(xorstr_("Player.OnLoadComplete"), m_Vanilla->GetMethodSlotAddress(methodDesc), reinterpret_cast<uintptr_t>(OnPlayerLoadCompleteHook), reinterpret_cast<uintptr_t*>(&oOnPlayerLoadComplete)) == VanillaResult::Success)
-        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.OnLoadComplete"));
+    if (m_Vanilla->GetHookManager().InstallPointerRedirectionHook(xorstr_("ASyncLoader.complete"), m_Vanilla->GetMethodSlotAddress(methodDesc), reinterpret_cast<uintptr_t>(LoadCompleteHook), reinterpret_cast<uintptr_t*>(&oLoadComplete)) == VanillaResult::Success)
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked ASyncLoader.complete"));
     else
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.OnLoadComplete!"));
-}
-
-void MapleBase::TryHookPlayerDispose(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
-{
-    const uintptr_t playerDispose = methodDesc
-        ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 8B F1 8B 8E B8 00 00 00 85 C9 74 0D BA 01 00 00 00 8B 01 8B 40 28 FF 50 1C"), functionAddress, functionSize)
-        : m_Vanilla->GetPatternScanner().FindPattern(xorstr_("55 8B EC 57 56 53 83 EC 08 89 55 F0 8B F1 8B 8E B8 00 00 00 85 C9 74 0D BA 01 00 00 00 8B 01 8B 40 28 FF 50 1C"));
-
-    if (!playerDispose)
-        return;
-
-    if (!methodDesc)
-        methodDesc = m_Vanilla->GetMethodDesc(playerDispose);
-
-    if (!methodDesc)
-    {
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to retrieve method descriptor of Player.Dispose!"));
-
-        return;
-    }
-
-    if (m_Vanilla->GetHookManager().InstallPointerRedirectionHook(xorstr_("Player.Dispose"), m_Vanilla->GetMethodSlotAddress(methodDesc), reinterpret_cast<uintptr_t>(PlayerDisposeHook), reinterpret_cast<uintptr_t*>(&oPlayerDispose)) == VanillaResult::Success)
-        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked Player.Dispose"));
-    else
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook Player.Dispose!"));
+        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook ASyncLoader.complete!"));
 }
 
 void MapleBase::TryHookHandleScoreSubmission(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
@@ -394,7 +359,7 @@ void MapleBase::AddModuleRange(const std::initializer_list<std::shared_ptr<IModu
 void MapleBase::RenderModulesGUI()
 {
     for (const std::shared_ptr<IModule>& module : m_Modules)
-        module->OnRender();
+        module->OnMenuRender();
 }
 
 void MapleBase::MakeScoreSubmissionUnsafe()

@@ -29,13 +29,9 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     #pragma region Hooks for module callbacks
     static inline bool m_IsPlayerLoaded = false;
 
-    typedef int(__fastcall* fnOnPlayerLoadComplete)(uintptr_t instance, bool success);
-    static inline fnOnPlayerLoadComplete oOnPlayerLoadComplete = nullptr;
-    static int __fastcall OnPlayerLoadCompleteHook(uintptr_t instance, bool success);
-
-    typedef void(__fastcall* fnPlayerDispose)(uintptr_t instance, int disposing);
-    static inline fnPlayerDispose oPlayerDispose = nullptr;
-    static void __fastcall PlayerDisposeHook(uintptr_t instance, int disposing);
+    typedef void(__fastcall* fnLoadComplete)(uintptr_t instance, bool success, bool runSuccessFunction);
+    static inline fnLoadComplete oLoadComplete = nullptr;
+    static void __fastcall LoadCompleteHook(uintptr_t instance, bool success, bool runSuccessFunction);
 
     static inline bool m_ScoreSubmissionUnsafe = false;
 
@@ -57,8 +53,7 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     static inline fnMouseViaKeyboardControls oMouseViaKeyboardControls = nullptr;
     static void __fastcall MouseViaKeyboardControlsHook();
 
-    static void TryHookOnPlayerLoadComplete(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
-    static void TryHookPlayerDispose(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
+    static void TryHookLoadComplete(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
     static void TryHookHandleScoreSubmission(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
     static void TryHookSetMousePosition(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
     static void TryHookMouseViaKeyboardControls(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
