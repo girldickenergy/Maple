@@ -172,7 +172,6 @@
     <ClCompile Include="Storage\Storage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Dependencies\Cacao\DependencyContainer.h" />
     <ClInclude Include="Dependencies\fnv1a\fnv1a.h" />
     <ClInclude Include="Dependencies\hde\hde32.h" />
     <ClInclude Include="Dependencies\hde\hde64.h" />

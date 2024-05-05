@@ -50,9 +50,6 @@
     <Filter Include="Dependencies">
       <UniqueIdentifier>{589fc566-6ef4-4b2c-a0cc-8fd445270f52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dependencies\Cacao">
-      <UniqueIdentifier>{c19fe899-0ff0-4c8b-9347-c44eed39e7ff}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SDK">
       <UniqueIdentifier>{c10cdb8e-c87f-434f-a4eb-c0b892f52ad6}</UniqueIdentifier>
     </Filter>
@@ -120,9 +117,6 @@
   <ItemGroup>
     <ClInclude Include="Modules\IModule.h">
       <Filter>Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\Cacao\DependencyContainer.h">
-      <Filter>Dependencies\Cacao</Filter>
     </ClInclude>
     <ClInclude Include="SDK\ISDK.h">
       <Filter>SDK</Filter>
