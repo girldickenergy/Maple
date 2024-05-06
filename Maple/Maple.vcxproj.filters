@@ -113,6 +113,12 @@
     <Filter Include="Dependencies\fnv1a">
       <UniqueIdentifier>{deb1ae4b-7ee6-421b-87f4-8c150ab11b99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structs">
+      <UniqueIdentifier>{e6f8515c-72f1-41e8-b7e7-d9dfbe0877f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structs\Input">
+      <UniqueIdentifier>{369fe5d7-0288-46eb-a73b-be115c103238}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\IModule.h">
@@ -255,6 +261,12 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Vanilla\Hooking\PointerRedirectionHook.h">
       <Filter>Dependencies\Vanilla\Hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs\Input\KeyState.h">
+      <Filter>Structs\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs\Input\CursorState.h">
+      <Filter>Structs\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

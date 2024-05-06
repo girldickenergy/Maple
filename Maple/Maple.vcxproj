@@ -221,6 +221,8 @@
     <ClInclude Include="Sdk\Scoring\Score.h" />
     <ClInclude Include="Sdk\Scoring\ScoreInternal.h" />
     <ClInclude Include="Storage\Storage.h" />
+    <ClInclude Include="Structs\Input\CursorState.h" />
+    <ClInclude Include="Structs\Input\KeyState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

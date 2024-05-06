@@ -49,14 +49,14 @@ class MapleBase : public std::enable_shared_from_this<MapleBase>
     static inline int* m_LeftButton = nullptr;
     static inline int* m_RightButton = nullptr;
 
-    typedef void(__fastcall* fnMouseViaKeyboardControls)();
-    static inline fnMouseViaKeyboardControls oMouseViaKeyboardControls = nullptr;
-    static void __fastcall MouseViaKeyboardControlsHook();
+    typedef BOOL(__stdcall* fnGetKeyboardState)(PBYTE arr);
+    static inline fnGetKeyboardState oGetKeyboardState = nullptr;
+    static BOOL __stdcall GetKeyboardStateHook(PBYTE arr);
 
     static void TryHookLoadComplete(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
     static void TryHookHandleScoreSubmission(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
     static void TryHookSetMousePosition(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
-    static void TryHookMouseViaKeyboardControls(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
+    static void TryHookGetKeyboardState(void* methodDesc = nullptr, uintptr_t functionAddress = 0u, size_t functionSize = 0u);
 
     static inline int* m_PlayerFlag = nullptr;
 

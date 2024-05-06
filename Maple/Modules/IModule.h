@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Gameplay/Keys/OsuKeys.h"
 #include "Numerics/Vector2.h"
 
-#include "../MapleBase.h"
 #include "../IMapleComponent.h"
 #include "../INameable.h"
+#include "../Structs/Input/CursorState.h"
+#include "../Structs/Input/KeyState.h"
 
 class IModule : public IMapleComponent, public INameable
 {
@@ -21,23 +21,25 @@ public:
      */
     virtual void __fastcall OnOverlayRender() {}
 
+    // todo: revisit OnCursorPositionUpdate and OnGameplayKeysUpdate
+
     /**
      * \brief Executed each time osu! tries to update cursor position
-     * \param currentPosition Current cursor position
-     * \return New cursor position to set
+     * \param state Current cursor state
+     * \return New cursor state to set, the decision on whether Maple should resync is taken by the last module to return its new cursor state. (???)
      */
-    virtual Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition)
+    virtual CursorState __fastcall OnCursorPositionUpdate(CursorState state)
     {
-        return currentPosition;
+        return state;
     }
     /**
      * \brief Executed each time osu! tries to update gameplay keypresses
-     * \param currentKeys Currently pressed gameplay keys
-     * \return New gameplay keys to set
+     * \param state Current state of gameplay keys
+     * \return New state of gameplay keys to set
      */
-    virtual OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys)
+    virtual KeyState __fastcall OnGameplayKeysUpdate(KeyState state)
     {
-        return currentKeys;
+        return state;
     }
     /**
      * \brief Executed on each Player initialization

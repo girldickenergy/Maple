@@ -32,18 +32,19 @@ public:
         m_ModManager = std::dynamic_pointer_cast<ModManager>(m_MapleBase->GetSDK(xorstr_("ModManager")));
     }
 
-    Vector2 __fastcall OnCursorPositionUpdate(Vector2 currentPosition) override
+    CursorState __fastcall OnCursorPositionUpdate(CursorState state) override
     {
-        printf("Current cursor position: %f, %f\n", currentPosition.X, currentPosition.Y);
+        printf("Current cursor position: %f, %f\n", state.CursorPosition.X, state.CursorPosition.Y);
 
-        return currentPosition;
+        return state;
     }
 
-    OsuKeys __fastcall OnGameplayKeysUpdate(OsuKeys currentKeys) override
+    KeyState __fastcall OnGameplayKeysUpdate(KeyState state) override
     {
-        printf("Current keys: %i\n", static_cast<int>(currentKeys));
+        printf("M1: %i, M2: %i\n", state.LeftMouseButtonDown, state.RightMouseButtonDown);
+        state.RightMouseButtonDown = true;
 
-        return currentKeys;
+        return state;
     }
 
     bool __fastcall OnScoreSubmission() override

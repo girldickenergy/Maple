@@ -42,7 +42,7 @@ void MapleBase::InitializeCore()
     TryHookLoadComplete();
     TryHookHandleScoreSubmission();
     TryHookSetMousePosition();
-    TryHookMouseViaKeyboardControls();
+    TryHookGetKeyboardState();
 
     TryFindPlayerFlag();
 }
@@ -58,8 +58,8 @@ void MapleBase::OnJIT(void* methodDesc, uintptr_t functionAddress, size_t functi
     if (!oSetMousePosition)
         TryHookSetMousePosition(methodDesc, functionAddress, functionSize);
 
-    if (!oMouseViaKeyboardControls)
-        TryHookMouseViaKeyboardControls(methodDesc, functionAddress, functionSize); // todo: replace with some lower level keyboard hook to add support for non-std modes
+    if (!oGetKeyboardState)
+        TryHookGetKeyboardState(methodDesc, functionAddress, functionSize);
 
     if (!m_PlayerFlag)
         TryFindPlayerFlag(methodDesc, functionAddress, functionSize);
@@ -112,72 +112,50 @@ void __fastcall MapleBase::HandleScoreSubmissionHook(uintptr_t instance)
 
 void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
 {
-    Vector2 newPosition = position;
+    // todo: save real and fake positions for use in other modules (e.g. rx, enlighten, aa overlay, etc., etc.)\
+    // todo: handle resync
+    CursorState cursorState = CursorState(position, false, 0.f);
 
     if (m_IsPlayerLoaded)
     {
         for (const std::shared_ptr<IModule>& module : m_Modules)
             if (module->RequiresCursorPosition())
-                newPosition = module->OnCursorPositionUpdate(newPosition);
+                cursorState = module->OnCursorPositionUpdate(cursorState);
     }
 
-    [[clang::musttail]] return oSetMousePosition(newPosition);
+    [[clang::musttail]] return oSetMousePosition(cursorState.CursorPosition);
 }
 
-[[clang::optnone]] void __fastcall MapleBase::MouseViaKeyboardControlsHook()
+BOOL __stdcall MapleBase::GetKeyboardStateHook(PBYTE arr)
 {
+    BOOL ret = oGetKeyboardState(arr);
+
     if (m_IsPlayerLoaded)
     {
-	const bool m1PressedPrevious = m_LeftButtons[0];
-        const bool k1PressedPrevious = m_LeftButtons[2];
-        const bool m2PressedPrevious = m_RightButtons[0];
-        const bool k2PressedPrevious = m_RightButtons[2];
+        std::array<uint8_t, 256> keys;
 
-	oMouseViaKeyboardControls();
+        for (int i = 0; i < 256; i++)
+            keys[i] = arr[i];
 
-        auto newKeyState = OsuKeys::None;
-
-	if (m_LeftButtons)
-        {
-            if (!m_LeftButtons[2] && m_LeftButtons[0])
-                newKeyState |= OsuKeys::M1;
-            else if (m_LeftButtons[2])
-                newKeyState |= OsuKeys::K1;
-        }
-
-        if (m_RightButtons)
-        {
-            if (!m_RightButtons[2] && m_RightButtons[0])
-                newKeyState |= OsuKeys::M2;
-            else if (m_RightButtons[2])
-                newKeyState |= OsuKeys::K2;
-        }
+        KeyState keyboardState(keys, *m_LeftButton == 1, *m_RightButton == 1);
 
         for (const std::shared_ptr<IModule>& module : m_Modules)
             if (module->RequiresGameplayKeys())
-                newKeyState = module->OnGameplayKeysUpdate(newKeyState);
+                keyboardState = module->OnGameplayKeysUpdate(keyboardState);
 
-        const bool m1Pressed = (newKeyState & OsuKeys::M1) > OsuKeys::None;
-        const bool k1Pressed = (newKeyState & OsuKeys::K1) > OsuKeys::None;
-        const bool m2Pressed = (newKeyState & OsuKeys::M2) > OsuKeys::None;
-        const bool k2Pressed = (newKeyState & OsuKeys::K2) > OsuKeys::None;
+	const bool m1PressedPrevious = m_LeftButtons[0];
+        const bool m2PressedPrevious = m_RightButtons[0];
 
         if (m_LeftButtons)
         {
-            m_LeftButtons[0] = m1Pressed || k1Pressed;
-            m_LeftButtons[1] = (m1Pressed || k1Pressed) && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m1PressedPrevious);
-
-	    m_LeftButtons[2] = k1Pressed;
-            m_LeftButtons[3] = k1Pressed && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !k1PressedPrevious);
+            m_LeftButtons[0] = keyboardState.LeftMouseButtonDown;
+            m_LeftButtons[1] = keyboardState.LeftMouseButtonDown && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m1PressedPrevious);
         }
 
         if (m_RightButtons)
         {
-            m_RightButtons[0] = m2Pressed || k2Pressed;
-            m_RightButtons[1] = (m2Pressed || k2Pressed) && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m2PressedPrevious);
-
-            m_RightButtons[2] = k2Pressed;
-            m_RightButtons[3] = k2Pressed && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !k2PressedPrevious);
+            m_RightButtons[0] = keyboardState.RightMouseButtonDown;
+            m_RightButtons[1] = keyboardState.RightMouseButtonDown && ((m_MouseButtonInstantRelease ? !*m_MouseButtonInstantRelease : true) || !m2PressedPrevious);
         }
 
         if (m_LeftButton)
@@ -186,8 +164,8 @@ void __fastcall MapleBase::SetMousePositionHook(Vector2 position)
         if (m_RightButton)
             *m_RightButton = (m_RightButtons[3] || m_RightButtons[1]);
     }
-    else
-	[[clang::musttail]] return oMouseViaKeyboardControls();
+
+    return ret;
 }
 
 void MapleBase::TryHookLoadComplete(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
@@ -265,7 +243,7 @@ void MapleBase::TryHookSetMousePosition(void* methodDesc, uintptr_t functionAddr
         m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook MouseManager.SetMousePosition!"));
 }
 
-void MapleBase::TryHookMouseViaKeyboardControls(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
+void MapleBase::TryHookGetKeyboardState(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
 {
     const uintptr_t mouseViaKeyboardControls = methodDesc
         ? m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("55 8B EC 57 56 83 3D ?? ?? ?? ?? 02 74 04 5E 5F 5D C3 33 C9 FF 15 ?? ?? ?? ?? 8B F0 85 F6 0F 84"), functionAddress, functionSize)
@@ -273,16 +251,6 @@ void MapleBase::TryHookMouseViaKeyboardControls(void* methodDesc, uintptr_t func
 
     if (!mouseViaKeyboardControls)
         return;
-
-    if (!methodDesc)
-        methodDesc = m_Vanilla->GetMethodDesc(mouseViaKeyboardControls);
-
-    if (!methodDesc)
-    {
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to retrieve method descriptor of Player.OnLoadComplete!"));
-
-        return;
-    }
 
     if (const uintptr_t mouseButtonInstantRelease = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("85 C9 74 45 80 3D ?? ?? ?? ?? 00"), mouseViaKeyboardControls + 0x30, mouseViaKeyboardControls + 0xB0))
         m_MouseButtonInstantRelease = *reinterpret_cast<bool**>(mouseButtonInstantRelease + 0x6);
@@ -299,10 +267,12 @@ void MapleBase::TryHookMouseViaKeyboardControls(void* methodDesc, uintptr_t func
     if (const uintptr_t rightButton = m_Vanilla->GetPatternScanner().FindPatternInRange(xorstr_("74 09 83 3D ?? ?? ?? ?? 00 75 0A C7 05"), mouseViaKeyboardControls + 0x310, mouseViaKeyboardControls + 0x2A))
         m_RightButton = *reinterpret_cast<int**>(rightButton + 0xD);
 
-    if (m_Vanilla->GetHookManager().InstallPointerRedirectionHook(xorstr_("InputManager.MouseViaKeyboardControls"), m_Vanilla->GetMethodSlotAddress(methodDesc), reinterpret_cast<uintptr_t>(MouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls)) == VanillaResult::Success)
-        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("InputManager.MouseViaKeyboardControls"));
+    auto getKeyboardState = reinterpret_cast<uintptr_t>(GetProcAddress(GetModuleHandleA(xorstr_("user32.dll")), xorstr_("GetKeyboardState")));
+
+    if (m_Vanilla->GetHookManager().InstallTrampolineHook(xorstr_("User32::GetKeyboardState"), getKeyboardState, reinterpret_cast<uintptr_t>(GetKeyboardStateHook), reinterpret_cast<uintptr_t*>(&oGetKeyboardState)) == VanillaResult::Success)
+        m_RuntimeLogger->Log(LogLevel::Verbose, xorstr_("Hooked User32::GetKeyboardState"));
     else
-        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook InputManager.MouseViaKeyboardControls!"));
+        m_RuntimeLogger->Log(LogLevel::Error, xorstr_("Failed to hook User32::GetKeyboardState!"));
 }
 
 void MapleBase::TryFindPlayerFlag(void* methodDesc, uintptr_t functionAddress, size_t functionSize)
