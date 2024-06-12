@@ -169,23 +169,27 @@ void Milk::doCRCBypass(uintptr_t address)
 {
     VIRTUALIZER_TIGER_WHITE_START
 
+    for (const auto& pair : _bypassed)
+    {
+        if (address >= pair.first && address <= pair.first + pair.second)
+            return;
+    }
+
     for (const auto& pair : *_crcMap)
     {
         auto functionPointerStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x48AB2731];
         auto functionSizeStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x13E76EB2];
-        auto functionChecksumStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x5335172C];
 
         auto functionPointer = decryptValue(*reinterpret_cast<uintptr_t*>(functionPointerStruct), *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
         auto functionSize = decryptValue(*reinterpret_cast<uintptr_t*>(functionSizeStruct), *reinterpret_cast<uintptr_t*>(functionSizeStruct + 0x4));
 
         if (address >= functionPointer && address <= functionPointer + functionSize)
         {
-            CryptoPP::CRC32 crc;
-            byte digest[CryptoPP::CRC32::DIGESTSIZE];
-            crc.CalculateDigest(digest, reinterpret_cast<byte*>(functionPointer), functionSize);
+            uintptr_t copiedFunc = reinterpret_cast<uintptr_t>(malloc(functionSize));
+            memcpy(reinterpret_cast<void*>(copiedFunc), reinterpret_cast<void*>(functionPointer), functionSize);
+            *reinterpret_cast<uintptr_t*>(functionPointerStruct) = encryptValue(copiedFunc, *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
 
-            auto checksum = *reinterpret_cast<unsigned*>(digest) ^ 0xFFFFFFFF;
-            *reinterpret_cast<uintptr_t*>(functionChecksumStruct) = encryptValue(checksum, *reinterpret_cast<uintptr_t*>(functionChecksumStruct + 0x4));
+            _bypassed.emplace_back(functionPointer, functionSize);
 
             return;
         }
@@ -210,7 +214,7 @@ bool Milk::DoCRCBypass(uintptr_t address)
 
     VIRTUALIZER_TIGER_WHITE_END
 
-        return true;
+    return true;
 }
 
 void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction)

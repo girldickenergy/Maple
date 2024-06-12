@@ -38,6 +38,7 @@ class Milk : public Singleton<Milk>
     uintptr_t _firstCRCAddress;
     CRC* _firstCRC;
     std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>* _crcMap;
+    std::vector<std::pair<uintptr_t, size_t>> _bypassed;
     uintptr_t _secondaryKey;
 
     static inline uintptr_t _originalJITVtable;
@@ -66,7 +67,7 @@ class Milk : public Singleton<Milk>
     /**
      * \brief Bypasses the detection vector where functions would be checked against CRC32.
      */
-    void doCRCBypass(uintptr_t address);
+    bool doCRCBypass(uintptr_t address);
 
 public:
     Milk(singletonLock);

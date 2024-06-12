@@ -33,14 +33,6 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			{
 				if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
 				{
-					void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
-					Score::SetOriginal(submit);
-
-					int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
-					*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
-
-					Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
-
 					if (!Milk::Get().DoCRCBypass(scanResult))
 					{
 						ConfigManager::ForceDisableScoreSubmission = true;
@@ -48,6 +40,14 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 					}
+
+					void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
+					Score::SetOriginal(submit);
+
+					int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
+					*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
+
+					Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
 				}
 				else
 				{
@@ -71,11 +71,6 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			char patchName[it->second.Name.GetSize()];
 			it->second.Name.GetData(patchName);
 
-			if (VanillaPatcher::InstallPatch(patchName, it->second.Pattern, objectAddress, it->second.ScanSize, it->second.Offset, it->second.Patch) == VanillaResult::Success)
-				Logger::Log(LogSeverity::Info, xorstr_("Patched %s dynamically!"), patchName);
-			else
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), patchName);
-
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				ConfigManager::ForceDisableScoreSubmission = true;
@@ -83,6 +78,11 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), patchName);
 			}
+
+			if (VanillaPatcher::InstallPatch(patchName, it->second.Pattern, objectAddress, it->second.ScanSize, it->second.Offset, it->second.Patch) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Patched %s dynamically!"), patchName);
+			else
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s dynamically!"), patchName);
 
 			it = pendingPatches.erase(it);
 		}
@@ -99,11 +99,6 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			char hookName[it->second.Name.GetSize()];
 			it->second.Name.GetData(hookName);
 
-			if (VanillaHooking::InstallHook(hookName, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Safe) == VanillaResult::Success)
-				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), hookName);
-			else
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), hookName);
-
 			if (!Milk::Get().DoCRCBypass(objectAddress))
 			{
 				ConfigManager::ForceDisableScoreSubmission = true;
@@ -111,6 +106,11 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 
 				Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), hookName);
 			}
+
+			if (VanillaHooking::InstallHook(hookName, objectAddress, it->second.DetourFunctionAddress, it->second.OriginalFunction, it->second.Safe) == VanillaResult::Success)
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked %s dynamically!"), hookName);
+			else
+				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s dynamically!"), hookName);
 
 			it = pendingHooks.erase(it);
 		}
@@ -158,14 +158,6 @@ void Memory::AddObject(const char* name, const char* pattern, unsigned int offse
 		{
 			if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
 			{
-				void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
-				Score::SetOriginal(submit);
-
-				int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
-				*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
-
-				Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
-
 				if (!Milk::Get().DoCRCBypass(scanResult))
 				{
 					ConfigManager::ForceDisableScoreSubmission = true;
@@ -173,6 +165,14 @@ void Memory::AddObject(const char* name, const char* pattern, unsigned int offse
 
 					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name);
 				}
+
+				void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
+				Score::SetOriginal(submit);
+
+				int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
+				*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
+
+				Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
 			}
 			else
 			{
@@ -204,11 +204,6 @@ void Memory::AddPatch(const char* name, const char* objectName, const char* patt
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (VanillaPatcher::InstallPatch(name, pattern, objectAddress, scanSize, offset, patch) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xorstr_("Patched %s!"), name);
-		else
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name);
-
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			ConfigManager::ForceDisableScoreSubmission = true;
@@ -216,6 +211,11 @@ void Memory::AddPatch(const char* name, const char* objectName, const char* patt
 
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 		}
+
+		if (VanillaPatcher::InstallPatch(name, pattern, objectAddress, scanSize, offset, patch) == VanillaResult::Success)
+			Logger::Log(LogSeverity::Info, xorstr_("Patched %s!"), name);
+		else
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to patch %s!"), name);
 	}
 	else
 	{
@@ -240,11 +240,6 @@ void Memory::AddHook(const char* name, const char* objectName, uintptr_t detourF
 
 	if (const uintptr_t objectAddress = Objects[objectName])
 	{
-		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, safe) == VanillaResult::Success)
-			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name);
-		else
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name);
-
 		if (!Milk::Get().DoCRCBypass(objectAddress))
 		{
 			ConfigManager::ForceDisableScoreSubmission = true;
@@ -252,6 +247,11 @@ void Memory::AddHook(const char* name, const char* objectName, uintptr_t detourF
 
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
 		}
+
+		if (VanillaHooking::InstallHook(name, objectAddress, detourFunctionAddress, originalFunction, safe) == VanillaResult::Success)
+			Logger::Log(LogSeverity::Info, xorstr_("Hooked %s!"), name);
+		else
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s!"), name);
 	}
 	else
 	{
