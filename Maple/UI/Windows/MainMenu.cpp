@@ -463,7 +463,7 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel(xorstr_("Spoofer (Detected)"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 2, 2)));
+                Widgets::BeginPanel(xorstr_("Spoofer (Detected)"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 3, 2)));
                 {
                     const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
                     const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
