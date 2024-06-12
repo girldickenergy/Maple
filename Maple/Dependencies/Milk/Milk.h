@@ -67,7 +67,7 @@ class Milk : public Singleton<Milk>
     /**
      * \brief Bypasses the detection vector where functions would be checked against CRC32.
      */
-    bool doCRCBypass(uintptr_t address);
+    void doCRCBypass(uintptr_t address);
 
 public:
     Milk(singletonLock);

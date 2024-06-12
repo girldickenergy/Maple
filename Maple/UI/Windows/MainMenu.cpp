@@ -145,7 +145,7 @@ void MainMenu::Render()
                     if (Widgets::Tab(xorstr_("Visuals"), StyleProvider::VisualsIconTexture, currentTab == 4, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 4 ? -1 : 4;
 
-                    if (Widgets::Tab(xorstr_("Spoofer"), StyleProvider::SpooferIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
+                    if (Widgets::Tab(xorstr_("Spoofer (Detected)"), StyleProvider::SpooferIconTexture, currentTab == 5, ImGuiSelectableFlags_SpanAllColumns, tabSize))
                         currentTab = currentTab == 5 ? -1 : 5;
 
                     if (Widgets::Tab(xorstr_("Misc"), StyleProvider::MiscIconTexture, currentTab == 6, ImGuiSelectableFlags_SpanAllColumns, tabSize))
@@ -175,9 +175,9 @@ void MainMenu::Render()
                 ImGui::PopFont();
 
                 ImGui::PushFont(StyleProvider::FontSmall);
-                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-17122023"));
+                const ImVec2 buildStringSize = ImGui::CalcTextSize(xorstr_("mlo-12062024"));
                 ImGui::SetCursorPos(ImVec2(buildInfoSize.x / 2 - buildStringSize.x / 2, buildInfoSize.y / 2 + style.ItemSpacing.y / 4));
-                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-17122023"));
+                ImGui::TextColored(StyleProvider::MottoColour, xorstr_("mlo-12062024"));
                 ImGui::PopFont();
             }
             ImGui::EndChild();
@@ -463,7 +463,7 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel(xorstr_("Spoofer"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 1, 2)));
+                Widgets::BeginPanel(xorstr_("Spoofer (Detected)"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 2, 2)));
                 {
                     const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
                     const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
@@ -471,6 +471,8 @@ void MainMenu::Render()
                     const float buttonWidth = (ImGui::GetWindowWidth() * 0.5f - style.ItemSpacing.x) / 2;
 
                     Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, Spoofer::Profiles);
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("Spoofer is currently detected on the official osu! server!"));
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("It is undetected on private servers, so feel free to use it there."));
 
 					EncryptedString currentProfile = xorstr_("Current profile: ") + Spoofer::Profiles[Spoofer::LoadedProfile];
                     char currentProfileName[currentProfile.GetSize()];
