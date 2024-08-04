@@ -1,26 +1,12 @@
 #include "Score.h"
-#include "VirtualizerSDK.h"
+
 #include "Vanilla.h"
 #include "xorstr.hpp"
 
-#include "../Memory.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../Player/Player.h"
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
-#include "../Osu/GameBase.h"
-#include "../../Features/Timewarp/Timewarp.h"
-#include "../../Communication/Communication.h"
-
-void Score::spoofPlayDuration()
-{
-	const int playStartTime = *reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET);
-	const int playEndTime = GameBase::GetTime();
-	const int playDuration = playEndTime - playStartTime;
-	const int scaledDuration = static_cast<int>(playDuration * Timewarp::GetRateMultiplier());
-
-	*reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET) = playEndTime - scaledDuration;
-}
 
 void __fastcall Score::submitHook(uintptr_t instance)
 {
@@ -60,10 +46,6 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 	Logger::Log(LogSeverity::Debug, xorstr_("D"));
 
-	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
-		spoofPlayDuration();
-
-	Logger::Log(LogSeverity::Debug, xorstr_("E"));
 	[[clang::musttail]] return oSubmit(instance);
 }
 
@@ -84,9 +66,6 @@ void Score::SetOriginal(void* val)
 
 void Score::Submit()
 {
-	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
-		spoofPlayDuration();
-
 	oSubmit(scoreInstance);
 
 	Vanilla::RemoveRelocation(std::ref(scoreInstance));

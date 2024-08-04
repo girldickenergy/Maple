@@ -181,7 +181,7 @@ void WaitForCriticalSDKToInitialize()
     Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
     
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
-    uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+    uintptr_t getRawElapsedTicks = Memory::Objects[xorstr_("Stopwatch::GetRawElapsedTicks")];
 
     VIRTUALIZER_FISH_RED_END
     
@@ -189,7 +189,7 @@ void WaitForCriticalSDKToInitialize()
 #ifdef NO_BYPASS
     while (!clientHash || !updateTiming/*||!submit*/)
 #else
-    while (!clientHash || !updateTiming)
+    while (!clientHash || !getRawElapsedTicks)
 #endif
     {
         VIRTUALIZER_FISH_RED_START
@@ -204,7 +204,7 @@ void WaitForCriticalSDKToInitialize()
         retries++;
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
-        updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
+        getRawElapsedTicks = Memory::Objects[xorstr_("Stopwatch::GetRawElapsedTicks")];
 
         Sleep(1000);
 

@@ -4,25 +4,68 @@
 
 #include "Vanilla.h"
 #include "xorstr.hpp"
-#include "Utilities/MemoryUtilities.h"
 #include "Math/sRectangle.h"
 
 #include "../Memory.h"
 #include "../Helpers/Obfuscated.h"
 #include "../../Communication/Communication.h"
+#include "../../Configuration/ConfigManager.h"
+#include "../../Logging/Logger.h"
+#include "Utilities/MemoryUtilities.h"
+#include "PatternScanning/VanillaPatternScanner.h"
+
+long long __fastcall GameBase::GetRawElapsedTicksHook(Stopwatch* instance)
+{
+	LARGE_INTEGER currentTicks;
+	QueryPerformanceCounter(&currentTicks);
+
+	if (instance == *stopwatchPtr)
+	{
+		if (!stopwatchInitialized)
+		{
+			stopwatchCurrent = currentTicks.QuadPart - instance->StartTimeStamp;
+			stopwatchPrevious = currentTicks.QuadPart;
+			stopwatchInitialized = true;
+
+			return stopwatchCurrent;
+		}
+
+		stopwatchCurrent += static_cast<long long>(static_cast<double>(currentTicks.QuadPart - stopwatchPrevious) / tickrate);
+		stopwatchPrevious = currentTicks.QuadPart;
+
+		return stopwatchCurrent;
+	}
+
+	return instance->IsRunning ? currentTicks.QuadPart - instance->StartTimeStamp : instance->Elapsed;
+}
 
 void GameBase::Initialize()
 {
 	VIRTUALIZER_FISH_RED_START
+
+	LARGE_INTEGER tmp;
+	if (QueryPerformanceFrequency(&tmp))
+	{
+		stopwatchPtr = reinterpret_cast<Stopwatch**>(VanillaPatternScanner::FindPattern(xorstr_("8B 0D ?? ?? ?? ?? BA ?? ?? ?? ?? 39 09 E8 ?? ?? ?? ?? 8B 0D ?? ?? ?? ?? E8"), 0x14, 1));
+		if (stopwatchPtr)
+		{
+			Memory::AddObject(xorstr_("Stopwatch::GetRawElapsedTicks"), xorstr_("83 EC 08 38 01 E8 ?? ?? ?? ?? 89 04 24"), 0x6, 1, true);
+			Memory::AddHook(xorstr_("Stopwatch::GetRawElapsedTicks"), xorstr_("Stopwatch::GetRawElapsedTicks"), reinterpret_cast<uintptr_t>(GetRawElapsedTicksHook), reinterpret_cast<uintptr_t*>(&oGetRawElapsedTicks));
+		}
+		else
+		{
+			ConfigManager::BypassFailed = true;
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to find GameBase::Stopwatch!"));
+		}
+	}
+	else
+	{
+		ConfigManager::BypassFailed = true;
+		Logger::Log(LogSeverity::Error, xorstr_("High-resolution performance counter is not supported!"));
+	}
 	
 	Memory::AddObject(xorstr_("GameBase::Time"), xorstr_("80 3D ?? ?? ?? ?? 00 74 1B A1 ?? ?? ?? ?? 2B 05 ?? ?? ?? ?? 3D"), 0xA, 1);
 	Memory::AddObject(xorstr_("GameBase::Mode"), xorstr_("80 B8 ?? ?? ?? ?? 00 75 19 A1 ?? ?? ?? ?? 83 F8 0B 74 0B"), 0xA, 1);
-
-	Memory::AddObject(xorstr_("GameBase::UpdateTiming"), xorstr_("8B F1 8B 0D ?? ?? ?? ?? 33 D2 39 09 FF 15 ?? ?? ?? ?? 8B CE FF 15"), 0x16, 2);
-	Memory::AddPatch(xorstr_("GameBase::UpdateTiming_TickratePatch_1"), xorstr_("GameBase::UpdateTiming"), xorstr_("DD 05 ?? ?? ?? ?? DC 25 ?? ?? ?? ?? D9 C0 DD 05"), 0x28E, 0x10, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
-	Memory::AddPatch(xorstr_("GameBase::UpdateTiming_TickratePatch_2"), xorstr_("GameBase::UpdateTiming"), xorstr_("1D ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 25"), 0x28E, 0xD, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
-	Memory::AddPatch(xorstr_("GameBase::UpdateTiming_TickratePatch_3"), xorstr_("GameBase::UpdateTiming"), xorstr_("DD 05 ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 25"), 0x28E, 0xE, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
-	Memory::AddPatch(xorstr_("GameBase::UpdateTiming_TickratePatch_4"), xorstr_("GameBase::UpdateTiming"), xorstr_("DD 1D ?? ?? ?? ?? DD 05 ?? ?? ?? ?? DC 35"), 0x28E, 0xE, MemoryUtilities::IntToByteArray(reinterpret_cast<int>(&tickrate)));
 
 	Memory::AddObject(xorstr_("GameBase::IsFullscreen"), xorstr_("55 8B EC 57 56 53 8B F1 80 3D ?? ?? ?? ?? 00 75 05 E9 ?? ?? ?? ?? 81 3D ?? ?? ?? ?? ?? ?? ?? ?? 7C 06 80 7E"), 0xA, 1);
 	Memory::AddObject(xorstr_("GameBase::ClientBounds"), xorstr_("56 FF 75 F0 8B 15 ?? ?? ?? ?? 83 C2 04 39 09"), 0x6, 1);

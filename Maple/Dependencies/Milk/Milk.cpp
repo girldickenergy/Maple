@@ -36,7 +36,7 @@ Milk::~Milk()
 
 uintptr_t __stdcall Milk::getJitHook()
 {
-    const uint32_t STUB_SIZE = 0x7F5000;
+    const uint32_t STUB_SIZE = 0x17D7840;
     const uint32_t BUFFER = 0x1000;
 
     auto retAddress = reinterpret_cast<uintptr_t>(__builtin_return_address(0));
@@ -52,7 +52,7 @@ void _declspec(naked) someBassFuncHook()
 {
     _asm
     {
-		mov eax, ebp
+		mov eax, esi
 		mov ecx, dword ptr[esp]
 		push ebp
 		mov ebp, esp
@@ -114,7 +114,7 @@ DWORD Milk::findAuthStubSize()
         if (region.BaseAddress > _authStubBaseAddress && (region.State == MEM_FREE || (region.Protect != PAGE_EXECUTE && region.Protect != PAGE_EXECUTE_READWRITE)))
             return size;
 
-	size += region.RegionSize;
+		size += region.RegionSize;
     }
 
     return 0;
@@ -123,31 +123,21 @@ DWORD Milk::findAuthStubSize()
 // ReSharper disable once CppInconsistentNaming
 uintptr_t Milk::findCRCMap()
 {
+    uintptr_t ret;
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("FF 5D C3 55 8B EC B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 68 ?? ?? ?? ?? E8 ?? ?? ?? ?? 59 5D C3 55 8B");
-
-    for (const auto& region : *_milkMemory.GetMemoryRegions())
-    {
-        if (region.BaseAddress < _authStubBaseAddress)
-            continue;
-
-        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize, 7);
-
-        if (result > _authStubBaseAddress)
-            return *reinterpret_cast<uintptr_t*>(result);
-    }
+    ret = *reinterpret_cast<uintptr_t*>(_authStubBaseAddress + 0x1);
 
     VIRTUALIZER_LION_BLACK_END
 
-    return 0;
+    return ret;
 }
 
 uintptr_t Milk::findSecondaryKey()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("55 8B EC B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 89");
+    auto pattern = xorstr_("B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 50");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
@@ -179,15 +169,28 @@ void Milk::doCRCBypass(uintptr_t address)
     {
         auto functionPointerStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x48AB2731];
         auto functionSizeStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x13E76EB2];
+        auto functionNameStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x7ce737c8];
 
         auto functionPointer = decryptValue(*reinterpret_cast<uintptr_t*>(functionPointerStruct), *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
         auto functionSize = decryptValue(*reinterpret_cast<uintptr_t*>(functionSizeStruct), *reinterpret_cast<uintptr_t*>(functionSizeStruct + 0x4));
+        auto functionName = decryptValue(*reinterpret_cast<uintptr_t*>(functionNameStruct), *reinterpret_cast<uintptr_t*>(functionNameStruct + 0x4));
 
         if (address >= functionPointer && address <= functionPointer + functionSize)
         {
-            uintptr_t copiedFunc = reinterpret_cast<uintptr_t>(malloc(functionSize));
+            auto copiedFunc = reinterpret_cast<uintptr_t>(malloc(functionSize));
             memcpy(reinterpret_cast<void*>(copiedFunc), reinterpret_cast<void*>(functionPointer), functionSize);
             *reinterpret_cast<uintptr_t*>(functionPointerStruct) = encryptValue(copiedFunc, *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
+
+            size_t nameLength = strlen(reinterpret_cast<char*>(functionName));
+            auto corruptedName = reinterpret_cast<uintptr_t>(malloc(nameLength + 1));
+            memset(reinterpret_cast<void*>(corruptedName), 0x0, nameLength + 1);
+
+            if (nameLength == 1)
+                *reinterpret_cast<uint8_t*>(corruptedName) = *reinterpret_cast<uint8_t*>(corruptedName) ^ 0x13;
+            else if (nameLength >= 2)
+                *reinterpret_cast<uint8_t*>(corruptedName + nameLength / 2) = 0x0;
+
+            *reinterpret_cast<uintptr_t*>(functionNameStruct) = encryptValue(corruptedName, *reinterpret_cast<uintptr_t*>(functionNameStruct + 0x4));
 
             _bypassed.emplace_back(functionPointer, functionSize);
 
@@ -259,16 +262,6 @@ bool Milk::Prepare()
 
     _crcMap = reinterpret_cast<std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>*>(_firstCRCAddress);
 
-    //_firstCRC = _crcMap->begin()->second;
-    //auto decryptedSize = decryptValue(_firstCRC->functionSize, _firstCRC->functionSizeXORKey);
-
-    //Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->className, _firstCRC->classNameXORKey)));
-    //Logger::Log(LogSeverity::Debug, reinterpret_cast<char*>(decryptValue(_firstCRC->functionName, _firstCRC->functionNameXORKey)));
-    //Logger::Log(LogSeverity::Debug, std::to_string(decryptedSize).c_str());
-
-    //if (decryptedSize < 1 || decryptedSize > 2000)
-    //    return false;
-
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
 
     void* getJit = GetProcAddress(GetModuleHandleA(xorstr_("clrjit.dll")), xorstr_("getJit"));
@@ -320,23 +313,20 @@ bool Milk::Prepare()
     return true;
 }
 
-int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret)
+int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD esi, DWORD ret)
 {
     auto val = oSomeBassFunc(handle);
 
-    const uint32_t STUB_SIZE = 0x7F5000;
+    const uint32_t STUB_SIZE = 0x17D7840;
     const uint32_t BUFFER = 0x1000;
 
     bool isAuthCall = ret > Get()._authStubBaseAddress && ret < Get()._authStubBaseAddress + STUB_SIZE + BUFFER;
 
     if (isAuthCall)
     {
-        auto var_ptr = (v8fix**)(ebp - 0x28);
+        auto v8_ptr = (v8fix*)esi;
 
-        v8.v7 = &v7;
-        v7.speed = AudioEngine::GetModTempo(); // fix speed
-
-        *var_ptr = &v8;
+        v8_ptr->v7->speed = AudioEngine::GetModTempo(); // fix speed
 
         auto freq = ((v10fix*)val)->v9->freq; // get current frequency
 
