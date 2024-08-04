@@ -5,6 +5,12 @@
 
 #include <unordered_map>
 
+struct someBassFuncRet
+{
+    void* esi;
+    int ret;
+};
+
 struct v7fix
 {
     uint8_t padding[0x40];
@@ -77,5 +83,5 @@ public:
     bool DoCRCBypass(uintptr_t address);
     void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
 
-    static int __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
+    static someBassFuncRet* __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };

@@ -61,7 +61,9 @@ void _declspec(naked) someBassFuncHook()
 		mov ecx, dword ptr[ebp + 8]
 		push ecx
 		call Milk::SpoofPlaybackRate
-		pop ebp
+        mov esi, [eax]
+        mov eax, [eax + 4]
+        pop ebp
 		retn 4
     }
 }
@@ -313,9 +315,13 @@ bool Milk::Prepare()
     return true;
 }
 
-int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD esi, DWORD ret)
+someBassFuncRet* __stdcall Milk::SpoofPlaybackRate(int handle, DWORD esi, DWORD ret)
 {
     auto val = oSomeBassFunc(handle);
+
+    someBassFuncRet retStruct;
+    retStruct.esi = (void*)esi;
+    retStruct.ret = val;
 
     const uint32_t STUB_SIZE = 0x17D7840;
     const uint32_t BUFFER = 0x1000;
@@ -324,9 +330,8 @@ int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD esi, DWORD ret)
 
     if (isAuthCall)
     {
-        auto v8_ptr = (v8fix*)esi;
-
-        v8_ptr->v7->speed = AudioEngine::GetModTempo(); // fix speed
+        v8.v7 = &v7;
+        v7.speed = AudioEngine::GetModTempo(); // fix speed
 
         auto freq = ((v10fix*)val)->v9->freq; // get current frequency
 
@@ -335,10 +340,13 @@ int __stdcall Milk::SpoofPlaybackRate(int handle, DWORD esi, DWORD ret)
         v10.v9 = &v9;
         v9.freq = AudioEngine::GetModFrequency(freq); // fix freq
 
-        return (int)(&v10);
+        retStruct.esi = &v8;
+        retStruct.ret = (int)(&v10);
+
+        return &retStruct;
     }
 
-    return val;
+    return &retStruct;
 }
 
 #pragma clang optimize on
