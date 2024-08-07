@@ -157,6 +157,19 @@ uintptr_t Milk::findSecondaryKey()
     return 0;
 }
 
+uintptr_t Milk::findInfoSectionStruct()
+{
+    VIRTUALIZER_LION_BLACK_START
+
+    auto pattern = xorstr_("23 00 3D 00 7A 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00 07 00 00 00 23 3D 7A");
+
+    uintptr_t result = VanillaPatternScanner::FindPatternRW(pattern, 0xB4);
+
+    VIRTUALIZER_LION_BLACK_END
+
+    return result;
+}
+
 void Milk::doCRCBypass(uintptr_t address)
 {
     VIRTUALIZER_TIGER_WHITE_START
@@ -228,6 +241,29 @@ void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunctio
     _copiedJITVtable[index] = detour;
 }
 
+void Milk::SetSpriteCollectionCounts(uint32_t value)
+{
+    VIRTUALIZER_TIGER_WHITE_START
+
+    for (unsigned int& spriteCollectionCount : _infoSection->spriteCollectionCounts)
+	    spriteCollectionCount = value;
+
+    VIRTUALIZER_TIGER_WHITE_END
+}
+
+void Milk::AdjustPollingVectorsToRate(double rate)
+{
+    VIRTUALIZER_TIGER_WHITE_START
+
+    size_t ratesRequiredSize = _infoSection->rates.size() * rate;
+    size_t spriteCollectionCountsRequiredSize = _infoSection->spriteCollectionCounts.size() * rate;
+
+    _infoSection->rates.resize(ratesRequiredSize, _infoSection->rates[0]);
+    _infoSection->spriteCollectionCounts.resize(spriteCollectionCountsRequiredSize, _infoSection->spriteCollectionCounts[0]);
+
+    VIRTUALIZER_TIGER_WHITE_END
+}
+
 bool Milk::Prepare()
 {
     VIRTUALIZER_LION_BLACK_START
@@ -265,6 +301,19 @@ bool Milk::Prepare()
     _crcMap = reinterpret_cast<std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>*>(_firstCRCAddress);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] FC FS OK"));
+
+    auto infoSectionPtr = findInfoSectionStruct();
+    if (!infoSectionPtr)
+        return false;
+
+    Logger::Log(LogSeverity::Debug, xorstr_("[Milk] ISS != 0x00000000"));
+
+    _infoSection = reinterpret_cast<infoSectionStruct*>(infoSectionPtr);
+
+    if (_infoSection->o != 'o' || _infoSection->s != 's' || _infoSection->u != 'u')
+        return false;
+
+    Logger::Log(LogSeverity::Debug, xorstr_("[Milk] IS OK"));
 
     void* getJit = GetProcAddress(GetModuleHandleA(xorstr_("clrjit.dll")), xorstr_("getJit"));
     if (!getJit)

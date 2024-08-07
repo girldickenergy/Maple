@@ -1,18 +1,29 @@
 #include "Score.h"
 
+#include "Milk.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
 
 #include "../../Configuration/ConfigManager.h"
+#include "../../Features/Timewarp/Timewarp.h"
 #include "../Player/Player.h"
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
+#include "../Mods/ModManager.h"
 
 void __fastcall Score::submitHook(uintptr_t instance)
 {
 	scoreInstance = instance;
 
 	Logger::Log(LogSeverity::Debug, xorstr_("A"));
+
+	// todo: better submit hook
+	// todo: mode check doesn't work
+	if (Player::GetPlayMode() == PlayModes::Osu && ModManager::CheckActive(Mods::Hidden) && ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled)
+		Milk::Get().SetSpriteCollectionCounts(3);
+
+	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
+		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier()); // todo: more testing required
 
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());

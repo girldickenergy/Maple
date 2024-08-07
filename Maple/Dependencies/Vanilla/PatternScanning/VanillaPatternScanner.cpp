@@ -94,3 +94,20 @@ uintptr_t VanillaPatternScanner::FindPattern(const std::string& pattern, unsigne
 	
     return 0u;
 }
+
+uintptr_t VanillaPatternScanner::FindPatternRW(const std::string& pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
+{
+    MEMORY_BASIC_INFORMATION32 mbi;
+    LPCVOID address = nullptr;
+
+    while (VirtualQueryEx(GetCurrentProcess(), address, reinterpret_cast<PMEMORY_BASIC_INFORMATION>(&mbi), sizeof mbi) != 0)
+    {
+        if (mbi.State == MEM_COMMIT && mbi.Protect != PAGE_NOACCESS && !(mbi.Protect & PAGE_GUARD) && (mbi.Protect & PAGE_READWRITE))
+            if (const uintptr_t result = FindPatternInRange(pattern, mbi.BaseAddress, mbi.RegionSize, offset, readCount, resolveRelativeAddress))
+                return result;
+
+        address = reinterpret_cast<LPCVOID>(mbi.BaseAddress + mbi.RegionSize);
+    }
+
+    return 0u;
+}

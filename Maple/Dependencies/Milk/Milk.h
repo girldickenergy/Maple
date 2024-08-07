@@ -36,6 +36,17 @@ struct v10fix
     uint8_t padding2[0x90];
 };
 
+struct infoSectionStruct
+{
+    uint8_t padding[0x2B4];
+    std::vector<float> rates;
+    std::vector<uint32_t> spriteCollectionCounts;
+    uint8_t padding2[0x9C];
+    char o;
+    char s;
+    char u;
+};
+
 class Milk : public Singleton<Milk>
 {
     MilkMemory _milkMemory;
@@ -46,6 +57,8 @@ class Milk : public Singleton<Milk>
     std::unordered_map<uint32_t, std::unordered_map<uint32_t, uintptr_t>*>* _crcMap;
     std::vector<std::pair<uintptr_t, size_t>> _bypassed;
     uintptr_t _secondaryKey;
+
+    infoSectionStruct* _infoSection;
 
     static inline uintptr_t _originalJITVtable;
     static inline uintptr_t* _copiedJITVtable;
@@ -69,6 +82,7 @@ class Milk : public Singleton<Milk>
     DWORD findAuthStubSize();
     uintptr_t findCRCMap();
     uintptr_t findSecondaryKey();
+    uintptr_t findInfoSectionStruct();
 
     /**
      * \brief Bypasses the detection vector where functions would be checked against CRC32.
@@ -82,6 +96,8 @@ public:
     bool Prepare();
     bool DoCRCBypass(uintptr_t address);
     void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
+    void SetSpriteCollectionCounts(uint32_t value);
+    void AdjustPollingVectorsToRate(double rate);
 
     static someBassFuncRet* __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };
