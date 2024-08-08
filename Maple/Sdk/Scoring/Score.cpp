@@ -10,34 +10,25 @@
 #include "../../UI/Windows/ScoreSubmissionDialog.h"
 #include "../../Logging/Logger.h"
 #include "../Mods/ModManager.h"
+#include "PatternScanning/VanillaPatternScanner.h"
 
 void __fastcall Score::submitHook(uintptr_t instance)
 {
 	scoreInstance = instance;
 
-	Logger::Log(LogSeverity::Debug, xorstr_("A"));
-
-	// todo: better submit hook
-	// todo: mode check doesn't work
 	if (Player::GetPlayMode() == PlayModes::Osu && ModManager::CheckActive(Mods::Hidden) && ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled)
 		Milk::Get().SetSpriteCollectionCounts(3);
 
 	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
-		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier()); // todo: more testing required
+		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier());
 
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 
-	Logger::Log(LogSeverity::Debug, xorstr_("A.A"));
-
 	Player::ResetAnticheatFlag();
-
-	Logger::Log(LogSeverity::Debug, xorstr_("A.B"));
 
 	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 1 || ConfigManager::ForceDisableScoreSubmission)
 		return;
-
-	Logger::Log(LogSeverity::Debug, xorstr_("B"));
 
 	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 2 && !Player::GetIsRetrying())
 	{
@@ -45,38 +36,65 @@ void __fastcall Score::submitHook(uintptr_t instance)
 
 		ScoreSubmissionDialog::Show();
 
-		Logger::Log(LogSeverity::Debug, xorstr_("B.A"));
-
 		return;
 	}
-
-	Logger::Log(LogSeverity::Debug, xorstr_("C"));
 
 	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 2 && Player::GetIsRetrying() && ConfigManager::CurrentConfig.Misc.PromptBehaviorOnRetry == 1)
 		return;
 
-	Logger::Log(LogSeverity::Debug, xorstr_("D"));
+	if (!z3Compiled)
+	{
+		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(oSubmit);
+		z3Compiled = true;
+	}
 
 	[[clang::musttail]] return oSubmit(instance);
 }
 
 void Score::Initialize()
 {
-
+	if (auto submitAddress = VanillaPatternScanner::FindPattern(xorstr_("68 ?? ?? ?? ?? C3 8B F1 83 BE ?? ?? ?? ?? 00"))) // Score.Submit
+	{
+		auto h3Address = *reinterpret_cast<uintptr_t*>(submitAddress + 0x1); // A.B.H3
+		z3Slot = VanillaPatternScanner::FindPatternInRange(xorstr_("FF 15"), h3Address, 0x25, 0x2, 1); // A.B.Z3 ptr
+		if (z3Slot)
+		{
+			oSubmit = reinterpret_cast<fnSubmit>(*reinterpret_cast<uintptr_t*>(z3Slot));
+			*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(submitHook);
+		}
+		else
+		{
+			ConfigManager::BypassFailed = true;
+			ConfigManager::ForceDisableScoreSubmission = true;
+			Logger::Log(LogSeverity::Error, xorstr_("Failed to find A.B::Z3 slot!"));
+		}
+	}
+	else
+	{
+		ConfigManager::BypassFailed = true;
+		ConfigManager::ForceDisableScoreSubmission = true;
+		Logger::Log(LogSeverity::Error, xorstr_("Failed to find Score::Submit!"));
+	}
 }
 
-void* Score::GetHook()
+void Score::FixSubmitHook()
 {
-	return submitHook;
-}
-
-void Score::SetOriginal(void* val)
-{
-	oSubmit = static_cast<fnSubmit>(val);
+	if (!submitHookFixed && z3Compiled)
+	{
+		oSubmit = reinterpret_cast<fnSubmit>(*reinterpret_cast<uintptr_t*>(z3Slot));
+		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(submitHook);
+		submitHookFixed = true;
+	}
 }
 
 void Score::Submit()
 {
+	if (!z3Compiled)
+	{
+		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(oSubmit);
+		z3Compiled = true;
+	}
+
 	oSubmit(scoreInstance);
 
 	Vanilla::RemoveRelocation(std::ref(scoreInstance));

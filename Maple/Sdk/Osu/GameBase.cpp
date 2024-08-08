@@ -55,12 +55,14 @@ void GameBase::Initialize()
 		else
 		{
 			ConfigManager::BypassFailed = true;
+			ConfigManager::ForceDisableScoreSubmission = true;
 			Logger::Log(LogSeverity::Error, xorstr_("Failed to find GameBase::Stopwatch!"));
 		}
 	}
 	else
 	{
 		ConfigManager::BypassFailed = true;
+		ConfigManager::ForceDisableScoreSubmission = true;
 		Logger::Log(LogSeverity::Error, xorstr_("High-resolution performance counter is not supported!"));
 	}
 	

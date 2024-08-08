@@ -14,6 +14,7 @@
 #include "../../Features/Relax/Relax.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../../Logging/Logger.h"
+#include "../Scoring/Score.h"
 
 int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 {
@@ -29,6 +30,17 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 		Relax::Initialize();
 		AimAssist::Initialize();
 		ReplayBot::Initialize();
+
+		Score::FixSubmitHook();
+
+		if (!modePtrChecked && !modePtr)
+		{
+			Logger::Log(LogSeverity::Error, xorstr_("Player::Mode was not found!"));
+
+			modePtrChecked = true;
+			ConfigManager::BypassFailed = true;
+			ConfigManager::ForceDisableScoreSubmission = true;
+		}
 	}
 
 	[[clang::musttail]] return oOnLoadComplete(instance, success);
@@ -40,11 +52,22 @@ void __fastcall Player::updateFlashlightHook(uintptr_t instance)
 		[[clang::musttail]] return oUpdateFlashlight(instance);
 }
 
+void __fastcall Player::handleScoreSubmissionHook(uintptr_t instance)
+{
+	ResetAnticheatFlag();
+
+	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 1 || ConfigManager::ForceDisableScoreSubmission)
+		return;
+
+	[[clang::musttail]] return oHandleScoreSubmission(instance);
+}
+
 void Player::Initialize()
 {
 	VIRTUALIZER_FISH_RED_START
 	
 	Memory::AddObject(xorstr_("Player::Instance"), xorstr_("80 3D ?? ?? ?? ?? 00 75 26 A1 ?? ?? ?? ?? 85 C0 74 0C"), 0xA, 1);
+	Memory::AddObject(xorstr_("Player::Mode"), xorstr_("E8 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 01 8B 0D ?? ?? ?? ?? 8B 15"), 0x14, 1);
 	Memory::AddObject(xorstr_("Player::Retrying"), xorstr_("8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00"), 0xA, 1);
 	Memory::AddObject(xorstr_("Player::Failed"), xorstr_("8B 15 ?? ?? ?? ?? 89 90 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 74 57 80 3D"), 0xE, 1);
 	Memory::AddObject(xorstr_("Player::Flag"), xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), 0x9, 1);
@@ -52,8 +75,9 @@ void Player::Initialize()
 	Memory::AddObject(xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
 	Memory::AddPatch(xorstr_("Player::GetAllowSubmissionVariableConditions_HackCheck"), xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
 
-	Memory::AddObject(xorstr_("Player::HandleScoreSubmission"), xorstr_("55 8B EC 57 56 53 83 EC 08 8B F1 80 BE ?? ?? ?? ?? 00 75 26 B9"));
+	Memory::AddObject(xorstr_("Player::HandleScoreSubmission"), xorstr_("55 8B EC 57 56 53 ?? ?? ?? 8B F1 80 BE ?? ?? ?? ?? 00 75 26"));
 	Memory::AddPatch(xorstr_("Player::HandleScoreSubmission_HackCheck"), xorstr_("Player::HandleScoreSubmission"), xorstr_("80 78 7C 00 0F 84"), 0x40F, 0x5, { 0x8D });
+	Memory::AddHook(xorstr_("Player::HandleScoreSubmission"), xorstr_("Player::HandleScoreSubmission"), reinterpret_cast<uintptr_t>(handleScoreSubmissionHook), reinterpret_cast<uintptr_t*>(&oHandleScoreSubmission));
 
 	Memory::AddObject(xorstr_("Player::Update"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 85 C0 74 05"));
 	Memory::AddPatch(xorstr_("Player::Update_AudioCheck"), xorstr_("Player::Update"), xorstr_("0F 85 ?? ?? ?? ?? 83 BE ?? ?? ?? ?? FF"), 0x1BCC, 0x1, { 0x8D });
@@ -102,9 +126,10 @@ bool Player::GetIsReplayMode()
 
 PlayModes Player::GetPlayMode()
 {
-	const uintptr_t instance = GetInstance();
+	if (!modePtr)
+		modePtr = reinterpret_cast<PlayModes*>(Memory::Objects[xorstr_("Player::Mode")]);
 
-	return instance ? *reinterpret_cast<PlayModes*>(instance + PLAY_MODE_OFFSET) : PlayModes::Osu;
+	return modePtr ? *modePtr : PlayModes::Osu;
 }
 
 bool Player::GetIsRetrying()

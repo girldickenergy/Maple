@@ -28,34 +28,6 @@ void Memory::jitCallback(uintptr_t address, unsigned int size)
 			Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved dynamically!"), objectName);
 			Objects[it->first] = scanResult;
 
-			// special handling for submit hook. holy fuck.
-			if (it->first == xorstr_("Player::HandleScoreSubmission"))
-			{
-				if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
-				{
-					if (!Milk::Get().DoCRCBypass(scanResult))
-					{
-						ConfigManager::ForceDisableScoreSubmission = true;
-						ConfigManager::BypassFailed = true;
-
-						Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), objectName);
-					}
-
-					void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
-					Score::SetOriginal(submit);
-
-					int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
-					*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
-
-					Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
-				}
-				else
-				{
-					Logger::Log(LogSeverity::Error, xorstr_("Failed to hook Score::Submit!"));
-					Security::CorruptMemory();
-				}
-			}
-
 			it = pendingObjects.erase(it);
 		}
 		else
@@ -152,34 +124,6 @@ void Memory::AddObject(const char* name, const char* pattern, unsigned int offse
 		Logger::Log(LogSeverity::Info, xorstr_("%s has been resolved!"), name);
 
 		Objects[name] = scanResult;
-
-		// special handling for submit hook. holy fuck.
-		if (name == xorstr_("Player::HandleScoreSubmission"))
-		{
-			if (const uintptr_t submitPatchLocation = VanillaPatternScanner::FindPatternInRange(xorstr_("8B 3D ?? ?? ?? ?? 8B CF 39 09 E8"), scanResult, 0x43E, 0xB))
-			{
-				if (!Milk::Get().DoCRCBypass(scanResult))
-				{
-					ConfigManager::ForceDisableScoreSubmission = true;
-					ConfigManager::BypassFailed = true;
-
-					Logger::Log(LogSeverity::Error, xorstr_("Failed to bypass CRC check for %s!"), name);
-				}
-
-				void* submit = reinterpret_cast<void*>(static_cast<intptr_t>(submitPatchLocation) + 0x4 + *reinterpret_cast<int*>(submitPatchLocation));
-				Score::SetOriginal(submit);
-
-				int relativeSubmitHook = reinterpret_cast<intptr_t>(Score::GetHook()) - static_cast<intptr_t>(submitPatchLocation) - 0x4;
-				*reinterpret_cast<int*>(submitPatchLocation) = relativeSubmitHook;
-
-				Logger::Log(LogSeverity::Info, xorstr_("Hooked Score::Submit!"));
-			}
-			else
-			{
-				Logger::Log(LogSeverity::Error, xorstr_("Failed to hook %s. Score::Submit!"));
-				Security::CorruptMemory();
-			}
-		}
 	}
 	else
 	{
