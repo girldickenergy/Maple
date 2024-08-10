@@ -54,6 +54,9 @@ void __fastcall Player::updateFlashlightHook(uintptr_t instance)
 
 void __fastcall Player::handleScoreSubmissionHook(uintptr_t instance)
 {
+	if (GetAnticheatFlag() != 0)
+		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), GetAnticheatFlag());
+
 	ResetAnticheatFlag();
 
 	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 1 || ConfigManager::ForceDisableScoreSubmission)
