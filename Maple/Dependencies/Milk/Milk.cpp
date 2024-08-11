@@ -161,21 +161,19 @@ uintptr_t Milk::findInfoSectionStruct()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("23 00 3D 00 7A 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00 07 00 00 00 23 3D 7A");
-    auto fallbackPattern = xorstr_("6F 73 75 21 2D 73 63 6F 72 65 62 75 72 67 72 2D 2D 2D 2D 2D 2D 2D 2D 2D");
+    auto pattern = xorstr_("6F 73 75 21 2D 73 63 6F 72 65 62 75 72 67 72 2D 2D 2D 2D 2D 2D 2D 2D 2D");
+    auto fallbackPattern = xorstr_("23 00 3D 00 7A 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00 07 00 00 00 23 3D 7A");
 
-    uintptr_t result = VanillaPatternScanner::FindPatternRW(pattern, 0xB4);
+    uintptr_t result = VanillaPatternScanner::FindPatternRW(pattern);
+    if (result)
+    {
+        result -= 0x368;
+        if (*reinterpret_cast<uint8_t*>(result - 0xB4) != '#')
+            result = 0u;
+    }
 
     if (!result)
-    {
-        result = VanillaPatternScanner::FindPatternRW(fallbackPattern);
-        if (result)
-        {
-            result -= 0x368;
-            if (*reinterpret_cast<uint8_t*>(result - 0xB4) != '#')
-                result = 0u;
-        }
-    }
+        result = VanillaPatternScanner::FindPatternRW(fallbackPattern, 0xB4);
 
     VIRTUALIZER_LION_BLACK_END
 
