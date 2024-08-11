@@ -30,6 +30,9 @@ std::string ReplayBot::GetReplayString()
 	if (!replayLoaded)
 		return "none";
 
+	if (currentReplay.ReplayFrames.empty())
+		return "This replay contains no data!";
+
 	std::string rulesetString;
 	switch (currentReplay.PlayMode)
 	{
