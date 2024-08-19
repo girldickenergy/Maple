@@ -2,6 +2,7 @@
 
 #define NOMINMAX
 
+#include <numeric>
 #include <random>
 
 #include "VirtualizerSDK.h"
@@ -161,6 +162,7 @@ void HitObjectManager::RestoreVisuals()
 void HitObjectManager::CacheHitObjects()
 {
 	hitObjects.clear();
+	densities.clear();
 	
 	auto isAddressValid = [](uintptr_t address)
 	{
@@ -289,11 +291,38 @@ void HitObjectManager::CacheHitObjects()
 		}
 		else hitObjects.emplace_back(type, startTime, endTime, position, position, segmentCount, spatialLength);
 	}
+
+	std::vector<double> counts;
+	for (int i = 0; i < hitObjectsCount; i++)
+	{
+		int currentTime = hitObjects[i].StartTime;
+		int startTime = currentTime - DENSITY_TIME_WINDOW / 2;
+		int endTime = currentTime + DENSITY_TIME_WINDOW / 2;
+
+		const int count = std::ranges::count_if(hitObjects, [&](const HitObject& h)
+		{
+			return h.StartTime >= startTime && h.StartTime <= endTime;
+		});
+
+		counts.push_back(static_cast<double>(count) / (static_cast<double>(DENSITY_TIME_WINDOW) / 1000));
+	}
+
+	auto maxCount = std::ranges::max(counts);
+	for (const double count : counts)
+		densities.push_back(maxCount > 0 ? count / maxCount : 0);
 }
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
 	return hitObjects[(Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (index > (int)(hitObjects.size() / 2) ? (int)(hitObjects.size() / 2) : index) : index];
+}
+
+double HitObjectManager::GetDensity(int index)
+{
+	if (index >= densities.size())
+		return 0.0;
+
+	return densities[index];
 }
 
 uintptr_t HitObjectManager::GetInstance()

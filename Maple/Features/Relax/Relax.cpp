@@ -48,8 +48,35 @@ void Relax::moveToNextHitObject(int skipCount)
 
 void Relax::updateTimings()
 {
-	currentHitOffset = normalDistribution(gen) * (((-0.0007 - ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate) / -3.9955) / 2.3);
-	currentHoldTime = ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2) : (ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime + (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2)) + (normalDistribution(gen) * ((currentHitObject.IsType(HitObjectType::Normal) ? (ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2 : (ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2) / 2.5))) * rateMultiplier;
+	const double density = HitObjectManager::GetDensity(currentHitObjectIndex);
+	const int noise = std::round((noiseSignDistribution(gen) * 2 - 1) * 5 * density);
+
+	double hitOffsetScale = 0.4 * (1.0 - std::pow(1.0 - density, 6.0 * density)) + 0.6;
+	double holdTimeScale = 0.2 * (std::pow(1.0 - density, 8)) + 1.0;
+	printf("hitOffsetScale: %f, density: %f\n", hitOffsetScale, density);
+
+	currentHitOffset = normalDistribution(gen) * hitOffsetScale * ((ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate / 3.0) / 3.0) + noise;
+
+	int stddev = std::abs(ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2;
+	int mean = (std::min)(ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime, ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime) + stddev;
+
+	int s_stddev = std::abs(ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime) / 2;
+	int s_mean = (std::min)(ConfigManager::CurrentConfig.Relax.Timing.MinimumSliderHoldTime, ConfigManager::CurrentConfig.Relax.Timing.MaximumSliderHoldTime) + stddev;
+
+	if (currentHitObject.IsType(HitObjectType::Slider))
+	{
+		if (density < 0.4)
+			currentHoldTime = (normalDistribution(gen) * holdTimeScale * (s_stddev / 3.0) + s_mean + noise) * rateMultiplier;
+		else
+			currentHoldTime = (normalDistribution(gen) * holdTimeScale * 15 + 20 + noise) * rateMultiplier;
+	}
+	else
+	{
+		if (density < 0.4)
+			currentHoldTime = (normalDistribution(gen) * holdTimeScale * ((stddev + stddev * 0.2) / 3.0) + (mean + mean * 0.5) + noise) * rateMultiplier;
+		else
+			currentHoldTime = (normalDistribution(gen) * holdTimeScale * (stddev / 3.0) + mean + noise) * rateMultiplier;
+	}
 }
 
 void Relax::updateAlternation()
