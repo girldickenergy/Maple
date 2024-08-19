@@ -38,7 +38,7 @@ struct v10fix
 
 struct infoSectionStruct
 {
-    uint8_t padding[0x2B4];
+    uint8_t padding[0x2F8];
     std::vector<float> rates;
     std::vector<uint32_t> spriteCollectionCounts;
     uint8_t padding2[0x9C];

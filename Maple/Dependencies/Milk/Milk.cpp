@@ -161,23 +161,22 @@ uintptr_t Milk::findInfoSectionStruct()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("6F 73 75 21 2D 73 63 6F 72 65 62 75 72 67 72 2D 2D 2D 2D 2D 2D 2D 2D 2D");
-    auto fallbackPattern = xorstr_("23 00 3D 00 7A 00 00 00 00 00 00 00 00 00 00 00 03 00 00 00 07 00 00 00 23 3D 7A");
+    auto pattern = xorstr_("A1 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC CC CC 8B 54 24");
 
-    uintptr_t result = VanillaPatternScanner::FindPatternRW(pattern);
-    if (result)
+    for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
-        result -= 0x368;
-        if (*reinterpret_cast<uint8_t*>(result - 0xB4) != '#')
-            result = 0u;
-    }
+        if (region.BaseAddress < _authStubBaseAddress)
+            continue;
 
-    if (!result)
-        result = VanillaPatternScanner::FindPatternRW(fallbackPattern, 0xB4);
+        uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize);
+
+        if (result > _authStubBaseAddress)
+            return *reinterpret_cast<uintptr_t*>(result + 0x1);
+    }
 
     VIRTUALIZER_LION_BLACK_END
 
-    return result;
+    return 0;
 }
 
 void Milk::doCRCBypass(uintptr_t address)
@@ -318,7 +317,7 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] ISS != 0x00000000"));
 
-    _infoSection = reinterpret_cast<infoSectionStruct*>(infoSectionPtr);
+    _infoSection = *reinterpret_cast<infoSectionStruct**>(infoSectionPtr);
 
     if (_infoSection->o != 'o' || _infoSection->s != 's' || _infoSection->u != 'u')
         return false;
