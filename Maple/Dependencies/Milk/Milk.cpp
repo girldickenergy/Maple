@@ -205,8 +205,8 @@ void Milk::doCRCBypass(uintptr_t address)
             memcpy(reinterpret_cast<void*>(copiedFunc), reinterpret_cast<void*>(functionPointer), functionSize);
             *reinterpret_cast<uintptr_t*>(functionPointerStruct) = encryptValue(copiedFunc, *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
 
-            auto copiedMethodInfo = reinterpret_cast<uintptr_t>(malloc(0x18));
-            memcpy(reinterpret_cast<void*>(copiedMethodInfo), reinterpret_cast<void*>(methodInfo), 0x18);
+            auto copiedMethodInfo = reinterpret_cast<uintptr_t>(malloc(0xC));
+            memcpy(reinterpret_cast<void*>(copiedMethodInfo), reinterpret_cast<void*>(methodInfo), 0xC);
             *reinterpret_cast<uintptr_t*>(copiedMethodInfo + 0x8) = copiedFunc;
             *reinterpret_cast<uintptr_t*>(methodInfoStruct) = encryptValue(copiedMethodInfo, *reinterpret_cast<uintptr_t*>(methodInfoStruct + 0x4));
 
