@@ -128,7 +128,7 @@ uintptr_t Milk::findCRCMap()
     uintptr_t ret;
     VIRTUALIZER_LION_BLACK_START
 
-    ret = *reinterpret_cast<uintptr_t*>(_authStubBaseAddress + 0x1);
+    ret = *reinterpret_cast<uintptr_t*>(_authStubBaseAddress + 0x4E);
 
     VIRTUALIZER_LION_BLACK_END
 
@@ -161,7 +161,7 @@ uintptr_t Milk::findInfoSectionStruct()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("A1 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC CC CC 8B 54 24");
+    auto pattern = xorstr_("A1 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC CC CC 56 6A 00");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
@@ -191,13 +191,13 @@ void Milk::doCRCBypass(uintptr_t address)
 
     for (const auto& pair : *_crcMap)
     {
-        auto functionPointerStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x48AB2731];
-        auto functionSizeStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x13E76EB2];
-        auto functionNameStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x7ce737c8];
+        auto functionPointerStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x36ef87db];
+        auto functionSizeStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x4f233a8e];
+        auto methodInfoStruct = (*pair.second)[reinterpret_cast<uintptr_t>(pair.second) ^ 0x53ff6340];
 
         auto functionPointer = decryptValue(*reinterpret_cast<uintptr_t*>(functionPointerStruct), *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
         auto functionSize = decryptValue(*reinterpret_cast<uintptr_t*>(functionSizeStruct), *reinterpret_cast<uintptr_t*>(functionSizeStruct + 0x4));
-        auto functionName = decryptValue(*reinterpret_cast<uintptr_t*>(functionNameStruct), *reinterpret_cast<uintptr_t*>(functionNameStruct + 0x4));
+        auto methodInfo = decryptValue(*reinterpret_cast<uintptr_t*>(methodInfoStruct), *reinterpret_cast<uintptr_t*>(methodInfoStruct + 0x4));
 
         if (address >= functionPointer && address <= functionPointer + functionSize)
         {
@@ -205,16 +205,10 @@ void Milk::doCRCBypass(uintptr_t address)
             memcpy(reinterpret_cast<void*>(copiedFunc), reinterpret_cast<void*>(functionPointer), functionSize);
             *reinterpret_cast<uintptr_t*>(functionPointerStruct) = encryptValue(copiedFunc, *reinterpret_cast<uintptr_t*>(functionPointerStruct + 0x4));
 
-            size_t nameLength = strlen(reinterpret_cast<char*>(functionName));
-            auto corruptedName = reinterpret_cast<uintptr_t>(malloc(nameLength + 1));
-            memset(reinterpret_cast<void*>(corruptedName), 0x0, nameLength + 1);
-
-            if (nameLength == 1)
-                *reinterpret_cast<uint8_t*>(corruptedName) = *reinterpret_cast<uint8_t*>(corruptedName) ^ 0x13;
-            else if (nameLength >= 2)
-                *reinterpret_cast<uint8_t*>(corruptedName + nameLength / 2) = 0x0;
-
-            *reinterpret_cast<uintptr_t*>(functionNameStruct) = encryptValue(corruptedName, *reinterpret_cast<uintptr_t*>(functionNameStruct + 0x4));
+            auto copiedMethodInfo = reinterpret_cast<uintptr_t>(malloc(0x18));
+            memcpy(reinterpret_cast<void*>(copiedMethodInfo), reinterpret_cast<void*>(methodInfo), 0x18);
+            *reinterpret_cast<uintptr_t*>(copiedMethodInfo + 0x8) = copiedFunc;
+            *reinterpret_cast<uintptr_t*>(methodInfoStruct) = encryptValue(copiedMethodInfo, *reinterpret_cast<uintptr_t*>(methodInfoStruct + 0x4));
 
             _bypassed.emplace_back(functionPointer, functionSize);
 
