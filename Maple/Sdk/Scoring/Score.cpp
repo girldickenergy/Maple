@@ -22,6 +22,13 @@ void __fastcall Score::submitHook(uintptr_t instance)
 	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
 		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier());
 
+	if (Milk::Get().IsBroken())
+	{
+		ConfigManager::BypassFailed = true;
+		ConfigManager::ForceDisableScoreSubmission = true;
+		Logger::Log(LogSeverity::Error, xorstr_("rv.empty() || sccv.empty()!"));
+	}
+
 	if (Player::GetAnticheatFlag() != 0)
 		Logger::Log(LogSeverity::Warning, xorstr_("AC flag is not zero! Flag -> %d"), Player::GetAnticheatFlag());
 

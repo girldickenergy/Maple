@@ -267,6 +267,11 @@ void Milk::AdjustPollingVectorsToRate(double rate)
     VIRTUALIZER_TIGER_WHITE_END
 }
 
+bool Milk::IsBroken()
+{
+    return _infoSection->rates.empty() || _infoSection->spriteCollectionCounts.empty();
+}
+
 bool Milk::Prepare()
 {
     VIRTUALIZER_LION_BLACK_START

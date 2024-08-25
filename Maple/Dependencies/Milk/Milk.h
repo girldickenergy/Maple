@@ -98,6 +98,7 @@ public:
     void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
     void SetSpriteCollectionCounts(uint32_t value);
     void AdjustPollingVectorsToRate(double rate);
+    bool IsBroken();
 
     static someBassFuncRet* __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };
