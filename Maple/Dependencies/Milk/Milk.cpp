@@ -10,6 +10,7 @@
 #include <VirtualizerSDK.h>
 
 #include "../../SDK/Audio/AudioEngine.h"
+#include "../../SDK/Player/Player.h"
 #include "crc.h"
 
 #pragma clang optimize off
@@ -269,7 +270,7 @@ void Milk::AdjustPollingVectorsToRate(double rate)
 
 bool Milk::IsBroken()
 {
-    return _infoSection->rates.empty() || _infoSection->spriteCollectionCounts.empty();
+    return _infoSection->rates.empty() || (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _infoSection->spriteCollectionCounts.empty());
 }
 
 bool Milk::Prepare()
