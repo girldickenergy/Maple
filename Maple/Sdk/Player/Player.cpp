@@ -73,7 +73,7 @@ void Player::Initialize()
 	Memory::AddObject(xorstr_("Player::Mode"), xorstr_("C6 05 ?? ?? ?? ?? 01 8B 0D ?? ?? ?? ?? 8B 15"), 0xF, 1);
 	Memory::AddObject(xorstr_("Player::Retrying"), xorstr_("8B CE FF 15 ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00"), 0xA, 1);
 	Memory::AddObject(xorstr_("Player::Failed"), xorstr_("8B 15 ?? ?? ?? ?? 89 90 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 74 57 80 3D"), 0xE, 1);
-	Memory::AddObject(xorstr_("Player::Flag"), xorstr_("E8 ?? ?? ?? ?? 33 D2 89 15 ?? ?? ?? ?? 88 15 ?? ?? ?? ?? B9"), 0x9, 1);
+	Memory::AddObject(xorstr_("Player::Flag"), xorstr_("C7 86 ?? ?? ?? ?? ?? ?? ?? ?? F7 05"), 0xC, 1);
 
 	Memory::AddObject(xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
 	Memory::AddPatch(xorstr_("Player::GetAllowSubmissionVariableConditions_HackCheck"), xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
