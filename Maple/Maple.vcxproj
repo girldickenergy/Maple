@@ -257,6 +257,7 @@
     <ClCompile Include="Features\AimAssist\AimAssist.cpp" />
     <ClCompile Include="Features\Enlighten\Enlighten.cpp" />
     <ClCompile Include="Features\Relax\Relax.cpp" />
+    <ClCompile Include="Features\Relax\SpeedDifficultyEvaluator.cpp" />
     <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
@@ -590,6 +591,7 @@
     <ClInclude Include="Features\AimAssist\AimAssist.h" />
     <ClInclude Include="Features\Enlighten\Enlighten.h" />
     <ClInclude Include="Features\Relax\Relax.h" />
+    <ClInclude Include="Features\Relax\SpeedDifficultyEvaluator.h" />
     <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />

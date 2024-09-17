@@ -212,6 +212,9 @@
     <ClCompile Include="Configuration\ConfigManager.cpp">
       <Filter>Configuration</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Relax\SpeedDifficultyEvaluator.cpp">
+      <Filter>Features\Relax</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1463,6 +1466,9 @@
     </ClInclude>
     <ClInclude Include="Dependencies\Encryption\EncryptedUShortString.h">
       <Filter>Dependencies\Encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Relax\SpeedDifficultyEvaluator.h">
+      <Filter>Features\Relax</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
