@@ -14,7 +14,7 @@
 #include "Utilities/MemoryUtilities.h"
 #include "PatternScanning/VanillaPatternScanner.h"
 
-long long __fastcall GameBase::GetRawElapsedTicksHook(Stopwatch* instance)
+double __fastcall GameBase::GetElapsedMillisecondsPreciseHook(Stopwatch* instance)
 {
 	LARGE_INTEGER currentTicks;
 	QueryPerformanceCounter(&currentTicks);
@@ -27,16 +27,16 @@ long long __fastcall GameBase::GetRawElapsedTicksHook(Stopwatch* instance)
 			stopwatchPrevious = currentTicks.QuadPart;
 			stopwatchInitialized = true;
 
-			return stopwatchCurrent;
+			return static_cast<double>(stopwatchCurrent) / 10000000.0 * 1000.0;
 		}
 
 		stopwatchCurrent += static_cast<long long>(static_cast<double>(currentTicks.QuadPart - stopwatchPrevious) / tickrate);
 		stopwatchPrevious = currentTicks.QuadPart;
 
-		return stopwatchCurrent;
+		return static_cast<double>(stopwatchCurrent) / 10000000.0 * 1000.0;
 	}
 
-	return instance->IsRunning ? currentTicks.QuadPart - instance->StartTimeStamp : instance->Elapsed;
+	return static_cast<double>(instance->IsRunning ? currentTicks.QuadPart - instance->StartTimeStamp : instance->Elapsed) / 10000000.0 * 1000.0;
 }
 
 void GameBase::Initialize()
@@ -49,8 +49,8 @@ void GameBase::Initialize()
 		stopwatchPtr = reinterpret_cast<Stopwatch**>(VanillaPatternScanner::FindPattern(xorstr_("F9 8B 0D ?? ?? ?? ?? BA ?? ?? ?? ?? 39 09 E8 ?? ?? ?? ?? 8B 0D"), 0x15, 1));
 		if (stopwatchPtr)
 		{
-			Memory::AddObject(xorstr_("Stopwatch::GetRawElapsedTicks"), xorstr_("83 EC 08 38 01 E8 ?? ?? ?? ?? 89 04 24"), 0x6, 1, true);
-			Memory::AddHook(xorstr_("Stopwatch::GetRawElapsedTicks"), xorstr_("Stopwatch::GetRawElapsedTicks"), reinterpret_cast<uintptr_t>(GetRawElapsedTicksHook), reinterpret_cast<uintptr_t*>(&oGetRawElapsedTicks));
+			Memory::AddObject(xorstr_("Extensions::GetElapsedMillisecondsPrecise"), xorstr_("83 EC 08 38 01 E8 ?? ?? ?? ?? 89 04 24"));
+			Memory::AddHook(xorstr_("Extensions::GetElapsedMillisecondsPrecise"), xorstr_("Extensions::GetElapsedMillisecondsPrecise"), reinterpret_cast<uintptr_t>(GetElapsedMillisecondsPreciseHook), reinterpret_cast<uintptr_t*>(&oGetElapsedMillisecondsPrecise));
 		}
 		else
 		{

@@ -178,33 +178,33 @@ void InitializeMaple()
 void WaitForCriticalSDKToInitialize()
 {
     VIRTUALIZER_FISH_RED_START
-    Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
-    
+        Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
+
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
-    uintptr_t getRawElapsedTicks = Memory::Objects[xorstr_("Stopwatch::GetRawElapsedTicks")];
+    uintptr_t getElapsedMillisecondsPrecise = Memory::Objects[xorstr_("Extensions::GetElapsedMillisecondsPrecise")];
 
     VIRTUALIZER_FISH_RED_END
-    
-    unsigned int retries = 0;
+
+        unsigned int retries = 0;
 #ifdef NO_BYPASS
     while (!clientHash || !updateTiming/*||!submit*/)
 #else
-    while (!clientHash || !getRawElapsedTicks)
+    while (!clientHash || !getElapsedMillisecondsPrecise)
 #endif
     {
         VIRTUALIZER_FISH_RED_START
-        
-        if (retries >= 30)
-        {
-            Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
 
-            Security::CorruptMemory();
-        }
+            if (retries >= 30)
+            {
+                Logger::Log(LogSeverity::Error, xorstr_("Maple failed to initialize with code %i"), 0xdeadbeef);
+
+                Security::CorruptMemory();
+            }
 
         retries++;
 
         clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
-        getRawElapsedTicks = Memory::Objects[xorstr_("Stopwatch::GetRawElapsedTicks")];
+        getElapsedMillisecondsPrecise = Memory::Objects[xorstr_("Extensions::GetElapsedMillisecondsPrecise")];
 
         Sleep(1000);
 

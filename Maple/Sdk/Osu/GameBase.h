@@ -20,9 +20,9 @@ class GameBase
 	static inline long long stopwatchCurrent = 0;
 	static inline long long stopwatchPrevious = 0;
 
-	typedef long long(__fastcall* fnGetRawElapsedTicks)(Stopwatch* instance);
-	static inline fnGetRawElapsedTicks oGetRawElapsedTicks;
-	static long long __fastcall GetRawElapsedTicksHook(Stopwatch* instance);
+	typedef double(__fastcall* fnGetElapsedMillisecondsPrecise)(Stopwatch* instance);
+	static inline fnGetElapsedMillisecondsPrecise oGetElapsedMillisecondsPrecise;
+	static double __fastcall GetElapsedMillisecondsPreciseHook(Stopwatch* instance);
 
 	static inline double tickrate = 1.0;
 public:
