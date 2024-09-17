@@ -33,14 +33,8 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 
 		Score::FixSubmitHook();
 
-		if (!modePtrChecked && !modePtr)
-		{
-			Logger::Log(LogSeverity::Error, xorstr_("Player::Mode was not found!"));
-
-			modePtrChecked = true;
-			ConfigManager::BypassFailed = true;
-			ConfigManager::ForceDisableScoreSubmission = true;
-		}
+		if (!criticalFieldsChecked)
+			checkCriticalFieldInitialization();
 	}
 
 	[[clang::musttail]] return oOnLoadComplete(instance, success);
@@ -63,6 +57,18 @@ void __fastcall Player::handleScoreSubmissionHook(uintptr_t instance)
 		return;
 
 	[[clang::musttail]] return oHandleScoreSubmission(instance);
+}
+
+void Player::checkCriticalFieldInitialization()
+{
+	if (!Memory::Objects[xorstr_("Player::Mode")] || !Memory::Objects[xorstr_("Player::Flag")])
+	{
+		Logger::Log(LogSeverity::Error, xorstr_("Critical Player field(s) was (were) not found!"));
+
+		criticalFieldsChecked = true;
+		ConfigManager::BypassFailed = true;
+		ConfigManager::ForceDisableScoreSubmission = true;
+	}
 }
 
 void Player::Initialize()
@@ -129,8 +135,7 @@ bool Player::GetIsReplayMode()
 
 PlayModes Player::GetPlayMode()
 {
-	if (!modePtr)
-		modePtr = reinterpret_cast<PlayModes*>(Memory::Objects[xorstr_("Player::Mode")]);
+	auto modePtr = reinterpret_cast<PlayModes*>(Memory::Objects[xorstr_("Player::Mode")]);
 
 	return modePtr ? *modePtr : PlayModes::Osu;
 }

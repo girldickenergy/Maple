@@ -21,8 +21,8 @@ class Player
 	static inline fnHandleScoreSubmission oHandleScoreSubmission;
 	static void __fastcall handleScoreSubmissionHook(uintptr_t instance);
 
-	static inline bool modePtrChecked = false;
-	static inline PlayModes* modePtr = nullptr;
+	static inline bool criticalFieldsChecked = false;
+	static void checkCriticalFieldInitialization();
 public:
 	static void Initialize();
 
