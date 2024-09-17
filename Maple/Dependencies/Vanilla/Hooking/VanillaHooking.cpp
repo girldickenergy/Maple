@@ -54,14 +54,14 @@ void VanillaHooking::relocateRelativeAddresses(uintptr_t oldLocation, uintptr_t 
 	while (currentLength != length)
 	{
 		const unsigned int instructionLength = hde32_disasm(reinterpret_cast<void*>(newLocation + currentLength), &hde);
-		if (hde.opcode == 0xE9) //relative jmp
+		if (hde.opcode == 0xE9 || hde.opcode == 0xE8) //relative jmp/call
 		{
 			const intptr_t destinationAddress = static_cast<intptr_t>(oldLocation) + currentLength + instructionLength + *reinterpret_cast<int*>(newLocation + currentLength + 0x1);
 			const intptr_t relocatedDestinationAddress = destinationAddress - (static_cast<intptr_t>(newLocation) + currentLength + instructionLength);
 
 			*reinterpret_cast<intptr_t*>(newLocation + currentLength + 0x1) = relocatedDestinationAddress;
 		}
-		//todo: add support for call instruction and other jmp variants
+		//todo: add support for other jmp and call variants
 
 		currentLength += instructionLength;
 	}
