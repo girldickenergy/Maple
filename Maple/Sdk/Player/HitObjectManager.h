@@ -8,9 +8,6 @@
 class HitObjectManager
 {
 	static inline std::vector<HitObject> hitObjects;
-	static inline std::vector<double> densities;
-
-	static inline constexpr int DENSITY_TIME_WINDOW = 1000;
 
 	static inline constexpr int HITOBJECTMANAGER_INSTANCE_OFFSET = 0x48;
 
@@ -72,7 +69,6 @@ public:
 
 	static void CacheHitObjects();
 	static HitObject GetHitObject(int index);
-	static double GetDensity(int index);
 
 	static uintptr_t GetInstance();
 	static int GetPreEmpt(bool original = false);

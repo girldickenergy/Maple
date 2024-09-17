@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include "Relax.h"
 
+#include "SpeedDifficultyEvaluator.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../../Utilities/Security/Security.h"
 #include "../../SDK/Mods/ModManager.h"
@@ -48,14 +49,14 @@ void Relax::moveToNextHitObject(int skipCount)
 
 void Relax::updateTimings()
 {
-	const double density = HitObjectManager::GetDensity(currentHitObjectIndex);
-	const int noise = std::round((noiseSignDistribution(gen) * 2 - 1) * 5 * density);
+	const double strain = SpeedDifficultyEvaluator::NormalizedStrainAt(currentHitObjectIndex);
+	const int noise = std::round((noiseSignDistribution(gen) * 2 - 1) * 2 * strain);
 
-	double hitOffsetScale = 0.4 * (1.0 - std::pow(1.0 - density, 6.0 * density)) + 0.6;
-	double holdTimeScale = 0.2 * (std::pow(1.0 - density, 8)) + 1.0;
-	printf("hitOffsetScale: %f, density: %f\n", hitOffsetScale, density);
+	double hitOffsetScale = 0.5 * (1.0 - std::pow(1.0 - strain, 2.0 * strain)) + 0.5;
+	double holdTimeScale = 1;// 0.2 * (std::pow(1.0 - strain, 8)) + 1.0;
+	printf("hitOffsetScale: %f, strain: %f, difficulty: %f\n", hitOffsetScale, strain, SpeedDifficultyEvaluator::NormalizedDifficultyAt(currentHitObjectIndex));
 
-	currentHitOffset = normalDistribution(gen) * hitOffsetScale * ((ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate / 3.0) / 3.0) + noise;
+	currentHitOffset = normalDistribution(gen) * hitOffsetScale * (((-0.0007 - ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate) / -3.9955) / 2.1) + noise;
 
 	int stddev = std::abs(ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2;
 	int mean = (std::min)(ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime, ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime) + stddev;
@@ -65,14 +66,14 @@ void Relax::updateTimings()
 
 	if (currentHitObject.IsType(HitObjectType::Slider))
 	{
-		if (density < 0.4)
+		if (strain < 0.4)
 			currentHoldTime = (normalDistribution(gen) * holdTimeScale * (s_stddev / 3.0) + s_mean + noise) * rateMultiplier;
 		else
 			currentHoldTime = (normalDistribution(gen) * holdTimeScale * 15 + 20 + noise) * rateMultiplier;
 	}
 	else
 	{
-		if (density < 0.4)
+		if (strain < 0.4)
 			currentHoldTime = (normalDistribution(gen) * holdTimeScale * ((stddev + stddev * 0.2) / 3.0) + (mean + mean * 0.5) + noise) * rateMultiplier;
 		else
 			currentHoldTime = (normalDistribution(gen) * holdTimeScale * (stddev / 3.0) + mean + noise) * rateMultiplier;
@@ -242,6 +243,8 @@ void Relax::Initialize()
 	}
 	for (int i = 0; i < 100; i++)
 		std::cout << urarr[i] / 10000.0 << std::endl;*/
+
+	SpeedDifficultyEvaluator::Initialize();
 
 	rateMultiplier = ModManager::GetModPlaybackRate() / 100.0;
 
