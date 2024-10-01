@@ -4,26 +4,8 @@
 #include "Math/Vector2.h"
 #include "Osu/OsuModes.h"
 
-struct __attribute__((__packed__)) Stopwatch
-{
-	uintptr_t VTable;
-	long long Elapsed;
-	long long StartTimeStamp;
-	bool IsRunning;
-};
-
 class GameBase
 {
-	static inline Stopwatch** stopwatchPtr = 0u;
-
-	static inline bool stopwatchInitialized = false;
-	static inline long long stopwatchCurrent = 0;
-	static inline long long stopwatchPrevious = 0;
-
-	typedef double(__fastcall* fnGetElapsedMillisecondsPrecise)(Stopwatch* instance);
-	static inline fnGetElapsedMillisecondsPrecise oGetElapsedMillisecondsPrecise;
-	static double __fastcall GetElapsedMillisecondsPreciseHook(Stopwatch* instance);
-
 	static inline double tickrate = 1.0;
 public:
 	static void Initialize();

@@ -97,7 +97,8 @@ public:
     bool DoCRCBypass(uintptr_t address);
     void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
     void SetSpriteCollectionCounts(uint32_t value);
-    void AdjustPollingVectorsToRate(double rate);
+    void AdjustRate(double rateMultiplier);
+    void AdjustPollingVectorsToRate(double rateMultiplier);
     bool IsBroken();
 
     static someBassFuncRet* __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);

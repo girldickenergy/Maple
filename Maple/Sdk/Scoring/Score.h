@@ -4,6 +4,9 @@
 
 class Score
 {
+	static inline constexpr int STARTTIME_OFFSET = 0x74;
+	static void spoofPlayDuration();
+
 	static inline uintptr_t scoreInstance;
 	static inline uintptr_t z3Slot;
 	static inline bool z3Compiled = false;

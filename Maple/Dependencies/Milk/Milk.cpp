@@ -255,12 +255,18 @@ void Milk::SetSpriteCollectionCounts(uint32_t value)
     VIRTUALIZER_TIGER_WHITE_END
 }
 
-void Milk::AdjustPollingVectorsToRate(double rate)
+void Milk::AdjustRate(double rateMultiplier)
+{
+    for (float& rate : _infoSection->rates)
+        rate /= rateMultiplier;
+}
+
+void Milk::AdjustPollingVectorsToRate(double rateMultiplier)
 {
     VIRTUALIZER_TIGER_WHITE_START
 
-    size_t ratesRequiredSize = _infoSection->rates.size() * rate;
-    size_t spriteCollectionCountsRequiredSize = _infoSection->spriteCollectionCounts.size() * rate;
+    size_t ratesRequiredSize = _infoSection->rates.size() * rateMultiplier;
+    size_t spriteCollectionCountsRequiredSize = _infoSection->spriteCollectionCounts.size() * rateMultiplier;
 
     _infoSection->rates.resize(ratesRequiredSize, _infoSection->rates[0]);
     _infoSection->spriteCollectionCounts.resize(spriteCollectionCountsRequiredSize, _infoSection->spriteCollectionCounts[0]);

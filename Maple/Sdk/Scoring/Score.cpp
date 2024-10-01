@@ -11,21 +11,37 @@
 #include "../../Logging/Logger.h"
 #include "../Mods/ModManager.h"
 #include "PatternScanning/VanillaPatternScanner.h"
+#include "../Osu/GameBase.h"
+
+void Score::spoofPlayDuration()
+{
+	const int playStartTime = *reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET);
+	const int playEndTime = GameBase::GetTime();
+	const int playDuration = playEndTime - playStartTime;
+	const int scaledDuration = static_cast<int>(playDuration * Timewarp::GetRateMultiplier());
+	*reinterpret_cast<int*>(scoreInstance + STARTTIME_OFFSET) = playEndTime - scaledDuration;
+}
 
 void __fastcall Score::submitHook(uintptr_t instance)
 {
 	scoreInstance = instance;
 
+	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
+	{
+		spoofPlayDuration();
+
+		Milk::Get().AdjustRate(Timewarp::GetRateMultiplier());
+		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier());
+	}
+
 	if (Player::GetPlayMode() == PlayModes::Osu && ModManager::CheckActive(Mods::Hidden) && ConfigManager::CurrentConfig.Visuals.Removers.HiddenRemoverEnabled)
 		Milk::Get().SetSpriteCollectionCounts(3);
-
-	if (ConfigManager::CurrentConfig.Timewarp.Enabled)
-		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier());
 
 	if (Milk::Get().IsBroken())
 	{
 		ConfigManager::BypassFailed = true;
 		ConfigManager::ForceDisableScoreSubmission = true;
+
 		Logger::Log(LogSeverity::Error, xorstr_("rv.empty() || sccv.empty()!"));
 	}
 

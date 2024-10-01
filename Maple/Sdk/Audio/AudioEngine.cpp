@@ -17,9 +17,9 @@ void __stdcall AudioEngine::setCurrentPlaybackRateHook(double rate)
 	{
 		rate = Timewarp::GetRate();
 
-		GameBase::SetTickrate(1.0 * (1.0 / Timewarp::GetRateMultiplier()));
+		GameBase::SetTickrate(1000.0 / 60.0 * (1.0 / Timewarp::GetRateMultiplier()));
 	}
-	else GameBase::SetTickrate(1.0);
+	else GameBase::SetTickrate(1000.0 / 60.0);
 
 	[[clang::musttail]] return oSetCurrentPlaybackRate(rate);
 }

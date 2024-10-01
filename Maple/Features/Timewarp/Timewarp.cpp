@@ -7,8 +7,8 @@
 
 void Timewarp::Initialize()
 {
-    //if (Player::GetPlayMode() == PlayModes::CatchTheBeat)
-	//	Ruleset::SetCatcherSpeed(static_cast<float>(ConfigManager::CurrentConfig.Timewarp.Enabled ? GetRate() : ModManager::GetModPlaybackRate()) / 100.f);
+    if (Player::GetPlayMode() == PlayModes::CatchTheBeat)
+		Ruleset::SetCatcherSpeed(static_cast<float>(ConfigManager::CurrentConfig.Timewarp.Enabled ? GetRate() : ModManager::GetModPlaybackRate()) / 100.f);
 }
 
 double Timewarp::GetRate()
