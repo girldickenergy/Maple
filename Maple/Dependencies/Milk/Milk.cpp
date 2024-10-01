@@ -162,7 +162,7 @@ uintptr_t Milk::findInfoSectionStruct()
 {
     VIRTUALIZER_LION_BLACK_START
 
-    auto pattern = xorstr_("A1 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC CC CC 56 6A 00");
+    auto pattern = xorstr_("0C 89 35 ?? ?? ?? ?? 8B CE E8");
 
     for (const auto& region : *_milkMemory.GetMemoryRegions())
     {
@@ -172,7 +172,7 @@ uintptr_t Milk::findInfoSectionStruct()
         uintptr_t result = VanillaPatternScanner::FindPatternInRange(pattern, _authStubBaseAddress, _authStubSize);
 
         if (result > _authStubBaseAddress)
-            return *reinterpret_cast<uintptr_t*>(result + 0x1);
+            return *reinterpret_cast<uintptr_t*>(result + 0x3);
     }
 
     VIRTUALIZER_LION_BLACK_END
