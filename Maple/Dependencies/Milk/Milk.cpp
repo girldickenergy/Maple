@@ -255,10 +255,10 @@ void Milk::SetSpriteCollectionCounts(uint32_t value)
     VIRTUALIZER_TIGER_WHITE_END
 }
 
-void Milk::AdjustRate(double rateMultiplier)
+void Milk::AdjustRate(double rateMultiplier, bool isNoMod)
 {
     for (float& rate : _infoSection->rates)
-        rate /= rateMultiplier;
+        rate = isNoMod ? 1.f : rate / rateMultiplier;
 }
 
 void Milk::AdjustPollingVectorsToRate(double rateMultiplier)

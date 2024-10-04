@@ -30,7 +30,7 @@ void __fastcall Score::submitHook(uintptr_t instance)
 	{
 		spoofPlayDuration();
 
-		Milk::Get().AdjustRate(Timewarp::GetRateMultiplier());
+		Milk::Get().AdjustRate(Timewarp::GetRateMultiplier(), !ModManager::CheckActive(Mods::HalfTime) && !ModManager::CheckActive(Mods::DoubleTime) && !ModManager::CheckActive(Mods::Nightcore));
 		Milk::Get().AdjustPollingVectorsToRate(Timewarp::GetRateMultiplier());
 	}
 

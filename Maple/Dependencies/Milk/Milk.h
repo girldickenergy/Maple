@@ -97,7 +97,7 @@ public:
     bool DoCRCBypass(uintptr_t address);
     void HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunction);
     void SetSpriteCollectionCounts(uint32_t value);
-    void AdjustRate(double rateMultiplier);
+    void AdjustRate(double rateMultiplier, bool isNoMod = false);
     void AdjustPollingVectorsToRate(double rateMultiplier);
     bool IsBroken();
 
