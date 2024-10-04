@@ -6,7 +6,7 @@
 
 class GameBase
 {
-	static inline double tickrate = 1.0;
+	static inline double tickrate = 1000.0 / 60.0;;
 public:
 	static void Initialize();
 
