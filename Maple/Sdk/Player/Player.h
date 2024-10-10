@@ -20,11 +20,10 @@ class Player
 	typedef void(__fastcall* fnHandleScoreSubmission)(uintptr_t instance);
 	static inline fnHandleScoreSubmission oHandleScoreSubmission;
 	static void __fastcall handleScoreSubmissionHook(uintptr_t instance);
-
-	static inline bool criticalFieldsChecked = false;
-	static void checkCriticalFieldInitialization();
 public:
 	static void Initialize();
+
+	static bool HasInitialized();
 
 	static uintptr_t GetInstance();
 	static bool GetIsLoaded();

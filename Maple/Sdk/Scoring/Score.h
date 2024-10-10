@@ -11,6 +11,7 @@ class Score
 	static inline uintptr_t z3Slot;
 	static inline bool z3Compiled = false;
 	static inline bool submitHookFixed = false;
+	static inline bool playerInitChecked = false;
 
 	typedef void(__fastcall* fnSubmit)(uintptr_t instance);
 	static inline fnSubmit oSubmit;

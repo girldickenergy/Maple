@@ -32,9 +32,6 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 		ReplayBot::Initialize();
 
 		Score::FixSubmitHook();
-
-		if (!criticalFieldsChecked)
-			checkCriticalFieldInitialization();
 	}
 
 	[[clang::musttail]] return oOnLoadComplete(instance, success);
@@ -57,18 +54,6 @@ void __fastcall Player::handleScoreSubmissionHook(uintptr_t instance)
 		return;
 
 	[[clang::musttail]] return oHandleScoreSubmission(instance);
-}
-
-void Player::checkCriticalFieldInitialization()
-{
-	if (!Memory::Objects[xorstr_("Player::Mode")] || !Memory::Objects[xorstr_("Player::Flag")])
-	{
-		Logger::Log(LogSeverity::Error, xorstr_("Critical Player field(s) was (were) not found!"));
-
-		criticalFieldsChecked = true;
-		ConfigManager::BypassFailed = true;
-		ConfigManager::ForceDisableScoreSubmission = true;
-	}
 }
 
 void Player::Initialize()
@@ -110,6 +95,11 @@ void Player::Initialize()
 	Memory::AddHook(xorstr_("Player::UpdateFlashlight"), xorstr_("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
 
 	VIRTUALIZER_FISH_RED_END
+}
+
+bool Player::HasInitialized()
+{
+	return Memory::Objects[xorstr_("Player::Mode")] && Memory::Objects[xorstr_("Player::Flag")];
 }
 
 uintptr_t Player::GetInstance()
