@@ -26,7 +26,7 @@ void __fastcall Score::submitHook(uintptr_t instance)
 {
 	scoreInstance = instance;
 
-	if (!playerInitChecked && Player::HasInitialized())
+	if (!playerInitChecked && !Player::HasInitialized())
 	{
 		Logger::Log(LogSeverity::Error, xorstr_("Critical Player field(s) was (were) not found!"));
 

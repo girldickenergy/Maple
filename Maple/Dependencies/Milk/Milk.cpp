@@ -249,7 +249,7 @@ void Milk::SetSpriteCollectionCounts(uint32_t value)
 {
     VIRTUALIZER_TIGER_WHITE_START
 
-    for (unsigned int& spriteCollectionCount : _infoSection->spriteCollectionCounts)
+    for (unsigned int& spriteCollectionCount : *_spriteCollectionCounts)
 	    spriteCollectionCount = value;
 
     VIRTUALIZER_TIGER_WHITE_END
@@ -257,7 +257,7 @@ void Milk::SetSpriteCollectionCounts(uint32_t value)
 
 void Milk::AdjustRate(double rateMultiplier, bool isNoMod)
 {
-    for (float& rate : _infoSection->rates)
+    for (float& rate : *_rates)
         rate = isNoMod ? 1.f : rate / rateMultiplier;
 }
 
@@ -265,18 +265,18 @@ void Milk::AdjustPollingVectorsToRate(double rateMultiplier)
 {
     VIRTUALIZER_TIGER_WHITE_START
 
-    size_t ratesRequiredSize = _infoSection->rates.size() * rateMultiplier;
-    size_t spriteCollectionCountsRequiredSize = _infoSection->spriteCollectionCounts.size() * rateMultiplier;
+    size_t ratesRequiredSize = _rates->size() * rateMultiplier;
+    size_t spriteCollectionCountsRequiredSize = _spriteCollectionCounts->size() * rateMultiplier;
 
-    _infoSection->rates.resize(ratesRequiredSize, _infoSection->rates[0]);
-    _infoSection->spriteCollectionCounts.resize(spriteCollectionCountsRequiredSize, _infoSection->spriteCollectionCounts[0]);
+    _rates->resize(ratesRequiredSize, _rates->at(0));
+    _spriteCollectionCounts->resize(spriteCollectionCountsRequiredSize, _spriteCollectionCounts->at(0));
 
     VIRTUALIZER_TIGER_WHITE_END
 }
 
 bool Milk::IsBroken()
 {
-    return _infoSection->rates.empty() || (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _infoSection->spriteCollectionCounts.empty());
+    return _rates->empty() || (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _spriteCollectionCounts->empty());
 }
 
 bool Milk::Prepare()
@@ -323,10 +323,8 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] ISS != 0x00000000"));
 
-    _infoSection = *reinterpret_cast<infoSectionStruct**>(infoSectionPtr);
-
-    if (_infoSection->o != 'o' || _infoSection->s != 's' || _infoSection->u != 'u')
-        return false;
+    _rates = reinterpret_cast<std::vector<float>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x2F8);
+    _spriteCollectionCounts = reinterpret_cast<std::vector<uint32_t>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x304);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] IS OK"));
 

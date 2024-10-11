@@ -36,17 +36,6 @@ struct v10fix
     uint8_t padding2[0x90];
 };
 
-struct infoSectionStruct
-{
-    uint8_t padding[0x2F8];
-    std::vector<float> rates;
-    std::vector<uint32_t> spriteCollectionCounts;
-    uint8_t padding2[0x9C];
-    char o;
-    char s;
-    char u;
-};
-
 class Milk : public Singleton<Milk>
 {
     MilkMemory _milkMemory;
@@ -58,7 +47,8 @@ class Milk : public Singleton<Milk>
     std::vector<std::pair<uintptr_t, size_t>> _bypassed;
     uintptr_t _secondaryKey;
 
-    infoSectionStruct* _infoSection;
+    std::vector<float>* _rates;
+    std::vector<uint32_t>* _spriteCollectionCounts;
 
     static inline uintptr_t _originalJITVtable;
     static inline uintptr_t* _copiedJITVtable;
