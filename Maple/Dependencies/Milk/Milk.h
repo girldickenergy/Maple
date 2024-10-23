@@ -50,6 +50,11 @@ class Milk : public Singleton<Milk>
     std::vector<float>* _rates;
     std::vector<uint32_t>* _spriteCollectionCounts;
 
+    size_t* _hwidDataSize;
+    uint8_t** _hwidSectionPtr;
+    uint32_t* _hwidSectionKey1;
+    uint32_t* _hwidSectionKey2;
+
     static inline uintptr_t _originalJITVtable;
     static inline uintptr_t* _copiedJITVtable;
     bool preparationSuccess;
@@ -90,6 +95,9 @@ public:
     void AdjustRate(double rateMultiplier, bool isNoMod = false);
     void AdjustPollingVectorsToRate(double rateMultiplier);
     bool IsBroken();
+    size_t GetHWIDDataSize();
+    uint8_t* GetHWIDSectionPtr();
+    void ApplyHWIDSectionEncryptionAlgorithm(uint8_t* buffer, size_t size);
 
     static someBassFuncRet* __stdcall SpoofPlaybackRate(int handle, DWORD ebp, DWORD ret);
 };

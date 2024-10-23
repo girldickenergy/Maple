@@ -13,6 +13,7 @@ class Spoofer
 	static inline std::wstring realUniqueID;
 	static inline std::wstring realUniqueID2;
 	static inline std::wstring realUniqueCheck;
+	static inline uint8_t* realAuthHwid;
 
 	static inline std::wstring currentClientHash;
 	static inline std::wstring currentUniqueID;

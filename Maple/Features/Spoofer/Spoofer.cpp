@@ -4,9 +4,11 @@
 #include <filesystem>
 #include <fstream>
 
+#include "Milk.h"
 #include "VirtualizerSDK.h"
 #include "Vanilla.h"
 #include "xorstr.hpp"
+#include "../../Dependencies/fnv1a/fnv1a.h"
 
 #include "../../Storage/Storage.h"
 #include "../../Storage/StorageConfig.h"
@@ -136,6 +138,9 @@ void Spoofer::Initialize()
 	realUniqueID2 = GameBase::GetUniqueID2();
 	realUniqueCheck = GameBase::GetUniqueCheck();
 
+	realAuthHwid = static_cast<uint8_t*>(std::malloc(Milk::Get().GetHWIDDataSize()));
+	std::memcpy(realAuthHwid, Milk::Get().GetHWIDSectionPtr(), Milk::Get().GetHWIDDataSize());
+
 	for (const wchar_t c : realClientHash)
 	{
 		if (c == ':')
@@ -163,6 +168,8 @@ void Spoofer::Load()
 		currentUniqueID = realUniqueID;
 		currentUniqueID2 = realUniqueID2;
 		currentUniqueCheck = realUniqueCheck;
+
+		std::memcpy(Milk::Get().GetHWIDSectionPtr(), realAuthHwid, Milk::Get().GetHWIDDataSize());
 	}
 	else
 	{
@@ -208,6 +215,33 @@ void Spoofer::Load()
 
 		currentUniqueCheck = CryptoUtilities::GetMD5Hash(currentUniqueID + L"8" + L"512" + currentUniqueID2);
 		currentClientHash = fileMD5 + L":" + currentAdapters + L":" + CryptoUtilities::GetMD5Hash(currentAdapters) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID) + L":" + CryptoUtilities::GetMD5Hash(currentUniqueID2) + L":";
+
+		auto tempAuthHwidBuffer = static_cast<uint8_t*>(std::malloc(Milk::Get().GetHWIDDataSize()));
+		std::memcpy(tempAuthHwidBuffer, Milk::Get().GetHWIDSectionPtr(), Milk::Get().GetHWIDDataSize());
+		Milk::Get().ApplyHWIDSectionEncryptionAlgorithm(tempAuthHwidBuffer, Milk::Get().GetHWIDDataSize());
+
+		auto seed = fnv1a::Hash(currentClientHash.c_str()) ^ std::stoi(diskIdStr);
+
+		for (size_t i = 0; i < Milk::Get().GetHWIDDataSize() / 24; i++)
+		{
+			auto identifier = *reinterpret_cast<uint32_t*>(tempAuthHwidBuffer + i * 24);
+
+			std::mt19937 rng(seed ^ identifier);
+			std::uniform_int_distribution<std::uint16_t> dist(0, 255);
+			
+			std::vector<uint8_t> hwidEntry(256);
+
+			std::ranges::generate(hwidEntry, [&]() {
+				return static_cast<uint8_t>(dist(rng));
+			});
+
+			auto hwidEntryChecksum = CryptoUtilities::GetSHA1Hash(hwidEntry);
+			std::memcpy(tempAuthHwidBuffer + i * 24 + 4, hwidEntryChecksum.data(), 20);
+		}
+
+		Milk::Get().ApplyHWIDSectionEncryptionAlgorithm(tempAuthHwidBuffer, Milk::Get().GetHWIDDataSize());
+		std::memcpy(Milk::Get().GetHWIDSectionPtr(), tempAuthHwidBuffer, Milk::Get().GetHWIDDataSize());
+		std::free(tempAuthHwidBuffer);
 	}
 
 	if (!Vanilla::SetCLRString(Memory::Objects[xorstr_("GameBase::ClientHash")], GetClientHash()))

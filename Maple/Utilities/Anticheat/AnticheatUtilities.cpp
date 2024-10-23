@@ -29,7 +29,6 @@ std::string AnticheatUtilities::GetAnticheatChecksum()
 
 std::vector<uint8_t> AnticheatUtilities::GetAnticheatBytes()
 {
-    
     char buffer[MAX_PATH];
     GetModuleFileNameA(NULL, buffer, MAX_PATH);
     const std::string::size_type pos = std::string(buffer).find_last_of(xorstr_("\\/"));

@@ -283,6 +283,29 @@ bool Milk::IsBroken()
     return _rates->empty() || (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _spriteCollectionCounts->empty());
 }
 
+size_t Milk::GetHWIDDataSize()
+{
+    return *_hwidDataSize;
+}
+
+uint8_t* Milk::GetHWIDSectionPtr()
+{
+    return *_hwidSectionPtr;
+}
+
+void Milk::ApplyHWIDSectionEncryptionAlgorithm(uint8_t* buffer, size_t size)
+{
+    VIRTUALIZER_TIGER_WHITE_START
+
+    auto key1 = *_hwidSectionKey1;
+    auto key2 = *_hwidSectionKey2;
+
+    for (size_t i = 0; i < size; i++)
+        buffer[i] ^= static_cast<uint8_t>(static_cast<uint8_t>((RotateLeft32(key1, (i + 1) % 16) & 0xFF)) ^ static_cast<uint8_t>((RotateRight32(key2, (i + 1) % 16) & 0xFF)));
+
+    VIRTUALIZER_TIGER_WHITE_END
+}
+
 bool Milk::Prepare()
 {
     VIRTUALIZER_LION_BLACK_START
@@ -331,6 +354,13 @@ bool Milk::Prepare()
     _spriteCollectionCounts = reinterpret_cast<std::vector<uint32_t>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x304);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] IS OK"));
+
+    _hwidDataSize = reinterpret_cast<size_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x76C);
+    _hwidSectionPtr = reinterpret_cast<uint8_t**>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x770);
+    _hwidSectionKey1 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x778);
+    _hwidSectionKey2 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x77C);
+
+    Logger::Log(LogSeverity::Debug, xorstr_("[Milk] HW OK"));
 
     void* getJit = GetProcAddress(GetModuleHandleA(xorstr_("clrjit.dll")), xorstr_("getJit"));
     if (!getJit)

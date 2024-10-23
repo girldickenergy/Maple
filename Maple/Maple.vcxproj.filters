@@ -448,6 +448,9 @@
     <Filter Include="Dependencies\Encryption">
       <UniqueIdentifier>{4aa9a644-035f-487b-8ce9-078a0190d07c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\fnv1a">
+      <UniqueIdentifier>{a69b991a-f321-42f6-aec3-17be83521a78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\CryptoPP\shake.h">
@@ -1469,6 +1472,9 @@
     </ClInclude>
     <ClInclude Include="Features\Relax\SpeedDifficultyEvaluator.h">
       <Filter>Features\Relax</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\fnv1a\fnv1a.h">
+      <Filter>Dependencies\fnv1a</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

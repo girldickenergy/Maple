@@ -7,6 +7,7 @@
 #include "base64.h"
 #include "md5.h"
 #include "hex.h"
+#include "sha.h"
 
 std::string CryptoUtilities::GetMD5Hash(const std::string& str)
 {
@@ -55,6 +56,17 @@ std::wstring CryptoUtilities::GetMD5Hash(const std::wstring& str)
     std::transform(strHashed.begin(), strHashed.end(), strHashed.begin(), ::tolower);
 
     return std::wstring(strHashed.begin(), strHashed.end());
+}
+
+std::vector<uint8_t> CryptoUtilities::GetSHA1Hash(const std::vector<uint8_t>& input)
+{
+    CryptoPP::SHA1 sha1;
+
+    std::vector<uint8_t> checksum(CryptoPP::SHA1::DIGESTSIZE);
+
+    sha1.CalculateDigest(checksum.data(), input.data(), input.size());
+
+    return checksum;
 }
 
 std::vector<uint8_t> CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
