@@ -49,14 +49,17 @@ void Relax::moveToNextHitObject(int skipCount)
 
 void Relax::updateTimings()
 {
+	auto minOffset = 14;
+	auto maxOffset = 22;
+
 	const double strain = SpeedDifficultyEvaluator::NormalizedStrainAt(currentHitObjectIndex);
 	const int noise = std::round((noiseSignDistribution(gen) * 2 - 1) * 2 * strain);
 
-	double hitOffsetScale = 0.5 * (1.0 - std::pow(1.0 - strain, 2.0 * strain)) + 0.5;
+	double hitOffsetScale = 1.0 - (1.0 - strain) * (1.0 - strain); // any easing function really
 	double holdTimeScale = 1;// 0.2 * (std::pow(1.0 - strain, 8)) + 1.0;
 	printf("hitOffsetScale: %f, strain: %f, difficulty: %f\n", hitOffsetScale, strain, SpeedDifficultyEvaluator::NormalizedDifficultyAt(currentHitObjectIndex));
 
-	currentHitOffset = normalDistribution(gen) * hitOffsetScale * (((-0.0007 - ConfigManager::CurrentConfig.Relax.Timing.TargetUnstableRate) / -3.9955) / 2.1) + noise;
+	currentHitOffset = normalDistribution(gen) * ((minOffset + (maxOffset - minOffset) * hitOffsetScale) / 3.0) + noise;
 
 	int stddev = std::abs(ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime - ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime) / 2;
 	int mean = (std::min)(ConfigManager::CurrentConfig.Relax.Timing.MinimumHoldTime, ConfigManager::CurrentConfig.Relax.Timing.MaximumHoldTime) + stddev;
