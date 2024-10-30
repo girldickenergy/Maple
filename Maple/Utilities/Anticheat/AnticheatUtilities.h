@@ -7,7 +7,7 @@ class AnticheatUtilities
 {
     static inline std::vector<std::string> goodKnownChecksums =
     {
-		"c7198a6b535acb7a831e0e29d16ff0e9"
+		"25a62fad2aeb99581fa5fee41886433e"
     };
 public:
     static std::string GetAnticheatChecksum();
