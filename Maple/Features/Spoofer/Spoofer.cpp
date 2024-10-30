@@ -220,7 +220,7 @@ void Spoofer::Load()
 		std::memcpy(tempAuthHwidBuffer, Milk::Get().GetHWIDSectionPtr(), Milk::Get().GetHWIDDataSize());
 		Milk::Get().ApplyHWIDSectionEncryptionAlgorithm(tempAuthHwidBuffer, Milk::Get().GetHWIDDataSize());
 
-		auto seed = fnv1a::Hash(currentClientHash.c_str()) ^ std::stoi(diskIdStr);
+		auto seed = fnv1a::Hash(currentUniqueCheck.c_str()) ^ std::stoi(diskIdStr);
 
 		for (size_t i = 0; i < Milk::Get().GetHWIDDataSize() / 24; i++)
 		{
