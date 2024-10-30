@@ -14,7 +14,6 @@
 #include "../../Features/Relax/Relax.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../../Logging/Logger.h"
-#include "../Scoring/Score.h"
 
 int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 {
@@ -30,8 +29,6 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 		Relax::Initialize();
 		AimAssist::Initialize();
 		ReplayBot::Initialize();
-
-		Score::FixSubmitHook();
 	}
 
 	[[clang::musttail]] return oOnLoadComplete(instance, success);

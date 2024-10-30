@@ -350,15 +350,15 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] ISS != 0x00000000"));
 
-    _rates = reinterpret_cast<std::vector<float>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x2F8);
-    _spriteCollectionCounts = reinterpret_cast<std::vector<uint32_t>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x304);
+    _rates = reinterpret_cast<std::vector<float>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x2e4);
+    _spriteCollectionCounts = reinterpret_cast<std::vector<uint32_t>*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x2f0);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] IS OK"));
 
-    _hwidDataSize = reinterpret_cast<size_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x76C);
-    _hwidSectionPtr = reinterpret_cast<uint8_t**>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x770);
-    _hwidSectionKey1 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x778);
-    _hwidSectionKey2 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x77C);
+    _hwidDataSize = reinterpret_cast<size_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x780);
+    _hwidSectionPtr = reinterpret_cast<uint8_t**>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x784);
+    _hwidSectionKey1 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x78C);
+    _hwidSectionKey2 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x790);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] HW OK"));
 

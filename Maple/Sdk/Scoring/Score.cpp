@@ -12,6 +12,8 @@
 #include "../Mods/ModManager.h"
 #include "PatternScanning/VanillaPatternScanner.h"
 #include "../Osu/GameBase.h"
+#include "Hooking/VanillaHooking.h"
+#include "../Memory.h"
 
 void Score::spoofPlayDuration()
 {
@@ -74,59 +76,25 @@ void __fastcall Score::submitHook(uintptr_t instance)
 	if (ConfigManager::CurrentConfig.Misc.ScoreSubmissionType == 2 && Player::GetIsRetrying() && ConfigManager::CurrentConfig.Misc.PromptBehaviorOnRetry == 1)
 		return;
 
-	if (!z3Compiled)
-	{
-		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(oSubmit);
-		z3Compiled = true;
-	}
-
 	[[clang::musttail]] return oSubmit(instance);
 }
 
 void Score::Initialize()
 {
-	if (auto submitAddress = VanillaPatternScanner::FindPattern(xorstr_("68 ?? ?? ?? ?? C3 8B F1 83 BE ?? ?? ?? ?? 00"))) // Score.Submit
+	Memory::AddObject(xorstr_("A.B.H3"), xorstr_("68 ?? ?? ?? ?? C3 8B F1 83 BE ?? ?? ?? ?? 00"), 0x1, 0x1);
+	Memory::AddHook(xorstr_("A.B.H3_Hook"), xorstr_("A.B.H3"), reinterpret_cast<uintptr_t>(submitHook), reinterpret_cast<uintptr_t*>(&oSubmit));
+
+	if (!Memory::Objects[xorstr_("A.B.H3")])
 	{
-		auto h3Address = *reinterpret_cast<uintptr_t*>(submitAddress + 0x1); // A.B.H3
-		z3Slot = VanillaPatternScanner::FindPatternInRange(xorstr_("FF 15"), h3Address, 0x25, 0x2, 1); // A.B.Z3 ptr
-		if (z3Slot)
-		{
-			oSubmit = reinterpret_cast<fnSubmit>(*reinterpret_cast<uintptr_t*>(z3Slot));
-			*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(submitHook);
-		}
-		else
-		{
-			ConfigManager::BypassFailed = true;
-			ConfigManager::ForceDisableScoreSubmission = true;
-			Logger::Log(LogSeverity::Error, xorstr_("Failed to find A.B::Z3 slot!"));
-		}
-	}
-	else
-	{
+		Logger::Log(LogSeverity::Error, xorstr_("Failed to hook A.B.H3!"));
+
 		ConfigManager::BypassFailed = true;
 		ConfigManager::ForceDisableScoreSubmission = true;
-		Logger::Log(LogSeverity::Error, xorstr_("Failed to find Score::Submit!"));
-	}
-}
-
-void Score::FixSubmitHook()
-{
-	if (!submitHookFixed && z3Compiled)
-	{
-		oSubmit = reinterpret_cast<fnSubmit>(*reinterpret_cast<uintptr_t*>(z3Slot));
-		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(submitHook);
-		submitHookFixed = true;
 	}
 }
 
 void Score::Submit()
 {
-	if (!z3Compiled)
-	{
-		*reinterpret_cast<uintptr_t*>(z3Slot) = reinterpret_cast<uintptr_t>(oSubmit);
-		z3Compiled = true;
-	}
-
 	oSubmit(scoreInstance);
 
 	Vanilla::RemoveRelocation(std::ref(scoreInstance));
