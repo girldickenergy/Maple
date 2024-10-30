@@ -463,7 +463,7 @@ void MainMenu::Render()
             }
             if (currentTab == 5)
             {
-                Widgets::BeginPanel(xorstr_("Spoofer"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 2, 2)));
+                Widgets::BeginPanel(xorstr_("Spoofer"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8, 7, 2)));
                 {
                     const bool sameProfile = Spoofer::SelectedProfile == Spoofer::LoadedProfile;
                     const bool currentProfileIsDefault = Spoofer::SelectedProfile == 0;
@@ -472,6 +472,11 @@ void MainMenu::Render()
 
                     Widgets::Combo(xorstr_("Profiles"), &Spoofer::SelectedProfile, Spoofer::Profiles);
                     ImGui::TextColored(StyleProvider::AccentColour, xorstr_("Please remember to enable spoofer profiles ONLY while logged OUT!"));
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("We recommend restarting the game before loading another profile"));
+                    ImGui::NewLine();
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("!!!ATTENTION!!!"));
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("Profiles used between October 26th and 30th are no longer safe"));
+                    ImGui::TextColored(StyleProvider::AccentColour, xorstr_("Please remove them and create new ones"));
 
 					EncryptedString currentProfile = xorstr_("Current profile: ") + Spoofer::Profiles[Spoofer::LoadedProfile];
                     char currentProfileName[currentProfile.GetSize()];
