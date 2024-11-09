@@ -247,39 +247,26 @@ void Milk::HookJITVtable(int index, uintptr_t detour, uintptr_t* originalFunctio
 
 void Milk::SetSpriteCollectionCounts(uint32_t value)
 {
-    Logger::Log(LogSeverity::Debug, xorstr_("SCC Before: %i"), _spriteCollectionCounts->size());
-
     for (unsigned int& spriteCollectionCount : *_spriteCollectionCounts)
 	    spriteCollectionCount = value;
-
-    Logger::Log(LogSeverity::Debug, xorstr_("SCC After: %i"), _spriteCollectionCounts->size());
 }
 
 void Milk::AdjustRate(double rateMultiplier, bool isNoMod)
 {
-    Logger::Log(LogSeverity::Debug, xorstr_("R Before: %i"), _rates->size());
-
     for (float& rate : *_rates)
         rate = isNoMod ? 1.f : rate / rateMultiplier;
-
-    Logger::Log(LogSeverity::Debug, xorstr_("R After: %i"), _rates->size());
 }
 
 void Milk::AdjustPollingVectorsToRate(double rateMultiplier)
 {
-    size_t ratesRequiredSize = _rates->size() * rateMultiplier;
-    size_t spriteCollectionCountsRequiredSize = _spriteCollectionCounts->size() * rateMultiplier;
-
-    auto a1 = _rates->size();
-    auto a2 = _spriteCollectionCounts->size();
+    size_t ratesRequiredSize = (std::max)(static_cast<size_t>(_rates->size() * rateMultiplier), 1u);
+    size_t spriteCollectionCountsRequiredSize = (std::max)(static_cast<size_t>(_spriteCollectionCounts->size() * rateMultiplier), 1u);
 
     if (!_rates->empty())
 		_rates->resize(ratesRequiredSize, _rates->at(0));
 
     if (!_spriteCollectionCounts->empty())
 		_spriteCollectionCounts->resize(spriteCollectionCountsRequiredSize, _spriteCollectionCounts->at(0));
-
-    Logger::Log(LogSeverity::Debug, xorstr_("Adjusting: %i, %i, %i, %i, %i, %i"), a1, a2, ratesRequiredSize, spriteCollectionCountsRequiredSize, _rates->size(), _spriteCollectionCounts->size());
 }
 
 bool Milk::IsBroken()
