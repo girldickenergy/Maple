@@ -173,7 +173,7 @@ void InitializeMaple()
     Logger::StopPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
 
     VIRTUALIZER_FISH_RED_END
-    }
+}
 
 void WaitForCriticalSDKToInitialize()
 {
@@ -186,11 +186,7 @@ void WaitForCriticalSDKToInitialize()
     VIRTUALIZER_FISH_RED_END
 
     unsigned int retries = 0;
-#ifdef NO_BYPASS
-    while (!clientHash || !updateTiming/*||!submit*/)
-#else
     while (!clientHash || !updateTiming)
-#endif
     {
         VIRTUALIZER_FISH_RED_START
 

@@ -45,7 +45,7 @@
     CryptoPP::StringSource source(rsaPrivateKeyStr, true);
     CryptoPP::PEM_Load(source, rsaPrivateKey);
 
-        VIRTUALIZER_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 }
 
 void CryptoProvider::InitializeAES(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
