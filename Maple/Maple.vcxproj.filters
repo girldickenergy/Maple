@@ -1488,6 +1488,9 @@
     <ClInclude Include="Dependencies\Charlotte\CharlotteFunction.h">
       <Filter>Dependencies\Charlotte</Filter>
     </ClInclude>
+    <ClInclude Include="Communication\Crypto\CryptoTransformation.h">
+      <Filter>Communication\Crypto</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\DirectX\d3dx9.lib">

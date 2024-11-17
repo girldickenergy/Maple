@@ -86,9 +86,9 @@ DWORD WINAPI Initialize()
     Storage::Initialize(Communication::GetUser()->GetUsernameHashed(xorstr_("-mlo")));
 
 #ifdef _DEBUG
-    Logger::Initialize(LogSeverity::All, false, true, L"Runtime log | Maple");
+    Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
 #else
-    Logger::Initialize(LogSeverity::All, true);
+    Logger::Initialize(LogSeverity::All);
 #endif
 
     memset(data_addr, 0x0, sizeof(UserData));
