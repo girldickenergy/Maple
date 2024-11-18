@@ -218,6 +218,9 @@
     <ClCompile Include="Dependencies\Charlotte\Charlotte.cpp">
       <Filter>Dependencies\Charlotte</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Packets\PacketSerializer.cpp">
+      <Filter>Communication\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1490,6 +1493,15 @@
     </ClInclude>
     <ClInclude Include="Communication\Crypto\CryptoTransformation.h">
       <Filter>Communication\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\PacketSerializer.h">
+      <Filter>Communication\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Fnv1a.h">
+      <Filter>Communication\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Packet.h">
+      <Filter>Communication\Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
