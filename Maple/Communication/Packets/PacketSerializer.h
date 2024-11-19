@@ -4,14 +4,15 @@
 #include <any>
 #include <unordered_map>
 #include <functional>
-#include "Packet.h"
 #include "Fnv1a.h"
 #include <xorstr.hpp>
-#include <sysinfoapi.h>
+#include "Packet.h"
+
+#include <Windows.h>
 
 class PacketSerializer : public Singleton<PacketSerializer>
 {
-	std::unordered_map<uint32_t, std::function<std::vector<uint8_t>(const std::any&)>> m_TypeSerializers;
+#define ADD_RANGE(vector, data) vector.insert(vector.end(), data.begin(), data.end())
 
 	template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
 	std::vector<uint8_t> SplitValueToBytes(const T& value)
@@ -24,6 +25,11 @@ class PacketSerializer : public Singleton<PacketSerializer>
 		}
 		return bytes;
 	}
+
+	std::vector<uint8_t> SerializeFunction(Packet& packet, const FieldInfo& fieldInfo);
+
+	std::vector<uint8_t> SerializeType(Packet& packet);
+	std::vector<uint8_t> SerializeValue(Packet& packet, const FieldInfo& fieldInfo);
 public:
 	explicit PacketSerializer(singletonLock);
 
@@ -38,8 +44,12 @@ public:
 
 		std::vector<uint8_t> ticks = SplitValueToBytes(GetTickCount());
 
+		std::vector<uint8_t> serializedType = SerializeType(dynamicPacket);
 		auto serializedPacket = std::vector<uint8_t>();
-		serializedPacket.insert(serializedPacket.end(), identifier.begin(), identifier.end());
-		serializedPacket.insert(serializedPacket.end(), ticks.begin(), ticks.end());
+		ADD_RANGE(serializedPacket, identifier);
+		ADD_RANGE(serializedPacket, ticks);
+		ADD_RANGE(serializedPacket, serializedType);
+
+		return serializedPacket;
 	}
 };

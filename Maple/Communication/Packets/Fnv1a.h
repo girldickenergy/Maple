@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 
 constexpr uint32_t Val32Const = 0x811c9dc5;
