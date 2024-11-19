@@ -1503,6 +1503,9 @@
     <ClInclude Include="Communication\Packets\Packet.h">
       <Filter>Communication\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Communication\Packets\ISerializeable.h">
+      <Filter>Communication\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\DirectX\d3dx9.lib">

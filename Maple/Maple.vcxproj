@@ -300,6 +300,7 @@
     <ClInclude Include="Communication\Crypto\CryptoProvider.h" />
     <ClInclude Include="Communication\Crypto\CryptoTransformation.h" />
     <ClInclude Include="Communication\Packets\Fnv1a.h" />
+    <ClInclude Include="Communication\Packets\ISerializeable.h" />
     <ClInclude Include="Communication\Packets\Packet.h" />
     <ClInclude Include="Communication\Packets\PacketSerializer.h" />
     <ClInclude Include="Communication\Packets\PacketType.h" />
