@@ -202,18 +202,25 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
 {
     VIRTUALIZER_MUTATE_ONLY_START
 
-    auto transformedBuffer = std::vector<uint8_t>(buffer);
-    std::vector<CryptoTransformation> transformations = GenerateCryptoTransformations(key1 ^ key2 ^ key3, transformedBuffer.size());
     key1 ^= key3;
     key2 ^= key3;
+    auto transformedBuffer = std::vector<uint8_t>(buffer);
+    std::mt19937 rng(static_cast<int32_t>(key1 ^ key2 ^ key3));
+    std::uniform_int_distribution<int> dist(0, static_cast<int>(CryptoTransformation::Cancer));
 
+    uint8_t previousByte = 0x00;
     size_t startingPosition = reverse ? (transformedBuffer.size() - 1) : 0;
     for (auto i = startingPosition; reverse ? i >= 0 : i < transformedBuffer.size(); i += reverse ? -1 : 1)
     {
-        if (reverse)
-            transformedBuffer[i] ^= (i > 0 ? transformedBuffer[i - 1] : 0);
+        auto transformation = dist(rng);
 
-        switch (transformations[i])
+        if (reverse)
+        {
+            transformedBuffer[i] ^= (i > 0 ? previousByte : 0);
+            previousByte = (transformedBuffer[i] ^ previousByte);
+        }
+
+        switch (transformation)
         {
             case Xor:
                 transformedBuffer[i] ^= (key1 ^ key2);
@@ -225,7 +232,7 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
                 transformedBuffer[i] ^= (key1 ^ key2) >> (16 - ((i + 1) % 16));
                 break;
             case Shlr:
-                transformedBuffer[i] ^= (key1 << ((i + 1) % 16) ^ (key2 >> (16 - ((i + 1) % 16)));
+                transformedBuffer[i] ^= (key1 << ((i + 1) % 16) ^ (key2 >> (16 - ((i + 1) % 16))));
                 break;
             case Rol:
                 transformedBuffer[i] ^= std::rotl(key1 ^ key2, (i + 1) % 16);
@@ -261,24 +268,6 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
     }
 
     return transformedBuffer;
-
-    VIRTUALIZER_MUTATE_ONLY_END
-}
-
-std::vector<CryptoTransformation> CryptoProvider::GenerateCryptoTransformations(uint32_t seed, size_t size)
-{
-    VIRTUALIZER_MUTATE_ONLY_START
-
-    auto transformations = std::vector<CryptoTransformation>(size);
-    std::mt19937 rng(seed);
-    std::uniform_int_distribution<int> dist(0, static_cast<int>(CryptoTransformation::Cancer) - 1);
-
-    for (size_t i = 0; i < size; i++)
-    {
-        transformations[i] = static_cast<CryptoTransformation>(dist(rng));
-    }
-
-    return transformations;
 
     VIRTUALIZER_MUTATE_ONLY_END
 }

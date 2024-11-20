@@ -26,5 +26,4 @@ public:
 	std::vector<unsigned char> AESDecrypt(const std::vector<unsigned char>& ciphertext);
 
 	std::vector<uint8_t> ApplyCryptoTransformations(const std::vector<uint8_t>& buffer, uint32_t key1, uint32_t key2, uint32_t key3, bool reverse = false);
-	std::vector<CryptoTransformation> GenerateCryptoTransformations(uint32_t seed, size_t size);
 };

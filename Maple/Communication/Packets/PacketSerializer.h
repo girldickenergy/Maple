@@ -25,10 +25,11 @@ class PacketSerializer : public Singleton<PacketSerializer>
 			uint8_t byte = value >> (i * 8);
 			bytes.insert(bytes.begin(), byte);
 		}
+		std::reverse(bytes.begin(), bytes.end());
 		return bytes;
 	}
 
-	std::vector<uint8_t> SerializeFunction(Packet& packet, const FieldInfo& fieldInfo);
+	std::pair<std::string, std::vector<uint8_t>> SerializeFunction(Packet& packet, const FieldInfo& fieldInfo);
 
 	template <typename T, typename std::enable_if<std::is_base_of<ISerializeable, T>::value>::type* = nullptr>
 	std::vector<uint8_t> SerializeType(T& type)
@@ -55,22 +56,22 @@ class PacketSerializer : public Singleton<PacketSerializer>
 	{
 		auto serializedValue = std::vector<uint8_t>();
 
-		std::vector<uint8_t> serializedField = SerializeFunction(packet, fieldInfo);
-		if (!serializedField.empty())
+		std::pair<std::string, std::vector<uint8_t>> serializedField = SerializeFunction(packet, fieldInfo);
+		if (!serializedField.second.empty())
 		{
-			const std::string& packetName = packet.GetName();
-			std::vector<uint8_t> typeIdentifier = SplitValueToBytes(Hash32Fnv1a(packetName.c_str(), packetName.size()));
+			std::vector<uint8_t> typeIdentifier = SplitValueToBytes(Hash32Fnv1a(serializedField.first.c_str(), serializedField.first.size()));
 			ADD_RANGE(serializedValue, typeIdentifier);
 
 			auto random = std::mt19937();
 			uint32_t key1 = random();
 			uint32_t key2 = random();
-			uint32_t key3 = (GetTickCount() >> 10) ^ 0xdeadbeef;
+			auto milliSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			uint32_t key3 = (milliSeconds >> 10) ^ 0xdeadbeef;
 			std::vector<uint8_t> serializedKey1 = SplitValueToBytes(key1);
 			std::vector<uint8_t> serializedKey2 = SplitValueToBytes(key2);
 			std::vector<uint8_t> serializedKey3 = SplitValueToBytes(key3);
 
-			std::vector<uint8_t> encryptedValue = CryptoProvider::Get().ApplyCryptoTransformations(serializedField, key1, key2, key3);
+			std::vector<uint8_t> encryptedValue = CryptoProvider::Get().ApplyCryptoTransformations(serializedField.second, key1, key2, key3);
 
 			std::vector<uint8_t> length = SplitValueToBytes(encryptedValue.size());
 
@@ -102,7 +103,8 @@ public:
 		uint32_t packetIdentifier = Hash32Fnv1a(packetName.c_str(), packetName.size());
 		std::vector<uint8_t> identifier = SplitValueToBytes(packetIdentifier);
 
-		std::vector<uint8_t> ticks = SplitValueToBytes(GetTickCount());
+		auto milliSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		std::vector<uint8_t> ticks = SplitValueToBytes(milliSeconds);
 
 		std::vector<uint8_t> serializedType = SerializeType(packet);
 		auto serializedPacket = std::vector<uint8_t>();
