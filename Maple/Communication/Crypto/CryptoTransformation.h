@@ -4,6 +4,9 @@
 enum CryptoTransformation : uint8_t
 {
 	Xor,
+	Shl,
+	Shr,
+	Shlr,
 	Rol,
 	Ror,
 	Rolr,

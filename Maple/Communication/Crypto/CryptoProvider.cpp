@@ -218,6 +218,15 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
             case Xor:
                 transformedBuffer[i] ^= (key1 ^ key2);
                 break;
+            case Shl:
+                transformedBuffer[i] ^= (key1 ^ key2) << ((i + 1) % 16);
+                break;
+            case Shr:
+                transformedBuffer[i] ^= (key1 ^ key2) >> (16 - ((i + 1) % 16));
+                break;
+            case Shlr:
+                transformedBuffer[i] ^= (key1 << ((i + 1) % 16) ^ (key2 >> (16 - ((i + 1) % 16)));
+                break;
             case Rol:
                 transformedBuffer[i] ^= std::rotl(key1 ^ key2, (i + 1) % 16);
                 break;
@@ -225,7 +234,7 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
                 transformedBuffer[i] ^= std::rotr(key1 ^ key2, 16 - ((i + 1) % 16));
                 break;
             case Rolr:
-                transformedBuffer[i] ^= std::rotl(key1, (i + 1) % 16) ^ std::rotr(key2, 16 - ((1 + 1) % 16));
+                transformedBuffer[i] ^= std::rotl(key1, (i + 1) % 16) ^ std::rotr(key2, 16 - ((i + 1) % 16));
                 break;
             case Add:
                 if (reverse)
@@ -240,7 +249,7 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
                     transformedBuffer[i] -= key1 ^ key2;
                 break;
             case Cancer:
-                transformedBuffer[i] ^= key1 ^ key2 ^ 0xdeadbeef ^ std::rotl(key3, (i + 1) % 16) ^ std::rotr(key3, 16 - ((i + 1) % 16));
+                transformedBuffer[i] ^= key1 ^ key2 ^ 0xdeadbeef ^ std::rotl(key3, (i + 1) % 16) ^ (key3 >> (16 - ((i + 1) % 16)));
                 break;
             default:
                 Security::CorruptMemory();
@@ -262,7 +271,7 @@ std::vector<CryptoTransformation> CryptoProvider::GenerateCryptoTransformations(
 
     auto transformations = std::vector<CryptoTransformation>(size);
     std::mt19937 rng(seed);
-    std::uniform_int_distribution<int> dist(0, static_cast<int>(CryptoTransformation::Cancer));
+    std::uniform_int_distribution<int> dist(0, static_cast<int>(CryptoTransformation::Cancer) - 1);
 
     for (size_t i = 0; i < size; i++)
     {
