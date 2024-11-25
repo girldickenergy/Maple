@@ -10,7 +10,7 @@
 #pragma pack(push, 1)
 struct Config
 {
-	float Version = 2.f;
+	float Version = 3.f;
 
 	struct Relax
 	{
@@ -141,6 +141,20 @@ struct Config
 			bool HideSpectateButton = false;
 			bool HideMatchButton = false;
 		} DiscordRichPresenceSpoofer;
+
+		struct TaikoMania
+		{
+			bool Enabled = false;
+			int NoteStyle = 0;
+			int Playstyle = 0;
+			int AlternateBPM = 100;
+			bool ShowStageSeparators = false;
+			int StageSpacing = 5;
+			ImVec4 BackgroundColour = ImColor(0, 0, 0, 255).Value;
+			ImVec4 PlayfieldColour = ImColor(65, 65, 65, 255).Value;
+			ImVec4 DonColour = ImColor(232, 93, 155, 255).Value;
+			ImVec4 KatsuColour = ImColor(232, 93, 155, 255).Value;
+		} TaikoMania;
 	} Misc;
 
 	void Serialize(std::ostream& outStream)
@@ -155,13 +169,14 @@ struct Config
 		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled), sizeof(bool));
 		Misc.DiscordRichPresenceSpoofer.CustomDetails.Serialize(outStream);
 		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
+		outStream.write(reinterpret_cast<const char*>(&Misc.TaikoMania.Enabled), sizeof(Config::Misc::TaikoMania));
 	}
 
 	void Deserialize(std::istream& inStream)
 	{
         float version;
 		inStream.read(reinterpret_cast<char*>(&version), sizeof(float));
-        if (version == 2.f)
+        if (version >= 2.f)
         {
             Version = version;
 			inStream.read(reinterpret_cast<char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
@@ -174,6 +189,9 @@ struct Config
 			Misc.DiscordRichPresenceSpoofer.CustomDetails.Deserialize(inStream);
 			inStream.read(reinterpret_cast<char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
 		}
+
+		if (version == 3.f)
+			inStream.read(reinterpret_cast<char*>(&Misc.TaikoMania.Enabled), sizeof(Config::Misc::TaikoMania));
 	}
 };
 #pragma pack(pop)
