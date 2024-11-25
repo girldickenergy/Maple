@@ -5,6 +5,11 @@ bool HitObject::IsType(HitObjectType type)
 	return (Type & type) > HitObjectType::None;
 }
 
+bool HitObject::HasHitSound(HitSoundType hitSound)
+{
+	return (HitSound & hitSound) > HitSoundType::None;
+}
+
 Vector2 HitObject::PositionAtLength(float length)
 {
 	if (IsType(HitObjectType::Slider))
@@ -81,9 +86,10 @@ Vector2 HitObject::PositionAtTime(int time)
 	return Position;
 }
 
-HitObject::HitObject(HitObjectType type, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, std::vector<Vector2> sliderCurvePoints, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines, std::vector<double> cumulativeLengths)
+HitObject::HitObject(HitObjectType type, HitSoundType hitSound, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, std::vector<Vector2> sliderCurvePoints, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines, std::vector<double> cumulativeLengths)
 {
 	Type = type;
+	HitSound = hitSound;
 	StartTime = startTime;
 	EndTime = endTime;
 	Duration = EndTime - StartTime;

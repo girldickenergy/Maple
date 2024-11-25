@@ -561,6 +561,7 @@
     <ClInclude Include="Dependencies\OsuDataTypes\Math\sRectangle.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Math\Vector2.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitObjectType.h" />
+    <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitSoundType.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Keys\CatchTheBeatKeys.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Keys\OsuKeys.h" />
     <ClInclude Include="Dependencies\OsuDataTypes\Osu\Keys\OsuManiaKeys.h" />

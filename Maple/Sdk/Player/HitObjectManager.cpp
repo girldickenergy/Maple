@@ -195,6 +195,7 @@ void HitObjectManager::CacheHitObjects()
 		}
 
 		const HitObjectType type = *reinterpret_cast<HitObjectType*>(hitObjectAddress + HITOBJECT_TYPE_OFFSET);
+		const HitSoundType hitSoundType = *reinterpret_cast<HitSoundType*>(hitObjectAddress + HITOBJECT_HIT_SOUND_TYPE_OFFSET);
 		const int startTime = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_STARTTIME_OFFSET);
 		const int endTime = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_ENDTIME_OFFSET);
 		const Vector2 position = *reinterpret_cast<Vector2*>(hitObjectAddress + HITOBJECT_POSITION_OFFSET);
@@ -286,9 +287,9 @@ void HitObjectManager::CacheHitObjects()
 					cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItemsAddress + 0x8 + 0x8 * j));
 			}
 
-			hitObjects.emplace_back(type, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
+			hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
 		}
-		else hitObjects.emplace_back(type, startTime, endTime, position, position, segmentCount, spatialLength);
+		else hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, position, segmentCount, spatialLength);
 	}
 }
 

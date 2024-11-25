@@ -4,12 +4,14 @@
 
 #include "Math/Vector2.h"
 #include "Osu/HitObjects/HitObjectType.h"
+#include "Osu/HitObjects/HitSoundType.h"
 
 class HitObject
 {
 public:
 	bool IsNull = false;
 	HitObjectType Type;
+	HitSoundType HitSound;
 	int StartTime;
 	int EndTime;
 	int Duration;
@@ -22,9 +24,10 @@ public:
 	std::vector<double> CumulativeLengths;
 
 	bool IsType(HitObjectType type);
+	bool HasHitSound(HitSoundType hitSound);
 	Vector2 PositionAtLength(float length);
 	Vector2 PositionAtTime(int time);
 
-	HitObject(HitObjectType type, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, std::vector<Vector2> sliderCurvePoints = {}, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines = {}, std::vector<double> cumulativeLengths = {});
+	HitObject(HitObjectType type, HitSoundType hitSound, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, std::vector<Vector2> sliderCurvePoints = {}, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines = {}, std::vector<double> cumulativeLengths = {});
 	HitObject();
 };

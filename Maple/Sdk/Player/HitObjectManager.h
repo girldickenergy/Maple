@@ -27,6 +27,7 @@ class HitObjectManager
 	static inline constexpr int HITOBJECTMANAGER_HITOBJECTS_OFFSET = 0x48;
 
 	static inline constexpr int HITOBJECT_TYPE_OFFSET = 0x18;
+	static inline constexpr int HITOBJECT_HIT_SOUND_TYPE_OFFSET = 0x1C;
 	static inline constexpr int HITOBJECT_STARTTIME_OFFSET = 0x10;
 	static inline constexpr int HITOBJECT_ENDTIME_OFFSET = 0x14;
 	static inline constexpr int HITOBJECT_POSITION_OFFSET = 0x38;
