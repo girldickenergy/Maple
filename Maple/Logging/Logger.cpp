@@ -11,6 +11,8 @@
 #include "../Storage/Storage.h"
 #include "../Utilities/Crypto/CryptoUtilities.h"
 
+#include "Charlotte.h"
+
 void Logger::clearLogFile()
 {
 	if (exists(logFilePath))
@@ -41,6 +43,8 @@ void Logger::clearLogFile()
 
 void Logger::createLogEntry(LogSeverity severity, const char* message)
 {
+	VIRTUALIZER_FISH_WHITE_START
+
 	const auto time = std::time(nullptr);
 	tm timeStruct{};
 	localtime_s(&timeStruct, &time);
@@ -99,15 +103,21 @@ void Logger::createLogEntry(LogSeverity severity, const char* message)
 
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("vD5KJvfDRKZEaR9I"))) : entryBuf) << std::endl;
+#ifdef CLEAR_TEXT_LOGS
+	logFile << entryBuf << std::endl;
+#else
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo"))) << std::endl;
+#endif
 	logFile.close();
+
+	VIRTUALIZER_FISH_WHITE_END
 }
 
-void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole, LPCWSTR consoleTitle)
+void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR consoleTitle)
 {
 	VIRTUALIZER_FISH_RED_START
 
-	shouldEncrypt = encrypt;
+	auto& charlotte = Charlotte::Get();
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
 	Logger::crashLogFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
@@ -116,9 +126,9 @@ void Logger::Initialize(LogSeverity scope, bool encrypt, bool initializeConsole,
 
 	if (initializeConsole)
 	{
-		AllocConsole();
-		freopen_s(reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
-		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+		charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(AllocConsole));
+		charlotte.Call<errno_t>(reinterpret_cast<uintptr_t>(freopen_s), reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
+		consoleHandle = charlotte.Call<HANDLE>(reinterpret_cast<uintptr_t>(GetStdHandle), STD_OUTPUT_HANDLE);
 
 		SetConsoleTitle(consoleTitle);
 	}
@@ -132,7 +142,11 @@ void Logger::WriteCrashReport(const std::string& crashReport)
 {
 	std::fstream logFile;
 	logFile.open(crashLogFilePath, std::ios_base::out | std::ios_base::trunc);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("vD5KJvfDRKZEaR9I"))) : crashReport);
+#ifdef CLEAR_TEXT_LOGS
+	logFile << crashReport;
+#else
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo")));
+#endif
 	logFile.close();
 }
 
@@ -140,10 +154,14 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 {
 	if (static_cast<int>(severity & scope) > 0)
 	{
-		char buffer[1024];
+		const int size = 1024;
+
+		auto& charlotte = Charlotte::Get();
+
+		char buffer[size];
 		va_list args;
 		__builtin_va_start(args, format);
-		vsnprintf(buffer, 1024, format, args);
+		charlotte.Call<int>(reinterpret_cast<uintptr_t>(vsnprintf), buffer, size, format, args);
 		__builtin_va_end(args);
 
 		createLogEntry(severity, buffer);
@@ -154,10 +172,13 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 {
 	if (!result)
 	{
-		char buffer[1024];
+		const int size = 1024;
+		auto& charlotte = Charlotte::Get();
+
+		char buffer[size];
 		va_list args;
 		__builtin_va_start(args, format);
-        vsnprintf(buffer, 1024, format, args);
+		charlotte.Call<int>(reinterpret_cast<uintptr_t>(vsnprintf), buffer, size, format, args);
 		__builtin_va_end(args);
 
 		if (static_cast<int>(LogSeverity::Assert & scope) > 0)
@@ -179,6 +200,7 @@ void Logger::StartPerformanceCounter(const std::string& guid)
 void Logger::StopPerformanceCounter(const std::string& guid)
 {
 	VIRTUALIZER_MUTATE_ONLY_START
+
 	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
 	// Find index
 	for (auto& pr : performanceLogMap)
@@ -217,11 +239,16 @@ void Logger::StopPerformanceCounter(const std::string& guid)
 
 	std::fstream logFile;
 	logFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::app);
-	logFile << (shouldEncrypt ? CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("vD5KJvfDRKZEaR9I"))) : entryBuf) << std::endl;
+#ifdef CLEAR_TEXT_LOGS
+	logFile << entryBuf << std::endl;
+#else
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo"))) << std::endl;
+#endif
 	logFile.close();
 
 	// Remove from performanceReportMap
 	performanceLogMap.erase(guid);
+
 	VIRTUALIZER_MUTATE_ONLY_END
 }
 

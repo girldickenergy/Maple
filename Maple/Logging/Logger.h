@@ -22,7 +22,7 @@ class Logger
 	static void clearLogFile();
 	static void createLogEntry(LogSeverity severity, const char* message);
 public:
-	static void Initialize(LogSeverity scope = LogSeverity::None, bool encrypt = false, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
+	static void Initialize(LogSeverity scope = LogSeverity::None, bool initializeConsole = false, LPCWSTR consoleTitle = L"");
 	static void WriteCrashReport(const std::string& crashReport);
 	static void Log(LogSeverity severity, const char* format, ...);
 	static void Assert(bool condition, bool throwIfFalse, const char* format, ...);

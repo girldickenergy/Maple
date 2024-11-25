@@ -128,7 +128,7 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 			pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
 			pingThreadHandle = pingMilkThread->Start();
 
-						VIRTUALIZER_SHARK_BLACK_END
+			VIRTUALIZER_SHARK_BLACK_END
 		}
 			break;
 		case PacketType::Heartbeat:
@@ -146,7 +146,7 @@ void Communication::onReceive(const std::vector<unsigned char>& data)
 				Security::CorruptMemory();
 			}
 
-						VIRTUALIZER_SHARK_BLACK_END
+			VIRTUALIZER_SHARK_BLACK_END
 		}
 			break;
 		case PacketType::Ping:

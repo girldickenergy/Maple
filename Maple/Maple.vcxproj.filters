@@ -215,6 +215,9 @@
     <ClCompile Include="Features\Relax\SpeedDifficultyEvaluator.cpp">
       <Filter>Features\Relax</Filter>
     </ClCompile>
+    <ClCompile Include="Dependencies\Charlotte\Charlotte.cpp">
+      <Filter>Dependencies\Charlotte</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -450,6 +453,9 @@
     </Filter>
     <Filter Include="Dependencies\fnv1a">
       <UniqueIdentifier>{a69b991a-f321-42f6-aec3-17be83521a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Charlotte">
+      <UniqueIdentifier>{3476f8f9-62b2-4c19-9da9-a2690d2889ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1475,6 +1481,15 @@
     </ClInclude>
     <ClInclude Include="Dependencies\fnv1a\fnv1a.h">
       <Filter>Dependencies\fnv1a</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Charlotte\Charlotte.h">
+      <Filter>Dependencies\Charlotte</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Charlotte\CharlotteFunction.h">
+      <Filter>Dependencies\Charlotte</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Crypto\CryptoTransformation.h">
+      <Filter>Communication\Crypto</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

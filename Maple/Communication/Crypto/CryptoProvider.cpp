@@ -6,11 +6,15 @@
 #include "pem.h"
 #include "VirtualizerSDK.h"
 #include "xorstr.hpp"
+#include <random>
+#include "../../Utilities/Security/Security.h"
+#include <bit>
 
 [[clang::optnone]] CryptoProvider::CryptoProvider(singletonLock)
 {
     VIRTUALIZER_FISH_RED_START
-        xorKey = xorstr_("xjCFQ58Pqd8KPNHp");
+    
+    m_XorKey = xorstr_("xjCFQ58Pqd8KPNHp");
 
     const std::string rsaPrivateKeyStr =
         xorstr_("-----BEGIN PRIVATE KEY-----\n"
@@ -43,17 +47,17 @@
         "-----END PRIVATE KEY-----\n");
 
     CryptoPP::StringSource source(rsaPrivateKeyStr, true);
-    CryptoPP::PEM_Load(source, rsaPrivateKey);
+    CryptoPP::PEM_Load(source, m_RsaPrivateKey);
 
-        VIRTUALIZER_FISH_RED_END
+    VIRTUALIZER_FISH_RED_END
 }
 
 void CryptoProvider::InitializeAES(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
 {
     VIRTUALIZER_FISH_RED_START
 
-    aesKeyBlock = CryptoPP::SecByteBlock((&key[0]), key.size());
-    aesIVBlock = CryptoPP::SecByteBlock((&iv[0]), iv.size());
+    m_AesKeyBlock = CryptoPP::SecByteBlock((&key[0]), key.size());
+    m_AesIvBlock = CryptoPP::SecByteBlock((&iv[0]), iv.size());
 
     VIRTUALIZER_FISH_RED_END
 }
@@ -67,9 +71,9 @@ std::vector<unsigned char> CryptoProvider::XOR(const std::vector<unsigned char>&
     unsigned int j = 0;
     for (unsigned int i = 0; i < data.size(); i++)
     {
-        result[i] = data[i] ^ xorKey[j];
+        result[i] = data[i] ^ m_XorKey[j];
 
-        j = (++j < xorKey.length() ? j : 0);
+        j = (++j < m_XorKey.length() ? j : 0);
     }
 
     VIRTUALIZER_FISH_RED_END
@@ -117,7 +121,7 @@ std::vector<unsigned char> CryptoProvider::RSADecrypt(const std::vector<unsigned
 
     CryptoPP::AutoSeededRandomPool rng;
 
-    CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(rsaPrivateKey);
+    CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(m_RsaPrivateKey);
 
     size_t dpl = decryptor.MaxPlaintextLength(ciphertext.size());
     CryptoPP::SecByteBlock recovered(dpl);
@@ -133,18 +137,18 @@ std::vector<unsigned char> CryptoProvider::AESEncrypt(const std::vector<unsigned
 {
     VIRTUALIZER_FISH_RED_START
 
-    if (aesKeyBlock.empty() || aesKeyBlock.size() <= 0)
+    if (m_AesKeyBlock.empty() || m_AesKeyBlock.size() <= 0)
         return {};
 
-    if (aesIVBlock.empty() || aesIVBlock.size() <= 0)
+    if (m_AesIvBlock.empty() || m_AesIvBlock.size() <= 0)
         return {};
 
     CryptoPP::AutoSeededRandomPool prng;
 
     std::vector<unsigned char> cipher;
 
-    CryptoPP::AES::Encryption aesEncryption(aesKeyBlock, 32);
-    CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, aesIVBlock);
+    CryptoPP::AES::Encryption aesEncryption(m_AesKeyBlock, 32);
+    CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, m_AesIvBlock);
 
     CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::VectorSink(cipher));
     stfEncryptor.Put(reinterpret_cast<const unsigned char*>(&cleartext[0]), cleartext.size());
@@ -159,10 +163,10 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
 {
     VIRTUALIZER_FISH_RED_START
 
-    if (aesKeyBlock.empty() || aesKeyBlock.size() <= 0)
+    if (m_AesKeyBlock.empty() || m_AesKeyBlock.size() <= 0)
         return {};
 
-    if (aesIVBlock.empty() || aesIVBlock.size() <= 0)
+    if (m_AesIvBlock.empty() || m_AesIvBlock.size() <= 0)
         return {};
 
     CryptoPP::AutoSeededRandomPool prng;
@@ -176,7 +180,7 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
         VIRTUALIZER_FISH_RED_START
 
         CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption d;
-        d.SetKeyWithIV(aesKeyBlock, aesKeyBlock.size(), aesIVBlock);
+        d.SetKeyWithIV(m_AesKeyBlock, m_AesKeyBlock.size(), m_AesIvBlock);
 
         CryptoPP::VectorSource s(ciphertext, true,
             new CryptoPP::StreamTransformationFilter(d,
@@ -192,4 +196,80 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
     }
 
     return recovered;
+}
+
+std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vector<uint8_t>& buffer, uint32_t key1, uint32_t key2, uint32_t key3, bool reverse)
+{
+    VIRTUALIZER_MUTATE_ONLY_START
+
+    auto transformedBuffer = std::vector<uint8_t>(buffer);
+    std::vector<CryptoTransformation> transformations = GenerateCryptoTransformations(key1 ^ key2 ^ key3, transformedBuffer.size());
+    key1 ^= key3;
+    key2 ^= key3;
+
+    size_t startingPosition = reverse ? (transformedBuffer.size() - 1) : 0;
+    for (auto i = startingPosition; reverse ? i >= 0 : i < transformedBuffer.size(); i += reverse ? -1 : 1)
+    {
+        if (reverse)
+            transformedBuffer[i] ^= (i > 0 ? transformedBuffer[i - 1] : 0);
+
+        switch (transformations[i])
+        {
+            case Xor:
+                transformedBuffer[i] ^= (key1 ^ key2);
+                break;
+            case Rol:
+                transformedBuffer[i] ^= std::rotl(key1 ^ key2, (i + 1) % 16);
+                break;
+            case Ror:
+                transformedBuffer[i] ^= std::rotr(key1 ^ key2, 16 - ((i + 1) % 16));
+                break;
+            case Rolr:
+                transformedBuffer[i] ^= std::rotl(key1, (i + 1) % 16) ^ std::rotr(key2, 16 - ((1 + 1) % 16));
+                break;
+            case Add:
+                if (reverse)
+                    transformedBuffer[i] -= key1 ^ key2;
+                else
+                    transformedBuffer[i] += key1 ^ key2;
+                break;
+            case Sub:
+                if (reverse)
+                    transformedBuffer[i] += key1 ^ key2;
+                else
+                    transformedBuffer[i] -= key1 ^ key2;
+                break;
+            case Cancer:
+                transformedBuffer[i] ^= key1 ^ key2 ^ 0xdeadbeef ^ std::rotl(key3, (i + 1) % 16) ^ std::rotr(key3, 16 - ((i + 1) % 16));
+                break;
+            default:
+                Security::CorruptMemory();
+                break;
+        }
+
+        if (!reverse)
+            transformedBuffer[i] ^= i > 0 ? transformedBuffer[i - 1] : 0;
+    }
+
+    return transformedBuffer;
+
+    VIRTUALIZER_MUTATE_ONLY_END
+}
+
+std::vector<CryptoTransformation> CryptoProvider::GenerateCryptoTransformations(uint32_t seed, size_t size)
+{
+    VIRTUALIZER_MUTATE_ONLY_START
+
+    auto transformations = std::vector<CryptoTransformation>(size);
+    std::mt19937 rng(seed);
+    std::uniform_int_distribution<int> dist(0, static_cast<int>(CryptoTransformation::Cancer));
+
+    for (size_t i = 0; i < size; i++)
+    {
+        transformations[i] = static_cast<CryptoTransformation>(dist(rng));
+    }
+
+    return transformations;
+
+    VIRTUALIZER_MUTATE_ONLY_END
 }

@@ -5,13 +5,14 @@
 #include "rsa.h"
 #include "secblock.h"
 #include "../Singleton/Singleton.h"
+#include "CryptoTransformation.h"
 
 class CryptoProvider : public Singleton<CryptoProvider>
 {
-	std::string xorKey;
-	CryptoPP::RSA::PrivateKey rsaPrivateKey;
-	CryptoPP::SecByteBlock aesKeyBlock;
-	CryptoPP::SecByteBlock aesIVBlock;
+	std::string m_XorKey;
+	CryptoPP::RSA::PrivateKey m_RsaPrivateKey;
+	CryptoPP::SecByteBlock m_AesKeyBlock;
+	CryptoPP::SecByteBlock m_AesIvBlock;
 public:
 	CryptoProvider(singletonLock);
 
@@ -23,4 +24,7 @@ public:
 	std::vector<unsigned char> RSADecrypt(const std::vector<unsigned char>& ciphertext);
 	std::vector<unsigned char> AESEncrypt(const std::vector<unsigned char>& cleartext);
 	std::vector<unsigned char> AESDecrypt(const std::vector<unsigned char>& ciphertext);
+
+	std::vector<uint8_t> ApplyCryptoTransformations(const std::vector<uint8_t>& buffer, uint32_t key1, uint32_t key2, uint32_t key3, bool reverse = false);
+	std::vector<CryptoTransformation> GenerateCryptoTransformations(uint32_t seed, size_t size);
 };

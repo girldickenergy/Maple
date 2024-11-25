@@ -5,6 +5,83 @@
 class Security
 {
 
+	struct CLIENT_ID
+	{
+		HANDLE UniqueProcess;
+		HANDLE UniqueThread;
+	};
+
+	struct TEB
+	{
+		NT_TIB NtTib;
+		PVOID EnvironmentPointer;
+		CLIENT_ID ClientId;
+		PVOID ActiveRpcHandle;
+		PVOID ThreadLocalStoragePointer;
+		struct PEB* ProcessEnvironmentBlock;
+	};
+
+	struct PEB_LDR_DATA
+	{
+		ULONG Length;
+		BOOLEAN Initialized;
+		HANDLE SsHandle;
+		LIST_ENTRY InLoadOrderModuleList;
+		LIST_ENTRY InMemoryOrderModuleList;
+		LIST_ENTRY InInitializationOrderModuleList;
+		PVOID EntryInProgress;
+		BOOLEAN ShutdownInProgress;
+		HANDLE ShutdownThreadId;
+	};
+
+	struct PEB
+	{
+		BOOLEAN InheritedAddressSpace;
+		BOOLEAN ReadImageFileExecOptions;
+		BOOLEAN BeingDebugged;
+		union
+		{
+			BOOLEAN BitField;
+			struct
+			{
+				BOOLEAN ImageUsesLargePages : 1;
+				BOOLEAN IsProtectedProcess : 1;
+				BOOLEAN IsImageDynamicallyRelocated : 1;
+				BOOLEAN SkipPatchingUser32Forwarders : 1;
+				BOOLEAN IsPackagedProcess : 1;
+				BOOLEAN IsAppContainer : 1;
+				BOOLEAN IsProtectedProcessLight : 1;
+				BOOLEAN SpareBits : 1;
+			};
+		};
+		HANDLE Mutant;
+		PVOID ImageBaseAddress;
+		PEB_LDR_DATA* Ldr;
+	};
+
+	struct UNICODE_STRING
+	{
+		USHORT Length;
+		USHORT MaximumLength;
+		PWCH Buffer;
+	};
+
+	struct LDR_DATA_TABLE_ENTRY
+	{
+		LIST_ENTRY InLoadOrderLinks;
+		LIST_ENTRY InMemoryOrderLinks;
+		union
+		{
+			LIST_ENTRY InInitializationOrderLinks;
+			LIST_ENTRY InProgressLinks;
+		};
+		PVOID DllBase;
+		PVOID EntryPoint;
+		ULONG SizeOfImage;
+		UNICODE_STRING FullDllName;
+		UNICODE_STRING BaseDllName;
+	};
+
 	static wchar_t* GetFileNameFromPath(wchar_t* Path)
 	{
 		wchar_t* LastSlash = NULL;
@@ -71,13 +148,18 @@ public:
 		// If after this we for some reason haven't thrown SOME kind of exception, we do now.
 		_asm
 		{
+			xor esp, esp;
+			__emit 0xDE;
 			__emit 0xF3;
 			__emit 0x64;
 			__emit 0xCC;
+			__emit 0xAD;
+			xor eax, eax;
+			mov eax, [ebx];
 		}
 	}
 
-	static __forceinline uintptr_t HdnGetProcAddress(void* hModule, const wchar_t* wAPIName)
+	static __forceinline uintptr_t HdnGetProcAddress(void* hModule, const char* apiName)
 	{
 #if defined( _WIN32 )   
 		unsigned char* lpBase = reinterpret_cast<unsigned char*>(hModule);
@@ -95,7 +177,7 @@ public:
 				for (unsigned int uiIter = 0; uiIter < iedExportDirectory->NumberOfNames; ++uiIter)
 				{
 					char* szNames = reinterpret_cast<char*>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfNames)[uiIter]);
-					if (wcscmp(wAPIName, (wchar_t*)GetWC(szNames)) == 0)
+					if (wcscmp(GetWC(apiName), (wchar_t*)GetWC(szNames)) == 0)
 					{
 						unsigned short usOrdinal = reinterpret_cast<unsigned short*>(lpBase + iedExportDirectory->AddressOfNameOrdinals)[uiIter];
 						return reinterpret_cast<uintptr_t>(lpBase + reinterpret_cast<unsigned long*>(lpBase + iedExportDirectory->AddressOfFunctions)[usOrdinal]);
@@ -107,85 +189,31 @@ public:
 		return 0;
 	}
 
+	static __forceinline void* HdnGetModuleBase(const char* moduleName) {
+#if defined( _WIN64 )  
+#define PEBOffset 0x60  
+#define LdrOffset 0x18  
+#define ListOffset 0x10  
+		unsigned long long pPeb = __readgsqword(PEBOffset);
+#elif defined( _WIN32 )  
+#define PEBOffset 0x30  
+#define LdrOffset 0x0C  
+#define ListOffset 0x0C  
+		unsigned long pPeb = __readfsdword(PEBOffset);
+#endif       
+		pPeb = *reinterpret_cast<decltype(pPeb)*>(pPeb + LdrOffset);
+		LDR_DATA_TABLE_ENTRY* pModuleList = *reinterpret_cast<LDR_DATA_TABLE_ENTRY**>(pPeb + ListOffset);
+		while (pModuleList->DllBase)
+		{
+			if (!wcscmp(pModuleList->BaseDllName.Buffer, GetWC(moduleName)))
+				return pModuleList->DllBase;
+			pModuleList = reinterpret_cast<LDR_DATA_TABLE_ENTRY*>(pModuleList->InLoadOrderLinks.Flink);
+		}
+		return nullptr;
+	}
+
 	static __forceinline HMODULE WINAPI GetModuleW(_In_opt_ LPCWSTR lpModuleName)
 	{
-		struct CLIENT_ID
-		{
-			HANDLE UniqueProcess;
-			HANDLE UniqueThread;
-		};
-
-		struct TEB
-		{
-			NT_TIB NtTib;
-			PVOID EnvironmentPointer;
-			CLIENT_ID ClientId;
-			PVOID ActiveRpcHandle;
-			PVOID ThreadLocalStoragePointer;
-			struct PEB* ProcessEnvironmentBlock;
-		};
-
-		struct PEB_LDR_DATA
-		{
-			ULONG Length;
-			BOOLEAN Initialized;
-			HANDLE SsHandle;
-			LIST_ENTRY InLoadOrderModuleList;
-			LIST_ENTRY InMemoryOrderModuleList;
-			LIST_ENTRY InInitializationOrderModuleList;
-			PVOID EntryInProgress;
-			BOOLEAN ShutdownInProgress;
-			HANDLE ShutdownThreadId;
-		};
-
-		struct PEB
-		{
-			BOOLEAN InheritedAddressSpace;
-			BOOLEAN ReadImageFileExecOptions;
-			BOOLEAN BeingDebugged;
-			union
-			{
-				BOOLEAN BitField;
-				struct
-				{
-					BOOLEAN ImageUsesLargePages : 1;
-					BOOLEAN IsProtectedProcess : 1;
-					BOOLEAN IsImageDynamicallyRelocated : 1;
-					BOOLEAN SkipPatchingUser32Forwarders : 1;
-					BOOLEAN IsPackagedProcess : 1;
-					BOOLEAN IsAppContainer : 1;
-					BOOLEAN IsProtectedProcessLight : 1;
-					BOOLEAN SpareBits : 1;
-				};
-			};
-			HANDLE Mutant;
-			PVOID ImageBaseAddress;
-			PEB_LDR_DATA* Ldr;
-		};
-
-		struct UNICODE_STRING
-		{
-			USHORT Length;
-			USHORT MaximumLength;
-			PWCH Buffer;
-		};
-
-		struct LDR_DATA_TABLE_ENTRY
-		{
-			LIST_ENTRY InLoadOrderLinks;
-			LIST_ENTRY InMemoryOrderLinks;
-			union
-			{
-				LIST_ENTRY InInitializationOrderLinks;
-				LIST_ENTRY InProgressLinks;
-			};
-			PVOID DllBase;
-			PVOID EntryPoint;
-			ULONG SizeOfImage;
-			UNICODE_STRING FullDllName;
-			UNICODE_STRING BaseDllName;
-		};
-
 		PEB* ProcessEnvironmentBlock = ((PEB*)((TEB*)((TEB*)NtCurrentTeb())->ProcessEnvironmentBlock));
 		if (lpModuleName == nullptr)
 			return (HMODULE)(ProcessEnvironmentBlock->ImageBaseAddress);

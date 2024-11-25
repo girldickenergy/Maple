@@ -1,6 +1,8 @@
 #include "MilkThread.h"
 
 #include <string>
+#include <Charlotte.h>
+
 #include <VirtualizerSDK.h>
 
 MilkThread::MilkThread(uintptr_t function, bool lazy)
@@ -33,13 +35,15 @@ void MilkThread::prepareCodeCave()
 {
     VIRTUALIZER_TIGER_WHITE_START
 
+	auto& charlotte = Charlotte::Get();
+
 	DWORD oldProtection;
-	VirtualProtect(_codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
+	charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(VirtualProtect), _codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0x68; // push
     const uintptr_t jumpLocation = _function;
 	*reinterpret_cast<uint32_t*>((reinterpret_cast<uintptr_t>(_codeCaveLocation) + 1)) = jumpLocation;
     *reinterpret_cast<uint8_t *>((reinterpret_cast<uintptr_t>(_codeCaveLocation) + 5)) = 0xC3; // ret
-	VirtualProtect(_codeCaveLocation, 6, oldProtection, &oldProtection);
+	charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(VirtualProtect), _codeCaveLocation, 6, oldProtection, &oldProtection);
 
 	_codeCavePrepared = true;
 
@@ -48,14 +52,16 @@ void MilkThread::prepareCodeCave()
 
 void MilkThread::CleanCodeCave()
 {
-        VIRTUALIZER_TIGER_WHITE_START
+    VIRTUALIZER_TIGER_WHITE_START
+
+	auto& charlotte = Charlotte::Get();
 
 	DWORD oldProtection;
-	VirtualProtect(_codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
+	charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(VirtualProtect), _codeCaveLocation, 6, PAGE_EXECUTE_READWRITE, &oldProtection);
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation) = 0xCC;
 	*(_codeCaveLocation + 1) = 0xCCCCCCCC;
 	*reinterpret_cast<uint8_t*>(_codeCaveLocation + 5) = 0xCC;
-	VirtualProtect(_codeCaveLocation, 6, oldProtection, &oldProtection);
+	charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(VirtualProtect), _codeCaveLocation, 6, oldProtection, &oldProtection);
 
 	_codeCavePrepared = false;
 
@@ -71,9 +77,11 @@ HANDLE MilkThread::Start()
 	if (!_codeCavePrepared)
 		[[clang::noinline]] prepareCodeCave();
 
-	HANDLE ret = CreateThread(nullptr, NULL, reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation),
-		nullptr, NULL, nullptr);
-        VIRTUALIZER_TIGER_WHITE_END
+	auto& charlotte = Charlotte::Get();
+	auto ret = charlotte.Call<HANDLE>(reinterpret_cast<uintptr_t>(CreateThread), nullptr, NULL, 
+		reinterpret_cast<LPTHREAD_START_ROUTINE>(_codeCaveLocation), nullptr, NULL, nullptr);
+    
+	VIRTUALIZER_TIGER_WHITE_END
 	return ret;
 }
 

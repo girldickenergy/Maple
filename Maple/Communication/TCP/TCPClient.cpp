@@ -1,13 +1,20 @@
 #include "TCPClient.h"
 
 #include <ws2tcpip.h>
+#include "../../Utilities/Security/Security.h"
+#include <xorstr.hpp>
 
 void TCPClient::receiveThread()
 {
     while (connected)
     {
         char buffer[BUFFER_LENGTH];
-        const int bytesReceived = recv(m_socket, buffer, BUFFER_LENGTH, 0);
+
+        auto handle = Security::HdnGetModuleBase(xorstr_("ws2.dll"));
+        auto func = Security::HdnGetProcAddress(handle, xorstr_("recv"));
+        typedef int(__stdcall* recvType)(SOCKET, char*, int, int);
+        const int bytesReceived = reinterpret_cast<recvType>(func)(m_socket, buffer, BUFFER_LENGTH, 0);
+
         if (bytesReceived <= 0)
         {
             if (disconnectedCallback)
@@ -101,7 +108,11 @@ bool TCPClient::Connect(const std::string& host, const std::string& port)
             return false;
         }
 
-        iResult = connect(m_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
+        auto handle = Security::HdnGetModuleBase(xorstr_("ws2.dll"));
+        auto func = Security::HdnGetProcAddress(handle, xorstr_("connect"));
+        typedef int(__stdcall* connectType)(SOCKET, const sockaddr*, int);
+        iResult = reinterpret_cast<connectType>(func)(m_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
+
         if (iResult == SOCKET_ERROR)
         {
             closesocket(m_socket);
@@ -168,7 +179,10 @@ void TCPClient::Send(const std::vector<unsigned char>& data)
     {
         const int bytesToSend = (std::min)(BUFFER_LENGTH, static_cast<unsigned>(remainingBytes));
 
-        send(m_socket, reinterpret_cast<char*>(packet.data() + offset), bytesToSend, 0);
+        auto handle = Security::HdnGetModuleBase(xorstr_("ws2.dll"));
+        auto func = Security::HdnGetProcAddress(handle, xorstr_("send"));
+        typedef int(__stdcall* sendType)(SOCKET, const char*, int, int);
+        reinterpret_cast<sendType>(func)(m_socket, reinterpret_cast<char*>(packet.data() + offset), bytesToSend, 0);
 
         offset += bytesToSend;
         remainingBytes -= bytesToSend;
