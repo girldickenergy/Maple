@@ -260,7 +260,7 @@ void Milk::AdjustRate(double rateMultiplier, bool isNoMod)
 void Milk::AdjustPollingVectorsToRate(double rateMultiplier)
 {
     size_t ratesRequiredSize = (std::max)(static_cast<size_t>(_rates->size() * rateMultiplier), 1u);
-    size_t spriteCollectionCountsRequiredSize = (std::max)(static_cast<size_t>(_spriteCollectionCounts->size() * rateMultiplier), 1u);
+    size_t spriteCollectionCountsRequiredSize = _spriteCollectionCounts->empty() ? 0 : (std::max)(static_cast<size_t>(_spriteCollectionCounts->size() * rateMultiplier), 1u);
 
     if (!_rates->empty())
 		_rates->resize(ratesRequiredSize, _rates->at(0));
@@ -271,7 +271,7 @@ void Milk::AdjustPollingVectorsToRate(double rateMultiplier)
 
 bool Milk::IsBroken()
 {
-    return _rates->empty() || (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _spriteCollectionCounts->empty());
+    return _rates->empty() && (Player::GetPlayMode() != PlayModes::OsuMania && Player::GetPlayMode() != PlayModes::CatchTheBeat && _spriteCollectionCounts->empty());
 }
 
 size_t Milk::GetHWIDDataSize()
@@ -346,10 +346,10 @@ bool Milk::Prepare()
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] IS OK"));
 
-    _hwidDataSize = reinterpret_cast<size_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x780);
-    _hwidSectionPtr = reinterpret_cast<uint8_t**>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x784);
-    _hwidSectionKey1 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x78C);
-    _hwidSectionKey2 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x790);
+    _hwidDataSize = reinterpret_cast<size_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x788);
+    _hwidSectionPtr = reinterpret_cast<uint8_t**>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x78C);
+    _hwidSectionKey1 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x794);
+    _hwidSectionKey2 = reinterpret_cast<uint32_t*>(*reinterpret_cast<uintptr_t*>(infoSectionPtr) + 0x798);
 
     Logger::Log(LogSeverity::Debug, xorstr_("[Milk] HW OK"));
 
