@@ -109,6 +109,21 @@ struct Config
 			float CS = 4.2;
 		} CSChanger;
 
+		struct TaikoMania
+		{
+			bool Enabled = false;
+			int NoteStyle = 0;
+			int Playstyle = 0;
+			int AlternateBPM = 100;
+			float ScrollSpeed = 1.f;
+			bool ShowStageSeparators = true;
+			int StageSpacing = 15;
+			ImVec4 BackgroundColour = ImColor(0, 0, 0, 255).Value;
+			ImVec4 PlayfieldColour = ImColor(65, 65, 65, 255).Value;
+			ImVec4 DonColour = ImColor(232, 93, 155, 255).Value;
+			ImVec4 KatsuColour = ImColor(232, 93, 155, 255).Value;
+		} TaikoMania;
+
 		struct UI
 		{
 			int MenuScale = 2;
@@ -141,20 +156,6 @@ struct Config
 			bool HideSpectateButton = false;
 			bool HideMatchButton = false;
 		} DiscordRichPresenceSpoofer;
-
-		struct TaikoMania
-		{
-			bool Enabled = false;
-			int NoteStyle = 0;
-			int Playstyle = 0;
-			int AlternateBPM = 100;
-			bool ShowStageSeparators = false;
-			int StageSpacing = 5;
-			ImVec4 BackgroundColour = ImColor(0, 0, 0, 255).Value;
-			ImVec4 PlayfieldColour = ImColor(65, 65, 65, 255).Value;
-			ImVec4 DonColour = ImColor(232, 93, 155, 255).Value;
-			ImVec4 KatsuColour = ImColor(232, 93, 155, 255).Value;
-		} TaikoMania;
 	} Misc;
 
 	void Serialize(std::ostream& outStream)
@@ -169,7 +170,6 @@ struct Config
 		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.CustomDetailsEnabled), sizeof(bool));
 		Misc.DiscordRichPresenceSpoofer.CustomDetails.Serialize(outStream);
 		outStream.write(reinterpret_cast<const char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
-		outStream.write(reinterpret_cast<const char*>(&Misc.TaikoMania.Enabled), sizeof(Config::Misc::TaikoMania));
 	}
 
 	void Deserialize(std::istream& inStream)
@@ -179,7 +179,13 @@ struct Config
         if (version >= 2.f)
         {
             Version = version;
-			inStream.read(reinterpret_cast<char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
+			if (version >= 3.f)
+				inStream.read(reinterpret_cast<char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
+			else
+			{
+				inStream.read(reinterpret_cast<char*>(&Relax.Enabled), reinterpret_cast<uintptr_t>(&Visuals.TaikoMania.Enabled) - reinterpret_cast<uintptr_t>(&Relax.Enabled));
+				inStream.read(reinterpret_cast<char*>(&Visuals.UI.MenuScale), reinterpret_cast<uintptr_t>(&Visuals.UI.MenuBackground) - reinterpret_cast<uintptr_t>(&Visuals.UI.MenuScale));
+			}
 			Visuals.UI.MenuBackground.Deserialize(inStream);
 			inStream.read(reinterpret_cast<char*>(&Visuals.UI.Snow), reinterpret_cast<uintptr_t>(&Misc.DiscordRichPresenceSpoofer.CustomLargeImageText) - reinterpret_cast<uintptr_t>(&Visuals.UI.Snow));
 			Misc.DiscordRichPresenceSpoofer.CustomLargeImageText.Deserialize(inStream);
@@ -189,9 +195,6 @@ struct Config
 			Misc.DiscordRichPresenceSpoofer.CustomDetails.Deserialize(inStream);
 			inStream.read(reinterpret_cast<char*>(&Misc.DiscordRichPresenceSpoofer.HideSpectateButton), sizeof(bool) * 2);
 		}
-
-		if (version == 3.f)
-			inStream.read(reinterpret_cast<char*>(&Misc.TaikoMania.Enabled), sizeof(Config::Misc::TaikoMania));
 	}
 };
 #pragma pack(pop)

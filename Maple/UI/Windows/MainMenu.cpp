@@ -398,6 +398,36 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
+                Widgets::BeginPanel(xorstr_("TaikoMania"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(11)));
+                {
+                    Widgets::Checkbox(xorstr_("Enabled"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.Enabled);
+
+                    const auto rectangle = std::string(xorstr_("Rectangle"));
+                    const auto circle = std::string(xorstr_("Circle"));
+                    const char* noteStyles[] = { rectangle.c_str(), circle.c_str() };
+                    Widgets::Combo(xorstr_("Note style"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.NoteStyle, noteStyles, IM_ARRAYSIZE(noteStyles));
+
+                    const auto kddk = std::string(xorstr_("kddk"));
+                    const auto dkkd = std::string(xorstr_("dkkd"));
+                    const auto kkdd = std::string(xorstr_("kkdd"));
+                    const auto ddkk = std::string(xorstr_("ddkk"));
+                    const auto kdkd = std::string(xorstr_("kdkd"));
+                    const auto dkdk = std::string(xorstr_("dkdk"));
+                    const char* playstyles[] = { kddk.c_str(), dkkd.c_str(), kkdd.c_str(), ddkk.c_str(), kdkd.c_str(), dkdk.c_str() };
+                    Widgets::Combo(xorstr_("Playstyle"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
+                    Widgets::SliderInt(xorstr_("Alternate BPM"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.AlternateBPM, 0, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+                    Widgets::SliderFloat(xorstr_("Scroll speed"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.ScrollSpeed, 0.1f, 3.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+
+                    Widgets::Checkbox(xorstr_("Show stage separators"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.ShowStageSeparators);
+                    Widgets::SliderInt(xorstr_("Stage spacing"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.StageSpacing, 0, 25, 1, 5, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
+
+                    ImGui::ColorEdit4(xorstr_("Background colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.BackgroundColour), ImGuiColorEditFlags_NoInputs);
+                    ImGui::ColorEdit4(xorstr_("Playfield colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.PlayfieldColour), ImGuiColorEditFlags_NoInputs);
+                    ImGui::ColorEdit4(xorstr_("Don colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.DonColour), ImGuiColorEditFlags_NoInputs);
+                    ImGui::ColorEdit4(xorstr_("Katsu colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.KatsuColour), ImGuiColorEditFlags_NoInputs);
+                }
+                Widgets::EndPanel();
+
                 Widgets::BeginPanel(xorstr_("User Interface"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(backgroundTexture ? 8 : 7, 0, 2)));
                 {
                     Widgets::Checkbox(xorstr_("Snow"), &ConfigManager::CurrentConfig.Visuals.UI.Snow);
@@ -588,35 +618,6 @@ void MainMenu::Render()
 
                     if (storageConfigEdited)
                         Storage::SaveStorageConfig();
-                }
-                Widgets::EndPanel();
-
-                Widgets::BeginPanel(xorstr_("TaikoMania"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(10)));
-                {
-                    Widgets::Checkbox(xorstr_("Enabled"), &ConfigManager::CurrentConfig.Misc.TaikoMania.Enabled);
-
-                    const auto rectangle = std::string(xorstr_("Rectangle"));
-                    const auto circle = std::string(xorstr_("Circle"));
-                    const char* noteStyles[] = { rectangle.c_str(), circle.c_str() };
-                    Widgets::Combo(xorstr_("Note style"), &ConfigManager::CurrentConfig.Misc.TaikoMania.NoteStyle, noteStyles, IM_ARRAYSIZE(noteStyles));
-
-                    const auto kddk = std::string(xorstr_("kddk"));
-                    const auto dkkd = std::string(xorstr_("dkkd"));
-                    const auto kkdd = std::string(xorstr_("kkdd"));
-                    const auto ddkk = std::string(xorstr_("ddkk"));
-                    const auto kdkd = std::string(xorstr_("kdkd"));
-                    const auto dkdk = std::string(xorstr_("dkdk"));
-                    const char* playstyles[] = { kddk.c_str(), dkkd.c_str(), kkdd.c_str(), ddkk.c_str(), kdkd.c_str(), dkdk.c_str() };
-                    Widgets::Combo(xorstr_("Playstyle"), &ConfigManager::CurrentConfig.Misc.TaikoMania.Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
-                    Widgets::SliderInt(xorstr_("Alternate BPM"), &ConfigManager::CurrentConfig.Misc.TaikoMania.AlternateBPM, 0, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
-
-                    Widgets::Checkbox(xorstr_("Show stage separators"), &ConfigManager::CurrentConfig.Misc.TaikoMania.ShowStageSeparators);
-                    Widgets::SliderInt(xorstr_("Stage spacing"), &ConfigManager::CurrentConfig.Misc.TaikoMania.StageSpacing, 0, 25, 1, 5, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
-
-                    ImGui::ColorEdit4(xorstr_("Background colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Misc.TaikoMania.BackgroundColour), ImGuiColorEditFlags_NoInputs);
-                    ImGui::ColorEdit4(xorstr_("Playfield colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Misc.TaikoMania.PlayfieldColour), ImGuiColorEditFlags_NoInputs);
-                    ImGui::ColorEdit4(xorstr_("Don colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Misc.TaikoMania.DonColour), ImGuiColorEditFlags_NoInputs);
-                    ImGui::ColorEdit4(xorstr_("Katsu colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Misc.TaikoMania.KatsuColour), ImGuiColorEditFlags_NoInputs);
                 }
                 Widgets::EndPanel();
 
