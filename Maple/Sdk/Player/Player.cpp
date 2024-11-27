@@ -14,6 +14,7 @@
 #include "../../Features/Relax/Relax.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../../Logging/Logger.h"
+#include "../../Features/TaikoMania/TaikoMania.h"
 
 int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 {
@@ -29,6 +30,7 @@ int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 		Relax::Initialize();
 		AimAssist::Initialize();
 		ReplayBot::Initialize();
+		TaikoMania::Initialize();
 	}
 
 	[[clang::musttail]] return oOnLoadComplete(instance, success);

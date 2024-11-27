@@ -21,6 +21,7 @@
 #include "../Features/Enlighten/Enlighten.h"
 #include "../Features/AimAssist/AimAssist.h"
 #include "../Features/Relax/Relax.h"
+#include "../Features/TaikoMania/TaikoMania.h"
 #include "../Storage/Storage.h"
 
 IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -258,6 +259,7 @@ void UI::render()
 
 	Enlighten::Render();
 	AimAssist::Render();
+	TaikoMania::Render();
 
 	ImGui::Render();
 

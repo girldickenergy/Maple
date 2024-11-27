@@ -26,6 +26,8 @@ public:
 	static inline ImFont* FontHuge;
 	static inline ImFont* FontHugeSemiBold;
 	static inline ImFont* FontHugeBold;
+	static inline ImFont* FontVeryHugeSemiBold;
+	static inline ImFont* FontEnormousBold;
 
 	static inline float Scale = 1;
 	static inline ImVec2 MainMenuSize;
@@ -82,6 +84,10 @@ public:
 		FontHuge = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaData, Fonts::ComfortaaSize, 26);
 		FontHugeSemiBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaSemiBoldData, Fonts::ComfortaaSemiBoldSize, 26);
 		FontHugeBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaBoldData, Fonts::ComfortaaBoldSize, 26);
+
+		// for overlay statistics
+		FontVeryHugeSemiBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaSemiBoldData, Fonts::ComfortaaSemiBoldSize, 36);
+		FontEnormousBold = io.Fonts->AddFontFromMemoryCompressedTTF(Fonts::ComfortaaBoldData, Fonts::ComfortaaBoldSize, 48);
 	}
 
 	static void LoadTextures()

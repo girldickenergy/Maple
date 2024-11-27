@@ -261,6 +261,7 @@
     <ClCompile Include="Features\Relax\SpeedDifficultyEvaluator.cpp" />
     <ClCompile Include="Features\ReplayBot\ReplayBot.cpp" />
     <ClCompile Include="Features\Spoofer\Spoofer.cpp" />
+    <ClCompile Include="Features\TaikoMania\TaikoMania.cpp" />
     <ClCompile Include="Features\Timewarp\Timewarp.cpp" />
     <ClCompile Include="Logging\Logger.cpp" />
     <ClCompile Include="SDK\Audio\AudioEngine.cpp" />
@@ -600,6 +601,10 @@
     <ClInclude Include="Features\Relax\SpeedDifficultyEvaluator.h" />
     <ClInclude Include="Features\ReplayBot\ReplayBot.h" />
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
+    <ClInclude Include="Features\TaikoMania\TaikoMania.h" />
+    <ClInclude Include="Features\TaikoMania\TaikoManiaObjectType.h" />
+    <ClInclude Include="Features\TaikoMania\TaikoManiaPlaystyle.h" />
+    <ClInclude Include="Features\TaikoMania\TaikoManiaStage.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="Logging\LogSeverity.h" />

@@ -218,6 +218,9 @@
     <ClCompile Include="Dependencies\Charlotte\Charlotte.cpp">
       <Filter>Dependencies\Charlotte</Filter>
     </ClCompile>
+    <ClCompile Include="Features\TaikoMania\TaikoMania.cpp">
+      <Filter>Features\TaikoMania</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -456,6 +459,9 @@
     </Filter>
     <Filter Include="Dependencies\Charlotte">
       <UniqueIdentifier>{3476f8f9-62b2-4c19-9da9-a2690d2889ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\TaikoMania">
+      <UniqueIdentifier>{64621b53-046d-46b2-af16-2024a651a945}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1490,6 +1496,21 @@
     </ClInclude>
     <ClInclude Include="Communication\Crypto\CryptoTransformation.h">
       <Filter>Communication\Crypto</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\OsuDataTypes\Osu\HitObjects\HitSoundType.h">
+      <Filter>Dependencies\OsuDataTypes\Osu\HitObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TaikoMania\TaikoMania.h">
+      <Filter>Features\TaikoMania</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TaikoMania\TaikoManiaObjectType.h">
+      <Filter>Features\TaikoMania</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TaikoMania\TaikoManiaPlaystyle.h">
+      <Filter>Features\TaikoMania</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TaikoMania\TaikoManiaStage.h">
+      <Filter>Features\TaikoMania</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
