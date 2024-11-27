@@ -305,7 +305,6 @@ bool Milk::Prepare()
         VIRTUALIZER_LION_BLACK_END
         return true;
 #endif
-    Logger::StartPerformanceCounter(xorstr_("{99D6FB11-046C-4ACB-A269-92B179C3186A}"));
 
     _authStubBaseAddress = findAuthStub();
     if (!_authStubBaseAddress)
@@ -396,7 +395,6 @@ bool Milk::Prepare()
 
     preparationSuccess = true;
 
-    Logger::StopPerformanceCounter(xorstr_("{99D6FB11-046C-4ACB-A269-92B179C3186A}"));
     VIRTUALIZER_LION_BLACK_END
 
     return true;

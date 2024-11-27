@@ -7,8 +7,7 @@ enum class LogSeverity
 	Debug = 1 << 1,
 	Warning = 1 << 2,
 	Error = 1 << 3,
-	Assert = 1 << 4,
-	All = Info | Debug | Warning | Error | Assert
+	All = Info | Debug | Warning | Error
 };
 
 inline LogSeverity operator|(LogSeverity a, LogSeverity b)

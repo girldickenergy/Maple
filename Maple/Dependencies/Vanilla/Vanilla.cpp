@@ -42,7 +42,6 @@ void __stdcall Vanilla::relocateAddressHook(uint8_t** block)
 VanillaResult Vanilla::Initialize(bool useCLR)
 {
 	usingCLR = useCLR;
-	Logger::StartPerformanceCounter(xorstr_("{3565E803-F261-4A79-A9BC-4924686EF87F}"));
 	
 	if (usingCLR)
 	{
@@ -76,7 +75,6 @@ VanillaResult Vanilla::Initialize(bool useCLR)
 			return VanillaResult::CLRStringFailure;
 	}
 
-	Logger::StopPerformanceCounter(xorstr_("{3565E803-F261-4A79-A9BC-4924686EF87F}"));
 	return VanillaResult::Success;
 }
 

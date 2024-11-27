@@ -196,7 +196,7 @@ void Communication::onDisconnect()
 bool Communication::Connect()
 {
 	VIRTUALIZER_TIGER_WHITE_START
-	Logger::StartPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
+
 	if (connected)
 	{
 		IntegritySignature1 -= 0x1;
@@ -218,7 +218,6 @@ bool Communication::Connect()
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	tcpClient.Send(handshakeRequest.Serialize());
 
-	Logger::StopPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
 	VIRTUALIZER_TIGER_WHITE_END
 
 	return true;
@@ -238,12 +237,10 @@ void Communication::Disconnect()
 [[clang::optnone]] void Communication::SendAnticheat()
 {
     VIRTUALIZER_TIGER_WHITE_START
-	Logger::StartPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 
 	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
 	tcpClient.Send(authStreamStageOneRequest.Serialize());
 
-	Logger::StopPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
     VIRTUALIZER_TIGER_WHITE_END
 }
 

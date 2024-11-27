@@ -34,7 +34,6 @@
 #include "Utilities/Anticheat/AnticheatUtilities.h"
 #include "Utilities/Strings/StringUtilities.h"
 #include "Dependencies/Milk/MilkThread.h"
-#include "Utilities/Exceptions/ExceptionHandler.h"
 
 DWORD WINAPI Initialize();
 void InitializeMaple();
@@ -73,8 +72,6 @@ DWORD WINAPI Initialize()
     auto data_addr = data;
 
     VIRTUALIZER_TIGER_WHITE_START
-    Logger::StartPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
-    //ExceptionHandler::Setup();
 
     if (!data_addr)
         Security::CorruptMemory();
@@ -95,17 +92,12 @@ DWORD WINAPI Initialize()
 
     Communication::Connect();
 
-    Logger::StartPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
     while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Sleep(500);
-    Logger::StopPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
 
-    Logger::StartPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
     auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(Communication::SendAnticheat));
-    Logger::StopPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
 
     InitializeMaple();
-    Logger::StopPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
 
     VIRTUALIZER_TIGER_WHITE_END
 
@@ -115,8 +107,7 @@ DWORD WINAPI Initialize()
 void InitializeMaple()
 {
     VIRTUALIZER_FISH_RED_START
-    Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
-    
+
     if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
@@ -170,7 +161,6 @@ void InitializeMaple()
 
         Security::CorruptMemory();
     }
-    Logger::StopPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
 
     VIRTUALIZER_FISH_RED_END
 }
@@ -178,7 +168,6 @@ void InitializeMaple()
 void WaitForCriticalSDKToInitialize()
 {
     VIRTUALIZER_FISH_RED_START
-    Logger::StartPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
 
     uintptr_t clientHash = Memory::Objects[xorstr_("GameBase::ClientHash")];
     uintptr_t updateTiming = Memory::Objects[xorstr_("GameBase::UpdateTiming")];
@@ -206,5 +195,4 @@ void WaitForCriticalSDKToInitialize()
 
         VIRTUALIZER_FISH_RED_END
     }
-    Logger::StopPerformanceCounter(xorstr_("{EB5A207C-0E8B-4B27-9160-67B2271A2EE8}"));
 }

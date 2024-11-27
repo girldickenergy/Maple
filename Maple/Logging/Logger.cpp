@@ -32,13 +32,6 @@ void Logger::clearLogFile()
 	std::fstream logFile;
 	logFile.open(logFilePath, std::ios_base::out | std::ios_base::trunc);
 	logFile.close();
-
-	if (performanceLogFilePath.empty())
-		return;
-
-	std::fstream performanceReportFile;
-	performanceReportFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::trunc);
-	performanceReportFile.close();
 }
 
 void Logger::createLogEntry(LogSeverity severity, const char* message)
@@ -74,12 +67,6 @@ void Logger::createLogEntry(LogSeverity severity, const char* message)
 
 			entry += xorstr_("[ERROR] ");
 			break;
-		case LogSeverity::Assert:
-			if (consoleHandle)
-				SetConsoleTextAttribute(consoleHandle, 5);
-
-			entry += xorstr_("[ASSERT FAIL] ");
-			break;
 		default:
 			if (consoleHandle)
 				SetConsoleTextAttribute(consoleHandle, 7);
@@ -93,8 +80,10 @@ void Logger::createLogEntry(LogSeverity severity, const char* message)
 	char entryBuf[entry.GetSize()];
 	entry.GetData(entryBuf);
 
+#if defined(CLEAR_TEXT_LOGS) || defined(_DEBUG)
 	if (consoleHandle)
 		std::cout << entryBuf << std::endl;
+#endif
 
 	if (logFilePath.empty())
 		return;
@@ -106,7 +95,7 @@ void Logger::createLogEntry(LogSeverity severity, const char* message)
 #ifdef CLEAR_TEXT_LOGS
 	logFile << entryBuf << std::endl;
 #else
-	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo"))) << std::endl;
+	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::EncryptLogEntry(entryBuf, entry.GetSize() - 1)) << "\n";
 #endif
 	logFile.close();
 
@@ -118,8 +107,6 @@ void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR conso
 	VIRTUALIZER_FISH_RED_START
 
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
-	Logger::crashLogFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
-	Logger::performanceLogFilePath = Storage::LogsDirectory + xorstr_("\\performance.log");
 	Logger::scope = scope;
 
 	if (initializeConsole)
@@ -134,18 +121,6 @@ void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR conso
 	clearLogFile();
 
 	VIRTUALIZER_FISH_RED_END
-}
-
-void Logger::WriteCrashReport(const std::string& crashReport)
-{
-	std::fstream logFile;
-	logFile.open(crashLogFilePath, std::ios_base::out | std::ios_base::trunc);
-#ifdef CLEAR_TEXT_LOGS
-	logFile << crashReport;
-#else
-	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(crashReport, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo")));
-#endif
-	logFile.close();
 }
 
 void Logger::Log(LogSeverity severity, const char* format, ...)
@@ -164,89 +139,6 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 	}
 }
 
-void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
-{
-	if (!result)
-	{
-		const int size = 1024;
-
-		char buffer[size];
-		va_list args;
-		__builtin_va_start(args, format);
-		vsnprintf(buffer, size, format, args);
-		__builtin_va_end(args);
-
-		if (static_cast<int>(LogSeverity::Assert & scope) > 0)
-			createLogEntry(LogSeverity::Assert, buffer);
-
-		if (throwIfFalse)
-			throw std::runtime_error(std::string(xorstr_("Assertion failed: ")) + buffer);
-	}
-}
-
-void Logger::StartPerformanceCounter(const std::string& guid)
-{
-	auto time = std::time(nullptr);
-	tm timeStruct{};
-	localtime_s(&timeStruct, &time);
-	performanceLogMap.emplace(std::make_pair(guid, std::make_pair(timeStruct, timeStruct)));
-}
-
-void Logger::StopPerformanceCounter(const std::string& guid)
-{
-	VIRTUALIZER_MUTATE_ONLY_START
-
-	std::pair<std::string, std::tuple<tm, tm>> performanceReport = {};
-	// Find index
-	for (auto& pr : performanceLogMap)
-	{
-		if (pr.first == guid)
-		{
-			performanceReport = pr;
-			break;
-		}
-	}
-
-	if (performanceReport.first.empty())
-		return;
-
-	auto time = std::time(nullptr);
-	tm timeStruct{};
-	localtime_s(&timeStruct, &time);
-	performanceReport.second = std::make_pair(std::get<0>(performanceReport.second), timeStruct);
-
-	// Write to file
-	if (performanceLogFilePath.empty())
-		return;
-
-	char timeStartBuf[32];
-	std::strftime(timeStartBuf, 32, "%d.%m.%Y %H:%M:%S", &std::get<0>(performanceReport.second));
-
-	char timeEndBuf[32];
-	std::strftime(timeEndBuf, 32, "%d.%m.%Y %H:%M:%S", &std::get<1>(performanceReport.second));
-
-	EncryptedString entry = xorstr_("Performance Counter finished! ") + EncryptedString(guid.c_str()) + xorstr_(" Start: ") + EncryptedString(timeStartBuf) + xorstr_(" End: ") + EncryptedString(timeEndBuf);
-
-	Storage::EnsureDirectoryExists(Storage::LogsDirectory);
-
-	char entryBuf[entry.GetSize()];
-    entry.GetData(entryBuf);
-
-	std::fstream logFile;
-	logFile.open(performanceLogFilePath, std::ios_base::out | std::ios_base::app);
-#ifdef CLEAR_TEXT_LOGS
-	logFile << entryBuf << std::endl;
-#else
-	logFile << CryptoUtilities::Base64Encode(CryptoUtilities::MapleXOR(entryBuf, entry.GetSize() - 1, xorstr_("hRaIpIYfKXDQS1CTLT7T4vAo"))) << std::endl;
-#endif
-	logFile.close();
-
-	// Remove from performanceReportMap
-	performanceLogMap.erase(guid);
-
-	VIRTUALIZER_MUTATE_ONLY_END
-}
-
 std::string Logger::GetPreviousRuntimeLogData()
 {
 	return previousRuntimeLogData;
@@ -262,28 +154,4 @@ std::string Logger::GetRuntimeLogData()
 	ifs.close();
 
 	return logData;
-}
-
-std::string Logger::GetCrashLogData()
-{
-	if (!exists(crashLogFilePath))
-		return {};
-
-	std::ifstream ifs(crashLogFilePath);
-	std::string crashData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-	ifs.close();
-
-	return crashData;
-}
-
-std::string Logger::GetPerformanceLogData()
-{
-	if (!exists(performanceLogFilePath))
-		return {};
-
-	std::ifstream ifs(performanceLogFilePath);
-	std::string performanceData((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-	ifs.close();
-
-	return performanceData;
 }

@@ -1,6 +1,7 @@
 #include "CryptoUtilities.h"
 
 #include <windows.h>
+#include <random>
 
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "base32.h"
@@ -8,6 +9,24 @@
 #include "md5.h"
 #include "hex.h"
 #include "sha.h"
+
+std::vector<uint8_t> CryptoUtilities::EncryptLogEntry(const char* str, size_t size)
+{
+    std::vector<uint8_t> result;
+
+    std::random_device randomDevice;
+    auto seed = randomDevice() ^ 0x0000dead ^ 0xbeef0000 ^ size;
+
+    result.insert(result.begin(), reinterpret_cast<uint8_t*>(&seed), reinterpret_cast<uint8_t*>(&seed) + sizeof(seed));
+    
+    std::mt19937 random(seed);
+    std::uniform_int_distribution dist(0, 0xFF);
+    
+    for (size_t i = 0; i < size; i++)
+        result.push_back(str[i] ^ dist(random) ^ (i > 0 ? result[i + sizeof(seed) - 1] : 0));
+
+    return result;
+}
 
 std::string CryptoUtilities::GetMD5Hash(const std::string& str)
 {
@@ -67,36 +86,6 @@ std::vector<uint8_t> CryptoUtilities::GetSHA1Hash(const std::vector<uint8_t>& in
     sha1.CalculateDigest(checksum.data(), input.data(), input.size());
 
     return checksum;
-}
-
-std::vector<uint8_t> CryptoUtilities::MapleXOR(const std::string& str, const std::string& key)
-{
-    std::vector<uint8_t> result;
-
-    unsigned int j = 0;
-    for (unsigned int i = 0; i < str.size(); i++)
-    {
-        result.push_back(str[i] ^ key[j]);
-
-        j = ++j < key.length() ? j : 0;
-    }
-
-    return result;
-}
-
-std::vector<uint8_t> CryptoUtilities::MapleXOR(const char* str, size_t size, const std::string& key)
-{
-    std::vector<uint8_t> result;
-
-    unsigned int j = 0;
-    for (unsigned int i = 0; i < size; i++)
-    {
-        result.push_back(str[i] ^ key[j]);
-
-        j = ++j < key.length() ? j : 0;
-    }
-
-    return result;
 }
 
 std::string CryptoUtilities::Base64Encode(const std::string& str)
