@@ -91,6 +91,8 @@ void Score::Initialize()
 		ConfigManager::BypassFailed = true;
 		ConfigManager::ForceDisableScoreSubmission = true;
 	}
+
+	Memory::AddObject(xorstr_("Score::Instance"), xorstr_("55 8B EC 57 56 83 EC 1C A1"), 0x9, 0x1);
 }
 
 void Score::Submit()
@@ -103,4 +105,52 @@ void Score::Submit()
 void Score::AbortSubmission()
 {
 	Vanilla::RemoveRelocation(std::ref(scoreInstance));
+}
+
+uintptr_t Score::GetInstance()
+{
+	const uintptr_t instanceAddress = Memory::Objects[xorstr_("Score::Instance")];
+
+	return instanceAddress ? *reinterpret_cast<uintptr_t*>(instanceAddress) : 0u;
+}
+
+int Score::GetScore()
+{
+	const uintptr_t instance = GetInstance();
+	if (!instance)
+		return 0;
+
+	return *reinterpret_cast<int*>(instance + TOTAL_SCORE_OFFSET);
+}
+
+int Score::GetCombo()
+{
+	const uintptr_t instance = GetInstance();
+	if (!instance)
+		return 0;
+
+	return *reinterpret_cast<int*>(instance + CURRENT_COMBO_OFFSET);
+}
+
+float Score::GetAccuracy()
+{
+	const uintptr_t instance = GetInstance();
+	if (!instance)
+		return 0.f;
+
+	auto count300 = *reinterpret_cast<uint16_t*>(instance + COUNT300_OFFSET);
+	auto count100 = *reinterpret_cast<uint16_t*>(instance + COUNT100_OFFSET);
+	auto count50 = *reinterpret_cast<uint16_t*>(instance + COUNT50_OFFSET);
+	auto countMiss = *reinterpret_cast<uint16_t*>(instance + COUNTMISS_OFFSET);
+
+	auto totalHits = count300 + count100 + count50 + countMiss;
+	if (totalHits <= 0)
+	{
+		if (Player::GetPlayMode() == PlayModes::Taiko)
+			return 0.f;
+
+		return 100.f;
+	}
+
+	return static_cast<float>(Player::GetPlayMode() == PlayModes::Taiko ? count300 * 300 + count100 * 150 : count300 * 300 + count100 * 100 + count50 * 50) / static_cast<float>(totalHits * 300) * 100.f;
 }
