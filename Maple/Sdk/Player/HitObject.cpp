@@ -86,7 +86,7 @@ Vector2 HitObject::PositionAtTime(int time)
 	return Position;
 }
 
-HitObject::HitObject(HitObjectType type, HitSoundType hitSound, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, std::vector<Vector2> sliderCurvePoints, std::vector<std::pair<Vector2, Vector2>> sliderCurveSmoothLines, std::vector<double> cumulativeLengths)
+HitObject::HitObject(HitObjectType type, HitSoundType hitSound, int startTime, int endTime, Vector2 position, Vector2 endPosition, int segmentCount, double spatialLength, double minHitDelay, int rotationRequirement, const std::vector<Vector2>& sliderCurvePoints, const std::vector<std::pair<Vector2, Vector2>>& sliderCurveSmoothLines, const std::vector<double>& cumulativeLengths)
 {
 	Type = type;
 	HitSound = hitSound;
@@ -97,6 +97,8 @@ HitObject::HitObject(HitObjectType type, HitSoundType hitSound, int startTime, i
 	EndPosition = endPosition;
 	SegmentCount = segmentCount;
 	SpatialLength = spatialLength;
+	MinHitDelay = minHitDelay;
+	RotationRequirement = rotationRequirement;
 	SliderCurvePoints = sliderCurvePoints;
 	SliderCurveSmoothLines = sliderCurveSmoothLines;
 	CumulativeLengths = cumulativeLengths;

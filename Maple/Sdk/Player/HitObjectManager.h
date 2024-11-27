@@ -34,6 +34,9 @@ class HitObjectManager
 	static inline constexpr int HITOBJECT_SEGMENTCOUNT_OFFSET = 0x20;
 	static inline constexpr int HITOBJECT_SPATIALLENGTH_OFFSET = 0x8;
 
+	static inline constexpr int HITOBJECT_MIN_HIT_DELAY_OFFSET = 0x160; // taiko
+	static inline constexpr int HITOBJECT_ROTATION_REQUIREMENT_OFFSET = 0xF8; // osu & taiko
+
 	static inline constexpr int SLIDEROSU_ENDPOSITION_OFFSET = 0x140;
 	static inline constexpr int SLIDEROSU_SLIDERCURVEPOINTS_OFFSET = 0xD4;
 	static inline constexpr int SLIDEROSU_SLIDERCURVESMOOTHLINES_OFFSET = 0xD8;

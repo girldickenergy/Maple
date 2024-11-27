@@ -201,6 +201,8 @@ void HitObjectManager::CacheHitObjects()
 		const Vector2 position = *reinterpret_cast<Vector2*>(hitObjectAddress + HITOBJECT_POSITION_OFFSET);
 		const int segmentCount = *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_SEGMENTCOUNT_OFFSET);
 		const double spatialLength = *reinterpret_cast<double*>(hitObjectAddress + HITOBJECT_SPATIALLENGTH_OFFSET);
+		const double minHitDelay = (type & HitObjectType::Slider) > HitObjectType::None && Player::GetPlayMode() == PlayModes::Taiko ? *reinterpret_cast<double*>(hitObjectAddress + HITOBJECT_MIN_HIT_DELAY_OFFSET) : 0.0;
+		const int rotationRequirement = (type & HitObjectType::Spinner) > HitObjectType::None && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::Taiko) ? *reinterpret_cast<int*>(hitObjectAddress + HITOBJECT_ROTATION_REQUIREMENT_OFFSET) : 0;
 
 		if ((type & HitObjectType::Slider) > HitObjectType::None)
 		{
@@ -287,9 +289,9 @@ void HitObjectManager::CacheHitObjects()
 					cumulativeLengths.emplace_back(*reinterpret_cast<double*>(cumulativeLengthsItemsAddress + 0x8 + 0x8 * j));
 			}
 
-			hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, endPosition, segmentCount, spatialLength, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
+			hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, endPosition, segmentCount, spatialLength, minHitDelay, rotationRequirement, sliderCurvePoints, sliderCurveSmoothLines, cumulativeLengths);
 		}
-		else hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, position, segmentCount, spatialLength);
+		else hitObjects.emplace_back(type, hitSoundType, startTime, endTime, position, position, segmentCount, spatialLength, minHitDelay, rotationRequirement);
 	}
 }
 
