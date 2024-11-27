@@ -116,10 +116,7 @@ struct Config
 			int Playstyle = 0;
 			int AlternateBPM = 100;
 			float ScrollSpeed = 1.f;
-			bool ShowStageSeparators = true;
-			int StageSpacing = 15;
-			ImVec4 BackgroundColour = ImColor(0, 0, 0, 255).Value;
-			ImVec4 PlayfieldColour = ImColor(65, 65, 65, 255).Value;
+			int StageSpacing = 10;
 			ImVec4 DonColour = ImColor(232, 93, 155, 255).Value;
 			ImVec4 KatsuColour = ImColor(232, 93, 155, 255).Value;
 		} TaikoMania;

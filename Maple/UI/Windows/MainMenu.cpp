@@ -398,7 +398,7 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("TaikoMania"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(11)));
+                Widgets::BeginPanel(xorstr_("TaikoMania"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8)));
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.Enabled);
 
@@ -417,12 +417,8 @@ void MainMenu::Render()
                     Widgets::Combo(xorstr_("Playstyle"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.Playstyle, playstyles, IM_ARRAYSIZE(playstyles));
                     Widgets::SliderInt(xorstr_("Alternate BPM"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.AlternateBPM, 0, 500, 1, 10, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
                     Widgets::SliderFloat(xorstr_("Scroll speed"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.ScrollSpeed, 0.1f, 3.f, .1f, 1.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
-
-                    Widgets::Checkbox(xorstr_("Show stage separators"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.ShowStageSeparators);
                     Widgets::SliderInt(xorstr_("Stage spacing"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.StageSpacing, 0, 25, 1, 5, xorstr_("%d"), ImGuiSliderFlags_ClampOnInput);
 
-                    ImGui::ColorEdit4(xorstr_("Background colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.BackgroundColour), ImGuiColorEditFlags_NoInputs);
-                    ImGui::ColorEdit4(xorstr_("Playfield colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.PlayfieldColour), ImGuiColorEditFlags_NoInputs);
                     ImGui::ColorEdit4(xorstr_("Don colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.DonColour), ImGuiColorEditFlags_NoInputs);
                     ImGui::ColorEdit4(xorstr_("Katsu colour"), reinterpret_cast<float*>(&ConfigManager::CurrentConfig.Visuals.TaikoMania.KatsuColour), ImGuiColorEditFlags_NoInputs);
                 }
