@@ -117,8 +117,6 @@ void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR conso
 {
 	VIRTUALIZER_FISH_RED_START
 
-	auto& charlotte = Charlotte::Get();
-
 	Logger::logFilePath = Storage::LogsDirectory + xorstr_("\\runtime.log");
 	Logger::crashLogFilePath = Storage::LogsDirectory + xorstr_("\\crash.log");
 	Logger::performanceLogFilePath = Storage::LogsDirectory + xorstr_("\\performance.log");
@@ -126,9 +124,9 @@ void Logger::Initialize(LogSeverity scope, bool initializeConsole, LPCWSTR conso
 
 	if (initializeConsole)
 	{
-		charlotte.Call<BOOL>(reinterpret_cast<uintptr_t>(AllocConsole));
-		charlotte.Call<errno_t>(reinterpret_cast<uintptr_t>(freopen_s), reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
-		consoleHandle = charlotte.Call<HANDLE>(reinterpret_cast<uintptr_t>(GetStdHandle), STD_OUTPUT_HANDLE);
+		AllocConsole();
+		freopen_s(reinterpret_cast<FILE**>(stdout), xorstr_("CONOUT$"), xorstr_("w"), stdout);
+		consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		SetConsoleTitle(consoleTitle);
 	}
@@ -156,12 +154,10 @@ void Logger::Log(LogSeverity severity, const char* format, ...)
 	{
 		const int size = 1024;
 
-		auto& charlotte = Charlotte::Get();
-
 		char buffer[size];
 		va_list args;
 		__builtin_va_start(args, format);
-		charlotte.Call<int>(reinterpret_cast<uintptr_t>(vsnprintf), buffer, size, format, args);
+		vsnprintf(buffer, size, format, args);
 		__builtin_va_end(args);
 
 		createLogEntry(severity, buffer);
@@ -173,12 +169,11 @@ void Logger::Assert(bool result, bool throwIfFalse, const char* format, ...)
 	if (!result)
 	{
 		const int size = 1024;
-		auto& charlotte = Charlotte::Get();
 
 		char buffer[size];
 		va_list args;
 		__builtin_va_start(args, format);
-		charlotte.Call<int>(reinterpret_cast<uintptr_t>(vsnprintf), buffer, size, format, args);
+		vsnprintf(buffer, size, format, args);
 		__builtin_va_end(args);
 
 		if (static_cast<int>(LogSeverity::Assert & scope) > 0)
