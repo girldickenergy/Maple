@@ -1506,9 +1506,6 @@
     <ClInclude Include="Features\TaikoMania\TaikoManiaObjectType.h">
       <Filter>Features\TaikoMania</Filter>
     </ClInclude>
-    <ClInclude Include="Features\TaikoMania\TaikoManiaPlaystyle.h">
-      <Filter>Features\TaikoMania</Filter>
-    </ClInclude>
     <ClInclude Include="Features\TaikoMania\TaikoManiaStage.h">
       <Filter>Features\TaikoMania</Filter>
     </ClInclude>

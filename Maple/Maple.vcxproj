@@ -603,7 +603,6 @@
     <ClInclude Include="Features\Spoofer\Spoofer.h" />
     <ClInclude Include="Features\TaikoMania\TaikoMania.h" />
     <ClInclude Include="Features\TaikoMania\TaikoManiaObjectType.h" />
-    <ClInclude Include="Features\TaikoMania\TaikoManiaPlaystyle.h" />
     <ClInclude Include="Features\TaikoMania\TaikoManiaStage.h" />
     <ClInclude Include="Features\Timewarp\Timewarp.h" />
     <ClInclude Include="Logging\Logger.h" />
