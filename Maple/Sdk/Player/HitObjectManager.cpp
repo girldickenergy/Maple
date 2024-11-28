@@ -413,23 +413,21 @@ void HitObjectManager::SetSpriteRatio(float value)
 		*reinterpret_cast<float*>(hitObjectManagerInstance + HITOBJECTMANAGER_SPRITERATIO_OFFSET) = value;
 }
 
-uintptr_t HitObjectManager::GetSpriteManagerInstance()
+uintptr_t HitObjectManager::GetSpriteManagerInstance(uintptr_t instance)
 {
-	const uintptr_t hitObjectManagerInstance = GetInstance();
-
-	return hitObjectManagerInstance ? *reinterpret_cast<uintptr_t*>(hitObjectManagerInstance + HITOBJECTMANAGER_SPRITEMANAGER_OFFSET) : 0u;
+	return instance ? *reinterpret_cast<uintptr_t*>(instance + HITOBJECTMANAGER_SPRITEMANAGER_OFFSET) : 0u;
 }
 
 float HitObjectManager::GetGamefieldSpriteRatio()
 {
-	const uintptr_t spriteManagerInstance = GetSpriteManagerInstance();
+	const uintptr_t spriteManagerInstance = GetSpriteManagerInstance(GetInstance());
 
 	return spriteManagerInstance ? SpriteManager::GetGamefieldSpriteRatio(spriteManagerInstance) : 0.f;
 }
 
 void HitObjectManager::SetGamefieldSpriteRatio(float value)
 {
-	if (const uintptr_t spriteManagerInstance = GetSpriteManagerInstance())
+	if (const uintptr_t spriteManagerInstance = GetSpriteManagerInstance(GetInstance()))
 		SpriteManager::SetGamefieldSpriteRatio(spriteManagerInstance, value);
 }
 
@@ -471,11 +469,6 @@ double HitObjectManager::MapDifficultyRange(double difficulty, double min, doubl
 		return mid - (mid - min) * (5. - difficulty) / 5.;
 
 	return mid;
-}
-
-uintptr_t HitObjectManager::GetSpriteManagerInstance(uintptr_t instance)
-{
-	return instance ? *reinterpret_cast<uintptr_t*>(instance + HITOBJECTMANAGER_SPRITEMANAGER_OFFSET) : 0u;
 }
 
 bool HitObjectManager::Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits)

@@ -94,7 +94,7 @@ public:
 	static void SetHitObjectRadius(float value);
 	static float GetSpriteRatio();
 	static void SetSpriteRatio(float value);
-	static uintptr_t GetSpriteManagerInstance();
+	static uintptr_t GetSpriteManagerInstance(uintptr_t instance);
 	static float GetGamefieldSpriteRatio();
 	static void SetGamefieldSpriteRatio(float value);
 	static float GetStackOffset();
@@ -103,7 +103,6 @@ public:
 	static int GetHitObjectsCount();
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
 
-	static uintptr_t GetSpriteManagerInstance(uintptr_t instance);
 	static bool Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
 	static void SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods);
 	static void Update(uintptr_t instance);

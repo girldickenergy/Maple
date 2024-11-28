@@ -267,6 +267,8 @@ void UI::render()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	else
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+
+	Enlighten::RenderPlayfield();
 }
 
 void UI::Initialize()
