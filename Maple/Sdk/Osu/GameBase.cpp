@@ -146,5 +146,5 @@ uintptr_t GameBase::GetSpriteManagerCursor()
 {
 	const uintptr_t spriteManagerCursorAddress = Memory::Objects[xorstr_("GameBase::SpriteManagerCursor")];
 
-	return spriteManagerCursorAddress ? spriteManagerCursorAddress : 0u;
+	return spriteManagerCursorAddress ? *reinterpret_cast<uintptr_t*>(spriteManagerCursorAddress) : 0u;
 }
