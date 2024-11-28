@@ -8,6 +8,7 @@ class Player
 {
 	static inline constexpr int ASYNC_LOAD_COMPLETE_OFFSET = 0x188;
 	static inline constexpr int REPLAY_MODE_OFFSET = 0x17F;
+	static inline constexpr int BEATMAP_OFFSET = 0xDC;
 
 	typedef int(__fastcall* fnOnLoadComplete)(uintptr_t instance, bool success);
 	static inline fnOnLoadComplete oOnLoadComplete;
@@ -33,4 +34,5 @@ public:
 	static bool GetIsFailed();
 	static int GetAnticheatFlag();
 	static void ResetAnticheatFlag();
+	static uintptr_t GetBeatmapInstance();
 };

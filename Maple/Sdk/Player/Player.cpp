@@ -155,3 +155,10 @@ void Player::ResetAnticheatFlag()
 	if (const uintptr_t flagAddress = Memory::Objects[xorstr_("Player::Flag")])
 		*reinterpret_cast<int*>(flagAddress) = 0;
 }
+
+uintptr_t Player::GetBeatmapInstance()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<uintptr_t*>(instance + BEATMAP_OFFSET) : 0u;
+}
