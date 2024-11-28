@@ -34,6 +34,7 @@
 #include "Utilities/Anticheat/AnticheatUtilities.h"
 #include "Utilities/Strings/StringUtilities.h"
 #include "Dependencies/Milk/MilkThread.h"
+#include "SDK/Graphics/SpriteManager.h"
 
 DWORD WINAPI Initialize();
 void InitializeMaple();
@@ -135,6 +136,7 @@ void InitializeMaple()
         GameBase::Initialize();
         ErrorSubmission::Initialize();
         AudioEngine::Initialize();
+        SpriteManager::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();
         Obfuscated::Initialize();
