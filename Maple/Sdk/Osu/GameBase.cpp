@@ -35,6 +35,8 @@ void GameBase::Initialize()
 	Memory::AddObject(xorstr_("GameBase::UniqueID2"), xorstr_("EB 10 E8 ?? ?? ?? ?? 89 85 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 1D ?? ?? ?? ?? B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B F8 B9"), 0x14, 1);
 	Memory::AddObject(xorstr_("GameBase::UniqueCheck"), xorstr_("C6 40 14 00 8B 1D ?? ?? ?? ?? 8B 0D ?? ?? ?? ?? BA ?? ?? ?? ?? FF 15"), 0x6, 1);
 
+	Memory::AddObject(xorstr_("GameBase::SpriteManagerCursor"), xorstr_("D9 40 24 D9 5B 24 83 3D ?? ?? ?? ?? 00 74 0F 8B 0D"), 0x11, 0x1);
+
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -138,4 +140,11 @@ std::wstring GameBase::GetUniqueCheck()
 	const uintptr_t uniqueCheckAddress = Memory::Objects[xorstr_("GameBase::UniqueCheck")];
 
 	return uniqueCheckAddress ? Obfuscated::GetString(*reinterpret_cast<uintptr_t*>(uniqueCheckAddress))->Data().data() : L"";
+}
+
+uintptr_t GameBase::GetSpriteManagerCursor()
+{
+	const uintptr_t spriteManagerCursorAddress = Memory::Objects[xorstr_("GameBase::SpriteManagerCursor")];
+
+	return spriteManagerCursorAddress ? spriteManagerCursorAddress : 0u;
 }

@@ -23,8 +23,6 @@ void SpriteManager::SetGamefieldSpriteRatio(uintptr_t instance, float value)
 bool SpriteManager::Draw(uintptr_t instance)
 {
 	const uintptr_t drawFunctionAddress = Memory::Objects[xorstr_("SpriteManager::Draw")];
-	if (!drawFunctionAddress)
-		return false;
 
-	return reinterpret_cast<fnDraw>(drawFunctionAddress)(instance);
+	return drawFunctionAddress ? reinterpret_cast<fnDraw>(drawFunctionAddress)(instance) : false;
 }

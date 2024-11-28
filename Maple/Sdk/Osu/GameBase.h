@@ -23,4 +23,5 @@ public:
 	static std::wstring GetUniqueID2();
 	static uintptr_t GetUniqueCheckInstance();
 	static std::wstring GetUniqueCheck();
+	static uintptr_t GetSpriteManagerCursor();
 };
