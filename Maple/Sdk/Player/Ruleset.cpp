@@ -45,6 +45,8 @@ void Ruleset::Initialize()
 	Memory::AddObject(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("55 8B EC 56 A1 ?? ?? ?? ?? 85 C0 74 24 8B 50 1C 8B 4A 04 8B 72 08 FF 72 0C 8B D6"));
 	Memory::AddHook(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
 
+	Memory::AddObject(xorstr_("RulesetOsu::CreateHitObjectManager"), xorstr_("55 8B EC 56 E8 ?? ?? ?? ?? 85 C0 74 18 B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B F0"));
+
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -70,4 +72,11 @@ void Ruleset::SetCatcherSpeed(float value)
 {
 	if (const uintptr_t instance = GetInstance())
 		*reinterpret_cast<float*>(instance + BASEMOVEMENTSPEED_OFFSET) = value;
+}
+
+uintptr_t Ruleset::CreateHitObjectManager(uintptr_t instance)
+{
+	const uintptr_t createHitObjectManagerFunctionAddress = Memory::Objects[xorstr_("RulesetOsu::CreateHitObjectManager")];
+
+	return createHitObjectManagerFunctionAddress ? reinterpret_cast<fnCreateHitObjectManager>(createHitObjectManagerFunctionAddress)(instance) : 0u;
 }

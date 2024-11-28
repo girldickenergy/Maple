@@ -17,10 +17,14 @@ class Ruleset
 	typedef int(__fastcall* fnHasHiddenSprites)(uintptr_t instance);
 	static inline fnHasHiddenSprites oHasHiddenSprites;
 	static int __fastcall hasHiddenSpritesHook(uintptr_t instance);
+
+	typedef uintptr_t(__fastcall* fnCreateHitObjectManager)(uintptr_t instance);
 public:
 	static void Initialize();
 
 	static uintptr_t GetInstance();
 	static float GetCatcherSpeed();
 	static void SetCatcherSpeed(float value);
+
+	static uintptr_t CreateHitObjectManager(uintptr_t instance);
 };

@@ -150,6 +150,10 @@ void HitObjectManager::Initialize()
 	Memory::AddObject(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("55 8B EC 57 56 53 81 EC ?? ?? ?? ?? 8B F1 8D BD ?? ?? ?? ?? B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 89 8D ?? ?? ?? ?? 8B F2 83 7D 08 FF 75 10 8B 85 ?? ?? ?? ?? 8B 80"));
 	Memory::AddHook(xorstr_("HitObjectManager::AddFollowPoints"), xorstr_("HitObjectManager::AddFollowPoints"), reinterpret_cast<uintptr_t>(addFollowPointsHook), reinterpret_cast<uintptr_t*>(&oAddFollowPoints));
 
+	Memory::AddObject(xorstr_("HitObjectManager::Load"), xorstr_("55 8B EC 57 56 53 83 EC 74 8B F1 8D 7D 84 B9 1B 00 00 00 33 C0 F3 AB 8B CE 89 4D 88 8B F2"));
+	Memory::AddObject(xorstr_("HitObjectManager::SetBeatmap"), xorstr_("55 8B EC 57 56 8B F1 8B C2 8D 56 30"));
+	Memory::AddObject(xorstr_("HitObjectManager::UpdateBasic"), xorstr_("55 8B EC 57 56 53 83 EC 44 8B F1 8D 7D B4 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 8B D9"));
+
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -467,4 +471,32 @@ double HitObjectManager::MapDifficultyRange(double difficulty, double min, doubl
 		return mid - (mid - min) * (5. - difficulty) / 5.;
 
 	return mid;
+}
+
+uintptr_t HitObjectManager::GetSpriteManagerInstance(uintptr_t instance)
+{
+	return instance ? *reinterpret_cast<uintptr_t*>(instance + HITOBJECTMANAGER_SPRITEMANAGER_OFFSET) : 0u;
+}
+
+bool HitObjectManager::Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits)
+{
+	const uintptr_t loadFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::Load")];
+
+	return instance && loadFunctionAddress ? reinterpret_cast<fnLoad>(loadFunctionAddress)(instance, processHeaders, applyParsingLimits) : false;
+}
+
+void HitObjectManager::SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods)
+{
+	const uintptr_t setBeatmapFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::SetBeatmap")];
+
+	if (instance && setBeatmapFunctionAddress)
+		reinterpret_cast<fnSetBeatmap>(setBeatmapFunctionAddress)(instance, beatmap, mods);
+}
+
+void HitObjectManager::Update(uintptr_t instance)
+{
+	const uintptr_t updateFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::UpdateBasic")];
+
+	if (instance && updateFunctionAddress)
+		reinterpret_cast<fnUpdate>(updateFunctionAddress)(instance);
 }

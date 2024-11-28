@@ -66,6 +66,10 @@ class HitObjectManager
 	typedef void(__fastcall* fnAddFollowPoints)(uintptr_t instance, int startIndex, int endIndex);
 	static inline fnAddFollowPoints oAddFollowPoints;
 	static void __fastcall addFollowPointsHook(uintptr_t instance, int startIndex, int endIndex);
+
+	typedef bool(__fastcall* fnLoad)(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
+	typedef void(__fastcall* fnSetBeatmap)(uintptr_t instance, uintptr_t beatmap, Mods mods);
+	typedef void(__fastcall* fnUpdate)(uintptr_t instance);
 public:
 	static void Initialize();
 
@@ -98,4 +102,9 @@ public:
 	static int GetCurrentHitObjectIndex();
 	static int GetHitObjectsCount();
 	static double MapDifficultyRange(double difficulty, double min, double mid, double max, bool adjustToMods);
+
+	static uintptr_t GetSpriteManagerInstance(uintptr_t instance);
+	static bool Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
+	static void SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods);
+	static void Update(uintptr_t instance);
 };
