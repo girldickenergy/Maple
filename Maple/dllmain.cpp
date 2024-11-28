@@ -35,6 +35,7 @@
 #include "Utilities/Strings/StringUtilities.h"
 #include "Dependencies/Milk/MilkThread.h"
 #include "SDK/Graphics/SpriteManager.h"
+#include "SDK/Graphics/TextureShader2D.h"
 
 DWORD WINAPI Initialize();
 void InitializeMaple();
@@ -136,6 +137,7 @@ void InitializeMaple()
         GameBase::Initialize();
         ErrorSubmission::Initialize();
         AudioEngine::Initialize();
+        TextureShader2D::Initialize();
         SpriteManager::Initialize();
         InputManager::Initialize();
         ModManager::Initialize();

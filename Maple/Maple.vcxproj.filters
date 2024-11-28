@@ -218,6 +218,9 @@
     <ClCompile Include="Features\TaikoMania\TaikoMania.cpp">
       <Filter>Features\TaikoMania</Filter>
     </ClCompile>
+    <ClCompile Include="SDK\Graphics\TextureShader2D.cpp">
+      <Filter>SDK\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1499,6 +1502,9 @@
     </ClInclude>
     <ClInclude Include="Features\TaikoMania\TaikoManiaStage.h">
       <Filter>Features\TaikoMania</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Graphics\TextureShader2D.h">
+      <Filter>SDK\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

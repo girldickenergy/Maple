@@ -268,6 +268,7 @@
     <ClCompile Include="SDK\Discord\DiscordRPC.cpp" />
     <ClCompile Include="SDK\GL\GLControl.cpp" />
     <ClCompile Include="SDK\Graphics\SpriteManager.cpp" />
+    <ClCompile Include="SDK\Graphics\TextureShader2D.cpp" />
     <ClCompile Include="SDK\Helpers\ErrorSubmission.cpp" />
     <ClCompile Include="SDK\Helpers\Obfuscated.cpp" />
     <ClCompile Include="SDK\Input\InputManager.cpp" />
@@ -610,6 +611,7 @@
     <ClInclude Include="SDK\Discord\DiscordRPC.h" />
     <ClInclude Include="SDK\GL\GLControl.h" />
     <ClInclude Include="SDK\Graphics\SpriteManager.h" />
+    <ClInclude Include="SDK\Graphics\TextureShader2D.h" />
     <ClInclude Include="SDK\Helpers\ErrorSubmission.h" />
     <ClInclude Include="SDK\Helpers\Obfuscated.h" />
     <ClInclude Include="SDK\Input\InputManager.h" />

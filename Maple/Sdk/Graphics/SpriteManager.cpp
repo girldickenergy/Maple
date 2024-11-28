@@ -24,5 +24,5 @@ bool SpriteManager::Draw(uintptr_t instance)
 {
 	const uintptr_t drawFunctionAddress = Memory::Objects[xorstr_("SpriteManager::Draw")];
 
-	return drawFunctionAddress ? reinterpret_cast<fnDraw>(drawFunctionAddress)(instance) : false;
+	return drawFunctionAddress && instance ? reinterpret_cast<fnDraw>(drawFunctionAddress)(instance) : false;
 }
