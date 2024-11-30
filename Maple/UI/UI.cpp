@@ -257,7 +257,8 @@ void UI::render()
 	MainMenu::Render();
 	ScoreSubmissionDialog::Render();
 
-	Enlighten::Render();
+	Enlighten::RenderOverlayBackground();
+	Enlighten::RenderPreemptiveDots();
 	AimAssist::Render();
 	TaikoMania::Render();
 
@@ -268,7 +269,7 @@ void UI::render()
 	else
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-	Enlighten::RenderPlayfield();
+	Enlighten::RenderOverlay();
 }
 
 void UI::Initialize()

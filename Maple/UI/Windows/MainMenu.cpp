@@ -17,6 +17,7 @@
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Strings/StringUtilities.h"
 #include "../../Configuration/ConfigManager.h"
+#include "../../Features/Enlighten/Enlighten.h"
 
 bool backgroundImageDialogInitialized = false;
 ImGui::FileBrowser backgroundImageDialog;
@@ -398,7 +399,13 @@ void MainMenu::Render()
                 }
                 Widgets::EndPanel();
 
-                Widgets::BeginPanel(xorstr_("TaikoMania"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8)));
+                Widgets::BeginPanel(xorstr_("[Experimental] Enlighten Overlay"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(1)));
+                {
+                    Widgets::Checkbox(xorstr_("Enabled"), &Enlighten::Enabled);
+                }
+                Widgets::EndPanel();
+
+                Widgets::BeginPanel(xorstr_("TaikoMania Overlay"), ImVec2(optionsWidth, Widgets::CalcPanelHeight(8)));
                 {
                     Widgets::Checkbox(xorstr_("Enabled"), &ConfigManager::CurrentConfig.Visuals.TaikoMania.Enabled);
 

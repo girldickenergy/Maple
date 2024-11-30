@@ -12,7 +12,28 @@
 #include "../../SDK/Audio/AudioEngine.h"
 #include "../../SDK/Graphics/SpriteManager.h"
 #include "../../SDK/Graphics/TextureShader2D.h"
+#include "../../SDK/Input/InputManager.h"
+#include "../../SDK/Mods/ModManager.h"
 #include "../../SDK/Player/Ruleset.h"
+
+void Enlighten::initializeOverlay()
+{
+	hitObjectManagerLoaded = false;
+	hitObjectManagerReady = false;
+
+	if (Enabled && Player::GetPlayMode() == PlayModes::Osu)
+	{
+		if (!hitObjectManager)
+		{
+			hitObjectManager = Ruleset::CreateHitObjectManager(Ruleset::GetInstance());
+
+			Vanilla::AddRelocation(std::ref(hitObjectManager));
+		}
+
+		// todo: let hitobjectmanager hooks handle mods and preempt
+		HitObjectManager::SetBeatmap(hitObjectManager, Player::GetBeatmapInstance(), Mods::None);
+	}
+}
 
 void Enlighten::initializePreemptiveDots()
 {
@@ -37,22 +58,13 @@ void Enlighten::initializePreemptiveDots()
 
 void Enlighten::Initialize()
 {
-	hitObjectManagerInitialized = false;
-	if (Player::GetPlayMode() == PlayModes::Osu)
-	{
-		Vanilla::RemoveRelocation(std::ref(hitObjectManager));
-		hitObjectManager = Ruleset::CreateHitObjectManager(Ruleset::GetInstance());
-		Vanilla::AddRelocation(std::ref(hitObjectManager));
-
-		HitObjectManager::SetBeatmap(hitObjectManager, *reinterpret_cast<uintptr_t*>(Player::GetInstance() + 0xDC), Mods::None);
-	}
-
+	initializeOverlay();
 	initializePreemptiveDots();
 }
 
-void Enlighten::Render()
+void Enlighten::RenderOverlayBackground() // just in case we won't be able to render beatmap background for some reason
 {
-	if (Player::GetIsLoaded() && !Player::GetIsReplayMode() && Player::GetPlayMode() == PlayModes::Osu && !AudioEngine::GetIsPaused())
+	if (Enabled && Player::GetIsLoaded() && !Player::GetIsReplayMode() && Player::GetPlayMode() == PlayModes::Osu && !AudioEngine::GetIsPaused())
 	{
 		const Vector2 clientPosition = GameBase::GetClientPosition();
 		const Vector2 clientSize = GameBase::GetClientSize();
@@ -62,7 +74,58 @@ void Enlighten::Render()
 
 		ImGui::GetBackgroundDrawList()->AddRectFilled(positionOffset, positionOffset + windowSize, ImColor(0, 0, 0, 255));
 	}
+}
 
+void Enlighten::RenderOverlay()
+{
+	if (Enabled && Player::GetIsLoaded() && !Player::GetIsReplayMode() && !AudioEngine::GetIsPaused())
+	{
+		if (!hitObjectManagerLoaded)
+		{
+			hitObjectManagerLoaded = true;
+			hitObjectManagerReady = HitObjectManager::Load(hitObjectManager, false, false);
+		}
+
+		isOverlayCurrentlyRendering = true;
+
+		uintptr_t originalHitObjectManager = Player::GetHitObjectManager();
+		if (!hitObjectManager || !originalHitObjectManager || !hitObjectManagerReady)
+		{
+			isOverlayCurrentlyRendering = false;
+
+			return;
+		}
+			
+		Player::SetHitObjectManager(hitObjectManager);
+
+		if (isGamePressScheduled)
+			Player::DoOnGamePress();
+
+		Player::UpdateActive();
+
+		HitObjectManager::UpdateBasic(hitObjectManager);
+
+		if (InputManager::GetScorableFrame())
+			Ruleset::UpdateScoring();
+
+		HitObjectManager::UpdateHitObjects(hitObjectManager);
+
+		TextureShader2D::Begin();
+		// todo: draw TransitionManager.spriteManagerBack and TransitionManager.spriteManagerBackWide
+		Player::Draw();
+		// todo: maybe draw GameBase.FpsDisplay, GameBase.Volume and GameBase.cursorTrailRenderer
+		SpriteManager::Draw(GameBase::GetSpriteManagerCursor());
+		TextureShader2D::End();
+
+		Player::SetHitObjectManager(originalHitObjectManager);
+		Player::UpdateActive();
+
+		isOverlayCurrentlyRendering = false;
+	}
+}
+
+void Enlighten::RenderPreemptiveDots()
+{
 	if (ConfigManager::CurrentConfig.Visuals.ARChanger.Enabled && ConfigManager::CurrentConfig.Visuals.ARChanger.DrawPreemptiveDot && Player::GetIsLoaded() && !Player::GetIsReplayMode() && (Player::GetPlayMode() == PlayModes::Osu || Player::GetPlayMode() == PlayModes::CatchTheBeat))
 	{
 		for (unsigned int i = 0; i < preemptiveDots.size(); i++)
@@ -74,21 +137,22 @@ void Enlighten::Render()
 	}
 }
 
-void Enlighten::RenderPlayfield()
+uintptr_t Enlighten::GetHitObjectManager()
 {
-	if (Player::GetIsLoaded() && !Player::GetIsReplayMode() && Player::GetPlayMode() == PlayModes::Osu && !AudioEngine::GetIsPaused())
-	{
-		if (!hitObjectManagerInitialized)
-		{
-			hitObjectManagerInitialized = true;
-			HitObjectManager::Load(hitObjectManager, false, false);
-		}
+	return hitObjectManager;
+}
 
-		HitObjectManager::Update(hitObjectManager);
+bool Enlighten::GetIsOverlayCurrentlyRendering()
+{
+	return isOverlayCurrentlyRendering;
+}
 
-		TextureShader2D::Begin();
-		SpriteManager::Draw(HitObjectManager::GetSpriteManagerInstance(hitObjectManager));
-		SpriteManager::Draw(GameBase::GetSpriteManagerCursor());
-		TextureShader2D::End();
-	}
+void Enlighten::ScheduleGamePress()
+{
+	isGamePressScheduled = true;
+}
+
+void Enlighten::DrawHitObjectManager()
+{
+	SpriteManager::Draw(HitObjectManager::GetSpriteManagerInstance(hitObjectManager));
 }

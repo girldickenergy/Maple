@@ -19,6 +19,11 @@ class Ruleset
 	static int __fastcall hasHiddenSpritesHook(uintptr_t instance);
 
 	typedef uintptr_t(__fastcall* fnCreateHitObjectManager)(uintptr_t instance);
+	typedef void(__fastcall* fnUpdateScoring)(uintptr_t instance);
+
+	typedef void(__fastcall* fnIncreaseScoreHit)(uintptr_t instance, int value, uintptr_t hitObject);
+	static inline fnIncreaseScoreHit oIncreaseScoreHit;
+	static void __fastcall increaseScoreHitHook(uintptr_t instance, int value, uintptr_t hitObject);
 public:
 	static void Initialize();
 
@@ -27,4 +32,5 @@ public:
 	static void SetCatcherSpeed(float value);
 
 	static uintptr_t CreateHitObjectManager(uintptr_t instance);
+	static void UpdateScoring();
 };

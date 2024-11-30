@@ -15,6 +15,8 @@
 #include "../../Configuration/ConfigManager.h"
 #include "../../Logging/Logger.h"
 #include "../../Features/TaikoMania/TaikoMania.h"
+#include "../Graphics/SpriteManager.h"
+#include "Ruleset.h"
 
 int __fastcall Player::onLoadCompleteHook(uintptr_t instance, bool success)
 {
@@ -55,6 +57,28 @@ void __fastcall Player::handleScoreSubmissionHook(uintptr_t instance)
 	[[clang::musttail]] return oHandleScoreSubmission(instance);
 }
 
+bool __fastcall Player::onGamePressHook(uintptr_t instance, uintptr_t object, uintptr_t e)
+{
+	if (Enlighten::Enabled)
+		Enlighten::ScheduleGamePress();
+
+	[[clang::musttail]] return oOnGamePress(instance, object, e);
+}
+
+void __fastcall Player::drawRulesetHook(uintptr_t instance)
+{
+	if (Enlighten::GetIsOverlayCurrentlyRendering())
+	{
+		Enlighten::DrawHitObjectManager();
+
+		// todo: draw Ruleset.ScoreMeter and EventManager.spriteManagerOverlay
+
+		return;
+	}
+
+	[[clang::musttail]] return oDrawRuleset(instance);
+}
+
 void Player::Initialize()
 {
 	VIRTUALIZER_FISH_RED_START
@@ -68,7 +92,7 @@ void Player::Initialize()
 	Memory::AddObject(xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("55 8B EC 56 8B F1 A1 ?? ?? ?? ?? 2B 86"));
 	Memory::AddPatch(xorstr_("Player::GetAllowSubmissionVariableConditions_HackCheck"), xorstr_("Player::GetAllowSubmissionVariableConditions"), xorstr_("83 BE ?? ?? ?? ?? 00 7E 1C"), 0x80, 0x0, {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90});
 
-	Memory::AddObject(xorstr_("Player::HandleScoreSubmission"), xorstr_("55 8B EC 57 56 53 ?? ?? ?? 8B F1 80 BE ?? ?? ?? ?? 00 75 26"));
+	Memory::AddObject(xorstr_("Player::HandleScoreSubmission"), xorstr_("55 8B EC 57 56 53 ?? ?? ?? 8B F1 80 BE ?? ?? ?? ?? 00 ?? ?? B9"));
 	Memory::AddPatch(xorstr_("Player::HandleScoreSubmission_HackCheck"), xorstr_("Player::HandleScoreSubmission"), xorstr_("80 78 7C 00 0F 84"), 0x40F, 0x5, { 0x8D });
 	Memory::AddHook(xorstr_("Player::HandleScoreSubmission"), xorstr_("Player::HandleScoreSubmission"), reinterpret_cast<uintptr_t>(handleScoreSubmissionHook), reinterpret_cast<uintptr_t*>(&oHandleScoreSubmission));
 
@@ -92,6 +116,15 @@ void Player::Initialize()
 
 	Memory::AddObject(xorstr_("Player::UpdateFlashlight"), xorstr_("55 8B EC 57 56 8B F1 83 BE ?? ?? ?? ?? 00 74 32 83 7E 68 00 74 2C A1 ?? ?? ?? ?? 8B 50 1C"));
 	Memory::AddHook(xorstr_("Player::UpdateFlashlight"), xorstr_("Player::UpdateFlashlight"), reinterpret_cast<uintptr_t>(updateFlashlightHook), reinterpret_cast<uintptr_t*>(&oUpdateFlashlight));
+
+	Memory::AddObject(xorstr_("Player::onGamePress"), xorstr_("55 8B EC 57 56 53 83 EC 38 33 C0 89 45 E4 89 45 E8 8B D9 83 3D ?? ?? ?? ?? 00"));
+	Memory::AddHook(xorstr_("Player::onGamePress"), xorstr_("Player::onGamePress"), reinterpret_cast<uintptr_t>(onGamePressHook), reinterpret_cast<uintptr_t*>(&oOnGamePress));
+
+	Memory::AddObject(xorstr_("Player::drawRuleset"), xorstr_("55 8B EC 56 8B F1 8B 4E 68 8B 01 8B 40 38"));
+	Memory::AddHook(xorstr_("Player::drawRuleset"), xorstr_("Player::drawRuleset"), reinterpret_cast<uintptr_t>(drawRulesetHook), reinterpret_cast<uintptr_t*>(&oDrawRuleset));
+
+	Memory::AddObject(xorstr_("Player::Draw"), xorstr_("55 8B EC 57 56 53 83 EC 10 8B F1 83 BE ?? ?? ?? ?? 00 0F 84"));
+	Memory::AddObject(xorstr_("Player::UpdateActive"), xorstr_("55 8B EC 57 56 53 83 EC 10 8B F1 80 3D ?? ?? ?? ?? 00"));
 
 	VIRTUALIZER_FISH_RED_END
 }
@@ -161,4 +194,54 @@ uintptr_t Player::GetBeatmapInstance()
 	const uintptr_t instance = GetInstance();
 
 	return instance ? *reinterpret_cast<uintptr_t*>(instance + BEATMAP_OFFSET) : 0u;
+}
+
+uintptr_t Player::GetHitObjectManager()
+{
+	const uintptr_t instance = GetInstance();
+
+	return instance ? *reinterpret_cast<uintptr_t*>(instance + HIT_OBJECT_MANAGER_OFFSET) : 0u;
+}
+
+void Player::SetHitObjectManager(uintptr_t hitObjectManagerInstance)
+{
+	const uintptr_t instance = GetInstance();
+	if (instance && hitObjectManagerInstance)
+		*reinterpret_cast<uintptr_t*>(instance + HIT_OBJECT_MANAGER_OFFSET) = hitObjectManagerInstance;
+}
+
+void Player::DoOnGamePress()
+{
+	if (const uintptr_t instance = GetInstance())
+	{
+		__asm
+		{
+			pushad
+			pushfd
+			mov ecx, instance
+			mov ebx, 0
+			push 0
+			call oOnGamePress
+			popfd
+			popad
+		}
+	}
+}
+
+void Player::UpdateActive()
+{
+	const uintptr_t instance = GetInstance();
+	const uintptr_t updateActiveFunctionAddress = Memory::Objects[xorstr_("Player::UpdateActive")];
+
+	if (instance && updateActiveFunctionAddress)
+		reinterpret_cast<fnDraw>(updateActiveFunctionAddress)(instance);
+}
+
+void Player::Draw()
+{
+	const uintptr_t instance = GetInstance();
+	const uintptr_t drawFunctionAddress = Memory::Objects[xorstr_("Player::Draw")];
+
+	if (instance && drawFunctionAddress)
+		reinterpret_cast<fnDraw>(drawFunctionAddress)(instance);
 }

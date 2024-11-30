@@ -8,6 +8,7 @@
 #include "../Osu/GameBase.h"
 #include "../../Configuration/ConfigManager.h"
 #include "../../Communication/Communication.h"
+#include "../../Features/Enlighten/Enlighten.h"
 
 void __fastcall Ruleset::loadFlashlightHook(uintptr_t instance)
 {
@@ -29,6 +30,14 @@ int __fastcall Ruleset::hasHiddenSpritesHook(uintptr_t instance)
 	return FALSE;
 }
 
+void __fastcall Ruleset::increaseScoreHitHook(uintptr_t instance, int value, uintptr_t hitObject)
+{
+	if (Enlighten::GetIsOverlayCurrentlyRendering())
+		return;
+
+	[[clang::musttail]] return oIncreaseScoreHit(instance, value, hitObject);
+}
+
 void Ruleset::Initialize()
 {
 	VIRTUALIZER_FISH_RED_START
@@ -46,6 +55,9 @@ void Ruleset::Initialize()
 	Memory::AddHook(xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), xorstr_("RulesetMania::StageMania::GetHasHiddenSprites"), reinterpret_cast<uintptr_t>(hasHiddenSpritesHook), reinterpret_cast<uintptr_t*>(&oHasHiddenSprites));
 
 	Memory::AddObject(xorstr_("RulesetOsu::CreateHitObjectManager"), xorstr_("55 8B EC 56 E8 ?? ?? ?? ?? 85 C0 74 18 B9 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B F0"));
+	Memory::AddObject(xorstr_("Ruleset::UpdateScoring"), xorstr_("55 8B EC 57 56 50 8B F9 8B 47 44"));
+	Memory::AddObject(xorstr_("RulesetOsu::IncreaseScoreHit"), xorstr_("55 8B EC 57 56 53 8B F9 8B F2 8B 5D 08 8B CB"));
+	Memory::AddHook(xorstr_("RulesetOsu::IncreaseScoreHit"), xorstr_("RulesetOsu::IncreaseScoreHit"), reinterpret_cast<uintptr_t>(increaseScoreHitHook), reinterpret_cast<uintptr_t*>(&oIncreaseScoreHit));
 
 	VIRTUALIZER_FISH_RED_END
 }
@@ -79,4 +91,13 @@ uintptr_t Ruleset::CreateHitObjectManager(uintptr_t instance)
 	const uintptr_t createHitObjectManagerFunctionAddress = Memory::Objects[xorstr_("RulesetOsu::CreateHitObjectManager")];
 
 	return createHitObjectManagerFunctionAddress ? reinterpret_cast<fnCreateHitObjectManager>(createHitObjectManagerFunctionAddress)(instance) : 0u;
+}
+
+void Ruleset::UpdateScoring()
+{
+	const uintptr_t instance = GetInstance();
+	const uintptr_t updateScoringFunctionAddress = Memory::Objects[xorstr_("Ruleset::UpdateScoring")];
+
+	if (instance)
+		reinterpret_cast<fnUpdateScoring>(updateScoringFunctionAddress)(instance);
 }
