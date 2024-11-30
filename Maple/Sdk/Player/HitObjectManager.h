@@ -105,5 +105,6 @@ public:
 
 	static bool Load(uintptr_t instance, bool processHeaders, bool applyParsingLimits);
 	static void SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mods);
-	static void Update(uintptr_t instance);
+	static void UpdateBasic(uintptr_t instance);
+	static void UpdateHitObjects(uintptr_t instance);
 };

@@ -20,6 +20,7 @@
 #include "../Mods/ModManager.h"
 #include "../../Features/Timewarp/Timewarp.h"
 #include "../../Communication/Communication.h"
+#include "../../Features/Enlighten/Enlighten.h"
 #include "../../Logging/Logger.h"
 #include "../../Utilities/Security/Security.h"
 
@@ -153,6 +154,7 @@ void HitObjectManager::Initialize()
 	Memory::AddObject(xorstr_("HitObjectManager::Load"), xorstr_("55 8B EC 57 56 53 83 EC 74 8B F1 8D 7D 84 B9 1B 00 00 00 33 C0 F3 AB 8B CE 89 4D 88 8B F2"));
 	Memory::AddObject(xorstr_("HitObjectManager::SetBeatmap"), xorstr_("55 8B EC 57 56 8B F1 8B C2 8D 56 30"));
 	Memory::AddObject(xorstr_("HitObjectManager::UpdateBasic"), xorstr_("55 8B EC 57 56 53 83 EC 44 8B F1 8D 7D B4 B9 ?? ?? ?? ?? 33 C0 F3 AB 8B CE 8B D9"));
+	Memory::AddObject(xorstr_("HitObjectManager::UpdateHitObjects"), xorstr_("55 8B EC FF 15 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00"));
 
 	VIRTUALIZER_FISH_RED_END
 }
@@ -486,10 +488,18 @@ void HitObjectManager::SetBeatmap(uintptr_t instance, uintptr_t beatmap, Mods mo
 		reinterpret_cast<fnSetBeatmap>(setBeatmapFunctionAddress)(instance, beatmap, mods);
 }
 
-void HitObjectManager::Update(uintptr_t instance)
+void HitObjectManager::UpdateBasic(uintptr_t instance)
 {
-	const uintptr_t updateFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::UpdateBasic")];
+	const uintptr_t updateBasicFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::UpdateBasic")];
 
-	if (instance && updateFunctionAddress)
-		reinterpret_cast<fnUpdate>(updateFunctionAddress)(instance);
+	if (instance && updateBasicFunctionAddress)
+		reinterpret_cast<fnUpdate>(updateBasicFunctionAddress)(instance);
+}
+
+void HitObjectManager::UpdateHitObjects(uintptr_t instance)
+{
+	const uintptr_t updateBasicFunctionAddress = Memory::Objects[xorstr_("HitObjectManager::UpdateHitObjects")];
+
+	if (instance && updateBasicFunctionAddress)
+		reinterpret_cast<fnUpdate>(updateBasicFunctionAddress)(instance);
 }
