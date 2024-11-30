@@ -89,6 +89,8 @@ void InputManager::Initialize()
 	Memory::AddHook(xorstr_("MouseManager::SetMousePosition"), xorstr_("MouseManager::SetMousePosition"), reinterpret_cast<uintptr_t>(setMousePositionHook), reinterpret_cast<uintptr_t*>(&oSetMousePosition));
 	Memory::AddHook(xorstr_("InputManager::MouseViaKeyboardControls"), xorstr_("InputManager::MouseViaKeyboardControls"), reinterpret_cast<uintptr_t>(mouseViaKeyboardControlsHook), reinterpret_cast<uintptr_t*>(&oMouseViaKeyboardControls));
 
+	Memory::AddObject(xorstr_("InputManager::ScorableFrame"), xorstr_("0F B6 05 ?? ?? ?? ?? A2 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? 00 75 34"), 0x8, 0x1);
+
 	VIRTUALIZER_FISH_RED_END
 }
 
@@ -166,4 +168,11 @@ void InputManager::SetKeyStates(OsuKeys keys)
 		if (*reinterpret_cast<bool*>(rightButton2iAddress) || *reinterpret_cast<bool*>(rightButton1iAddress))
 			*reinterpret_cast<int*>(rightButtonAddress) = 1;
 	}
+}
+
+bool InputManager::GetScorableFrame()
+{
+	const uintptr_t scorableFrameAddress = Memory::Objects[xorstr_("InputManager::ScorableFrame")];
+
+	return scorableFrameAddress ? *reinterpret_cast<bool*>(scorableFrameAddress) : false;
 }
