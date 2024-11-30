@@ -1,12 +1,13 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include "../IPacket.h"
 
-class HeartbeatRequest
+class HeartbeatRequest : public IPacket
 {
-	std::string sessionToken;
+	std::string m_SessionToken;
 public:
 	HeartbeatRequest(const std::string& sessionToken);
-	std::vector<unsigned char> Serialize();
+
+	uint32_t GetIdentifier() override;
 };

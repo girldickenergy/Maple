@@ -1,21 +1,21 @@
 #pragma once
 
-#include <vector>
+#include "../IPacket.h"
 
-enum class HeartbeatResult
+enum class HeartbeatResult : uint8_t
 {
 	Success = 0,
 	InvalidSession = 1,
 	UnknownError = 2
 };
 
-class HeartbeatResponse
+class HeartbeatResponse : public IPacket
 {
-	HeartbeatResult result;
+	HeartbeatResult m_Result;
 
-	HeartbeatResponse(HeartbeatResult result);
+	HeartbeatResponse();
 public:
 	HeartbeatResult GetResult();
 
-	static HeartbeatResponse Deserialize(const std::vector<unsigned char>& payload);
+	uint32_t GetIdentifier() override;
 };

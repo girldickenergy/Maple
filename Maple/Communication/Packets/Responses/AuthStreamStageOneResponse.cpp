@@ -1,30 +1,22 @@
 #include "AuthStreamStageOneResponse.h" 
-
 #include "VirtualizerSDK.h" 
-#include "json.hpp" 
-#include "xorstr.hpp"
-#include "../../Crypto/CryptoProvider.h" 
-#include "../../../Utilities/Strings/StringUtilities.h" 
 
-AuthStreamStageOneResponse::AuthStreamStageOneResponse(bool shouldSend)
+AuthStreamStageOneResponse::AuthStreamStageOneResponse()
 {
-	this->shouldSend = shouldSend;
+	VIRTUALIZER_FISH_RED_START
+
+	entt::meta<AuthStreamStageOneResponse>().type(GetIdentifier())
+		.data<&AuthStreamStageOneResponse::m_ShouldSend>(Hash32Fnv1aConst("ShouldSend"));
+
+	VIRTUALIZER_FISH_RED_END
 }
 
 bool AuthStreamStageOneResponse::GetShouldSend()
 {
-	return shouldSend;
+	return m_ShouldSend;
 }
 
-AuthStreamStageOneResponse AuthStreamStageOneResponse::Deserialize(const std::vector<unsigned char>& payload)
+uint32_t AuthStreamStageOneResponse::GetIdentifier()
 {
-	VIRTUALIZER_SHARK_BLACK_START
-	
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().AESDecrypt(payload)));
-
-	AuthStreamStageOneResponse response = AuthStreamStageOneResponse(jsonPayload[xorstr_("a")]);
-
-		VIRTUALIZER_SHARK_BLACK_END
-
-	return response;
+	return Hash32Fnv1aConst("AuthStreamStageOneResponse");
 }

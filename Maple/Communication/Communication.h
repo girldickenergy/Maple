@@ -2,9 +2,12 @@
 
 #include "User.h"
 #include "TCP/TCPClient.h"
+#include "Packets/PacketSerializer.h"
 
 class Communication
 {
+	static inline PacketSerializer& serializer = PacketSerializer::Get();
+
 	static inline User* user;
 	static inline TCPClient tcpClient;
 	
@@ -14,6 +17,12 @@ class Communication
 	static inline bool pingThreadLaunched = false;
 	static inline HANDLE pingThreadHandle;
 	static inline HANDLE heartbeatThreadHandle;
+
+#define SEND(x) \
+	if (auto serialized = serializer.Serialize(x); serialized.has_value()) \
+		tcpClient.Send(*serialized); \
+	else \
+		Security::CorruptMemory(); \
 
 	static void pingThread();
 	static void heartbeatThread();

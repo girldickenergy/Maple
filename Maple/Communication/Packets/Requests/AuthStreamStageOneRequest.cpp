@@ -1,34 +1,19 @@
 #include "AuthStreamStageOneRequest.h" 
-
 #include <VirtualizerSDK.h> 
-#include <json.hpp> 
-
-#include "xorstr.hpp"
-#include "../../Crypto/CryptoProvider.h" 
-#include "../PacketType.h" 
-#include "../../../Utilities/Strings/StringUtilities.h" 
-
-#include "../../../Logging/Logger.h"
 
 AuthStreamStageOneRequest::AuthStreamStageOneRequest(const std::string& checksum)
 {
-	this->checksum = checksum;
+	VIRTUALIZER_FISH_RED_START
+
+	entt::meta<AuthStreamStageOneRequest>().type(GetIdentifier())
+		.data<&AuthStreamStageOneRequest::m_Checksum>(Hash32Fnv1aConst("Checksum"));
+
+	m_Checksum = checksum;
+
+	VIRTUALIZER_FISH_RED_END
 }
 
-std::vector<unsigned char> AuthStreamStageOneRequest::Serialize()
+uint32_t AuthStreamStageOneRequest::GetIdentifier()
 {
-    VIRTUALIZER_TIGER_WHITE_START
-			
-	nlohmann::json jsonPayload;
-	jsonPayload[xorstr_("a")] = checksum;
-
-	std::vector payload(CryptoProvider::Get().AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
-
-	std::vector<unsigned char> packet;
-	packet.push_back(static_cast<unsigned char>(PacketType::AuthStreamStageOne));
-	packet.insert(packet.end(), payload.begin(), payload.end());
-
-	VIRTUALIZER_TIGER_WHITE_END
-
-	return packet;
+	return Hash32Fnv1aConst("AuthStreamStageOneRequest");
 }

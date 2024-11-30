@@ -1,34 +1,19 @@
 #include "HandshakeRequest.h"
-
-#include "json.hpp"
 #include "VirtualizerSDK.h"
-#include "xorstr.hpp"
 
-#include "../PacketType.h"
-#include "../../Crypto/CryptoProvider.h"
-#include "../../../Utilities/Strings/StringUtilities.h"
-
-#include "../../../Logging/Logger.h"
-
-std::vector<unsigned char> HandshakeRequest::Serialize()
+HandshakeRequest::HandshakeRequest()
 {
-	VIRTUALIZER_SHARK_BLACK_START
+	VIRTUALIZER_FISH_RED_START
 
-	Logger::StartPerformanceCounter(xorstr_("{84EB13B7-7E8C-4632-8894-95ADF4D56552}"));
-	std::time_t epoch;
-	std::time(&epoch);
+	entt::meta<HandshakeRequest>().type(GetIdentifier())
+		.data<&HandshakeRequest::m_Epoch>(Hash32Fnv1aConst("Epoch"));
 
-	nlohmann::json jsonPayload;
-	jsonPayload[xorstr_("Epoch")] = epoch;
+	std::time(&m_Epoch);
 
-	std::vector payload(CryptoProvider::Get().XOR(StringUtilities::StringToByteArray(jsonPayload.dump())));
+	VIRTUALIZER_FISH_RED_END
+}
 
-	std::vector<unsigned char> packet;
-	packet.push_back(static_cast<unsigned char>(PacketType::Handshake));
-	packet.insert(packet.end(), payload.begin(), payload.end());
-
-	Logger::StopPerformanceCounter(xorstr_("{84EB13B7-7E8C-4632-8894-95ADF4D56552}"));
-		VIRTUALIZER_SHARK_BLACK_END
-
-	return packet;
+uint32_t HandshakeRequest::GetIdentifier()
+{
+	return Hash32Fnv1aConst("HandshakeRequest");
 }

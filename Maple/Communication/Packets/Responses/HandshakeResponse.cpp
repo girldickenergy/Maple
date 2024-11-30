@@ -1,37 +1,28 @@
 #include "HandshakeResponse.h"
-
-#include "json.hpp"
 #include "VirtualizerSDK.h"
-#include "xorstr.hpp"
 
-#include "../../Crypto/CryptoProvider.h"
-#include "../../../Utilities/Strings/StringUtilities.h"
-
-HandshakeResponse::HandshakeResponse(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv)
+HandshakeResponse::HandshakeResponse()
 {
-	this->key = key;
-	this->iv = iv;
+	VIRTUALIZER_FISH_RED_START
+
+	entt::meta<HandshakeResponse>().type(GetIdentifier())
+		.data<&HandshakeResponse::m_Key>(Hash32Fnv1aConst("Key"))
+		.data<&HandshakeResponse::m_Iv>(Hash32Fnv1aConst("Iv"));
+
+	VIRTUALIZER_FISH_RED_END
 }
 
-const std::vector<unsigned char>& HandshakeResponse::GetKey()
+const std::vector<uint8_t>& HandshakeResponse::GetKey()
 {
-	return key;
+	return m_Key;
 }
 
-const std::vector<unsigned char>& HandshakeResponse::GetIV()
+const std::vector<uint8_t>& HandshakeResponse::GetIV()
 {
-	return iv;
+	return m_Iv;
 }
 
-HandshakeResponse HandshakeResponse::Deserialize(const std::vector<unsigned char>& payload)
+uint32_t HandshakeResponse::GetIdentifier()
 {
-	VIRTUALIZER_SHARK_BLACK_START
-	
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().RSADecrypt(payload)));
-
-	HandshakeResponse response = HandshakeResponse(CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("Key")]), CryptoProvider::Get().Base64Decode(jsonPayload[xorstr_("IV")]));
-
-		VIRTUALIZER_SHARK_BLACK_END
-
-	return response;
+	return Hash32Fnv1aConst("HandshakeResponse");
 }

@@ -1,12 +1,13 @@
 #pragma once 
 
-#include <string> 
-#include <vector> 
+#include <string>
+#include "../IPacket.h"
 
-class AuthStreamStageOneRequest
+class AuthStreamStageOneRequest : public IPacket
 {
-	std::string checksum;
+	std::string m_Checksum;
 public:
 	AuthStreamStageOneRequest(const std::string& checksum);
-	std::vector<unsigned char> Serialize();
+
+	uint32_t GetIdentifier() override;
 };

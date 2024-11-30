@@ -1,10 +1,12 @@
 #pragma once
 
-#include <vector>
+#include "../IPacket.h"
 
-class HandshakeRequest
+class HandshakeRequest : public IPacket
 {
+	std::time_t m_Epoch;
 public:
-	HandshakeRequest() = default;
-	std::vector<unsigned char> Serialize();
+	HandshakeRequest();
+
+	uint32_t GetIdentifier() override;
 };

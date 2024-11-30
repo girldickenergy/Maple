@@ -1,14 +1,14 @@
 #pragma once 
 
-#include <vector> 
+#include "../IPacket.h"
 
-class AuthStreamStageOneResponse
+class AuthStreamStageOneResponse : public IPacket
 {
-	bool shouldSend;
+	bool m_ShouldSend;
 
-	AuthStreamStageOneResponse(bool shouldSend);
+	AuthStreamStageOneResponse();
 public:
 	bool GetShouldSend();
 
-	static AuthStreamStageOneResponse Deserialize(const std::vector<unsigned char>& payload);
+	uint32_t GetIdentifier() override;
 };

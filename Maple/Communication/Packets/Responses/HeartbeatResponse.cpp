@@ -1,30 +1,22 @@
 #include "HeartbeatResponse.h"
-
 #include "VirtualizerSDK.h"
-#include "json.hpp"
-#include "xorstr.hpp"
-#include "../../Crypto/CryptoProvider.h"
-#include "../../../Utilities/Strings/StringUtilities.h"
 
-HeartbeatResponse::HeartbeatResponse(HeartbeatResult result)
+HeartbeatResponse::HeartbeatResponse()
 {
-	this->result = result;
+	VIRTUALIZER_FISH_RED_START
+
+	entt::meta<HeartbeatResponse>().type(GetIdentifier())
+		.data<&HeartbeatResponse::m_Result>(Hash32Fnv1aConst("Result"));
+
+	VIRTUALIZER_FISH_RED_END
 }
 
 HeartbeatResult HeartbeatResponse::GetResult()
 {
-	return result;
+	return m_Result;
 }
 
-HeartbeatResponse HeartbeatResponse::Deserialize(const std::vector<unsigned char>& payload)
+uint32_t HeartbeatResponse::GetIdentifier()
 {
-	VIRTUALIZER_SHARK_BLACK_START
-	
-	nlohmann::json jsonPayload = nlohmann::json::parse(StringUtilities::ByteArrayToString(CryptoProvider::Get().AESDecrypt(payload)));
-
-	HeartbeatResponse response = HeartbeatResponse(jsonPayload[xorstr_("Result")]);
-
-		VIRTUALIZER_SHARK_BLACK_END
-
-	return response;
+	return Hash32Fnv1aConst("HeartbeatResponse");
 }

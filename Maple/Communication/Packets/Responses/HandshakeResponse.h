@@ -1,16 +1,17 @@
 #pragma once
 
 #include <vector>
+#include "../IPacket.h"
 
-class HandshakeResponse
+class HandshakeResponse : public IPacket
 {
-	std::vector<unsigned char> key;
-	std::vector<unsigned char> iv;
+	std::vector<uint8_t> m_Key;
+	std::vector<uint8_t> m_Iv;
 
-	HandshakeResponse(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv);
+	HandshakeResponse();
 public:
-	const std::vector<unsigned char>& GetKey();
-	const std::vector<unsigned char>& GetIV();
+	const std::vector<uint8_t>& GetKey();
+	const std::vector<uint8_t>& GetIV();
 
-	static HandshakeResponse Deserialize(const std::vector<unsigned char>& payload);
+	uint32_t GetIdentifier() override;
 };

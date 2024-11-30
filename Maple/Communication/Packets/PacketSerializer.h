@@ -1,117 +1,76 @@
 #pragma once
-#include <Singleton.h>
-#include "../Crypto/CryptoProvider.h"
-#include <vector>
-#include <any>
-#include <unordered_map>
-#include <functional>
-#include "Fnv1a.h"
-#include <xorstr.hpp>
-#include "Packet.h"
-#include <random>
 
-#include <Windows.h>
+#include <functional>
+#include <unordered_map>
+#include <vector>
+#include <expected>
+
+#include "entt.hpp"
+#include "Singleton.h"
+
+#include "IPacket.h"
+#include "BinaryReader.h"
+#include "SerializationError.h"
 
 class PacketSerializer : public Singleton<PacketSerializer>
 {
-#define ADD_RANGE(vector, data) vector.insert(vector.end(), data.begin(), data.end())
+	#define TO_BYTE_VECTOR(data) [&]() { \
+	    std::vector<uint8_t> bytes; \
+	    for (size_t i = 0; i < sizeof(data); ++i) { \
+	        bytes.push_back((data >> (i * 8)) & 0xFF); \
+	    } \
+	    return bytes; \
+	}()
 
-	template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
-	std::vector<uint8_t> SplitValueToBytes(const T& value)
-	{
-		std::vector<uint8_t> bytes;
-		for (size_t i = 0; i < sizeof(value); i++)
-		{
-			uint8_t byte = value >> (i * 8);
-			bytes.insert(bytes.begin(), byte);
-		}
-		std::reverse(bytes.begin(), bytes.end());
-		return bytes;
-	}
+	#define ADD_RANGE(vector, data) \
+	    do { \
+	        auto tempVec = data; \
+	        (vector).insert((vector).end(), tempVec.begin(), tempVec.end()); \
+	    } while (0)
 
-	std::pair<std::string, std::vector<uint8_t>> SerializeFunction(Packet& packet, const FieldInfo& fieldInfo);
+	#define ADD_RANGE_BEGIN(vector, data) \
+	    do { \
+	        auto tempVec = data; \
+	        (vector).insert((vector).begin(), tempVec.begin(), tempVec.end()); \
+	    } while (0)
 
-	template <typename T, typename std::enable_if<std::is_base_of<ISerializeable, T>::value>::type* = nullptr>
-	std::vector<uint8_t> SerializeType(T& type)
-	{
-		auto serializedPacket = std::vector<uint8_t>();
-		std::unordered_map<uint32_t, FieldInfo>& fields = type.GetFields();
-		std::vector<uint8_t> amountOfFields = SplitValueToBytes(fields.size());
+	std::unordered_map<uint32_t, std::function<std::vector<uint8_t>(entt::meta_any)>> m_TypeSerializers;
+	std::unordered_map<uint32_t, std::function<entt::meta_any(std::vector<uint8_t>)>> m_TypeDeserializers;
 
-		ADD_RANGE(serializedPacket, amountOfFields);
-		for (auto const& field : fields)
-		{
-			std::vector<uint8_t> hashedName = SplitValueToBytes(field.first);
-			ADD_RANGE(serializedPacket, hashedName);
+	std::vector<uint8_t> SerializePacket(const entt::meta_any& packet);
+	std::vector<uint8_t> SerializeType(const entt::meta_any& instance);
+	std::vector<uint8_t> SerializeValue(const entt::meta_any& value, bool suppressType = false);
+    std::expected<entt::meta_any, SerializationError> DeserializePacket(uint32_t identifier, BinaryReader& reader);
+	std::expected<void, SerializationError> DeserializeType(entt::meta_any& instance, BinaryReader& reader);
+    std::expected<entt::meta_any, SerializationError> DeserializeValue(const entt::meta_type& type, BinaryReader& reader, uint32_t typeIdentifier = 0);
 
-			std::vector<uint8_t> serializedValue = SerializeValue(type, field.second);
-			ADD_RANGE(serializedPacket, serializedValue);
-		}
-
-		return serializedPacket;
-	}
-
-	template <typename T, typename std::enable_if<std::is_base_of<ISerializeable, T>::value>::type* = nullptr>
-	std::vector<uint8_t> SerializeValue(T& packet, const FieldInfo& fieldInfo)
-	{
-		auto serializedValue = std::vector<uint8_t>();
-
-		std::pair<std::string, std::vector<uint8_t>> serializedField = SerializeFunction(packet, fieldInfo);
-		if (!serializedField.second.empty())
-		{
-			std::vector<uint8_t> typeIdentifier = SplitValueToBytes(Hash32Fnv1a(serializedField.first.c_str(), serializedField.first.size()));
-			ADD_RANGE(serializedValue, typeIdentifier);
-
-			auto random = std::mt19937();
-			uint32_t key1 = random();
-			uint32_t key2 = random();
-			auto milliSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-			uint32_t key3 = (milliSeconds >> 10) ^ 0xdeadbeef;
-			std::vector<uint8_t> serializedKey1 = SplitValueToBytes(key1);
-			std::vector<uint8_t> serializedKey2 = SplitValueToBytes(key2);
-			std::vector<uint8_t> serializedKey3 = SplitValueToBytes(key3);
-
-			std::vector<uint8_t> encryptedValue = CryptoProvider::Get().ApplyCryptoTransformations(serializedField.second, key1, key2, key3);
-
-			std::vector<uint8_t> length = SplitValueToBytes(encryptedValue.size());
-
-			ADD_RANGE(serializedValue, length);
-
-			ADD_RANGE(serializedValue, serializedKey1);
-			ADD_RANGE(serializedValue, serializedKey2);
-			ADD_RANGE(serializedValue, serializedKey3);
-
-			ADD_RANGE(serializedValue, encryptedValue);
-		} //TODO: implement arrays and vectors
-		else
-		{
-			std::vector<uint8_t> serializedType = SerializeType(packet);
-			ADD_RANGE(serializedValue, serializedType);
-		}
-
-		return serializedValue;
-	}
 public:
 	explicit PacketSerializer(singletonLock);
 
-	template <typename T, typename std::enable_if<std::is_base_of<Packet, T>::value>::type* = nullptr>
-	std::vector<uint8_t> Serialize(T& packet)
+	template <typename T, std::enable_if_t<std::is_base_of_v<IPacket, T>>* = nullptr>
+	std::expected<std::vector<uint8_t>, SerializationError> Serialize(T& packet)
 	{
-		auto dynamicPacket = dynamic_cast<Packet*>(&packet);
-		std::string packetName = dynamicPacket->GetName();
+		auto identifier = dynamic_cast<IPacket*>(&packet)->GetIdentifier();
 
-		uint32_t packetIdentifier = Hash32Fnv1a(packetName.c_str(), packetName.size());
-		std::vector<uint8_t> identifier = SplitValueToBytes(packetIdentifier);
+		if (entt::resolve(identifier).id() != identifier)
+			return std::unexpected(SerializationError::IdentifierUnknown);
 
-		auto milliSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-		std::vector<uint8_t> ticks = SplitValueToBytes(milliSeconds);
+		return SerializePacket(packet);
+	}
 
-		std::vector<uint8_t> serializedType = SerializeType(packet);
-		auto serializedPacket = std::vector<uint8_t>();
-		ADD_RANGE(serializedPacket, identifier);
-		ADD_RANGE(serializedPacket, ticks);
-		ADD_RANGE(serializedPacket, serializedType);
+	template <typename T, std::enable_if_t<std::is_base_of_v<IPacket, T>>* = nullptr>
+	std::expected<T, SerializationError> Deserialize(const std::vector<uint8_t>& buffer)
+	{
+		BinaryReader reader(buffer);
 
-		return serializedPacket;
+		auto identifier = reader.Read<uint32_t>();
+
+		if (entt::resolve(identifier).id() != identifier)
+			return std::unexpected(SerializationError::IdentifierUnknown);
+
+		if (const auto packet = DeserializePacket(identifier, reader); packet.has_value())
+			return packet->cast<T>();
+        else
+			return std::unexpected(packet.error());
 	}
 };

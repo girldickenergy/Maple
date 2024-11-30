@@ -1,15 +1,17 @@
 #pragma once 
 
-#include <string> 
-#include <vector> 
+#include <string>
+#include <vector>
+#include "../IPacket.h"
 
-class AuthStreamStageTwoRequest
+class AuthStreamStageTwoRequest : public IPacket
 {
-	std::string username;
-	std::string checksum;
-	std::vector<uint8_t> authBytes;
-	std::vector<uint8_t> osuBytes;
+	std::string m_Username;
+	std::string m_Checksum;
+	std::vector<uint8_t> m_AuthBytes;
+	std::vector<uint8_t> m_OsuBytes;
 public:
 	AuthStreamStageTwoRequest(const std::string& username, const std::string& checksum, const std::vector<uint8_t>& authBytes, const std::vector<uint8_t>& osuBytes);
-	std::vector<unsigned char> Serialize();
+
+	uint32_t GetIdentifier() override;
 };

@@ -1,40 +1,19 @@
 #include "HeartbeatRequest.h"
-
 #include "VirtualizerSDK.h"
-#include "json.hpp"
-#include "xorstr.hpp"
-
-#include "../../Crypto/CryptoProvider.h"
-#include "../../../Utilities/Strings/StringUtilities.h"
-#include "../PacketType.h"
-
-#include "../../../Logging/Logger.h"
 
 HeartbeatRequest::HeartbeatRequest(const std::string& sessionToken)
 {
-	this->sessionToken = sessionToken;
+	VIRTUALIZER_FISH_RED_START
+
+	entt::meta<HeartbeatRequest>().type(GetIdentifier())
+		.data<&HeartbeatRequest::m_SessionToken>(Hash32Fnv1aConst("SessionToken"));
+
+	m_SessionToken = sessionToken;
+
+	VIRTUALIZER_FISH_RED_END
 }
 
-std::vector<unsigned char> HeartbeatRequest::Serialize()
+uint32_t HeartbeatRequest::GetIdentifier()
 {
-    VIRTUALIZER_TIGER_WHITE_START
-
-	Logger::StartPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
-	std::time_t epoch;
-	std::time(&epoch);
-
-	nlohmann::json jsonPayload;
-	jsonPayload[xorstr_("SessionToken")] = sessionToken;
-	jsonPayload[xorstr_("Epoch")] = epoch + 1; // +1 to prevent the server from thinking the epoch is wrong (an edge case when we send both handshake and heartbeat packets at the same time)
-
-	std::vector payload(CryptoProvider::Get().AESEncrypt(StringUtilities::StringToByteArray(jsonPayload.dump())));
-
-	std::vector<unsigned char> packet;
-	packet.push_back(static_cast<unsigned char>(PacketType::Heartbeat));
-	packet.insert(packet.end(), payload.begin(), payload.end());
-
-	Logger::StopPerformanceCounter(xorstr_("{4221618B-FAC3-45EF-8B12-DAA05133AEB0}"));
-    VIRTUALIZER_TIGER_WHITE_END
-
-	return packet;
+	return Hash32Fnv1aConst("HeartbeatRequest");
 }

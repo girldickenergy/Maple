@@ -8,7 +8,10 @@
 #include "../Utilities/Security/Security.h"
 #include "../Logging/Logger.h"
 #include "Crypto/CryptoProvider.h"
-#include "Packets/PacketType.h"
+
+
+
+#include "Packets/Requests/PingRequest.h"
 #include "Packets/Requests/HandshakeRequest.h"
 #include "Packets/Requests/HeartbeatRequest.h"
 #include "Packets/Responses/HandshakeResponse.h"
@@ -45,7 +48,8 @@ static inline MilkThread* checkerMilkThread;
 			IntegritySignature3 -= 0x1;
 		}
 
-		tcpClient.Send({ static_cast<unsigned char>(PacketType::Ping) });
+		PingRequest pingRequest = PingRequest();
+		SEND(pingRequest);
 
 		Sleep(45000); //45 seconds
 		
@@ -89,7 +93,7 @@ void Communication::heartbeatThread()
 			heartbeatThreadLaunched = true;
 
 		HeartbeatRequest heartbeatRequest = HeartbeatRequest(user->GetSessionToken());
-		tcpClient.Send(heartbeatRequest.Serialize());
+		SEND(heartbeatRequest);
 
 		Sleep(600000); // 10 minutes
 	}
@@ -100,7 +104,7 @@ void Communication::sendAuthStreamStageTwo()
 	VIRTUALIZER_SHARK_BLACK_START
 
 	AuthStreamStageTwoRequest authStreamStageTwoRequest = AuthStreamStageTwoRequest(user->GetUsername(), AnticheatUtilities::GetAnticheatChecksum(), AnticheatUtilities::GetAnticheatBytes(), AnticheatUtilities::GetGameBytes());
-	tcpClient.Send(authStreamStageTwoRequest.Serialize());
+	SEND(authStreamStageTwoRequest);
 
 	VIRTUALIZER_SHARK_BLACK_END
 }
@@ -190,12 +194,13 @@ void Communication::onDisconnect()
 
 	Security::CorruptMemory();
 
-		VIRTUALIZER_SHARK_BLACK_END
+	VIRTUALIZER_SHARK_BLACK_END
 }
 
 bool Communication::Connect()
 {
 	VIRTUALIZER_TIGER_WHITE_START
+
 	Logger::StartPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
 	if (connected)
 	{
@@ -216,9 +221,10 @@ bool Communication::Connect()
 	ThreadCheckerHandle = checkerMilkThread->Start();
 
 	HandshakeRequest handshakeRequest = HandshakeRequest();
-	tcpClient.Send(handshakeRequest.Serialize());
+	SEND(handshakeRequest);
 
 	Logger::StopPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
+
 	VIRTUALIZER_TIGER_WHITE_END
 
 	return true;
@@ -238,12 +244,14 @@ void Communication::Disconnect()
 [[clang::optnone]] void Communication::SendAnticheat()
 {
     VIRTUALIZER_TIGER_WHITE_START
+
 	Logger::StartPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 
 	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
-	tcpClient.Send(authStreamStageOneRequest.Serialize());
+	SEND(authStreamStageOneRequest);
 
 	Logger::StopPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
+
     VIRTUALIZER_TIGER_WHITE_END
 }
 
