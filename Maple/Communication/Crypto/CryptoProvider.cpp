@@ -200,7 +200,7 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
 
 std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vector<uint8_t>& buffer, uint32_t key1, uint32_t key2, uint32_t key3, bool reverse)
 {
-    VIRTUALIZER_MUTATE_ONLY_START
+    VIRTUALIZER_FISH_WHITE_START
 
     key1 ^= key3;
     key2 ^= key3;
@@ -269,5 +269,5 @@ std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vecto
 
     return transformedBuffer;
 
-    VIRTUALIZER_MUTATE_ONLY_END
+    VIRTUALIZER_FISH_WHITE_END
 }

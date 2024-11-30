@@ -6,6 +6,8 @@
 #include <vector>
 #include <thread>
 
+#include <functional>
+
 class TCPClient
 {
 	static inline unsigned int constexpr BUFFER_LENGTH = 8192;
@@ -18,11 +20,8 @@ class TCPClient
 	SOCKET m_socket;
 	std::thread* m_receiveThread = nullptr;
 
-	typedef void (*fn_receiveCallback)(const std::vector<unsigned char>& data);
-	fn_receiveCallback receiveCallback = nullptr;
-
-	typedef void (*fn_disconnectedCallback)();
-	fn_disconnectedCallback disconnectedCallback = nullptr;
+	std::function<void(const std::vector<unsigned char>&)> m_ReceiveCallback;
+	std::function<void()> m_DisconnectedCallback;
 
 	std::vector<unsigned char> receiveStreamData;
 	bool isReceiving = false;
@@ -33,7 +32,7 @@ class TCPClient
 	void receive(char* buffer, int bytesReceived);
 public:
 	TCPClient() = default;
-	TCPClient(fn_receiveCallback receiveCallback, fn_disconnectedCallback disconnectedCallback);
+	TCPClient(const std::function<void(const std::vector<unsigned char>&)>& receiveCallback, const std::function<void()>& disconnectedCallback);
 	~TCPClient();
 
 	bool Connect(const std::string& host, const std::string& port);

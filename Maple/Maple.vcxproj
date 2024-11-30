@@ -160,7 +160,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions);_HAS_CXX23</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MAPLE_EXPORTS;_WINDOWS;_USRDLL;_DCRYPTOPP_DISABLE_ASM;DCRYPTOPP_DISABLE_ASM;CRYPTOPP_DISABLE_RDRAND;CRYPTOPP_DISABLE_RDSEED;_WINSOCKAPI_;CURL_STATICLIB;%(PreprocessorDefinitions);_HAS_CXX17;_HAS_CXX20;_HAS_CXX23</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -243,6 +243,7 @@
     <ClCompile Include="Communication\Packets\Responses\AuthStreamStageOneResponse.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HandshakeResponse.cpp" />
     <ClCompile Include="Communication\Packets\Responses\HeartbeatResponse.cpp" />
+    <ClCompile Include="Communication\Packets\Responses\PingResponse.cpp" />
     <ClCompile Include="Communication\TCP\TCPClient.cpp" />
     <ClCompile Include="Communication\User.cpp" />
     <ClCompile Include="Configuration\ConfigManager.cpp" />
@@ -321,9 +322,12 @@
     <ClInclude Include="Communication\Packets\Requests\HandshakeRequest.h" />
     <ClInclude Include="Communication\Packets\Requests\HeartbeatRequest.h" />
     <ClInclude Include="Communication\Packets\Requests\PingRequest.h" />
+    <ClInclude Include="Communication\Packets\Requests\RequestPackets.h" />
     <ClInclude Include="Communication\Packets\Responses\AuthStreamStageOneResponse.h" />
     <ClInclude Include="Communication\Packets\Responses\HandshakeResponse.h" />
     <ClInclude Include="Communication\Packets\Responses\HeartbeatResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\PingResponse.h" />
+    <ClInclude Include="Communication\Packets\Responses\ResponsePackets.h" />
     <ClInclude Include="Communication\Packets\SerializationError.h" />
     <ClInclude Include="Communication\TCP\TCPClient.h" />
     <ClInclude Include="Communication\User.h" />

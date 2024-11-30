@@ -3,47 +3,48 @@
 #include "User.h"
 #include "TCP/TCPClient.h"
 #include "Packets/PacketSerializer.h"
+#include "Singleton.h"
 
-class Communication
+#include "entt.hpp"
+
+class Communication : public Singleton<Communication>
 {
-	static inline PacketSerializer& serializer = PacketSerializer::Get();
+	std::unordered_map<uint32_t, std::function<void(entt::meta_any)>> m_PacketHandlers;
 
-	static inline User* user;
-	static inline TCPClient tcpClient;
+	PacketSerializer& m_Serializer;
+
+	User* m_User;
+	TCPClient m_TcpClient;
 	
-	static inline bool connected = false;
-	static inline bool handshakeSucceeded = false;
-	static inline bool heartbeatThreadLaunched = false;
-	static inline bool pingThreadLaunched = false;
-	static inline HANDLE pingThreadHandle;
-	static inline HANDLE heartbeatThreadHandle;
+	bool m_Connected;
+	bool m_HandshakeSucceeded;
+	bool m_HeartbeatThreadLaunched;
+	bool m_PingThreadLaunched;
+	HANDLE pingThreadHandle;
+	HANDLE heartbeatThreadHandle;
 
-#define SEND(x) \
-	if (auto serialized = serializer.Serialize(x); serialized.has_value()) \
-		tcpClient.Send(*serialized); \
-	else \
-		Security::CorruptMemory(); \
+	void PingThread();
+	void HeartbeatThread();
+	void CheckerThread();
+	void SendAuthStreamStageTwo();
 
-	static void pingThread();
-	static void heartbeatThread();
-	static void checkerThread();
-	static void sendAuthStreamStageTwo();
-
-	static void onReceive(const std::vector<unsigned char>& data);
-	static void onDisconnect();
+	void OnReceive(const std::vector<unsigned char>& data);
+	void OnDisconnect();
 public:
-	static inline HANDLE ThreadCheckerHandle;
-	static inline unsigned int IntegritySignature1 = 0xdeadbeef;
-	static inline unsigned int IntegritySignature2 = 0xefbeadde;
-	static inline unsigned int IntegritySignature3 = 0xbeefdead;
+	Communication(singletonLock);
 
-	static bool Connect();
-	static void Disconnect();
-	static void SendAnticheat();
+	HANDLE ThreadCheckerHandle;
+	unsigned int IntegritySignature1 = 0xdeadbeef;
+	unsigned int IntegritySignature2 = 0xefbeadde;
+	unsigned int IntegritySignature3 = 0xbeefdead;
 
-	static bool GetIsConnected();
-	static bool GetIsHandshakeSucceeded();
-	static bool GetIsHeartbeatThreadLaunched();
-	static User* GetUser();
-	static void SetUser(User* user);
+	bool Connect();
+	void Disconnect();
+	void SendAnticheat();
+
+	bool GetIsConnected();
+	bool GetIsHandshakeSucceeded();
+	bool GetIsHeartbeatThreadLaunched();
+	User* GetUser();
+	void SetUser(User* user);
 };

@@ -109,7 +109,8 @@ Vector2 InputManager::GetAccumulatedOffset()
 
 void InputManager::SetAccumulatedOffset(Vector2 value)
 {
-	accumulatedOffset = (Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (Vector2(-value.X, -value.Y)) : value;
+	auto& communication = Communication::Get();
+	accumulatedOffset = (communication.IntegritySignature1 != 0xdeadbeef || communication.IntegritySignature2 != 0xefbeadde || communication.IntegritySignature3 != 0xbeefdead) ? (Vector2(-value.X, -value.Y)) : value;
 }
 
 Vector2 InputManager::Resync(Vector2 displacement, Vector2 offset, float resyncFactor)

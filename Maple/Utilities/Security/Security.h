@@ -82,8 +82,7 @@ class Security
 		UNICODE_STRING BaseDllName;
 	};
 
-	static wchar_t* GetFileNameFromPath(wchar_t* Path)
-	{
+	static wchar_t* GetFileNameFromPath(wchar_t* Path) {
 		wchar_t* LastSlash = NULL;
 		for (DWORD i = 0; Path[i] != NULL; i++)
 		{
@@ -93,8 +92,7 @@ class Security
 		return LastSlash;
 	}
 
-	static wchar_t* RemoveFileExtension(wchar_t* FullFileName, wchar_t* OutputBuffer, DWORD OutputBufferSize)
-	{
+	static wchar_t* RemoveFileExtension(wchar_t* FullFileName, wchar_t* OutputBuffer, DWORD OutputBufferSize) {
 		wchar_t* LastDot = NULL;
 		for (DWORD i = 0; FullFileName[i] != NULL; i++)
 			if (FullFileName[i] == '.')
@@ -114,8 +112,7 @@ class Security
 	}
 
 public:
-	static const wchar_t* GetWC(const char* c)
-	{
+	static const wchar_t* GetWC(const char* c) {
 		const size_t cSize = strlen(c) + 1;
 		wchar_t* wc = new wchar_t[cSize];
 		mbstowcs(wc, c, cSize);
@@ -123,8 +120,7 @@ public:
 		return wc;
 	}
 
-	static __forceinline bool CheckIfThreadIsAlive(HANDLE hnd)
-	{
+	static __forceinline bool CheckIfThreadIsAlive(HANDLE hnd) {
 		DWORD exitCode;
 		if (GetExitCodeThread(hnd, &exitCode))
 			if (exitCode != STILL_ACTIVE)
@@ -133,7 +129,7 @@ public:
 		return true;
 	}
 
-	static __forceinline void CorruptMemory()
+	[[clang::always_inline]] static __forceinline void CorruptMemory()
 	{
 		int mem = 0x000a1000 + (std::rand() % (0x100b2000 - 0x000a1000 + 1));
 		int count = 0x00abcdef + (std::rand() % (0xfafdfa0f - 0x00abcdef + 1));

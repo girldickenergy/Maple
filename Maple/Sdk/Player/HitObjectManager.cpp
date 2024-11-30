@@ -29,11 +29,12 @@ void HitObjectManager::spoofVisuals()
 	if (GameBase::GetMode() != OsuModes::Play || Player::GetIsReplayMode())
 		return;
 
-	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
+	auto& communication = Communication::Get();
+	if (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched())
 	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
+		communication.IntegritySignature1 -= 0x1;
+		communication.IntegritySignature2 -= 0x1;
+		communication.IntegritySignature3 -= 0x1;
 	}
 
 	spoofPreEmpt();
@@ -294,7 +295,8 @@ void HitObjectManager::CacheHitObjects()
 
 HitObject HitObjectManager::GetHitObject(int index)
 {
-	return hitObjects[(Communication::IntegritySignature1 != 0xdeadbeef || Communication::IntegritySignature2 != 0xefbeadde || Communication::IntegritySignature3 != 0xbeefdead) ? (index > (int)(hitObjects.size() / 2) ? (int)(hitObjects.size() / 2) : index) : index];
+	auto& communication = Communication::Get();
+	return hitObjects[(communication.IntegritySignature1 != 0xdeadbeef || communication.IntegritySignature2 != 0xefbeadde || communication.IntegritySignature3 != 0xbeefdead) ? (index > (int)(hitObjects.size() / 2) ? (int)(hitObjects.size() / 2) : index) : index];
 }
 
 uintptr_t HitObjectManager::GetInstance()

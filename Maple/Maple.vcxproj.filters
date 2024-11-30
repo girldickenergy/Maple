@@ -224,6 +224,9 @@
     <ClCompile Include="Communication\Packets\Requests\PingRequest.cpp">
       <Filter>Communication\Packets\Requests</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Packets\Responses\PingResponse.cpp">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1654,6 +1657,15 @@
       <Filter>Communication\Packets</Filter>
     </ClInclude>
     <ClInclude Include="Communication\Packets\Requests\PingRequest.h">
+      <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\PingResponse.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Responses\ResponsePackets.h">
+      <Filter>Communication\Packets\Responses</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Packets\Requests\RequestPackets.h">
       <Filter>Communication\Packets\Requests</Filter>
     </ClInclude>
   </ItemGroup>

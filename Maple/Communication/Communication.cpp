@@ -10,38 +10,39 @@
 #include "Crypto/CryptoProvider.h"
 
 
+#include "Packets/Requests/RequestPackets.h"
+#include "Packets/Responses/ResponsePackets.h"
 
-#include "Packets/Requests/PingRequest.h"
-#include "Packets/Requests/HandshakeRequest.h"
-#include "Packets/Requests/HeartbeatRequest.h"
-#include "Packets/Responses/HandshakeResponse.h"
-#include "Packets/Responses/HeartbeatResponse.h"
 
 #include "../Dependencies/Milk/MilkThread.h"
-#include "Packets/Requests/AuthStreamStageOneRequest.h"
 #include "../Utilities/Anticheat/AnticheatUtilities.h"
-#include "Packets/Requests/AuthStreamStageTwoRequest.h"
-#include "Packets/Responses/AuthStreamStageOneResponse.h"
+#include "Packets/Fnv1a.h"
 
 static inline MilkThread* pingMilkThread;
 static inline MilkThread* heartbeatMilkThread;
 static inline MilkThread* checkerMilkThread;
 
-[[clang::optnone]] void Communication::pingThread()
+#define SEND(x) \
+	if (auto serialized = m_Serializer.Serialize(x); serialized.has_value()) \
+		m_TcpClient.Send(*serialized); \
+	else \
+		Security::CorruptMemory(); \
+
+[[clang::optnone]] void Communication::PingThread()
 {
 	//pingMilkThread->CleanCodeCave();
 	//delete pingMilkThread;
 
 	while (true)
 	{
-		while (!heartbeatThreadLaunched)
+		while (!m_HeartbeatThreadLaunched)
 			Sleep(100);
 
 		VIRTUALIZER_LION_WHITE_START
-		if (!pingThreadLaunched)
-			pingThreadLaunched = true;
+		if (!m_PingThreadLaunched)
+			m_PingThreadLaunched = true;
 
-		if (!connected || !handshakeSucceeded || !heartbeatThreadLaunched || !Security::CheckIfThreadIsAlive(ThreadCheckerHandle))
+		if (!m_Connected || !m_HandshakeSucceeded || !m_HeartbeatThreadLaunched || !Security::CheckIfThreadIsAlive(ThreadCheckerHandle))
 		{
 			IntegritySignature1 -= 0x1;
 			IntegritySignature2 -= 0x1;
@@ -57,7 +58,7 @@ static inline MilkThread* checkerMilkThread;
 	}
 }
 
-[[clang::optnone]] void Communication::checkerThread()
+[[clang::optnone]] void Communication::CheckerThread()
 {
 	//checkerMilkThread->CleanCodeCave();
 	//delete checkerMilkThread;
@@ -66,7 +67,7 @@ static inline MilkThread* checkerMilkThread;
 	{
 		VIRTUALIZER_FISH_RED_START
 
-		if (heartbeatThreadLaunched && pingThreadLaunched)
+		if (m_HeartbeatThreadLaunched && m_PingThreadLaunched)
 		{
 			if (!Security::CheckIfThreadIsAlive(heartbeatThreadHandle) || !Security::CheckIfThreadIsAlive(pingThreadHandle))
 			{
@@ -82,105 +83,55 @@ static inline MilkThread* checkerMilkThread;
 	}
 }
 
-void Communication::heartbeatThread()
+void Communication::HeartbeatThread()
 {
 	//heartbeatMilkThread->CleanCodeCave();
 	//delete heartbeatMilkThread;
 
 	while (true)
 	{
-		if (!heartbeatThreadLaunched)
-			heartbeatThreadLaunched = true;
+		if (!m_HeartbeatThreadLaunched)
+			m_HeartbeatThreadLaunched = true;
 
-		HeartbeatRequest heartbeatRequest = HeartbeatRequest(user->GetSessionToken());
+		HeartbeatRequest heartbeatRequest = HeartbeatRequest(m_User->GetSessionToken());
 		SEND(heartbeatRequest);
 
 		Sleep(600000); // 10 minutes
 	}
 }
 
-void Communication::sendAuthStreamStageTwo()
+void Communication::SendAuthStreamStageTwo()
 {
 	VIRTUALIZER_SHARK_BLACK_START
 
-	AuthStreamStageTwoRequest authStreamStageTwoRequest = AuthStreamStageTwoRequest(user->GetUsername(), AnticheatUtilities::GetAnticheatChecksum(), AnticheatUtilities::GetAnticheatBytes(), AnticheatUtilities::GetGameBytes());
+	AuthStreamStageTwoRequest authStreamStageTwoRequest = AuthStreamStageTwoRequest(m_User->GetUsername(), AnticheatUtilities::GetAnticheatChecksum(), AnticheatUtilities::GetAnticheatBytes(), AnticheatUtilities::GetGameBytes());
 	SEND(authStreamStageTwoRequest);
 
 	VIRTUALIZER_SHARK_BLACK_END
 }
 
-void Communication::onReceive(const std::vector<unsigned char>& data)
+void Communication::OnReceive(const std::vector<unsigned char>& data)
 {
-	const auto type = static_cast<PacketType>(data[0]);
-	const std::vector payload(data.begin() + 1, data.end());
+	VIRTUALIZER_SHARK_BLACK_START
 
-	switch (type)
+	auto deserialized = m_Serializer.Deserialize(data);
+	if (!deserialized.has_value())
+		Security::CorruptMemory();
+
+	if (!m_PacketHandlers.contains(deserialized->second))
 	{
-		case PacketType::Handshake:
-		{
-			VIRTUALIZER_SHARK_BLACK_START
-			
-			HandshakeResponse handshakeResponse = HandshakeResponse::Deserialize(payload);
-
-			CryptoProvider::Get().InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
-
-			handshakeSucceeded = true;
-			
-			heartbeatMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(heartbeatThread), true);
-			heartbeatThreadHandle = heartbeatMilkThread->Start();
-
-			pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingThread), true);
-			pingThreadHandle = pingMilkThread->Start();
-
-			VIRTUALIZER_SHARK_BLACK_END
-		}
-			break;
-		case PacketType::Heartbeat:
-		{
-			VIRTUALIZER_SHARK_BLACK_START
-			
-			HeartbeatResponse heartbeatResponse = HeartbeatResponse::Deserialize(payload);
-
-			if (heartbeatResponse.GetResult() != HeartbeatResult::Success)
-			{
-				int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
-				int errorCode = 4098;
-				Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
-
-				Security::CorruptMemory();
-			}
-
-			VIRTUALIZER_SHARK_BLACK_END
-		}
-			break;
-		case PacketType::Ping:
-			break;
-		case PacketType::AuthStreamStageOne:
-		{
-			VIRTUALIZER_SHARK_BLACK_START
-
-			AuthStreamStageOneResponse authStreamStageOneResponse = AuthStreamStageOneResponse::Deserialize(payload);
-
-			if (authStreamStageOneResponse.GetShouldSend())
-				auto authStreamStageTwoThread = MilkThread(reinterpret_cast<uintptr_t>(sendAuthStreamStageTwo));
-
-			VIRTUALIZER_SHARK_BLACK_END
-		}
-			break;
-		default:
-		{
-			VIRTUALIZER_SHARK_BLACK_START
-				
-			IntegritySignature1 -= 0x1;
-			IntegritySignature2 -= 0x1;
-			IntegritySignature3 -= 0x1;
-
-			VIRTUALIZER_SHARK_BLACK_END
-		}
+		IntegritySignature1 -= 0x1;
+		IntegritySignature2 -= 0x1;
+		IntegritySignature3 -= 0x1;
 	}
+
+	auto& packetHandler = m_PacketHandlers[deserialized->second];
+	packetHandler(deserialized->first);
+
+	VIRTUALIZER_SHARK_BLACK_END
 }
 
-void Communication::onDisconnect()
+void Communication::OnDisconnect()
 {
 	VIRTUALIZER_SHARK_BLACK_START
 		
@@ -197,12 +148,83 @@ void Communication::onDisconnect()
 	VIRTUALIZER_SHARK_BLACK_END
 }
 
+Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get())
+{
+	m_PacketHandlers =
+	{
+		{ 
+			Hash32Fnv1aConst("AuthStreamStageOneResponse"), [](entt::meta_any packet) 
+			{
+				VIRTUALIZER_SHARK_BLACK_START
+
+				auto authStreamStageOneResponse = packet.cast<AuthStreamStageOneResponse>();
+
+				if (authStreamStageOneResponse.GetShouldSend())
+				{
+					auto* sendAuthStreamStageTwoLambda = static_cast<void(*)()>([]() { Communication::Get().SendAuthStreamStageTwo(); });
+					auto authStreamStageTwoThread = MilkThread(reinterpret_cast<uintptr_t>(sendAuthStreamStageTwoLambda));
+				}
+
+				VIRTUALIZER_SHARK_BLACK_END
+			} 
+		},
+		{
+			Hash32Fnv1aConst("HandshakeResponse"), [this](entt::meta_any packet)
+			{
+				VIRTUALIZER_SHARK_BLACK_START
+
+				auto handshakeResponse = packet.cast<HandshakeResponse>();
+
+				CryptoProvider::Get().InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
+				
+				m_HandshakeSucceeded = true;
+
+				auto* heartbeatLambda = static_cast<void(*)()>([]() { Communication::Get().HeartbeatThread(); });
+				heartbeatMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(heartbeatLambda), true);
+				heartbeatThreadHandle = heartbeatMilkThread->Start();
+
+				auto* pingLambda = static_cast<void(*)()>([]() { Communication::Get().PingThread(); });
+				pingMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(pingLambda), true);
+				pingThreadHandle = pingMilkThread->Start();
+
+				VIRTUALIZER_SHARK_BLACK_END
+			}
+		},
+		{
+			Hash32Fnv1aConst("HeartbeatResponse"), [](entt::meta_any packet)
+			{
+				VIRTUALIZER_SHARK_BLACK_START
+
+				auto heartbeatResponse = packet.cast<HeartbeatResponse>();
+
+				if (heartbeatResponse.GetResult() != HeartbeatResult::Success)
+				{
+					int randomAddress = rand() % (UINT_MAX - 1048576 + 1) + 1048576;
+					int errorCode = 4098;
+					Logger::Log(LogSeverity::Error, xorstr_("Unhandled exception at 0x%X (0x%X). Please report this."), randomAddress, errorCode);
+
+					Security::CorruptMemory();
+				}
+
+				VIRTUALIZER_SHARK_BLACK_END
+			}
+		},
+		{ Hash32Fnv1aConst("PingResponse"), [](entt::meta_any packet) { } }
+	};
+
+	m_Connected = false;
+	m_HandshakeSucceeded = false;
+	m_HeartbeatThreadLaunched = false;
+	m_PingThreadLaunched = false;
+
+	//m_Serializer = PacketSerializer::Get();
+}
+
 bool Communication::Connect()
 {
 	VIRTUALIZER_TIGER_WHITE_START
 
-	Logger::StartPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
-	if (connected)
+	if (m_Connected)
 	{
 		IntegritySignature1 -= 0x1;
 		IntegritySignature2 -= 0x1;
@@ -211,19 +233,21 @@ bool Communication::Connect()
 		return true;
 	}
 
-	tcpClient = TCPClient(&onReceive, &onDisconnect);
-	if (!tcpClient.Connect(xorstr_("198.251.89.179"), xorstr_("9999")))
+	auto receiveBinding = [this]<typename T>(T && data) { OnReceive(std::forward<T>(data)); };
+	auto disconnectBinding = [this] { OnDisconnect(); };
+
+	m_TcpClient = TCPClient(receiveBinding, disconnectBinding);
+	if (!m_TcpClient.Connect(xorstr_("198.251.89.179"), xorstr_("9999")))
 		return false;
 
-	connected = true;
+	m_Connected = true;
 
-	checkerMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(checkerThread), true);
+	auto* checkerLambda = static_cast<void(*)()>([]() { Communication::Get().CheckerThread(); });
+	checkerMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(checkerLambda), true);
 	ThreadCheckerHandle = checkerMilkThread->Start();
 
 	HandshakeRequest handshakeRequest = HandshakeRequest();
 	SEND(handshakeRequest);
-
-	Logger::StopPerformanceCounter(xorstr_("{33F4FB1E-0474-4E4E-B8D0-66C61E118A01}"));
 
 	VIRTUALIZER_TIGER_WHITE_END
 
@@ -234,9 +258,8 @@ void Communication::Disconnect()
 {
 	VIRTUALIZER_SHARK_BLACK_START
 
-	connected = false;
-	
-	tcpClient.Disconnect();
+	m_Connected = false;
+	m_TcpClient.Disconnect();
 
 	VIRTUALIZER_SHARK_BLACK_END
 }
@@ -245,42 +268,32 @@ void Communication::Disconnect()
 {
     VIRTUALIZER_TIGER_WHITE_START
 
-	Logger::StartPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
-
 	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
 	SEND(authStreamStageOneRequest);
-
-	Logger::StopPerformanceCounter(xorstr_("{37D5F741-B981-4948-88FD-BD8ACF191EE5}"));
 
     VIRTUALIZER_TIGER_WHITE_END
 }
 
 bool Communication::GetIsConnected()
 {
-	bool ret = connected;
-
-	return ret;
+	return m_Connected;
 }
 
 bool Communication::GetIsHandshakeSucceeded()
 {
-	bool ret = handshakeSucceeded;
-
-	return ret;
+	return m_HandshakeSucceeded;
 }
 
 bool Communication::GetIsHeartbeatThreadLaunched()
 {
-	bool ret = heartbeatThreadLaunched;
-
-	return ret;
+	return m_HeartbeatThreadLaunched;
 }
 
 User* Communication::GetUser()
 {
 	VIRTUALIZER_SHARK_BLACK_START
 
-	User* ret = user;
+	User* ret = m_User;
 
 	VIRTUALIZER_SHARK_BLACK_END
 
@@ -291,8 +304,8 @@ User* Communication::GetUser()
 {
 	VIRTUALIZER_FISH_WHITE_START
 	
-	delete Communication::user;
-	Communication::user = user;
+	delete Communication::m_User;
+	Communication::m_User = user;
 
 	VIRTUALIZER_FISH_WHITE_END
 }

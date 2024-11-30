@@ -58,19 +58,5 @@ public:
 		return SerializePacket(packet);
 	}
 
-	template <typename T, std::enable_if_t<std::is_base_of_v<IPacket, T>>* = nullptr>
-	std::expected<T, SerializationError> Deserialize(const std::vector<uint8_t>& buffer)
-	{
-		BinaryReader reader(buffer);
-
-		auto identifier = reader.Read<uint32_t>();
-
-		if (entt::resolve(identifier).id() != identifier)
-			return std::unexpected(SerializationError::IdentifierUnknown);
-
-		if (const auto packet = DeserializePacket(identifier, reader); packet.has_value())
-			return packet->cast<T>();
-        else
-			return std::unexpected(packet.error());
-	}
+	std::expected<std::pair<entt::meta_any, uint32_t>, SerializationError> Deserialize(const std::vector<uint8_t>& buffer);
 };

@@ -5,7 +5,6 @@
 #include <map>
 #include <functional>
 #include <optional>
-
 #include <Singleton.h>
 
 class Charlotte : public Singleton<Charlotte>

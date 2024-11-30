@@ -351,3 +351,22 @@ PacketSerializer::PacketSerializer(singletonLock)
 
     VIRTUALIZER_FISH_RED_END
 }
+
+std::expected<std::pair<entt::meta_any, uint32_t>, SerializationError> PacketSerializer::Deserialize(const std::vector<uint8_t>& buffer)
+{
+    VIRTUALIZER_FISH_RED_START
+
+    BinaryReader reader(buffer);
+
+    auto identifier = reader.Read<uint32_t>();
+
+    if (entt::resolve(identifier).id() != identifier)
+        return std::unexpected(SerializationError::IdentifierUnknown);
+
+    if (const auto packet = DeserializePacket(identifier, reader); packet.has_value())
+        return std::make_pair(packet, identifier);
+    else
+        return std::unexpected(packet.error());
+
+    VIRTUALIZER_FISH_RED_END
+}

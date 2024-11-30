@@ -17,8 +17,8 @@ void TCPClient::receiveThread()
 
         if (bytesReceived <= 0)
         {
-            if (disconnectedCallback)
-                disconnectedCallback();
+            if (m_DisconnectedCallback)
+                m_DisconnectedCallback();
 
             Disconnect();
 
@@ -45,8 +45,8 @@ void TCPClient::receive(char* buffer, int bytesReceived)
     {
         receiveStreamData.erase(receiveStreamData.begin(), receiveStreamData.begin() + PACKET_HEADER_SIZE);
 
-        if (receiveCallback)
-            receiveCallback(receiveStreamData);
+        if (m_ReceiveCallback)
+            m_ReceiveCallback(receiveStreamData);
 
         const int remainingBufferLength = bytesReceived - receiveStreamLength;
 
@@ -65,10 +65,10 @@ void TCPClient::receive(char* buffer, int bytesReceived)
     }
 }
 
-TCPClient::TCPClient(fn_receiveCallback receiveCallback, fn_disconnectedCallback disconnectedCallback)
+TCPClient::TCPClient(const std::function<void(const std::vector<unsigned char>&)>& receiveCallback, const std::function<void()>& disconnectedCallback)
 {
-    this->receiveCallback = receiveCallback;
-    this->disconnectedCallback = disconnectedCallback;
+    m_ReceiveCallback = receiveCallback;
+    m_DisconnectedCallback = disconnectedCallback;
 }
 
 TCPClient::~TCPClient()

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-enum SerializationError : uint8_t
+enum class SerializationError : uint8_t
 {
 	Unknown,
 	IdentifierUnknown,

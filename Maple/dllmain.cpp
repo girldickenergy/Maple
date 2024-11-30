@@ -79,11 +79,13 @@ DWORD WINAPI Initialize()
     if (!data_addr)
         Security::CorruptMemory();
 
+    auto& communication = Communication::Get();
+
     UserData userData = *static_cast<UserData*>(data_addr);
-    Communication::SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
+    communication.SetUser(new User(userData.Username, userData.SessionToken, userData.DiscordID, userData.DiscordAvatarHash));
     
     // Initialize this a bit earlier just so we can log more data earlier.
-    Storage::Initialize(Communication::GetUser()->GetUsernameHashed(xorstr_("-mlo")));
+    Storage::Initialize(communication.GetUser()->GetUsernameHashed(xorstr_("-mlo")));
 
 #ifdef _DEBUG
     Logger::Initialize(LogSeverity::All, true, L"Runtime log | Maple");
@@ -93,15 +95,17 @@ DWORD WINAPI Initialize()
 
     memset(data_addr, 0x0, sizeof(UserData));
 
-    Communication::Connect();
+    communication.Connect();
 
     Logger::StartPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
-    while (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
+    while (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched())
         Sleep(500);
     Logger::StopPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
 
     Logger::StartPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
-    auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(Communication::SendAnticheat));
+
+    auto* sendAnticheatLambda = static_cast<void(*)()>([]() { Communication::Get().SendAnticheat(); });
+    auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(sendAnticheatLambda));
     Logger::StopPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
 
     InitializeMaple();
@@ -116,8 +120,10 @@ void InitializeMaple()
 {
     VIRTUALIZER_FISH_RED_START
     Logger::StartPerformanceCounter(xorstr_("{66BF4512-01D6-4F5B-94C4-E48776FCE6B9}"));
+
+    auto& communication = Communication::Get();
     
-    if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched())
+    if (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched())
         Security::CorruptMemory();
 
     ConfigManager::Initialize();

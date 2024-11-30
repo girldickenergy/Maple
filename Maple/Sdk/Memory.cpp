@@ -110,13 +110,15 @@ void Memory::EndInitialize()
 
 void Memory::AddObject(const char* name, const char* pattern, unsigned int offset, unsigned int readCount, bool resolveRelativeAddress)
 {
-    VIRTUALIZER_TIGER_WHITE_START
-	
-	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
+	VIRTUALIZER_TIGER_WHITE_START
+
+	auto& communication = Communication::Get();
+
+	if (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(communication.ThreadCheckerHandle))
 	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
+		communication.IntegritySignature1 -= 0x1;
+		communication.IntegritySignature2 -= 0x1;
+		communication.IntegritySignature3 -= 0x1;
 	}
 	
 	if (const uintptr_t scanResult = VanillaPatternScanner::FindPattern(pattern, offset, readCount, resolveRelativeAddress))
@@ -138,12 +140,14 @@ void Memory::AddObject(const char* name, const char* pattern, unsigned int offse
 void Memory::AddPatch(const char* name, const char* objectName, const char* pattern, unsigned int scanSize, unsigned int offset, const std::vector<uint8_t>& patch)
 {
     VIRTUALIZER_TIGER_WHITE_START
+
+	auto& communication = Communication::Get();
 	
-	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
+	if (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(communication.ThreadCheckerHandle))
 	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
+		communication.IntegritySignature1 -= 0x1;
+		communication.IntegritySignature2 -= 0x1;
+		communication.IntegritySignature3 -= 0x1;
 	}
 
 	if (const uintptr_t objectAddress = Objects[objectName])
@@ -174,12 +178,14 @@ void Memory::AddPatch(const char* name, const char* objectName, const char* patt
 void Memory::AddHook(const char* name, const char* objectName, uintptr_t detourFunctionAddress, uintptr_t* originalFunction, bool safe)
 {
     VIRTUALIZER_TIGER_WHITE_START
+
+	auto& communication = Communication::Get();
 	
-	if (!Communication::GetIsConnected() || !Communication::GetIsHandshakeSucceeded() || !Communication::GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(Communication::ThreadCheckerHandle))
+	if (!communication.GetIsConnected() || !communication.GetIsHandshakeSucceeded() || !communication.GetIsHeartbeatThreadLaunched() || !Security::CheckIfThreadIsAlive(communication.ThreadCheckerHandle))
 	{
-		Communication::IntegritySignature1 -= 0x1;
-		Communication::IntegritySignature2 -= 0x1;
-		Communication::IntegritySignature3 -= 0x1;
+		communication.IntegritySignature1 -= 0x1;
+		communication.IntegritySignature2 -= 0x1;
+		communication.IntegritySignature3 -= 0x1;
 	}
 
 	if (const uintptr_t objectAddress = Objects[objectName])
