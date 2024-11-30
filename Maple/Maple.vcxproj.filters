@@ -460,6 +460,24 @@
     <Filter Include="Dependencies\Charlotte">
       <UniqueIdentifier>{3476f8f9-62b2-4c19-9da9-a2690d2889ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\entt">
+      <UniqueIdentifier>{29c2081c-a95d-49a5-844a-214c0bbd5e0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\entt\config">
+      <UniqueIdentifier>{acf552e5-fc33-4afb-8b78-fed96318301c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\entt\container">
+      <UniqueIdentifier>{1a14a703-a4a9-4a87-beb1-8618d98e023e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\entt\core">
+      <UniqueIdentifier>{2afe52f6-a3c2-49ad-9c95-19ce8d906858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\entt\locator">
+      <UniqueIdentifier>{a0acba15-1764-450c-8166-3f80c68d3a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\entt\meta">
+      <UniqueIdentifier>{805511b9-8629-4620-beea-6d6016e3d423}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\CryptoPP\shake.h">
@@ -1505,6 +1523,132 @@
     </ClInclude>
     <ClInclude Include="Communication\Packets\ISerializeable.h">
       <Filter>Communication\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\entt.hpp">
+      <Filter>Dependencies\entt</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\fwd.hpp">
+      <Filter>Dependencies\entt</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\config\macro.h">
+      <Filter>Dependencies\entt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\config\version.h">
+      <Filter>Dependencies\entt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\config\config.h">
+      <Filter>Dependencies\entt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\container\table.hpp">
+      <Filter>Dependencies\entt\container</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\container\dense_map.hpp">
+      <Filter>Dependencies\entt\container</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\container\dense_set.hpp">
+      <Filter>Dependencies\entt\container</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\container\fwd.hpp">
+      <Filter>Dependencies\entt\container</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\hashed_string.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\ident.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\iterator.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\memory.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\monostate.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\ranges.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\tuple.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\type_info.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\type_traits.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\utility.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\algorithm.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\any.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\attribute.h">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\bit.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\compressed_pair.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\enum.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\family.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\core\fwd.hpp">
+      <Filter>Dependencies\entt\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\locator\locator.hpp">
+      <Filter>Dependencies\entt\locator</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\meta.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\node.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\pointer.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\policy.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\range.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\resolve.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\template.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\type_traits.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\utility.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\adl_pointer.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\container.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\context.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\factory.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\entt\meta\fwd.hpp">
+      <Filter>Dependencies\entt\meta</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
