@@ -234,6 +234,7 @@
   <ItemGroup>
     <ClCompile Include="Communication\Communication.cpp" />
     <ClCompile Include="Communication\Crypto\CryptoProvider.cpp" />
+    <ClCompile Include="Communication\Crypto\Mha256.cpp" />
     <ClCompile Include="Communication\Packets\PacketSerializer.cpp" />
     <ClCompile Include="Communication\Packets\Requests\AuthStreamStageOneRequest.cpp" />
     <ClCompile Include="Communication\Packets\Requests\AuthStreamStageTwoRequest.cpp" />
@@ -313,6 +314,7 @@
     <ClInclude Include="Communication\Communication.h" />
     <ClInclude Include="Communication\Crypto\CryptoProvider.h" />
     <ClInclude Include="Communication\Crypto\CryptoTransformation.h" />
+    <ClInclude Include="Communication\Crypto\Mha256.h" />
     <ClInclude Include="Communication\Packets\BinaryReader.h" />
     <ClInclude Include="Communication\Packets\Fnv1a.h" />
     <ClInclude Include="Communication\Packets\IPacket.h" />

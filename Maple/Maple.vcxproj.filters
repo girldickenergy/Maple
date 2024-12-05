@@ -227,6 +227,9 @@
     <ClCompile Include="Communication\Packets\Responses\PingResponse.cpp">
       <Filter>Communication\Packets\Responses</Filter>
     </ClCompile>
+    <ClCompile Include="Communication\Crypto\Mha256.cpp">
+      <Filter>Communication\Crypto</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -1667,6 +1670,9 @@
     </ClInclude>
     <ClInclude Include="Communication\Packets\Requests\RequestPackets.h">
       <Filter>Communication\Packets\Requests</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication\Crypto\Mha256.h">
+      <Filter>Communication\Crypto</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,8 @@ std::vector<uint8_t> PacketSerializer::SerializeType(const entt::meta_any& insta
     for (auto [identifier, field] : type.data())
     {
         auto value = field.get(instance);
+        if (!value)
+            continue;
         auto serializedValue = SerializeValue(value);
 
         ADD_RANGE(serializedType, TO_BYTE_VECTOR(identifier));
