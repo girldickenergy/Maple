@@ -251,7 +251,7 @@ std::expected<entt::meta_any, SerializationError> PacketSerializer::DeserializeV
                 auto arrayBuffer = reader.Read(arrayBufferLength);
                 auto decryptedArrayBuffer = CryptoProvider::Get().ApplyCryptoTransformations(arrayBuffer, key1, key2, key3, true);
 
-                auto elementSize = arrayBufferLength / arrayElementCount;
+                auto elementSize = arrayElementCount == 0 ? 0 : arrayBufferLength / arrayElementCount;
 
                 for (int i = 0; i < arrayElementCount; i++)
                 {
