@@ -6,12 +6,14 @@
 class HandshakeResponse : public IPacket
 {
 	std::vector<uint8_t> m_Key;
-	std::vector<uint8_t> m_Iv;
+	std::vector<uint8_t> m_EncryptedKey;
+	std::vector<uint8_t> m_EncryptedIv;
 
 	HandshakeResponse();
 public:
 	const std::vector<uint8_t>& GetKey();
-	const std::vector<uint8_t>& GetIV();
+	const std::vector<uint8_t>& GetEncryptedKey();
+	const std::vector<uint8_t>& GetEncryptedIv();
 
 	uint32_t GetIdentifier() override;
 };

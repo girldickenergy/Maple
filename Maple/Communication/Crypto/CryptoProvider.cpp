@@ -198,6 +198,16 @@ std::vector<unsigned char> CryptoProvider::AESDecrypt(const std::vector<unsigned
     return recovered;
 }
 
+std::vector<uint8_t> CryptoProvider::ApplyRollingXor(const std::vector<uint8_t>& buffer, const std::vector<uint8_t>& key)
+{
+    auto encrypted = std::vector<uint8_t>(buffer);
+
+    for (size_t i = 0; i < encrypted.size(); i++)
+        encrypted[i] ^= key[i % key.size()];
+
+    return encrypted;
+}
+
 std::vector<uint8_t> CryptoProvider::ApplyCryptoTransformations(const std::vector<uint8_t>& buffer, uint32_t key1, uint32_t key2, uint32_t key3, bool reverse)
 {
     VIRTUALIZER_FISH_WHITE_START

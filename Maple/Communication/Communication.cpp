@@ -28,6 +28,31 @@ static inline MilkThread* checkerMilkThread;
 	else \
 		Security::CorruptMemory(); \
 
+void Communication::sendHandshake()
+{
+	VIRTUALIZER_SHARK_BLACK_START
+
+	std::mt19937 random(std::random_device{}());
+	std::uniform_int_distribution<> byteDistribution(0x03, 0xFF);
+	std::uniform_int_distribution<> intDistribution(0x00, 0xFFFFFFFF);
+
+	// Random amount of bytes, but at least 0x03
+	auto length = byteDistribution(random);
+	auto data = std::vector<uint32_t>(length);
+
+	for (size_t i = 0; i < length; i++)
+	{
+		data[i] = intDistribution(random);
+	}
+
+	data[1] = data[0] ^ data[2] ^ 0xDEADBEEF;
+
+	HandshakeRequest handshakeRequest = HandshakeRequest(data);
+	SEND(handshakeRequest);
+
+	VIRTUALIZER_SHARK_BLACK_END
+}
+
 [[clang::optnone]] void Communication::PingThread()
 {
 	//pingMilkThread->CleanCodeCave();
@@ -100,16 +125,6 @@ void Communication::HeartbeatThread()
 	}
 }
 
-void Communication::SendAuthStreamStageTwo()
-{
-	VIRTUALIZER_SHARK_BLACK_START
-
-	AuthStreamStageTwoRequest authStreamStageTwoRequest = AuthStreamStageTwoRequest(m_User->GetUsername(), AnticheatUtilities::GetAnticheatChecksum(), AnticheatUtilities::GetAnticheatBytes(), AnticheatUtilities::GetGameBytes());
-	SEND(authStreamStageTwoRequest);
-
-	VIRTUALIZER_SHARK_BLACK_END
-}
-
 void Communication::OnReceive(const std::vector<unsigned char>& data)
 {
 	VIRTUALIZER_SHARK_BLACK_START
@@ -152,22 +167,6 @@ Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get
 {
 	m_PacketHandlers =
 	{
-		{ 
-			Hash32Fnv1aConst("AuthStreamStageOneResponse"), [](entt::meta_any packet) 
-			{
-				VIRTUALIZER_SHARK_BLACK_START
-
-				auto authStreamStageOneResponse = packet.cast<AuthStreamStageOneResponse>();
-
-				if (authStreamStageOneResponse.GetShouldSend())
-				{
-					auto* sendAuthStreamStageTwoLambda = static_cast<void(*)()>([]() { Communication::Get().SendAuthStreamStageTwo(); });
-					auto authStreamStageTwoThread = MilkThread(reinterpret_cast<uintptr_t>(sendAuthStreamStageTwoLambda));
-				}
-
-				VIRTUALIZER_SHARK_BLACK_END
-			} 
-		},
 		{
 			Hash32Fnv1aConst("HandshakeResponse"), [this](entt::meta_any packet)
 			{
@@ -175,7 +174,7 @@ Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get
 
 				auto handshakeResponse = packet.cast<HandshakeResponse>();
 
-				CryptoProvider::Get().InitializeAES(handshakeResponse.GetKey(), handshakeResponse.GetIV());
+				CryptoProvider::Get().InitializeAES(handshakeResponse.GetEncryptedKey(), handshakeResponse.GetEncryptedIv());
 				
 				m_HandshakeSucceeded = true;
 
@@ -246,8 +245,7 @@ bool Communication::Connect()
 	checkerMilkThread = new MilkThread(reinterpret_cast<uintptr_t>(checkerLambda), true);
 	ThreadCheckerHandle = checkerMilkThread->Start();
 
-	HandshakeRequest handshakeRequest = HandshakeRequest();
-	SEND(handshakeRequest);
+	sendHandshake();
 
 	VIRTUALIZER_TIGER_WHITE_END
 
@@ -262,16 +260,6 @@ void Communication::Disconnect()
 	m_TcpClient.Disconnect();
 
 	VIRTUALIZER_SHARK_BLACK_END
-}
-
-[[clang::optnone]] void Communication::SendAnticheat()
-{
-    VIRTUALIZER_TIGER_WHITE_START
-
-	AuthStreamStageOneRequest authStreamStageOneRequest = AuthStreamStageOneRequest(AnticheatUtilities::GetAnticheatChecksum());
-	SEND(authStreamStageOneRequest);
-
-    VIRTUALIZER_TIGER_WHITE_END
 }
 
 bool Communication::GetIsConnected()

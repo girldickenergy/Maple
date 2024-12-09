@@ -23,10 +23,11 @@ class Communication : public Singleton<Communication>
 	HANDLE pingThreadHandle;
 	HANDLE heartbeatThreadHandle;
 
+	void sendHandshake();
+
 	void PingThread();
 	void HeartbeatThread();
 	void CheckerThread();
-	void SendAuthStreamStageTwo();
 
 	void OnReceive(const std::vector<unsigned char>& data);
 	void OnDisconnect();
@@ -40,7 +41,6 @@ public:
 
 	bool Connect();
 	void Disconnect();
-	void SendAnticheat();
 
 	bool GetIsConnected();
 	bool GetIsHandshakeSucceeded();

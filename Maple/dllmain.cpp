@@ -102,12 +102,6 @@ DWORD WINAPI Initialize()
         Sleep(500);
     Logger::StopPerformanceCounter(xorstr_("{D7310D1B-17C9-42D2-9511-29906528545E}"));
 
-    Logger::StartPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
-
-    auto* sendAnticheatLambda = static_cast<void(*)()>([]() { Communication::Get().SendAnticheat(); });
-    auto sendAnticheatThread = MilkThread(reinterpret_cast<uintptr_t>(sendAnticheatLambda));
-    Logger::StopPerformanceCounter(xorstr_("{6EE91FB8-257A-4AB5-83B6-FB93F8ADA554}"));
-
     InitializeMaple();
     Logger::StopPerformanceCounter(xorstr_("{6907431E-A1F9-4E21-BD08-8CF5078CB8D1}"));
 

@@ -1,14 +1,14 @@
 #include "HandshakeRequest.h"
 #include "VirtualizerSDK.h"
 
-HandshakeRequest::HandshakeRequest()
+HandshakeRequest::HandshakeRequest(const std::vector<std::uint32_t>& randomJunk)
 {
 	VIRTUALIZER_FISH_RED_START
 
 	entt::meta<HandshakeRequest>().type(GetIdentifier())
-		.data<&HandshakeRequest::m_Epoch>(Hash32Fnv1aConst("Epoch"));
+		.data<&HandshakeRequest::m_RandomJunk>(Hash32Fnv1aConst("RandomJunk"));
 
-	std::time(&m_Epoch);
+	m_RandomJunk = randomJunk;
 
 	VIRTUALIZER_FISH_RED_END
 }

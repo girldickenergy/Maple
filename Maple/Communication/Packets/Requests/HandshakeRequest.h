@@ -4,9 +4,9 @@
 
 class HandshakeRequest : public IPacket
 {
-	std::time_t m_Epoch;
+	std::vector<std::uint32_t> m_RandomJunk;
 public:
-	HandshakeRequest();
+	HandshakeRequest(const std::vector<std::uint32_t>& randomJunk);
 
 	uint32_t GetIdentifier() override;
 };
