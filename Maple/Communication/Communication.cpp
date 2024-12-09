@@ -174,7 +174,10 @@ Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get
 
 				auto handshakeResponse = packet.cast<HandshakeResponse>();
 
-				CryptoProvider::Get().InitializeAES(handshakeResponse.GetEncryptedKey(), handshakeResponse.GetEncryptedIv());
+				auto decryptedKey = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedKey(), handshakeResponse.GetKey());
+				auto decryptedIv = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedIv(), handshakeResponse.GetKey());
+
+				CryptoProvider::Get().InitializeAES(decryptedKey, decryptedIv);
 				
 				m_HandshakeSucceeded = true;
 
