@@ -165,6 +165,8 @@ void Communication::OnDisconnect()
 
 Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get())
 {
+	m_Mha256 = Mha256();
+
 	m_PacketHandlers =
 	{
 		{
@@ -174,8 +176,11 @@ Communication::Communication(singletonLock) : m_Serializer(PacketSerializer::Get
 
 				auto handshakeResponse = packet.cast<HandshakeResponse>();
 
-				auto decryptedKey = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedKey(), handshakeResponse.GetKey());
-				auto decryptedIv = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedIv(), handshakeResponse.GetKey());
+				auto decryptionArray = m_Mha256.ComputeHash(handshakeResponse.GetKey());
+				auto decryptionKey = std::vector<uint8_t>(decryptionArray.begin(), decryptionArray.end());
+
+				auto decryptedKey = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedKey(), decryptionKey);
+				auto decryptedIv = CryptoProvider::Get().ApplyRollingXor(handshakeResponse.GetEncryptedIv(), decryptionKey);
 
 				CryptoProvider::Get().InitializeAES(decryptedKey, decryptedIv);
 				

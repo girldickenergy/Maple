@@ -4,6 +4,7 @@
 #include "TCP/TCPClient.h"
 #include "Packets/PacketSerializer.h"
 #include "Singleton.h"
+#include "Crypto/Mha256.h"
 
 #include "entt.hpp"
 
@@ -12,6 +13,7 @@ class Communication : public Singleton<Communication>
 	std::unordered_map<uint32_t, std::function<void(entt::meta_any)>> m_PacketHandlers;
 
 	PacketSerializer& m_Serializer;
+	Mha256 m_Mha256;
 
 	User* m_User;
 	TCPClient m_TcpClient;
